@@ -14,6 +14,11 @@ export class InfoClientService {
     game: GameServer;
     player: Player;
 
+    //useful because we can't send the map trough the socket so we
+    //send it as a string array and store it there for ui
+    playerNames: string[];
+    playerScores: string[];
+
     actualRoom: string;
     gameMode: string;
     isLog2990Enabled: boolean;
@@ -42,7 +47,14 @@ export class InfoClientService {
 
     vpLevel: string;
 
+    //useful to know to hide stands or not
+    isSpectator: boolean;
+
     constructor() {
+        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, false, "defaultLevel");
+        this.player = new Player('DefaultPlayerObject');
+        this.playerNames = [];
+        this.playerScores = [];
         this.actualRoom = '';
         this.gameMode = GlobalConstants.MODE_MULTI;
         this.isLog2990Enabled = true;
@@ -53,11 +65,10 @@ export class InfoClientService {
         this.randomBonusesOn = false;
         this.playerName = 'DefaultPlayerName';
         this.displayTurn = "En attente d'un autre joueur...";
-        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, false);
-        this.player = new Player('DefaultPlayerObject');
         this.rooms = [];
         this.nameVP1dictionary0 = 0;
         this.vpLevel = 'debutant';
+        this.isSpectator = false;
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],

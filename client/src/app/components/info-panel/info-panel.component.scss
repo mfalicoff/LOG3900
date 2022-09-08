@@ -110,6 +110,33 @@
 }
 
 /////////////////////////////////////////////////////////
+//PART FOR PLAYER NAME AND SCORE
+/////////////////////////////////////////////////////////
+#tableRoom {
+    font-family: Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 90%;
+    margin-bottom: 2%;
+}
+
+#tableRoom td, #tableRoom th {
+    padding: 4px;
+    color: #0C483F;
+    font-size: 17px;
+    text-align: center;
+}
+
+#tableRoom th {
+    background-color: wheat;
+    color: #0C483F;
+}
+
+#tableRoom td{
+    border-bottom: 2px solid wheat;
+}
+
+
+/////////////////////////////////////////////////////////
 // PARTIE POUR JOUEUR
 /////////////////////////////////////////////////////////
 

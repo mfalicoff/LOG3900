@@ -34,32 +34,17 @@
               <th>Nom salle</th>
               <th>Temps par tour</th>
               <th>Bonus Random</th>
+              <th>Players</th>
+              <th>Spectators</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let room of infoClientService.rooms" (click)="this.onClickGame(room.name)">
-              <td *ngIf="!room.isLog2990Enabled">{{room.name}}</td>
-              <td *ngIf="!room.isLog2990Enabled">{{room.timeTurn}} min</td>
-              <td *ngIf="!room.isLog2990Enabled">{{room.isBonusRandom ? "Activé" : "Désactivé"}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="roomList" *ngIf="this.infoClientService.isLog2990Enabled">
-        <table id="tableRoom">
-          <thead>
-            <tr>
-              <th>Nom salle</th>
-              <th>Temps par tour</th>
-              <th>Bonus Random</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let room of infoClientService.rooms" (click)="this.onClickGame(room.name)">
-              <td *ngIf="room.isLog2990Enabled">{{room.name}}</td>
-              <td *ngIf="room.isLog2990Enabled">{{room.timeTurn}} min</td>
-              <td *ngIf="room.isLog2990Enabled">{{room.isBonusRandom ? "Activé" : "Désactivé"}}</td>
+              <td>{{room.name}}</td>
+              <td>{{room.timeTurn}} min</td>
+              <td>{{room.isBonusRandom ? "Activé" : "Désactivé"}}</td>
+              <td>{{room.nbPlayers}} </td>
+              <td>{{room.nbSpectators}} </td>
             </tr>
           </tbody>
         </table>

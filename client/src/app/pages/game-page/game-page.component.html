@@ -7,6 +7,8 @@
         <div *ngIf="!infoClientService.game.isLog2990Enabled">
             <div id="playersInfoNoLog">
                 <app-info-panel></app-info-panel>
+                <!-- TODO REMOVE THAT LATER -->
+                <button (click)="testFunction()">FOR TEST ONLY</button>
             </div>
             <div id="communicationBoxNoLog">
                 <app-communication-box></app-communication-box>

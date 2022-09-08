@@ -65,6 +65,22 @@
     </div>
     <br>
     
+    <table id="tableRoom">
+        <thead>
+          <tr>
+            <th>Nom Joueur</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody>
+            <!-- TODO maybe change that ? It's a bit ugly but had no idea how to do otherwise -->
+          <tr *ngFor="let name of infoClientService.playerNames; let index = index">
+            <td>{{infoClientService.playerNames[index]}}</td>
+            <td>{{infoClientService.playerScores[index]}}</td>
+          </tr>
+        </tbody>
+      </table>
+
     <div id="objectives" *ngIf="infoClientService.game.isLog2990Enabled">
         <p class="titleObjectives">Objectifs publics de partie</p>
 

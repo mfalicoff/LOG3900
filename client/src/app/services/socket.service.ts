@@ -46,6 +46,8 @@ export class SocketService {
         this.socket.on('playerUpdate', (player) => this.playerUpdateCallBack(player));
 
         this.socket.on('gameUpdateClient', ({ game, player, scoreOpponent, nbLetterStandOpponent }) => {
+            console.log("game 1");
+            console.log(game);
             this.infoClientService.game = game;
             this.infoClientService.player = player;
             this.infoClientService.scoreOpponent = scoreOpponent;
@@ -60,8 +62,9 @@ export class SocketService {
             }
         });
 
-        this.socket.on('gameUpdateStart', ({ roomName, game, player }) => {
-            const waitTimeInitCanvas = 10;
+        this.socket.on('gameInit', ({ roomName, game, player }) => {
+            console.log("game 2");
+            console.log(game);
             setTimeout(() => {
                 this.infoClientService.actualRoom = roomName;
                 this.infoClientService.game = game;
@@ -71,8 +74,24 @@ export class SocketService {
                 }
                 this.drawingBoardService.drawBoardInit(game.bonusBoard);
                 this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
-            }, waitTimeInitCanvas);
+            }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+        }); 
+
+        this.socket.on('gameBoardUpdate', (game) => {
+            this.infoClientService.game = game;
+            setTimeout(() => {
+                this.drawingBoardService.reDrawBoard(game.bonusBoard, game.board, this.infoClientService.letterBank);
+            }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
+
+        //TODO U STOPPED HERE BOI
+        this.socket.on('infoPannelUpdate', ({ playerNames, playerScores }) => {
+            this.infoClientService.playerNames = playerNames;
+            this.infoClientService.playerScores = playerScores;
+            console.log("playerNames: " + playerNames);
+            console.log("playerScores: " + playerScores);
+        });
+
         this.socket.on('sendStand', (player) => {
             this.infoClientService.player = player;
             this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
@@ -116,9 +135,19 @@ export class SocketService {
     }
 
     private roomManipulationHandler() {
-        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, isLog2990Enabled }) => {
-            if (this.infoClientService.rooms.findIndex((element) => element.name === roomName) === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, isLog2990Enabled));
+        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, 
+                                                isLog2990Enabled , nbPlayers, nbSpectators}) => {
+            const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
+            console.log("nbPlayers: " + nbPlayers);
+            console.log("nbSpectators: " + nbSpectators);
+            if ( idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
+                console.log("1");
+                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, 
+                                                               isLog2990Enabled, nbPlayers, nbSpectators));
+            }else{
+                console.log("2");
+                this.infoClientService.rooms[idxExistingRoom].nbPlayers = nbPlayers;
+                this.infoClientService.rooms[idxExistingRoom].nbSpectators = nbSpectators;
             }
         });
 
@@ -129,6 +158,10 @@ export class SocketService {
         this.socket.on('roomChangeAccepted', ({ roomName, page }) => {
             this.infoClientService.actualRoom = roomName;
             this.router.navigate([page]);
+        });
+
+        this.socket.on('isSpectator', (isSpectator) => {
+            this.infoClientService.isSpectator = isSpectator;
         });
     }
 
