@@ -43,7 +43,7 @@ export class PlayAreaService {
         if (game.gameFinished && playerThatJustPlayed) {
             const opponent = game.mapPlayers.get(playerThatJustPlayed.idOpponent);
             if (opponent) {
-                this.sendGameToBothPlayer(game, playerThatJustPlayed, opponent);
+                this.sendGameToAllClientInRoom(game);
             }
             this.triggerStopTimer(playerThatJustPlayed);
             return;
@@ -67,8 +67,8 @@ export class PlayAreaService {
 
         const newPlayerToPlay = game.mapPlayers.get(game.currentPlayerId);
         if (newPlayerToPlay && playerThatJustPlayed) {
-            // Updates the game of both player
-            this.sendGameToBothPlayer(game, playerThatJustPlayed, newPlayerToPlay);
+            // Updates the game of all players
+            this.sendGameToAllClientInRoom(game);
         }
         // reset le timer pour les deux clients
         this.triggerTimer(game);
@@ -96,7 +96,7 @@ export class PlayAreaService {
         if (player) {
             opponent = game.mapPlayers.get(player.idOpponent);
             if (opponent) {
-                this.sendGameToBothPlayer(game, opponent, player);
+                this.sendGameToAllClientInRoom(game);
             }
             this.triggerTimer(game);
         }
@@ -275,37 +275,30 @@ export class PlayAreaService {
         }
     }
 
-    private sendGameToBothPlayer(game: GameServer, opponent: Player, player: Player) {
-        // we send a version of the game to both players
-        if (game.gameMode === 'Multi') {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('gameUpdateClient', {
-                game,
-                player,
-                scoreOpponent: opponent.score,
-                nbLetterStandOpponent: opponent.nbLetterStand,
-            });
-            this.sio.sockets.sockets.get(player.idOpponent)?.emit('gameUpdateClient', {
-                game,
-                player: opponent,
-                scoreOpponent: player.score,
-                nbLetterStandOpponent: player.nbLetterStand,
-            });
-        } else {
-            if (player.idPlayer === 'virtualPlayer') {
-                this.sio.sockets.sockets.get(player.idOpponent)?.emit('gameUpdateClient', {
-                    game,
-                    player: opponent,
-                    scoreOpponent: player.score,
-                    nbLetterStandOpponent: player.nbLetterStand,
-                });
-            } else {
-                this.sio.sockets.sockets.get(player.idPlayer)?.emit('gameUpdateClient', {
-                    game,
-                    player,
-                    scoreOpponent: opponent.score,
-                    nbLetterStandOpponent: opponent.nbLetterStand,
-                });
+    private sendGameToAllClientInRoom(game: GameServer) {
+        // We send to all clients a gameState and a scoreBoardState\
+        this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+
+        //we send to all clients an update of the scoreBoard
+        const playerNamesArr = [];
+        const playerScoresArr = [];
+        for(let player of game.mapPlayers.values()){
+            playerNamesArr.push(player.name);
+            playerScoresArr.push(player.score);
+        }
+        this.sio.to(game.roomName).emit('infoPannelUpdate', {
+            playerNames: playerNamesArr,
+            playerScores: playerScoresArr,
+        });
+
+        // we send an update of the player object for each respective client
+        for(let [socketId, player] of Object.entries(game.mapPlayers)){
+            if (player.idOpponent === 'virtualPlayer') {
+                continue;
             }
+            this.sio.sockets.sockets.get(socketId)?.emit('playerUpdate', {
+                player: player,
+            });
         }
     }
 

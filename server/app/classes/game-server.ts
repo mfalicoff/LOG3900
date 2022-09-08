@@ -14,6 +14,8 @@ export class GameServer {
     letterBank: Map<string, LetterData>;
     letters: string[];
 
+    roomName: string;
+
     // BOARD SERVICE DATA
     board: Tile[][];
     trie: Trie;
@@ -54,7 +56,7 @@ export class GameServer {
 
     constructor(minutesByTurn: number, randomBonusesOn: boolean, 
                 gameMode: string, isLog2990Enabled: boolean, 
-                vpLevel: string) {
+                vpLevel: string, roomName: string) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;
         this.randomBonusesOn = randomBonusesOn;
@@ -66,6 +68,7 @@ export class GameServer {
         // Initializing the rest of the variables
         this.letters = [];
         this.board = [];
+        this.roomName = roomName;
         this.mapLetterOnBoard = new Map();
         this.mapPlayers = new Map();
         this.mapSpectators = new Map();
@@ -75,7 +78,6 @@ export class GameServer {
         this.masterTimer = '';
         this.displaySkipTurn = "En attente d'un autre joueur..";
         this.currentPlayerId = '';
-        this.noTileOnBoard = true;
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],

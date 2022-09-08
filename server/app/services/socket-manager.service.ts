@@ -49,7 +49,7 @@ export class SocketManager {
 
         //TODO REMOVE THAT LATER
         this.users.set("mockId", {name:"mockName", roomName:"mockRoomName"});
-        const mockGame = new GameServer(1, false, GlobalConstants.MODE_SOLO, false, "nul");
+        const mockGame = new GameServer(1, false, GlobalConstants.MODE_SOLO, false, "nul", "mockRoomName");
         this.rooms.set("mockRoomName", mockGame)
     }
 
@@ -90,7 +90,7 @@ export class SocketManager {
             const opponent = this.rooms.get(roomName)?.mapPlayers.get(player.idOpponent);
             if (opponent) {
                 // We update the chatHistory and the game of each client
-                this.triggerGameUpdateClient(socket, player, opponent, game);
+                this.gameUpdateClients(roomName, game);
                 this.triggerStopTimer(socket, player, game, roomName);
             }
         }
@@ -225,7 +225,7 @@ export class SocketManager {
         });
 
         socket.on('callTestFunction', () => {
-            const gameStub = new GameServer(1, false, "null", false, "expert");
+            const gameStub = new GameServer(1, false, "null", false, "expert", "test");
             const userStub = { name: "test", roomName: "test" };
             this.joinGameAsSpectator(socket, gameStub, userStub, "test");
         });
@@ -244,7 +244,7 @@ export class SocketManager {
     ) {
         // We create the game and add it to the rooms map
         const newGame: GameServer = new GameServer(timeTurn, isBonusRandom, gameMode, 
-                                                   isLog2990Enabled, vpLevel);
+                                                   isLog2990Enabled, vpLevel, roomName);
         const newPlayer = new Player(playerName);
         if (isLog2990Enabled) {
             // Gives a private objective to the player
@@ -374,7 +374,6 @@ export class SocketManager {
         socket.join(roomName);
 
         // We send to the client a gameState and a scoreBoardState\
-        console.log('game', game);
         socket.emit('gameBoardUpdate', this.rooms.get(roomName));
 
         //TODO DELETE THAT LATER
@@ -411,19 +410,45 @@ export class SocketManager {
         });
     }
 
-    private triggerGameUpdateClient(socket: io.Socket, player: Player, opponent: Player, game: GameServer) {
-        socket.emit('gameUpdateClient', {
-            game,
-            player,
-            scoreOpponent: opponent?.score,
-            nbLetterStandOpponent: opponent?.nbLetterStand,
+    gameUpdateClients(roomName:string, game: GameServer) {
+        // olf code projet 2 remove if everyhting works
+        // socket.emit('gameUpdateClient', {
+        //     game,
+        //     player,
+        //     scoreOpponent: opponent?.score,
+        //     nbLetterStandOpponent: opponent?.nbLetterStand,
+        // });
+        // if (player.idOpponent !== 'virtualPlayer') {
+        //     this.sio.sockets.sockets.get(player.idOpponent)?.emit('gameUpdateClient', {
+        //         game,
+        //         player: opponent,
+        //         scoreOpponent: player?.score,
+        //         nbLetterStandOpponent: player?.nbLetterStand,
+        //     });
+        // }
+
+        // We send to all clients a gameState and a scoreBoardState\
+        this.sio.to(roomName).emit('gameBoardUpdate', game);
+
+        //we send to all clients an update of the scoreBoard
+        const playerNamesArr = [];
+        const playerScoresArr = [];
+        for(let player of game.mapPlayers.values()){
+            playerNamesArr.push(player.name);
+            playerScoresArr.push(player.score);
+        }
+        this.sio.to(roomName).emit('infoPannelUpdate', {
+            playerNames: playerNamesArr,
+            playerScores: playerScoresArr,
         });
-        if (player.idOpponent !== 'virtualPlayer') {
-            this.sio.sockets.sockets.get(player.idOpponent)?.emit('gameUpdateClient', {
-                game,
-                player: opponent,
-                scoreOpponent: player?.score,
-                nbLetterStandOpponent: player?.nbLetterStand,
+
+        // we send an update of the player object for each respective client
+        for(let [socketId, player] of Object.entries(game.mapPlayers)){
+            if (player.idOpponent === 'virtualPlayer') {
+                continue;
+            }
+            this.sio.sockets.sockets.get(socketId)?.emit('playerUpdate', {
+                player: player,
             });
         }
     }
@@ -677,9 +702,28 @@ export class SocketManager {
     private leaveGame(socket: io.Socket) {
         const user = this.users.get(socket.id);
         if (user) {
-            this.rooms.delete(user.roomName);
-            this.sio.sockets.emit('removeElementListRoom', user.roomName);
-            user.roomName = '';
+            const game = this.rooms.get(user.roomName);
+            if (game) {
+                const nbPlayers = game?.mapPlayers.size;
+                const nbSpectators = game?.mapSpectators.size;
+                //if the player leaving is the last one in the serveur, we delete the room
+                if(nbPlayers + nbSpectators === 1){
+                    this.rooms.delete(user.roomName);
+                    this.sio.sockets.emit('removeElementListRoom', user.roomName);
+                }else{
+                    //if the player isn't the last one to leave we delete it from 
+                    //the player in the game and leave
+                    const player = game?.mapPlayers.get(socket.id);
+                    if (player) {
+                        game.mapPlayers.delete(socket.id);
+                    }else{
+                        //if not a player means the client is a spectator
+                        game.mapSpectators.delete(socket.id);
+                    }
+                }
+                socket.leave(user.roomName);
+                user.roomName = '';
+            }
         }
     }
 

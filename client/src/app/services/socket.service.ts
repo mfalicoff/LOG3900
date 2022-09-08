@@ -119,6 +119,7 @@ export class SocketService {
             if (currentPlayerId === this.socket.id) {
                 this.infoClientService.displayTurn = "C'est votre tour !";
             } else {
+                //TODO: change this to the name of the opponent for the spectator
                 this.infoClientService.displayTurn = "C'est au tour de votre adversaire !";
             }
             this.timerService.clearTimer();
