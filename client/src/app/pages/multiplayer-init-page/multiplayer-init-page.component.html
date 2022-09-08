@@ -36,19 +36,30 @@
               <th>Bonus Random</th>
               <th>Players</th>
               <th>Spectators</th>
+              <th>Liste joueurs</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let room of infoClientService.rooms" (click)="this.onClickGame(room.name)">
-              <td>{{room.name}}</td>
-              <td>{{room.timeTurn}} min</td>
-              <td>{{room.isBonusRandom ? "Activé" : "Désactivé"}}</td>
-              <td>{{room.nbPlayers}} </td>
-              <td>{{room.nbSpectators}} </td>
+            <tr *ngFor="let room of infoClientService.rooms">
+              <td (click)="this.onClickGame(room.name)">{{room.name}}</td>
+              <td (click)="this.onClickGame(room.name)">{{room.timeTurn}} min</td>
+              <td (click)="this.onClickGame(room.name)">{{room.isBonusRandom ? "Activé" : "Désactivé"}}</td>
+              <td (click)="this.onClickGame(room.name)">{{room.players.length}} </td>
+              <td (click)="this.onClickGame(room.name)">{{room.spectators.length}} </td>
+              <td (click)="this.onClickMoreInfo(room.name)"><input type="button" id="buttonShowModal" value="Liste joueurs" ></td>
             </tr>
           </tbody>
         </table>
       </div>
+    </div>
+  </div>
+  <!-- The Modal to show the list of players real and virtuel-->
+  <div id="modalListPlayers" [style.display]="displayStyleModal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <span class="close" (click)="this.closeListPlayerModal()">&times;</span>
+      <ul id="listPlayer" class="listPlayersStyle"></ul>
+      <ul id="listVP" class="listPlayersStyle"></ul>
     </div>
   </div>
 </body>

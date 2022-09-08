@@ -376,24 +376,12 @@ export class SocketManager {
         // We send to the client a gameState and a scoreBoardState\
         socket.emit('gameBoardUpdate', this.rooms.get(roomName));
 
-        //TODO DELETE THAT LATER
-        const playerFoo = new Player("Robert");
-        playerFoo.score = 100;
-        const playerFoo2 = new Player("Alberta");
-        playerFoo2.score = 200;
-        game.mapPlayers.set("1234", playerFoo);
-        game.mapPlayers.set("5678", playerFoo2);
-
         const playerNamesArr = [];
         const playerScoresArr = [];
         for(let player of game.mapPlayers.values()){
             playerNamesArr.push(player.name);
             playerScoresArr.push(player.score);
         }
-
-        console.log("playerNames: " + playerNamesArr);
-        console.log("playerScores: " + playerScoresArr);
-        //END DELETE
 
         socket.emit('infoPannelUpdate', {
             playerNames: playerNamesArr,
@@ -411,22 +399,6 @@ export class SocketManager {
     }
 
     gameUpdateClients(roomName:string, game: GameServer) {
-        // olf code projet 2 remove if everyhting works
-        // socket.emit('gameUpdateClient', {
-        //     game,
-        //     player,
-        //     scoreOpponent: opponent?.score,
-        //     nbLetterStandOpponent: opponent?.nbLetterStand,
-        // });
-        // if (player.idOpponent !== 'virtualPlayer') {
-        //     this.sio.sockets.sockets.get(player.idOpponent)?.emit('gameUpdateClient', {
-        //         game,
-        //         player: opponent,
-        //         scoreOpponent: player?.score,
-        //         nbLetterStandOpponent: player?.nbLetterStand,
-        //     });
-        // }
-
         // We send to all clients a gameState and a scoreBoardState\
         this.sio.to(roomName).emit('gameBoardUpdate', game);
 
@@ -485,16 +457,20 @@ export class SocketManager {
             }
             this.createGameAndPlayer(gameMode, isLog2990Enabled, timeTurn, isBonusRandom, 
                                      playerName, socket, nameOpponent, roomName, vpLevel);
-            const nbPlayers = this.rooms.get(roomName)?.mapPlayers.size;
-            const nbSpectators = this.rooms.get(roomName)?.mapSpectators.size;
-            this.sio.sockets.emit('addElementListRoom', {
-                roomName,
-                timeTurn,
-                isBonusRandom,
-                isLog2990Enabled,
-                nbPlayers,
-                nbSpectators,
-            });
+            const createdGame = this.rooms.get(roomName);
+            if(createdGame){
+                const players = Array.from(createdGame.mapPlayers.values());
+                const spectators = Array.from(createdGame.mapSpectators.values());
+    
+                this.sio.sockets.emit('addElementListRoom', {
+                    roomName,
+                    timeTurn,
+                    isBonusRandom,
+                    isLog2990Enabled,
+                    players,
+                    spectators,
+                });
+            }
             // emit to change page on client after verification
             socket.emit('roomChangeAccepted', {
                 roomName,
@@ -552,24 +528,19 @@ export class SocketManager {
             }
 
             //sending game info to all client to update nbPlayers and nbSpectators
-            const nbPlayers = game?.mapPlayers.size;
-            const nbSpectators = game?.mapSpectators.size;
-            console.log("nbPlayers: " + nbPlayers);
-            console.log("nbSpectators: " + nbSpectators);
             if (game) { 
+                const players = Array.from(game.mapPlayers.values());
+                const spectators = Array.from(game.mapSpectators.values());
+
                 this.sio.sockets.emit('addElementListRoom', {
                     roomName,
-                    timeTurn: game?.minutesByTurn,
-                    isBonusRandom: game?.randomBonusesOn,
-                    isLog2990Enabled: game?.isLog2990Enabled,
-                    nbPlayers: nbPlayers,
-                    nbSpectators: nbSpectators,
+                    timeTurn: game.minutesByTurn,
+                    isBonusRandom: game.randomBonusesOn,
+                    isLog2990Enabled: game.isLog2990Enabled,
+                    players: players,
+                    spectators: spectators,
                 });
             }
-            
-            // commented bc we don't want that anymore ?
-            // Remove the room from the view of other players
-            // this.sio.sockets.emit('removeElementListRoom', roomName);
         });
 
         socket.on('listRoom', () => {
@@ -579,16 +550,17 @@ export class SocketManager {
                     continue;
                 }
     
-                const nbPlayers = game?.mapPlayers.size;
-                const nbSpectators = game?.mapSpectators.size;
                 if (game) {
+                    const players = Array.from(game.mapPlayers.values());
+                    const spectators = Array.from(game.mapSpectators.values());
+
                     socket.emit('addElementListRoom', {
                         roomName,
-                        timeTurn: game?.minutesByTurn,
-                        isBonusRandom: game?.randomBonusesOn,
-                        isLog2990Enabled: game?.isLog2990Enabled,
-                        nbPlayers: nbPlayers,
-                        nbSpectators: nbSpectators,
+                        timeTurn: game.minutesByTurn,
+                        isBonusRandom: game.randomBonusesOn,
+                        isLog2990Enabled: game.isLog2990Enabled,
+                        players: players,
+                        spectators: spectators,
                     });
                 }
             }
@@ -639,7 +611,7 @@ export class SocketManager {
                 const game = this.rooms.get(userData.roomName);
                 if (game) {
                     if (game.gameFinished) {
-                        this.gameFinishedAction(socket, game, userData.roomName);
+                        this.gameFinishedAction(game, userData.roomName);
                         return;
                     }
                     const playerThatLeaves = game.mapPlayers.get(socket.id);
@@ -674,7 +646,7 @@ export class SocketManager {
                 const game = this.rooms.get(userData.roomName);
                 if (game) {
                     if (game.gameFinished) {
-                        this.gameFinishedAction(socket, game, userData.roomName);
+                        this.gameFinishedAction(game, userData.roomName);
                         return;
                     }
                     const playerThatLeaves = game.mapPlayers.get(socket.id);
@@ -727,15 +699,14 @@ export class SocketManager {
         }
     }
 
-    private gameFinishedAction(socket: io.Socket, game: GameServer, roomName: string) {
-        const nbPlayerInGame = game.mapPlayers.size;
-        if (nbPlayerInGame >= 2) {
-            game.mapPlayers.delete(socket.id);
-        } else if (nbPlayerInGame <= 1) {
+    private gameFinishedAction(game: GameServer, roomName: string) {
+        const nbPlayer = game.mapPlayers.size;
+        const nbSpectators = game?.mapSpectators.size;
+        //if this is the last player to leave the room we delete it
+        if (nbPlayer +  nbSpectators <= 1) {
             this.rooms.delete(roomName);
-            this.sio.sockets.emit('removeElementListRoom', roomName);
         }
-        this.users.delete(socket.id);
+        this.sio.sockets.emit('removeElementListRoom', roomName);
     }
 
     private commBoxInputHandler(socket: io.Socket) {

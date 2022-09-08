@@ -8,7 +8,7 @@
             *ngIf="!infoClientService.isSpectator"
             mat-raised-button
             [disabled]="socketService.socket.id !== infoClientService.game.currentPlayerId" 
-            id="passBtn" 
+            id="passBtn"
             class="btnStyle"
             (click)="skipTurnButton()"
         >Passer

@@ -46,8 +46,6 @@ export class SocketService {
         this.socket.on('playerUpdate', (player) => this.playerUpdateCallBack(player));
 
         this.socket.on('gameUpdateClient', ({ game, player, scoreOpponent, nbLetterStandOpponent }) => {
-            console.log("game 1");
-            console.log(game);
             this.infoClientService.game = game;
             this.infoClientService.player = player;
             this.infoClientService.scoreOpponent = scoreOpponent;
@@ -63,8 +61,6 @@ export class SocketService {
         });
 
         this.socket.on('gameInit', ({ roomName, game, player }) => {
-            console.log("game 2");
-            console.log(game);
             setTimeout(() => {
                 this.infoClientService.actualRoom = roomName;
                 this.infoClientService.game = game;
@@ -84,7 +80,6 @@ export class SocketService {
             }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
 
-        //TODO U STOPPED HERE BOI
         this.socket.on('infoPannelUpdate', ({ playerNames, playerScores }) => {
             this.infoClientService.playerNames = playerNames;
             this.infoClientService.playerScores = playerScores;
@@ -137,19 +132,21 @@ export class SocketService {
 
     private roomManipulationHandler() {
         this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, 
-                                                isLog2990Enabled , nbPlayers, nbSpectators}) => {
+                                                isLog2990Enabled , players, spectators}) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
-            console.log("nbPlayers: " + nbPlayers);
-            console.log("nbSpectators: " + nbSpectators);
-            if ( idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                console.log("1");
+            console.log("START");
+            console.log("nbPlayers: " + players.length);
+            console.log("nbSpectators: " + spectators.length);
+            if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
                 this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, 
-                                                               isLog2990Enabled, nbPlayers, nbSpectators));
+                                                               isLog2990Enabled, players, spectators));
             }else{
-                console.log("2");
-                this.infoClientService.rooms[idxExistingRoom].nbPlayers = nbPlayers;
-                this.infoClientService.rooms[idxExistingRoom].nbSpectators = nbSpectators;
+                this.infoClientService.rooms[idxExistingRoom].players = players;
+                this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
+                console.log("nbPlayers2: " + this.infoClientService.rooms[idxExistingRoom].players.length);
+                console.log("nbSpectators2: " + this.infoClientService.rooms[idxExistingRoom].spectators.length);
             }
+            console.log("END\n");
         });
 
         this.socket.on('removeElementListRoom', (roomNameToDelete) => {
