@@ -14,6 +14,8 @@ export class GameServer {
     letterBank: Map<string, LetterData>;
     letters: string[];
 
+    roomName: string;
+
     // BOARD SERVICE DATA
     board: Tile[][];
     trie: Trie;
@@ -53,7 +55,8 @@ export class GameServer {
     vpLevel: string;
 
     constructor(minutesByTurn: number, randomBonusesOn: boolean, 
-                gameMode: string, isLog2990Enabled: boolean, vpLevel: string) {
+                gameMode: string, isLog2990Enabled: boolean, 
+                vpLevel: string, roomName: string) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;
         this.randomBonusesOn = randomBonusesOn;
@@ -65,6 +68,7 @@ export class GameServer {
         // Initializing the rest of the variables
         this.letters = [];
         this.board = [];
+        this.roomName = roomName;
         this.mapLetterOnBoard = new Map();
         this.mapPlayers = new Map();
         this.mapSpectators = new Map();

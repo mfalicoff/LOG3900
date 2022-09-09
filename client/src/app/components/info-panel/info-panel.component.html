@@ -51,9 +51,9 @@
         </thead>
         <tbody>
             <!-- TODO maybe change that ? It's a bit ugly but had no idea how to do otherwise -->
-          <tr *ngFor="let name of infoClientService.playerNames; let index = index">
-            <td>{{infoClientService.playerNames[index]}}</td>
-            <td>{{infoClientService.playerScores[index]}}</td>
+          <tr *ngFor="let player of infoClientService.rooms[infoClientService.idxActualRoom].players">
+            <td>{{player.name}}</td>
+            <td>{{player.score}}</td>
           </tr>
         </tbody>
       </table>

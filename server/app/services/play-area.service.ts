@@ -4,6 +4,7 @@ import { Player } from '@app/classes/player';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
 import { ChatService } from './chat.service';
+import { DatabaseService } from './database.service';
 import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
 import { ObjectiveService } from './objective.service';
@@ -20,6 +21,7 @@ export class PlayAreaService {
         private chatService: ChatService,
         private expertVPService: ExpertVP,
         private objectiveService: ObjectiveService,
+        private databaseService: DatabaseService,
     ) {
         this.sio = new io.Server();
     }
@@ -79,6 +81,11 @@ export class PlayAreaService {
         game.nbLetterReserve = this.letterBankService.getNbLettersInLetterBank(game.letterBank);
         game.gameStarted = true;
 
+        //init the stand for each player
+        for(let player of game.mapPlayers.values()){
+            this.standService.onInitStandPlayer(game.letters, game.letterBank, player);
+        }
+
         // DETERMINER FIRST PLAYER
         const keys = Array.from(game.mapPlayers.keys());
         game.currentPlayerId = keys[Math.floor(Math.random() * game.mapPlayers.size)];
@@ -109,31 +116,42 @@ export class PlayAreaService {
         this.updateOldTiles(game);
     }
 
-    generateNameOpponent(namePLayer: string): string {
-        const nameVPOptions = ['Mike Oxmol', 'Lee Hwak', 'Hugh Jass'];
+    generateNameOpponent(game: GameServer, nameFree: string): string {
+        let namesAlrdyUsed : string[] = [];
+        for(let player of game.mapPlayers.values()){
+            //we don't add the name that is going to be delete because this is the old player
+            if(player.name === nameFree){
+                continue;
+            }
+            namesAlrdyUsed.push(player.name);
+        }
 
-        let randomNumber = this.giveRandomNbOpponent(nameVPOptions.length);
-        while (namePLayer === nameVPOptions[randomNumber]) {
-            if (randomNumber === nameVPOptions.length - 1) {
+        const nbVPNames = this.databaseService.namesVP.length;
+        let randomNumber = this.giveRandomNbOpponent(nbVPNames);
+        let newName : string = this.databaseService.namesVP[randomNumber].firstName + " "  
+                             + this.databaseService.namesVP[randomNumber].lastName;
+        while (namesAlrdyUsed.indexOf(newName) <= -1) {
+            if (randomNumber === nbVPNames - 1) {
                 randomNumber--;
             } else {
                 randomNumber++;
             }
         }
-        return nameVPOptions[randomNumber];
+        return newName;
     }
 
-    replaceHumanByBot(playerThatLeaves: Player, opponent: Player, game: GameServer, message: string) {
-        // we send to the opponent the fact that the player disconnected
-        opponent.chatHistory.push({ message: 'Le joueur ' + playerThatLeaves?.name + message, isCommand: false, sender: 'S' });
-        opponent.chatHistory.push({ message: GlobalConstants.REPLACEMENT_BY_BOT, isCommand: false, sender: 'S' });
+    //function that transforms the playerThatLeaves into a virtual player
+    replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
+        // we send to everyone that the player has left and has been replaced by a bot
+        for(let player of game.mapPlayers.values()){
+            player.chatHistory.push({ message: 'Le joueur ' + playerThatLeaves?.name + message, isCommand: false, sender: 'S' });
+            player.chatHistory.push({ message: GlobalConstants.REPLACEMENT_BY_BOT, isCommand: false, sender: 'S' });
+        }
 
         const oldIdPlayer = playerThatLeaves.idPlayer;
 
-        game.gameMode = GlobalConstants.MODE_SOLO;
         playerThatLeaves.idPlayer = 'virtualPlayer';
-        playerThatLeaves.name = this.generateNameOpponent(opponent.name);
-        opponent.idOpponent = 'virtualPlayer';
+        playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
 
         // we delete the old player and replacer him with the virtual player
         game.mapPlayers.delete(oldIdPlayer);
@@ -279,16 +297,11 @@ export class PlayAreaService {
         // We send to all clients a gameState and a scoreBoardState\
         this.sio.to(game.roomName).emit('gameBoardUpdate', game);
 
-        //we send to all clients an update of the scoreBoard
-        const playerNamesArr = [];
-        const playerScoresArr = [];
-        for(let player of game.mapPlayers.values()){
-            playerNamesArr.push(player.name);
-            playerScoresArr.push(player.score);
-        }
-        this.sio.to(game.roomName).emit('infoPannelUpdate', {
-            playerNames: playerNamesArr,
-            playerScores: playerScoresArr,
+        // we send to all clients an update of the players and spectators
+        this.sio.to(game.roomName).emit('playersSpectatorsUpdate', {
+            roomName: game.roomName,
+            players: Array.from(game.mapPlayers.values()),
+            spectators: Array.from(game.mapSpectators.values()),
         });
 
         // we send an update of the player object for each respective client

@@ -14,17 +14,11 @@ export class InfoClientService {
     game: GameServer;
     player: Player;
 
-    //useful because we can't send the map trough the socket so we
-    //send it as a string array and store it there for ui
-    playerNames: string[];
-    playerScores: string[];
-
-    actualRoom: string;
+    idxActualRoom: number;
     gameMode: string;
     isLog2990Enabled: boolean;
 
     // Some opponent info that we need for the html
-    nameOpponent: string;
     nbLetterStandOpponent: number;
     scoreOpponent: number;
 
@@ -50,15 +44,17 @@ export class InfoClientService {
     //useful to know to hide stands or not
     isSpectator: boolean;
 
+    creatorShouldBeAbleToStartGame: boolean;
+
     constructor() {
-        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, false, "defaultLevel");
-        this.player = new Player('DefaultPlayerObject');
-        this.playerNames = [];
-        this.playerScores = [];
-        this.actualRoom = '';
+        this.game = new GameServer(
+            0, false, 
+            GlobalConstants.MODE_SOLO, false, 
+            "defaultLevel", "defaultRoom");
+        this.player = new Player('DefaultPlayerObject', false);
+        this.idxActualRoom = 0;
         this.gameMode = GlobalConstants.MODE_MULTI;
         this.isLog2990Enabled = true;
-        this.nameOpponent = 'NomAdversaire';
         this.nbLetterStandOpponent = GlobalConstants.NUMBER_SLOT_STAND;
         this.scoreOpponent = 0;
         this.minutesByTurn = 1;
@@ -69,6 +65,7 @@ export class InfoClientService {
         this.nameVP1dictionary0 = 0;
         this.vpLevel = 'debutant';
         this.isSpectator = false;
+        this.creatorShouldBeAbleToStartGame = false;
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
@@ -103,34 +100,5 @@ export class InfoClientService {
         this.nameVPBeginner = [];
         this.nameVPExpert = [];
         this.dictionaries = [];
-    }
-
-    generateNameOpponent(namePLayer: string): void {
-        let randomNumber = this.giveRandomNbOpponent();
-
-        if (this.vpLevel === 'debutant') {
-            while (namePLayer === this.nameVPBeginner[randomNumber].firstName + this.nameVPBeginner[randomNumber].lastName) {
-                if (randomNumber === this.nameVPBeginner.length - 1) {
-                    randomNumber--;
-                } else {
-                    randomNumber++;
-                }
-            }
-            this.nameOpponent = this.nameVPBeginner[randomNumber].firstName + this.nameVPBeginner[randomNumber].lastName;
-        } else {
-            while (namePLayer === this.nameVPExpert[randomNumber].firstName + this.nameVPExpert[randomNumber].lastName) {
-                if (randomNumber === this.nameVPExpert.length - 1) {
-                    randomNumber--;
-                } else {
-                    randomNumber++;
-                }
-            }
-            this.nameOpponent = this.nameVPExpert[randomNumber].firstName + this.nameVPExpert[randomNumber].lastName;
-        }
-    }
-
-    private giveRandomNbOpponent(): number {
-        const returnValue = Math.floor(Math.random() * this.nameVPBeginner.length);
-        return returnValue;
     }
 }

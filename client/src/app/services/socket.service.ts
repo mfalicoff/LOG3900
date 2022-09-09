@@ -62,7 +62,6 @@ export class SocketService {
 
         this.socket.on('gameInit', ({ roomName, game, player }) => {
             setTimeout(() => {
-                this.infoClientService.actualRoom = roomName;
                 this.infoClientService.game = game;
                 this.infoClientService.player = player;
                 if (this.infoClientService.displayTurn === "C'est votre tour !") {
@@ -80,26 +79,28 @@ export class SocketService {
             }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
 
-        this.socket.on('infoPannelUpdate', ({ playerNames, playerScores }) => {
-            this.infoClientService.playerNames = playerNames;
-            this.infoClientService.playerScores = playerScores;
-            console.log("playerNames: " + playerNames);
-            console.log("playerScores: " + playerScores);
+        this.socket.on('playersSpectatorsUpdate', ({roomName, players, spectators}) => {
+            const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
+            this.infoClientService.idxActualRoom = idxExistingRoom;
+            this.infoClientService.rooms[idxExistingRoom].players = players;
+            this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
         });
 
         this.socket.on('sendStand', (player) => {
             this.infoClientService.player = player;
             this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
         });
-        this.socket.on('nameOpponentUpdate', (nameOpponent) => {
-            this.infoClientService.nameOpponent = nameOpponent;
-        });
+        
         this.socket.on('findTileToPlaceArrow', (realPosInBoardPx) => {
             this.drawingBoardService.findTileToPlaceArrow(
                 realPosInBoardPx,
                 this.infoClientService.game.board,
                 this.infoClientService.game.bonusBoard,
             );
+        });
+
+        this.socket.on('creatorShouldBeAbleToStartGame', () => {
+            this.infoClientService.creatorShouldBeAbleToStartGame = true;
         });
     }
 
@@ -154,12 +155,7 @@ export class SocketService {
         });
 
         this.socket.on('roomChangeAccepted', ({ roomName, page }) => {
-            this.infoClientService.actualRoom = roomName;
             this.router.navigate([page]);
-        });
-
-        this.socket.on('isSpectator', (isSpectator) => {
-            this.infoClientService.isSpectator = isSpectator;
         });
     }
 
@@ -181,6 +177,10 @@ export class SocketService {
 
         this.socket.on('SendExpertVPNamesToClient', (namesVP: NameVP[]) => {
             this.infoClientService.nameVPExpert = namesVP;
+        });
+
+        this.socket.on('isSpectator', (isSpectator) => {
+            this.infoClientService.isSpectator = isSpectator;
         });
     }
 

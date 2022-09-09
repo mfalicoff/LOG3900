@@ -12,7 +12,6 @@ import { DatabaseService } from './services/database.service';
 import { DictionaryService } from './services/dictionary.service';
 import { PlayAreaService } from './services/play-area.service';
 import { PutLogicService } from './services/put-logic.service';
-import { StandService } from './services/stand.service';
 
 const baseDix = 10;
 
@@ -29,7 +28,6 @@ export class Server {
         private communicationBoxService: CommunicationBoxService,
         private playAreaService: PlayAreaService,
         private chatService: ChatService,
-        private standService: StandService,
         private boardService: BoardService,
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
@@ -57,7 +55,6 @@ export class Server {
             this.communicationBoxService,
             this.playAreaService,
             this.chatService,
-            this.standService,
             this.boardService,
             this.putLogicService,
             this.databaseService,

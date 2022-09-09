@@ -44,7 +44,6 @@ export const DEFAULT_VALUE_NUMBER = -1;
 /// ////////////////////////////////////////////////////////////////////////
 // VARIABLE socketManager
 /// ////////////////////////////////////////////////////////////////////////
-export const MAX_PERSON_IN_ROOM = 2;
 //TODO switch this to 4 when 4 game players will be enabled
 export const MIN_PERSON_PLAYING = 2;
 export const MAX_PERSON_PLAYING = 2;
@@ -84,7 +83,7 @@ export const POINTS_DEDUCTED = ' point(s) qui ont été déduit de votre score: 
 export const INVALID_LENGTH = ' La taille maximale de 512 caractère a ete depassée';
 export const UNABLE_TO_PROCESS_COMMAND = 'Commande impossible ';
 export const NO_MOVE_FOUND = "Aucune solution n'a été trouvée pour la plage de points indiquée.";
-export const WAIT_FOR_SECOND_PLAYER = "En attente d'un second joueur...";
+export const WAIT_FOR_OTHER_PLAYERS = "En attente d'autres joueurs...";
 export const WORD_DOESNT_EXIST = "Le mot n'existe pas.";
 export const END_GAME_DISPLAY_MSG = 'La partie est terminée.';
 export const INVALID_ARGUMENTS_PLACER = ": la commande !placer n'as pas d'arguments ou bien des arguments de position invalides";
@@ -99,6 +98,7 @@ export const FIRST_LETTER_NOT_IN_H8 = ' : votre premier mot doit commencer dans 
 export const LETTERS_FROM_BOARD_WRONG = ' : lettres du plateau de jeu mal utilisées!';
 export const REPLACEMENT_BY_BOT = 'Un bot a maintenant remplacé votre adversaire.';
 export const NB_MIN_LETTER_BANK = 6;
+export const WAITING_FOR_CREATOR = "En attente du créateur pour demarrer la partie...";
 
 /// ///////////////////////////////////////////////////////////////////////////
 // /////////////// databaseService constants//////////////////////////////////

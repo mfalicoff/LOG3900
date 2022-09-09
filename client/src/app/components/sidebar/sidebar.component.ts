@@ -90,13 +90,11 @@ export class SidebarComponent {
         }
 
         this.infoClientService.vpLevel = vpLevel;
-        this.infoClientService.generateNameOpponent(this.infoClientService.playerName);
-        this.socketService.socket.emit('convertGameInSolo', this.infoClientService.nameOpponent, vpLevel);
+        this.socketService.socket.emit('convertGameInSolo', vpLevel);
     }
 
     leaveGame() {
         this.socketService.socket.emit('leaveGame');
-        this.infoClientService.actualRoom = '';
     }
 
     openModal() {
@@ -111,5 +109,9 @@ export class SidebarComponent {
         modalRef.afterClosed().subscribe((result) => {
             this.convertGameInSolo(result);
         });
+    }
+
+    startGame(){
+        this.socketService.socket.emit('startGame', this.infoClientService.game.roomName);
     }
 }

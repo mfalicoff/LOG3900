@@ -8,6 +8,8 @@ export class Player {
     name: string;
     stand: Tile[];
 
+    isCreatorOfGame: boolean;
+
     // we are obliged to put the esLint disable because the object class we use isnt stable
     // we therefore need to use any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,8 +31,9 @@ export class Player {
     allLetterSwapped: boolean;
     isMoveBingo: boolean;
 
-    constructor(namePlayer: string) {
+    constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
+        this.isCreatorOfGame = isCreatorOfGame;
         this.idOpponent = '';
         this.idPlayer = '';
         this.stand = [];

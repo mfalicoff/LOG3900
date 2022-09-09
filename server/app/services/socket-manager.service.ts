@@ -19,7 +19,6 @@ import { DictionaryService } from './dictionary.service';
 import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PutLogicService } from './put-logic.service';
-import { StandService } from './stand.service';
 
 @Service()
 export class SocketManager {
@@ -37,7 +36,6 @@ export class SocketManager {
         private communicationBoxService: CommunicationBoxService,
         private playAreaService: PlayAreaService,
         private chatService: ChatService,
-        private standService: StandService,
         private boardService: BoardService,
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
@@ -90,7 +88,7 @@ export class SocketManager {
             const opponent = this.rooms.get(roomName)?.mapPlayers.get(player.idOpponent);
             if (opponent) {
                 // We update the chatHistory and the game of each client
-                this.gameUpdateClients(roomName, game);
+                this.gameUpdateClients(game);
                 this.triggerStopTimer(socket, player, game, roomName);
             }
         }
@@ -238,37 +236,43 @@ export class SocketManager {
         isBonusRandom: boolean,
         playerName: string,
         socket: io.Socket,
-        nameOpponent: string,
         roomName: string,
         vpLevel: string,
     ) {
         // We create the game and add it to the rooms map
         const newGame: GameServer = new GameServer(timeTurn, isBonusRandom, gameMode, 
                                                    isLog2990Enabled, vpLevel, roomName);
-        const newPlayer = new Player(playerName);
+        const newPlayer = new Player(playerName, true);
         if (isLog2990Enabled) {
             // Gives a private objective to the player
             newGame.setObjectivePlayer(socket.id);
         }
         newPlayer.idPlayer = socket.id;
-        this.standService.onInitStandPlayer(newGame.letters, newGame.letterBank, newPlayer);
         this.boardService.initBoardArray(newGame);
-        if (gameMode === GlobalConstants.MODE_SOLO) {
+
+        //fill the remaining players with bots
+        for(let i = 0; i < GlobalConstants.MAX_PERSON_PLAYING - 1; i++) {
             const virtualPlayerId = 'virtualPlayer';
             newPlayer.idOpponent = virtualPlayerId;
-            const newOpponent = new Player(nameOpponent);
-            if (isLog2990Enabled) {
-                // Gives a private objective to the virtualPlayer and sets the rest to public
-                newGame.setObjectivePlayer(virtualPlayerId);
-            }
+            const newOpponent = new Player(this.databaseService.namesVP[i].firstName + " " 
+                                           + this.databaseService.namesVP[i].lastName, false);
+
             newOpponent.idPlayer = virtualPlayerId;
             newOpponent.idOpponent = socket.id;
             newGame.mapPlayers.set(virtualPlayerId, newOpponent);
-            this.standService.onInitStandPlayer(newGame.letters, newGame.letterBank, newOpponent);
-        } else {
-            // We have a waiting message (while no 2nd player) on chatHistory
-            newPlayer?.chatHistory.push({ message: GlobalConstants.WAIT_FOR_SECOND_PLAYER, 
-                                          isCommand: false, sender: 'S' });
+        }
+
+        // We send a waiting message (while game not started) on chatHistory
+        if (gameMode !== GlobalConstants.MODE_SOLO) {
+            const nbRealPlayer = Array.from(newGame.mapPlayers.values()).filter(
+                                            (player) => player.idPlayer !== 'virtualPlayer').length;
+            if(nbRealPlayer >= GlobalConstants.MIN_PERSON_PLAYING) {
+                newPlayer?.chatHistory.push({ message: GlobalConstants.WAITING_FOR_CREATOR, 
+                    isCommand: false, sender: 'S' });
+            }else{
+                newPlayer?.chatHistory.push({ message: GlobalConstants.WAIT_FOR_OTHER_PLAYERS, 
+                    isCommand: false, sender: 'S' });
+            }
         }
 
         newGame.mapPlayers.set(socket.id, newPlayer);
@@ -288,31 +292,44 @@ export class SocketManager {
         this.mouseEventService.initSioMouseEvent(this.sio);
         this.playAreaService.initSioPlayArea(this.sio);
 
-        setTimeout(() => {
-            if (gameMode === GlobalConstants.MODE_SOLO) {
+        //launches the game automatically if the mode is solo
+        if (gameMode === GlobalConstants.MODE_SOLO){
+            setTimeout(() => {
                 socket.emit('setTimeoutTimerStart');
                 this.playAreaService.playGame(newGame);
+            }, timeForClientToInitialize);
+        }else{
+            //if the mode is multiplayer
+            //create button for creator to start the game if enough reel player are in the game
+            this.shouldCreatorBeAbleToStartGame(newGame);
+        }
+    }
+
+    private shouldCreatorBeAbleToStartGame(game: GameServer,){
+        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
+            (player) => player.idPlayer !== 'virtualPlayer').length;
+        //TODO WARNING : REMOVE THE / 2 LATER WHEN THERE IS 4 PLAYERS
+        if (nbRealPlayer < GlobalConstants.MIN_PERSON_PLAYING/2) {
+            return;
+        }
+        //if we have enough real player, we send a message to the creator to start the game
+        for(let player of game.mapPlayers.values()){
+            if(!player.isCreatorOfGame){
+                continue;
             }
-        }, timeForClientToInitialize);
+            this.sio.sockets.sockets.get(player.idPlayer)?.emit('creatorShouldBeAbleToStartGame');
+            return;
+        }
     }
 
     private joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User, 
                              roomName: string, idOpponent: string) {
         // we add the new player to the map of players
-        const newPlayer = new Player(userData.name);
+        const newPlayer = new Player(userData.name, false);
         newPlayer.idOpponent = idOpponent;
         newPlayer.idPlayer = socket.id;
-        if (game) {
-            if (game.isLog2990Enabled) {
-                // Gives a private objective to the player and sets the rest to public
-                game.setObjectivePlayer(socket.id);
-            }
-            this.standService.onInitStandPlayer(game?.letters, game?.letterBank, newPlayer);
-            // TODO check if commenting this line is a problem
-            // the board should already be initialized no need to call it again no ?
-            // this.boardService.initBoardArray(game);
-        }
         game?.mapPlayers.set(socket.id, newPlayer);
+
         const opponent = game?.mapPlayers.get(idOpponent);
         // We warn that a new users has arrived
         opponent?.chatHistory.push({ message: userData?.name + ' a rejoint la partie.', 
@@ -333,11 +350,6 @@ export class SocketManager {
         // We send the state to the opponent to update chatHistory
         this.sio.sockets.sockets.get(idOpponent)?.emit('playerUpdate', opponent);
 
-        // we send the name of the opponent for the html of the client
-        // we also send the new name of the player to the other client
-        socket.emit('nameOpponentUpdate', this.users.get(idOpponent)?.name);
-        this.sio.sockets.sockets.get(idOpponent)?.emit('nameOpponentUpdate', userData?.name);
-
         // we set the idOpponent of the new player for the first player
         if (opponent) {
             opponent.idOpponent = socket.id;
@@ -352,15 +364,6 @@ export class SocketManager {
             roomName,
             page: '/game',
         });
-        // usually after a player joins a room the game can start
-        if (game && game?.mapPlayers.size >= GlobalConstants.MIN_PERSON_PLAYING && !game?.gameStarted) {
-            this.putLogicService.initSioPutLogic(this.sio);
-            this.playAreaService.initSioPlayArea(this.sio);
-            this.mouseEventService.initSioMouseEvent(this.sio);
-            this.playAreaService.playGame(game);
-            socket.emit('setTimeoutTimerStart');
-            this.sio.sockets.sockets.get(idOpponent)?.emit('setTimeoutTimerStart');
-        }
     }
 
     private joinGameAsSpectator(socket: io.Socket, game: GameServer, userData: 
@@ -376,16 +379,10 @@ export class SocketManager {
         // We send to the client a gameState and a scoreBoardState\
         socket.emit('gameBoardUpdate', this.rooms.get(roomName));
 
-        const playerNamesArr = [];
-        const playerScoresArr = [];
-        for(let player of game.mapPlayers.values()){
-            playerNamesArr.push(player.name);
-            playerScoresArr.push(player.score);
-        }
-
-        socket.emit('infoPannelUpdate', {
-            playerNames: playerNamesArr,
-            playerScores: playerScoresArr,
+        socket.emit('playersSpectatorsUpdate', {
+            roomName: game.roomName,
+            players: Array.from(game.mapPlayers.values()),
+            spectators: Array.from(game.mapSpectators.values()),
         });
 
         //tell the client to his state as a person
@@ -398,53 +395,13 @@ export class SocketManager {
         });
     }
 
-    gameUpdateClients(roomName:string, game: GameServer) {
-        // We send to all clients a gameState and a scoreBoardState\
-        this.sio.to(roomName).emit('gameBoardUpdate', game);
-
-        //we send to all clients an update of the scoreBoard
-        const playerNamesArr = [];
-        const playerScoresArr = [];
-        for(let player of game.mapPlayers.values()){
-            playerNamesArr.push(player.name);
-            playerScoresArr.push(player.score);
-        }
-        this.sio.to(roomName).emit('infoPannelUpdate', {
-            playerNames: playerNamesArr,
-            playerScores: playerScoresArr,
-        });
-
-        // we send an update of the player object for each respective client
-        for(let [socketId, player] of Object.entries(game.mapPlayers)){
-            if (player.idOpponent === 'virtualPlayer') {
-                continue;
-            }
-            this.sio.sockets.sockets.get(socketId)?.emit('playerUpdate', {
-                player: player,
-            });
-        }
-    }
-
-    private triggerStopTimer(socket: io.Socket, player: Player, game: GameServer, roomName: string) {
-        if (!game.gameFinished) {
-            return;
-        }
-        if (player.idOpponent !== 'virtualPlayer') {
-            this.sio.to(roomName).emit('stopTimer');
-            this.sio.to(roomName).emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
-        } else {
-            socket.emit('stopTimer');
-            socket.emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
-        }
-    }
-
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', (name) => {
             this.users.set(socket.id, { name, roomName: '' });
         });
 
         socket.on('createRoomAndGame', ({ roomName, playerName, timeTurn, isBonusRandom, 
-                                          gameMode, isLog2990Enabled, nameOpponent, vpLevel }) => {
+                                          gameMode, isLog2990Enabled, vpLevel }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
                 socket.emit('messageServer', 'Une salle avec ce nom existe déjà.');
@@ -456,21 +413,31 @@ export class SocketManager {
                 user.roomName = roomName;
             }
             this.createGameAndPlayer(gameMode, isLog2990Enabled, timeTurn, isBonusRandom, 
-                                     playerName, socket, nameOpponent, roomName, vpLevel);
+                                     playerName, socket, roomName, vpLevel);
             const createdGame = this.rooms.get(roomName);
-            if(createdGame){
-                const players = Array.from(createdGame.mapPlayers.values());
-                const spectators = Array.from(createdGame.mapSpectators.values());
-    
-                this.sio.sockets.emit('addElementListRoom', {
-                    roomName,
-                    timeTurn,
-                    isBonusRandom,
-                    isLog2990Enabled,
-                    players,
-                    spectators,
-                });
+            if(!createdGame){
+                return;
             }
+
+            const players = Array.from(createdGame.mapPlayers.values());
+            const spectators = Array.from(createdGame.mapSpectators.values());
+            this.sio.sockets.emit('addElementListRoom', {
+                roomName,
+                timeTurn,
+                isBonusRandom,
+                isLog2990Enabled,
+                players,
+                spectators,
+            });
+
+            // we send to all clients an update of the players and spectators
+            // to update list of players and spectators on client's ui
+            this.sio.to(createdGame.roomName).emit('playersSpectatorsUpdate', {
+                roomName: createdGame.roomName,
+                players: players,
+                spectators: spectators,
+            });
+            
             // emit to change page on client after verification
             socket.emit('roomChangeAccepted', {
                 roomName,
@@ -493,18 +460,19 @@ export class SocketManager {
             }
 
             const game = this.rooms.get(roomName);
+            if(!game){
+                return;
+            }
 
             // find the name of the opponent
             let idOpponent = 'DefaultIdNotNormal';
-            if (game) {
-                //there should be only one player in the map
-                //so we get the first one
-                for (const key of game.mapPlayers.keys()) {
-                    idOpponent = key;
-                }
+            //there should be only one player in the map
+            //so we get the first one
+            for (const key of game.mapPlayers.keys()) {
+                idOpponent = key;
             }
 
-            if (userData?.name === this.users.get(idOpponent)?.name) {
+            if (userData.name === this.users.get(idOpponent)?.name) {
                 socket.emit(
                     'messageServer',
                     'Vous avez le même nom que le joueur déjà dans la salle, veuillez le changer en retournant au menu principal.',
@@ -517,22 +485,41 @@ export class SocketManager {
                 user.roomName = roomName;
             }
 
-            if(game){
-                //if condition respected it means the new user is a player and not a spectator
-                //else it is a spectator
-                if(game?.mapPlayers.size < GlobalConstants.MAX_PERSON_PLAYING){ 
-                    this.joinGameAsPlayer(socket, game, userData, roomName, idOpponent);
-                }else{
-                    this.joinGameAsSpectator(socket, game, userData, roomName);
-                }
+            //if condition respected it means the new user is a player and not a spectator
+            //else it is a spectator
+            if(game.mapPlayers.size < GlobalConstants.MAX_PERSON_PLAYING){ 
+                this.joinGameAsPlayer(socket, game, userData, roomName, idOpponent);
+            }else{
+                this.joinGameAsSpectator(socket, game, userData, roomName);
             }
 
             //sending game info to all client to update nbPlayers and nbSpectators
-            if (game) { 
+            const players = Array.from(game.mapPlayers.values());
+            const spectators = Array.from(game.mapSpectators.values());
+
+            this.sio.sockets.emit('addElementListRoom', {
+                roomName,
+                timeTurn: game.minutesByTurn,
+                isBonusRandom: game.randomBonusesOn,
+                isLog2990Enabled: game.isLog2990Enabled,
+                players: players,
+                spectators: spectators,
+            });
+
+            //create button for creator to start the game if enough reel player are in the game
+            this.shouldCreatorBeAbleToStartGame(game);
+        });
+
+        socket.on('listRoom', () => {
+            for (const roomName of this.rooms.keys()) {
+                const game = this.rooms.get(roomName);
+                if (!game || game?.gameFinished) {
+                    continue;
+                }
+
                 const players = Array.from(game.mapPlayers.values());
                 const spectators = Array.from(game.mapSpectators.values());
-
-                this.sio.sockets.emit('addElementListRoom', {
+                socket.emit('addElementListRoom', {
                     roomName,
                     timeTurn: game.minutesByTurn,
                     isBonusRandom: game.randomBonusesOn,
@@ -543,176 +530,170 @@ export class SocketManager {
             }
         });
 
-        socket.on('listRoom', () => {
-            for (const roomName of this.rooms.keys()) {
-                const game = this.rooms.get(roomName);
-                if (game?.gameFinished) {
-                    continue;
-                }
-    
-                if (game) {
-                    const players = Array.from(game.mapPlayers.values());
-                    const spectators = Array.from(game.mapSpectators.values());
-
-                    socket.emit('addElementListRoom', {
-                        roomName,
-                        timeTurn: game.minutesByTurn,
-                        isBonusRandom: game.randomBonusesOn,
-                        isLog2990Enabled: game.isLog2990Enabled,
-                        players: players,
-                        spectators: spectators,
-                    });
-                }
+        socket.on('convertGameInSolo', (vpLevel) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
             }
+            const roomName = user?.roomName;
+            const game = this.rooms.get(roomName);
+            const player = game?.mapPlayers.get(socket.id);
+            if (!game || !player) {
+                return;
+            }
+            game.gameMode = GlobalConstants.MODE_SOLO;
+            game.vpLevel = vpLevel;
+            // creating new game/room
+            const newRoomName = 'roomOf' + socket.id;
+            user.roomName = newRoomName;
+            this.createGameAndPlayer(
+                game.gameMode,
+                game.isLog2990Enabled,
+                game.minutesByTurn,
+                game.randomBonusesOn,
+                player.name,
+                socket,
+                newRoomName,
+                game.vpLevel,
+            );
+
+            // deleting old room
+            this.rooms.delete(roomName);
+
+            // Remove the room from the view of other players
+            this.sio.sockets.emit('removeElementListRoom', roomName);
         });
 
-        socket.on('convertGameInSolo', (nameOpponent, vpLevel) => {
-            const user = this.users.get(socket.id);
-            if (user) {
-                const roomName = user?.roomName;
-                const game = this.rooms.get(roomName);
-                const player = game?.mapPlayers.get(socket.id);
-                if (game && player) {
-                    game.gameMode = GlobalConstants.MODE_SOLO;
-                    game.vpLevel = vpLevel;
-                    // creating new game/room
-                    const newRoomName = 'roomOf' + socket.id;
-                    user.roomName = newRoomName;
-                    this.createGameAndPlayer(
-                        game.gameMode,
-                        game.isLog2990Enabled,
-                        game.minutesByTurn,
-                        game.randomBonusesOn,
-                        player.name,
-                        socket,
-                        nameOpponent,
-                        newRoomName,
-                        game.vpLevel,
-                    );
+        //called when the creator of a multiplayer game wants to start the game
+        socket.on('startGame', (roomName) => {
+            //OLD CODE REPLACED BY THE FACT THAT THE CREATOR OF THE GAME STARTS THE GAME
+            const game = this.rooms.get(roomName);
+            if (!game){
+                return;
+            }
+            
+            if(game.mapPlayers.size >= GlobalConstants.MIN_PERSON_PLAYING && !game.gameStarted) {
+                //we give the server bc we can't include socketManager in those childs
+                //but it sucks so... TODO: find a better way to do this
+                this.putLogicService.initSioPutLogic(this.sio);
+                this.playAreaService.initSioPlayArea(this.sio);
+                this.mouseEventService.initSioMouseEvent(this.sio);
 
-                    // deleting old room
-                    this.rooms.delete(roomName);
-
-                    // Remove the room from the view of other players
-                    this.sio.sockets.emit('removeElementListRoom', roomName);
-                }
+                //we start the game
+                this.playAreaService.playGame(game);
+                this.sio.to(roomName).emit('setTimeoutTimerStart');
             }
         });
 
         socket.on('leaveGame', () => {
-            this.leaveGame(socket);
+            this.leaveGame(socket, "");
         });
+    }
+
+    private gameUpdateClients(game: GameServer) {
+        // We send to all clients a gameState and a scoreBoardState\
+        this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+
+        // //we send to all clients an update of the players and spectators
+        this.sio.to(game.roomName).emit('playersSpectatorsUpdate', {
+            roomName: game.roomName,
+            players: Array.from(game.mapPlayers.values()),
+            spectators: Array.from(game.mapSpectators.values()),
+        });
+
+        // we send an update of the player object for each respective client
+        for(let [socketId, player] of Object.entries(game.mapPlayers)){
+            if (player.idOpponent === 'virtualPlayer') {
+                continue;
+            }
+            this.sio.sockets.sockets.get(socketId)?.emit('playerUpdate', {
+                player: player,
+            });
+        }
     }
 
     private disconnectAbandonHandler(socket: io.Socket) {
         socket.on('disconnect', () => {
-            const userData = this.users.get(socket.id);
-            if (userData) {
-                const game = this.rooms.get(userData.roomName);
-                if (game) {
-                    if (game.gameFinished) {
-                        this.gameFinishedAction(game, userData.roomName);
-                        return;
-                    }
-                    const playerThatLeaves = game.mapPlayers.get(socket.id);
-                    const opponent = playerThatLeaves ? game.mapPlayers.get(playerThatLeaves.idOpponent) : undefined;
-                    if (playerThatLeaves && opponent) {
-                        if (opponent.idOpponent !== 'virtualPlayer') {
-                            // we send to the opponent a update of the game
-                            const waitBeforeAbandonment = 5000;
-                            setTimeout(() => {
-                                this.playAreaService.replaceHumanByBot(playerThatLeaves, opponent, game, " s'est déconnecté.");
-
-                                this.sio.sockets.sockets.get(opponent.idPlayer)?.emit('nameOpponentUpdate', playerThatLeaves.name);
-                                this.sio.sockets.sockets.get(opponent.idPlayer)?.emit('gameUpdateClient', {
-                                    game,
-                                    player: opponent,
-                                    scoreOpponent: playerThatLeaves?.score,
-                                    nbLetterStandOpponent: playerThatLeaves?.nbLetterStand,
-                                });
-                            }, waitBeforeAbandonment);
-                        } else {
-                            this.leaveGame(socket);
-                        }
-                    }
-                }
-                this.users.delete(socket.id);
-            }
+            this.leaveGame(socket, " s'est déconnecté.");
+            this.users.delete(socket.id);
         });
 
         socket.on('giveUpGame', () => {
-            const userData = this.users.get(socket.id);
-            if (userData) {
-                const game = this.rooms.get(userData.roomName);
-                if (game) {
-                    if (game.gameFinished) {
-                        this.gameFinishedAction(game, userData.roomName);
-                        return;
-                    }
-                    const playerThatLeaves = game.mapPlayers.get(socket.id);
-                    const opponent = playerThatLeaves ? game.mapPlayers.get(playerThatLeaves.idOpponent) : undefined;
-                    if (playerThatLeaves && opponent) {
-                        if (opponent.idPlayer !== 'virtualPlayer') {
-                            this.playAreaService.replaceHumanByBot(playerThatLeaves, opponent, game, ' a abandonné !');
-
-                            this.sio.sockets.sockets.get(opponent.idPlayer)?.emit('nameOpponentUpdate', playerThatLeaves.name);
-                            this.sio.sockets.sockets.get(opponent.idPlayer)?.emit('gameUpdateClient', {
-                                game,
-                                player: opponent,
-                                scoreOpponent: playerThatLeaves?.score,
-                                nbLetterStandOpponent: playerThatLeaves?.nbLetterStand,
-                            });
-                        } else {
-                            this.leaveGame(socket);
-                        }
-                    }
-                }
-            }
+            this.leaveGame(socket, " a abandonné la partie.");
         });
     }
 
-    private leaveGame(socket: io.Socket) {
+    private leaveGame(socket: io.Socket, leaveMsg: string) {
         const user = this.users.get(socket.id);
-        if (user) {
-            const game = this.rooms.get(user.roomName);
-            if (game) {
-                const nbPlayers = game?.mapPlayers.size;
-                const nbSpectators = game?.mapSpectators.size;
-                //if the player leaving is the last one in the serveur, we delete the room
-                if(nbPlayers + nbSpectators === 1){
-                    this.rooms.delete(user.roomName);
-                    this.sio.sockets.emit('removeElementListRoom', user.roomName);
-                }else{
-                    //if the player isn't the last one to leave we delete it from 
-                    //the player in the game and leave
-                    const player = game?.mapPlayers.get(socket.id);
-                    if (player) {
-                        game.mapPlayers.delete(socket.id);
-                    }else{
-                        //if not a player means the client is a spectator
-                        game.mapSpectators.delete(socket.id);
-                    }
-                }
-                socket.leave(user.roomName);
-                user.roomName = '';
-            }
+        if (!user) {
+            return;
         }
+        const game = this.rooms.get(user.roomName);
+        if (!game) {
+            return;
+        }
+            
+        if (game.gameFinished) {
+            this.gameFinishedAction(game);
+            return;
+        }
+
+        const playerThatLeaves = game.mapPlayers.get(socket.id);
+        const specThatLeaves = game.mapSpectators.get(socket.id);
+        //if it is a spectator that leaves
+        if (specThatLeaves) {
+            game.mapSpectators.delete(socket.id);
+        }
+
+        //if there are only virtualPlayers in the game we delete the game
+        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
+            (player) => player.idPlayer !== 'virtualPlayer' && 
+                        player.idPlayer !== playerThatLeaves?.idPlayer).length;
+
+        if (nbRealPlayer >= 1 && playerThatLeaves) {
+            // we send to the opponent a update of the game
+            const waitBeforeAbandonment = 3000;
+            setTimeout(() => {
+                this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
+                this.gameUpdateClients(game);
+            }, waitBeforeAbandonment);
+        } else {
+            this.gameFinishedAction(game);
+        }
+
+        socket.leave(user.roomName);
+        user.roomName = '';
+        this.gameUpdateClients(game);
     }
 
-    private gameFinishedAction(game: GameServer, roomName: string) {
-        const nbPlayer = game.mapPlayers.size;
+    private gameFinishedAction(game: GameServer) {
+        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
+            (player) => player.idPlayer !== 'virtualPlayer').length;
         const nbSpectators = game?.mapSpectators.size;
         //if this is the last player to leave the room we delete it
-        if (nbPlayer +  nbSpectators <= 1) {
-            this.rooms.delete(roomName);
+        if (nbRealPlayer +  nbSpectators <= 1) {
+            this.rooms.delete(game.roomName);
+            this.sio.sockets.emit('removeElementListRoom', game.roomName);
         }
-        this.sio.sockets.emit('removeElementListRoom', roomName);
     }
 
     private commBoxInputHandler(socket: io.Socket) {
         socket.on('newMessageClient', (inputClient) => {
             this.manageNewMessageClient(inputClient, socket);
         });
+    }
+
+    private triggerStopTimer(socket: io.Socket, player: Player, game: GameServer, roomName: string) {
+        if (!game.gameFinished) {
+            return;
+        }
+        if (player.idOpponent !== 'virtualPlayer') {
+            this.sio.to(roomName).emit('stopTimer');
+            this.sio.to(roomName).emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
+        } else {
+            socket.emit('stopTimer');
+            socket.emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
+        }
     }
 
     private adminHandler(socket: io.Socket) {

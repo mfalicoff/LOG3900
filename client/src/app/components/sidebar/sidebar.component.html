@@ -1,7 +1,14 @@
 <div class="container">
     <h1>CONTRÔLES</h1>
     <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
-        <button mat-raised-button matTooltip="Abandonner" (click)="onClickGiveUpButton()" class="optionButton">Abandonner</button>
+        <button 
+            mat-raised-button 
+            matTooltip="Abandonner" 
+            (click)="onClickGiveUpButton()" 
+            class="optionButton"
+        >
+        Abandonner
+        </button>
     </div>
 
     <div id="sliderTiles">
@@ -9,10 +16,17 @@
         <mat-slider #fontSize (change)="updateSetting($event)" tickInterval="2" step="1" min="15" max="23" value="19"> </mat-slider>
     </div>
     <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
-        <button mat-raised-button *ngIf="shouldConvertSoloBe()" id="convertSolo" class="optionButton" (click)="openModal()">
+        <button 
+            mat-raised-button 
+            *ngIf="shouldConvertSoloBe()" 
+            id="convertSolo" 
+            class="optionButton" 
+            (click)="openModal()"
+        >
             Convertir en partie Solo
         </button>
     </div>
+    
     <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
         <button
             mat-raised-button
@@ -23,6 +37,18 @@
             routerLink="/multiplayer-init"
         >
             Annuler Partie
+        </button>
+    </div>
+
+    <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
+        <button 
+            mat-raised-button 
+            *ngIf="infoClientService.creatorShouldBeAbleToStartGame" 
+            id="startGame" 
+            class="optionButton" 
+            (click)="startGame()"
+        >
+            START GAME
         </button>
     </div>
 </div>
