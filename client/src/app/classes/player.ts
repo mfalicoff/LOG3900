@@ -3,7 +3,6 @@ import { Command } from './command';
 import { Tile } from './tile';
 
 export class Player {
-    idOpponent: string;
     idPlayer: string;
     name: string;
     stand: Tile[];
@@ -34,7 +33,6 @@ export class Player {
     constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
         this.isCreatorOfGame = isCreatorOfGame;
-        this.idOpponent = '';
         this.idPlayer = '';
         this.stand = [];
         this.mapLetterOnStand = new Map();

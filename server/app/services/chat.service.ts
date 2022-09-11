@@ -17,18 +17,22 @@ enum Commands {
 
 @Service()
 export class ChatService {
-    constructor(private validator: ValidationService, private endGameService: EndGameService, private objectiveService: ObjectiveService) {}
+    constructor(
+        private validator: ValidationService, 
+        private endGameService: EndGameService, 
+        private objectiveService: ObjectiveService) {}
 
     // verify if a command is entered and redirect to corresponding function
     sendMessage(input: string, game: GameServer, player: Player): boolean {
         const command: string = input.split(' ', 1)[0];
         if (input[0] === '!') {
             if (game.gameFinished) {
-                this.sendMessageToBothPlayer(game, player, GlobalConstants.GAME_IS_OVER, true, 'S', false);
+                this.pushMsgToAllPlayers(game, player.name, GlobalConstants.GAME_IS_OVER, true, 'S');
                 return false;
             }
             const isActionCommand: boolean = command === Commands.Place || command === Commands.Exchange || command === Commands.Pass;
-            if (isActionCommand && !(player.idPlayer === game.currentPlayerId)) {
+            const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
+            if (isActionCommand && !(player.idPlayer === playerPlaying.idPlayer)) {
                 player.chatHistory.push({ message: 'You ' + ' : ' + input, isCommand: true, sender: 'P' });
                 player.chatHistory.push({ message: GlobalConstants.NOT_YOUR_TURN, isCommand: false, sender: 'S' });
                 return false;
@@ -60,7 +64,9 @@ export class ChatService {
             player.chatHistory.push({ message: GlobalConstants.INVALID_LENGTH, isCommand: false, sender: 'S' });
             return false;
         }
-        this.sendMessageToBothPlayer(game, player, input, false, 'P', true);
+
+        this.pushMsgToAllPlayers(game, player.name, input, false, 'P');
+
         return true;
     }
 
@@ -74,7 +80,7 @@ export class ChatService {
     placeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
 
-        this.sendMessageToBothPlayer(game, player, input, true, 'P', true);
+        this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
         player.chatHistory.push({ message: GlobalConstants.PLACE_CMD, isCommand: false, sender: 'S' });
 
         if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
@@ -85,16 +91,24 @@ export class ChatService {
 
     // function to pass turn
     passCommand(input: string, game: GameServer, player: Player) {
-        const playerThatJustPlayed = game.mapPlayers.get(game.currentPlayerId);
+        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         if (playerThatJustPlayed && game.isLog2990Enabled) {
             this.objectiveService.isPlayerObjectivesCompleted(game, playerThatJustPlayed, input);
         }
         player.passInARow++;
-        this.sendMessageToBothPlayer(game, player, input, true, 'P', true);
+        this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
         player.chatHistory.push({ message: GlobalConstants.PASS_CMD, isCommand: false, sender: 'S' });
-
-        const opponent = game.mapPlayers.get(player.idOpponent);
-        if (opponent && player.passInARow >= 3 && opponent.passInARow >= 3) {
+        
+        let didEveryonePass3Times = false;
+        for(let player of game.mapPlayers.values()) {
+            if(player.passInARow < 3) {
+                didEveryonePass3Times = false;
+                break;
+            }else{
+                didEveryonePass3Times = true;
+            }
+        }
+        if(didEveryonePass3Times) {
             this.showEndGameStats(game, player, false);
             game.gameFinished = true;
         }
@@ -127,7 +141,9 @@ export class ChatService {
 
     private exchangeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
-        this.sendMessageToBothPlayer(game, player, input, true, 'P', true);
+        //TODO REMOVE THIS if everything works
+        // this.sendMessageToBothPlayer(game, player, input, true, 'P', true);
+        this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
         player.chatHistory.push({ message: GlobalConstants.EXCHANGE_PLAYER_CMD, isCommand: false, sender: 'S' });
     }
 
@@ -153,9 +169,10 @@ export class ChatService {
     }
 
     private debugCommand(input: string, player: Player, game: GameServer) {
-        const opponent = game.mapPlayers.get(player.idOpponent);
-        if (opponent) {
-            opponent.debugOn = !opponent.debugOn;
+        for(let playerElem of game.mapPlayers.values()) {
+            if(playerElem.idPlayer === "virtualPlayer") {
+                playerElem.debugOn = !playerElem.debugOn;
+            }
         }
 
         player.chatHistory.push({ message: input, isCommand: true, sender: 'P' });
@@ -167,67 +184,75 @@ export class ChatService {
     }
 
     private showEndGameStats(game: GameServer, player: Player, gameAbandoned: boolean) {
-        const opponent = game.mapPlayers.get(player.idOpponent);
-        if (!opponent) {
-            return;
+        //TODO REMOVE THIS if everything works
+        // this.sendMessageToBothPlayer(game, player, GlobalConstants.END_OF_GAME, false, 'S', false);
+        // this.sendMessageToBothPlayer(game, player, player.name + ' : ' + this.endGameService.listLetterStillOnStand(player), false, 'S', false);
+        // this.sendMessageToBothPlayer(game, player, opponent.name + ' : ' + this.endGameService.listLetterStillOnStand(opponent), false, 'S', false);
+        this.pushMsgToAllPlayers(game, player.name, GlobalConstants.END_OF_GAME, false, 'S');
+        for(let player of game.mapPlayers.values()) {
+            this.pushMsgToAllPlayers(game, player.name, player.name + ' : ' + this.endGameService.listLetterStillOnStand(player), false, 'S');
         }
-        this.sendMessageToBothPlayer(game, player, GlobalConstants.END_OF_GAME, false, 'S', false);
-        this.sendMessageToBothPlayer(game, player, player.name + ' : ' + this.endGameService.listLetterStillOnStand(player), false, 'S', false);
-        this.sendMessageToBothPlayer(game, player, opponent.name + ' : ' + this.endGameService.listLetterStillOnStand(opponent), false, 'S', false);
 
         if (!gameAbandoned) {
-            this.sendWinnerMessage(game, player, opponent);
+            this.sendWinnerMessage(game, player);
         }
     }
 
-    private sendWinnerMessage(game: GameServer, player: Player, opponent: Player) {
-        const winner = this.endGameService.chooseWinner(game, player, opponent);
+    private sendWinnerMessage(game: GameServer, player: Player) {
+        const winners = this.endGameService.chooseWinner(game);
+        if(winners.length === 1){
+            this.pushMsgToAllPlayers(
+                game, 
+                player.name, 
+                GlobalConstants.WINNER_MSG_PT1 + winners[0].name + GlobalConstants.WINNER_MSG_PT2 + winners[0].score, 
+                false, 
+                'S');
+        }else if(winners.length > 1){
+            this.pushMsgToAllPlayers(
+                game,
+                player.name,
+                GlobalConstants.DRAW_MSG,
+                false,
+                'S');
 
-        if (winner === GlobalConstants.PLAYER_WIN) {
-            this.sendMessageToBothPlayer(
-                game,
-                player,
-                GlobalConstants.WINNER_MSG_PT1 + player.name + GlobalConstants.WINNER_MSG_PT2 + player.score,
-                false,
-                'S',
-                false,
-            );
-        } else if (winner === GlobalConstants.OPPONENT_WIN) {
-            this.sendMessageToBothPlayer(
-                game,
-                player,
-                GlobalConstants.WINNER_MSG_PT1 + opponent.name + GlobalConstants.WINNER_MSG_PT2 + player.score,
-                false,
-                'S',
-                false,
-            );
+            for(let winner of winners){
+                this.pushMsgToAllPlayers(
+                    game,
+                    player.name,
+                    "Score final pour: " + winner.name + " est: " + winner.score,
+                    false,
+                    'S');
+            }
         } else {
-            this.sendMessageToBothPlayer(game, player, GlobalConstants.DRAW_MSG, false, 'S', false);
+            this.pushMsgToAllPlayers(game, player.name, GlobalConstants.GAME_NOT_UNDERSTOOD, false, 'S');
         }
     }
 
-    private sendMessageToBothPlayer(
-        game: GameServer,
-        player: Player,
-        messageChat: string,
-        command: boolean,
-        messageSender: string,
-        pushNamePlayer: boolean,
-    ) {
-        let senderOpponent = '';
-        if (messageSender === 'P') {
-            senderOpponent = 'O';
-        } else {
-            senderOpponent = 'S';
-        }
-        if (pushNamePlayer) {
-            player.chatHistory.push({ message: 'You : ' + messageChat, isCommand: command, sender: messageSender });
-            game.mapPlayers
-                .get(player.idOpponent)
-                ?.chatHistory.push({ message: player.name + ' : ' + messageChat, isCommand: command, sender: senderOpponent });
-        } else {
-            player.chatHistory.push({ message: messageChat, isCommand: command, sender: messageSender });
-            game.mapPlayers.get(player.idOpponent)?.chatHistory.push({ message: messageChat, isCommand: command, sender: senderOpponent });
-        }
+    //functions that psuh to chatHistory the msg to all players in the game
+    //then the chatHistory is sent to the client each time a player send a message
+    //TODO REFACTORING messageSender and command are too much we only need one of them
+    pushMsgToAllPlayers(game: GameServer, playerSendingMsg:string, 
+                        msg: string, command: boolean, 
+                        messageSender: string) {
+        game.mapPlayers.forEach((player) => {
+            if(messageSender !== 'S'){
+                if(player.name === playerSendingMsg){
+                    messageSender = 'P';
+                }else{
+                    messageSender = 'O';
+                }
+                player.chatHistory.push({ message: playerSendingMsg + ": " + msg, isCommand: command, sender: messageSender });
+            }else{
+                player.chatHistory.push({ message: msg, isCommand: command, sender: messageSender });
+            }
+        });
+
+        game.mapSpectators.forEach((spectator) => {
+            if(messageSender !== 'S'){
+                spectator.chatHistory.push({ message: playerSendingMsg + ": " + msg, isCommand: command, sender: 'O' });
+            }else{
+                spectator.chatHistory.push({ message: msg, isCommand: command, sender: messageSender });
+            }
+        });
     }
 }

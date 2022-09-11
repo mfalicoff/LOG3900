@@ -113,5 +113,20 @@ export class SidebarComponent {
 
     startGame(){
         this.socketService.socket.emit('startGame', this.infoClientService.game.roomName);
+        this.infoClientService.creatorShouldBeAbleToStartGame = false;
+    }
+
+    shouldSpecBeAbleToBePlayer(){
+        const nbVirtualPlayer = Array.from(this.infoClientService.actualRoom.players).filter(
+            (player) => player.idPlayer === 'virtualPlayer').length;
+        if(nbVirtualPlayer > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    spectWantsToBePlayer(){
+        this.socketService.socket.emit('spectWantsToBePlayer');
     }
 }

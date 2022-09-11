@@ -1,5 +1,4 @@
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
 import { Service } from 'typedi';
 import { DatabaseService } from './database.service';
@@ -8,33 +7,28 @@ import { DatabaseService } from './database.service';
 export class EndGameService {
     constructor(private databaseService: DatabaseService) {}
 
-    chooseWinner(game: GameServer, player: Player, opponent: Player): string {
-        const scoreDeductedPlayer = this.countDeductedScore(player);
-        const scoreDeductedOpponent = this.countDeductedScore(opponent);
-        player.score -= scoreDeductedPlayer;
-        opponent.score -= scoreDeductedOpponent;
-
-        // Adds bonus points if the stand is empty
-        if (this.isStandEmptyBonusPoints(player, game)) {
-            player.score += scoreDeductedOpponent;
+    //returns the player who won the game
+    chooseWinner(game: GameServer): Player[] {
+        const players = Array.from(game.mapPlayers.values());
+        if(players.length <= 0){
+            return [];
         }
-        if (this.isStandEmptyBonusPoints(opponent, game)) {
-            opponent.score += scoreDeductedPlayer;
-        }
-        if (game.isLog2990Enabled) {
-            this.databaseService.addScoreLog2990ToDb(player);
-            this.databaseService.addScoreLog2990ToDb(opponent);
-        } else {
+        let winnerPlayer = [new Player("fakePlayer", false)];
+        for(let player of players){
+            //subtract the score of the letters still on the stand
+            player.score -= this.countDeductedScore(player);
+            //adds score final to database
             this.databaseService.addScoreClassicToDb(player);
-            this.databaseService.addScoreClassicToDb(opponent);
+            //storing the id of the player with the highest score
+            if(player.score > winnerPlayer[0].score){
+                //emptying the array
+                winnerPlayer = [];
+                winnerPlayer.push(player);
+            }else if(player.score === winnerPlayer[0].score){
+                winnerPlayer.push(player);
+            }
         }
-        if (player.score > opponent.score) {
-            return GlobalConstants.PLAYER_WIN;
-        } else if (player.score < opponent.score) {
-            return GlobalConstants.OPPONENT_WIN;
-        } else {
-            return GlobalConstants.NOBODY_WIN;
-        }
+        return winnerPlayer; 
     }
 
     listLetterStillOnStand(player: Player): string[] {
@@ -55,10 +49,5 @@ export class EndGameService {
             }
         }
         return scoreDeducted;
-    }
-
-    private isStandEmptyBonusPoints(player: Player, game: GameServer): boolean {
-        const conditionBonusPoints = player.nbLetterStand !== 0 || game.nbLetterReserve !== 0;
-        return conditionBonusPoints ? false : true;
     }
 }

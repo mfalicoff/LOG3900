@@ -44,11 +44,6 @@ export class SocketManager {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
         this.rooms = new Map<string, GameServer>();
-
-        //TODO REMOVE THAT LATER
-        this.users.set("mockId", {name:"mockName", roomName:"mockRoomName"});
-        const mockGame = new GameServer(1, false, GlobalConstants.MODE_SOLO, false, "nul", "mockRoomName");
-        this.rooms.set("mockRoomName", mockGame)
     }
 
     handleSockets(): void {
@@ -74,23 +69,20 @@ export class SocketManager {
             game = this.rooms.get(roomName);
             player = game?.mapPlayers.get(socket.id);
         }
-        if (game && player && roomName) {
-            if (!game.gameStarted) {
-                player.chatHistory.push({ message: GlobalConstants.GAME_NOT_STARTED, isCommand: false, sender: 'S' });
-                socket.emit('playerUpdate', player);
-                return;
-            }
-            const updateOrNot = this.communicationBoxService.onEnter(game, player, placeMsg);
-            // If communicationBox doesnt want to update the board we leave the function
-            if (!updateOrNot) {
-                return;
-            }
-            const opponent = this.rooms.get(roomName)?.mapPlayers.get(player.idOpponent);
-            if (opponent) {
-                // We update the chatHistory and the game of each client
-                this.gameUpdateClients(game);
-                this.triggerStopTimer(socket, player, game, roomName);
-            }
+        if (!game || !player || !roomName) {
+            return;
+        }
+        if (!game.gameStarted) {
+            player.chatHistory.push({ message: GlobalConstants.GAME_NOT_STARTED, isCommand: false, sender: 'S' });
+            socket.emit('playerAndStandUpdate', player);
+            return;
+        }
+        this.communicationBoxService.onEnter(game, player, placeMsg);
+
+        // We update the chatHistory and the game of each client
+        this.gameUpdateClients(game);
+        if(game.gameFinished){
+            this.triggerStopTimer(roomName);
         }
     }
 
@@ -253,12 +245,10 @@ export class SocketManager {
         //fill the remaining players with bots
         for(let i = 0; i < GlobalConstants.MAX_PERSON_PLAYING - 1; i++) {
             const virtualPlayerId = 'virtualPlayer';
-            newPlayer.idOpponent = virtualPlayerId;
             const newOpponent = new Player(this.databaseService.namesVP[i].firstName + " " 
                                            + this.databaseService.namesVP[i].lastName, false);
 
             newOpponent.idPlayer = virtualPlayerId;
-            newOpponent.idOpponent = socket.id;
             newGame.mapPlayers.set(virtualPlayerId, newOpponent);
         }
 
@@ -277,14 +267,11 @@ export class SocketManager {
 
         newGame.mapPlayers.set(socket.id, newPlayer);
         this.rooms.set(roomName, newGame);
+
         // Joining the room
         socket.join(roomName);
-        // we send the first client a gameState
-        socket.emit('gameInit', {
-            roomName,
-            game: newGame,
-            player: newPlayer,
-        });
+
+        this.gameUpdateClients(newGame);
 
         const timeForClientToInitialize = 1000;
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
@@ -322,59 +309,27 @@ export class SocketManager {
         }
     }
 
-    private joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User, 
-                             roomName: string, idOpponent: string) {
+    private joinGameAsPlayer(socket: io.Socket, game: GameServer, 
+                             userData: User) {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
-        newPlayer.idOpponent = idOpponent;
         newPlayer.idPlayer = socket.id;
         game?.mapPlayers.set(socket.id, newPlayer);
 
-        const opponent = game?.mapPlayers.get(idOpponent);
-        // We warn that a new users has arrived
-        opponent?.chatHistory.push({ message: userData?.name + ' a rejoint la partie.', 
-                                     isCommand: false, sender: 'S' });
-        opponent?.chatHistory.push({ message: 'La partie commence !', isCommand: false, sender: 'S' });
-        newPlayer?.chatHistory.push({ message: 'La partie commence !', isCommand: false, sender: 'S' });
-
-        // Joining the room
-        socket.join(roomName);
-
-        // We send to the client a gameState and a playerState
-        socket.emit('gameInit', {
-            roomName,
-            game: this.rooms.get(roomName),
-            player: newPlayer,
-        });
-
-        // We send the state to the opponent to update chatHistory
-        this.sio.sockets.sockets.get(idOpponent)?.emit('playerUpdate', opponent);
-
-        // we set the idOpponent of the new player for the first player
-        if (opponent) {
-            opponent.idOpponent = socket.id;
-        }
+        this.playAreaService.sendMsgToAllInRoom(game, userData?.name + ' a rejoint la partie.');
+        this.playAreaService.sendMsgToAllInRoom(game, 'La partie commence !');
 
         //tell the client to his state as a person
         socket.emit('isSpectator', false);
-
-
-        // emit to change page on client after verification
-        socket.emit('roomChangeAccepted', {
-            roomName,
-            page: '/game',
-        });
     }
 
-    private joinGameAsSpectator(socket: io.Socket, game: GameServer, userData: 
-                                 User, roomName: string){
+    private joinGameAsSpectator(socket: io.Socket, game: 
+                                GameServer, userData: 
+                                User, roomName: string){
         // we add the new observator to the map of observators
         const newSpectator= new Spectator(userData.name);
         newSpectator.socketId = socket.id;
         game?.mapSpectators.set(socket.id, newSpectator);
-
-        // Joining the room
-        socket.join(roomName);
 
         // We send to the client a gameState and a scoreBoardState\
         socket.emit('gameBoardUpdate', this.rooms.get(roomName));
@@ -387,12 +342,6 @@ export class SocketManager {
 
         //tell the client to his state as a person
         socket.emit('isSpectator', true);
-
-        // emit to change page on client after verification
-        socket.emit('roomChangeAccepted', {
-            roomName,
-            page: '/game',
-        });
     }
 
     private clientAndRoomHandler(socket: io.Socket) {
@@ -439,10 +388,7 @@ export class SocketManager {
             });
             
             // emit to change page on client after verification
-            socket.emit('roomChangeAccepted', {
-                roomName,
-                page: '/game',
-            });
+            socket.emit('roomChangeAccepted', '/game');
         });
 
         socket.on('joinRoom', ({ roomName, playerId }) => {
@@ -452,10 +398,7 @@ export class SocketManager {
             }
 
             if (userData?.roomName === roomName) {
-                socket.emit('roomChangeAccepted', {
-                    roomName,
-                    page: '/game',
-                });
+                socket.emit('roomChangeAccepted', '/game');
                 return;
             }
 
@@ -464,18 +407,24 @@ export class SocketManager {
                 return;
             }
 
-            // find the name of the opponent
-            let idOpponent = 'DefaultIdNotNormal';
-            //there should be only one player in the map
-            //so we get the first one
-            for (const key of game.mapPlayers.keys()) {
-                idOpponent = key;
+            let isOneNamedSame = false;
+            for(let player of game.mapPlayers.values()){
+                if(userData.name === player.name){
+                    isOneNamedSame = true;
+                    break;
+                }
+            }
+            for(let spectator of game.mapSpectators.values()){
+                if(userData.name === spectator.name){
+                    isOneNamedSame = true;
+                    break;
+                }
             }
 
-            if (userData.name === this.users.get(idOpponent)?.name) {
+            if (isOneNamedSame) {
                 socket.emit(
                     'messageServer',
-                    'Vous avez le même nom que le joueur déjà dans la salle, veuillez le changer en retournant au menu principal.',
+                    "Vous avez le même nom qu'un des joueurs déjà dans la salle, veuillez le changer en retournant au menu principal.",
                 );
                 return;
             }
@@ -485,13 +434,25 @@ export class SocketManager {
                 user.roomName = roomName;
             }
 
+            // Joining the room
+            socket.join(roomName);
+
             //if condition respected it means the new user is a player and not a spectator
             //else it is a spectator
             if(game.mapPlayers.size < GlobalConstants.MAX_PERSON_PLAYING){ 
-                this.joinGameAsPlayer(socket, game, userData, roomName, idOpponent);
+                this.joinGameAsPlayer(socket, game, userData);
             }else{
                 this.joinGameAsSpectator(socket, game, userData, roomName);
             }
+
+            // we send the game state to all clients in the room
+            this.gameUpdateClients(game);
+
+            //create button for creator to start the game if enough reel player are in the game
+            this.shouldCreatorBeAbleToStartGame(game);
+
+            // emit to change page on client after verification
+            socket.emit('roomChangeAccepted', '/game');
 
             //sending game info to all client to update nbPlayers and nbSpectators
             const players = Array.from(game.mapPlayers.values());
@@ -505,9 +466,6 @@ export class SocketManager {
                 players: players,
                 spectators: spectators,
             });
-
-            //create button for creator to start the game if enough reel player are in the game
-            this.shouldCreatorBeAbleToStartGame(game);
         });
 
         socket.on('listRoom', () => {
@@ -564,6 +522,41 @@ export class SocketManager {
             this.sio.sockets.emit('removeElementListRoom', roomName);
         });
 
+        socket.on('spectWantsToBePlayer', () => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const roomName = user?.roomName;
+            const game = this.rooms.get(roomName);
+            if (!game) {
+                return;
+            }
+            const spectator = game.mapSpectators.get(socket.id);
+            if (!spectator) {
+                return;
+            }
+            game.mapSpectators.delete(socket.id);
+
+            let virtualPlayer = undefined;
+            for(let player of game.mapPlayers.values()){
+                if(player.idPlayer === "virtualPlayer"){
+                    virtualPlayer = player;
+                    break;
+                }
+            }
+            if(!virtualPlayer){
+                console.log("Error: virtual player not found in 'spectWantsToBePlayer'");
+                return;
+            }
+            virtualPlayer.idPlayer = socket.id;
+            virtualPlayer.name = user.name;
+
+            socket.emit('isSpectator', false);
+            this.gameUpdateClients(game);
+            this.shouldCreatorBeAbleToStartGame(game);
+        });
+
         //called when the creator of a multiplayer game wants to start the game
         socket.on('startGame', (roomName) => {
             //OLD CODE REPLACED BY THE FACT THAT THE CREATOR OF THE GAME STARTS THE GAME
@@ -590,6 +583,7 @@ export class SocketManager {
         });
     }
 
+    //update game for all players in the room
     private gameUpdateClients(game: GameServer) {
         // We send to all clients a gameState and a scoreBoardState\
         this.sio.to(game.roomName).emit('gameBoardUpdate', game);
@@ -602,13 +596,8 @@ export class SocketManager {
         });
 
         // we send an update of the player object for each respective client
-        for(let [socketId, player] of Object.entries(game.mapPlayers)){
-            if (player.idOpponent === 'virtualPlayer') {
-                continue;
-            }
-            this.sio.sockets.sockets.get(socketId)?.emit('playerUpdate', {
-                player: player,
-            });
+        for (const player of game.mapPlayers.values()) {
+            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
         }
     }
 
@@ -683,17 +672,9 @@ export class SocketManager {
         });
     }
 
-    private triggerStopTimer(socket: io.Socket, player: Player, game: GameServer, roomName: string) {
-        if (!game.gameFinished) {
-            return;
-        }
-        if (player.idOpponent !== 'virtualPlayer') {
-            this.sio.to(roomName).emit('stopTimer');
-            this.sio.to(roomName).emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
-        } else {
-            socket.emit('stopTimer');
-            socket.emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
-        }
+    private triggerStopTimer(roomName: string) {
+        this.sio.to(roomName).emit('stopTimer');
+        this.sio.to(roomName).emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
     }
 
     private adminHandler(socket: io.Socket) {

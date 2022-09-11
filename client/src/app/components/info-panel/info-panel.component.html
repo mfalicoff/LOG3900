@@ -7,7 +7,7 @@
         <button
             *ngIf="!infoClientService.isSpectator"
             mat-raised-button
-            [disabled]="socketService.socket.id !== infoClientService.game.currentPlayerId" 
+            [disabled]="!infoClientService.isTurnOurs" 
             id="passBtn"
             class="btnStyle"
             (click)="skipTurnButton()"
@@ -20,7 +20,7 @@
             id="exchangeBtn"
             class="btnStyle"
             (click)="this.onExchangeClick()"
-            [disabled]= "(infoClientService.game.currentPlayerId !== socketService.socket.id) || !this.drawingService.areLettersRightClicked(infoClientService.player.stand)"
+            [disabled]= "!infoClientService.isTurnOurs || !this.drawingService.areLettersRightClicked(infoClientService.player.stand)"
         >Échanger
         </button>
         <button
@@ -28,7 +28,7 @@
             id="cancelBtn"
             class="btnStyle"
             (click)="this.onCancelClick()"
-            [disabled]= "(infoClientService.game.currentPlayerId !== socketService.socket.id) || !this.drawingService.areLettersRightClicked(infoClientService.player.stand)"
+            [disabled]= "!infoClientService.isTurnOurs|| !this.drawingService.areLettersRightClicked(infoClientService.player.stand)"
         >Annuler
         </button>
         <button
@@ -36,7 +36,7 @@
             id="playBtn"
             class="btnStyle"
             (click)= "this.placeGraphicService.manageKeyBoardEvent(infoClientService.game, infoClientService.player, enter)"
-            [disabled]= "(infoClientService.game.currentPlayerId !== socketService.socket.id)  || !this.placeGraphicService.isLettersDrawnSizeAboveZero()"
+            [disabled]= "!infoClientService.isTurnOurs || !this.placeGraphicService.isLettersDrawnSizeAboveZero()"
         >Jouer
          </button>
     </div>
@@ -51,7 +51,7 @@
         </thead>
         <tbody>
             <!-- TODO maybe change that ? It's a bit ugly but had no idea how to do otherwise -->
-          <tr *ngFor="let player of infoClientService.rooms[infoClientService.idxActualRoom].players">
+          <tr *ngFor="let player of infoClientService.actualRoom.players">
             <td>{{player.name}}</td>
             <td>{{player.score}}</td>
           </tr>

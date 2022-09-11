@@ -44,13 +44,13 @@ export class GameServer {
     nbLetterReserve: number;
     gameStarted: boolean;
     gameFinished: boolean;
+    idxPlayerPlaying: number;
     masterTimer: string;
     objectiveArray: Objective[];
     objectivesOfGame: Objective[];
 
     // SKIP TURN SERVICE DATA
     displaySkipTurn: string;
-    currentPlayerId: string;
 
     vpLevel: string;
 
@@ -75,9 +75,10 @@ export class GameServer {
         this.nbLetterReserve = GlobalConstants.DEFAULT_NB_LETTER_BANK;
         this.gameStarted = false;
         this.gameFinished = false;
+        this.idxPlayerPlaying = 0;
         this.masterTimer = '';
         this.displaySkipTurn = "En attente d'un autre joueur..";
-        this.currentPlayerId = '';
+        this.noTileOnBoard = true;
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],

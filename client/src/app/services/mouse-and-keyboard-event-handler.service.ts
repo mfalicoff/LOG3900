@@ -42,7 +42,7 @@ export class MouseKeyboardEventHandlerService {
         event.preventDefault();
         const coordinateClick: Vec2 = { x: event.offsetX, y: event.offsetY };
 
-        if (this.infoClientService.game.currentPlayerId === this.socketService.socket.id) {
+        if (this.infoClientService.isTurnOurs) {
             if (this.drawingBoardService.lettersDrawn) {
                 return;
             }

@@ -51,4 +51,15 @@
             START GAME
         </button>
     </div>
+    <div *ngIf="infoClientService.isSpectator" class="buttonContainer">
+        <button 
+            mat-raised-button 
+            *ngIf="shouldSpecBeAbleToBePlayer()" 
+            id="specBecomePlayer" 
+            class="optionButton" 
+            (click)="spectWantsToBePlayer()"
+        >
+            Prendre la place d'un joueur virtuel
+        </button>
+    </div>
 </div>

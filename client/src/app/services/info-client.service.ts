@@ -14,13 +14,8 @@ export class InfoClientService {
     game: GameServer;
     player: Player;
 
-    idxActualRoom: number;
     gameMode: string;
     isLog2990Enabled: boolean;
-
-    // Some opponent info that we need for the html
-    nbLetterStandOpponent: number;
-    scoreOpponent: number;
 
     // Game parameters
     minutesByTurn: number;
@@ -34,8 +29,14 @@ export class InfoClientService {
     nameVPExpert: NameVP[];
 
     displayTurn: string;
+    isTurnOurs: boolean;
 
     rooms: RoomData[];
+    //this old the array of players and spectators in the room
+    //it is not in "game" object bc it is stored as maps which canned be sent to the client
+    //and we use the players/spectators array to display the players/spectators in the room
+    //when on the multiplayer page
+    actualRoom : RoomData;
 
     letterBank: Map<string, LetterData>;
 
@@ -52,15 +53,13 @@ export class InfoClientService {
             GlobalConstants.MODE_SOLO, false, 
             "defaultLevel", "defaultRoom");
         this.player = new Player('DefaultPlayerObject', false);
-        this.idxActualRoom = 0;
         this.gameMode = GlobalConstants.MODE_MULTI;
         this.isLog2990Enabled = true;
-        this.nbLetterStandOpponent = GlobalConstants.NUMBER_SLOT_STAND;
-        this.scoreOpponent = 0;
         this.minutesByTurn = 1;
         this.randomBonusesOn = false;
         this.playerName = 'DefaultPlayerName';
         this.displayTurn = "En attente d'un autre joueur...";
+        this.isTurnOurs = false;
         this.rooms = [];
         this.nameVP1dictionary0 = 0;
         this.vpLevel = 'debutant';

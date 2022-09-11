@@ -1,7 +1,6 @@
 /// ////////////////////////////////////////////////////////////////////////
 // BOARD AND STAND CONSTANTS
 /// ////////////////////////////////////////////////////////////////////////
-
 // Changing the size of the board will automatically change the size of the chevalet
 export const DEFAULT_WIDTH_BOARD = 750;
 export const DEFAULT_HEIGHT_BOARD = 750;
@@ -78,6 +77,7 @@ export const WINNER_MSG_PT1 = 'Bravo ';
 export const WINNER_MSG_PT2 = ' a gagne la partie avec un score de: ';
 export const GAME_WON = 'Vous avez gagné la partie !';
 export const DRAW_MSG = 'La partie a fini a égalité, bravo !';
+export const GAME_NOT_UNDERSTOOD = "Vous jouer tellement bien que le système ne comprend pas ce qu'il se passe donc personne n'a gagne (ou tout le monde on ne sait pas) !";
 export const LETTER_LIST = ' - ListeDeLettres: ';
 export const POINTS_DEDUCTED = ' point(s) qui ont été déduit de votre score: ';
 export const INVALID_LENGTH = ' La taille maximale de 512 caractère a ete depassée';
@@ -99,6 +99,7 @@ export const LETTERS_FROM_BOARD_WRONG = ' : lettres du plateau de jeu mal utilis
 export const REPLACEMENT_BY_BOT = 'Un bot a maintenant remplacé votre adversaire.';
 export const NB_MIN_LETTER_BANK = 6;
 export const WAITING_FOR_CREATOR = "En attente du créateur pour demarrer la partie...";
+export const PLAYER_TRIED_A_WORD = " a placé un mot non valide, son tour passe !";
 
 /// ///////////////////////////////////////////////////////////////////////////
 // /////////////// databaseService constants//////////////////////////////////
@@ -125,3 +126,6 @@ export const MODE_MULTI = 'Multi';
 export const PLAYER_WIN = 'playerWin';
 export const OPPONENT_WIN = 'opponentWin';
 export const NOBODY_WIN = 'nobodyWin';
+
+// PUT-LOGIC SERVICE AND COMM-BOX SERVICE CONSTANTS
+export const TIME_DELAY_RM_BAD_WORD = 3000;

@@ -22,26 +22,60 @@ export class CommunicationBoxService {
 
         switch (dataSeparated[0]) {
             case '!placer': {
-                if (this.chatService.sendMessage(input, game, player)) {
-                    if (this.putLogicService.computeWordToDraw(game, player, dataSeparated[1], dataSeparated[2])) {
-                        // We check if an objective has been completed
-                        const playerThatJustPlayed = game.mapPlayers.get(game.currentPlayerId);
-                        if (playerThatJustPlayed && game.isLog2990Enabled) {
-                            this.objectiveService.isPlayerObjectivesCompleted(game, playerThatJustPlayed, input);
+                if (!this.chatService.sendMessage(input, game, player)) {
+                    return false;
+                }
+                if (this.putLogicService.computeWordToDraw(game, player, dataSeparated[1], dataSeparated[2])) {
+                    // We change the turn if word is valid
+                    this.playAreaService.changePlayer(game);
+                } else {
+                    //word isn't valid
+                    //pops the msg that shoulnd't have beent sent
+                    //TODO maybe just don't send send at all ??
+                    for(let playerElem of game.mapPlayers.values()){
+                        //poping the msg "PlayerName: !placer pos foo"
+                        playerElem.chatHistory.pop();
+                        if(playerElem.name === player.name){
+                            //poping the msg "Vous avez placé vos lettres"
+                            playerElem.chatHistory.pop();
+                            playerElem.chatHistory.push({ 
+                                message: GlobalConstants.WORD_DOESNT_EXIST, 
+                                isCommand: false, sender: 'S' });
                         }
-                        // We change the turn
-                        this.playAreaService.changePlayer(game);
-                    } else {
-                        const opponent = game.mapPlayers.get(player.idOpponent);
-                        player.chatHistory.pop();
-                        player.chatHistory.pop();
-                        player.chatHistory.push({ message: GlobalConstants.WORD_DOESNT_EXIST, isCommand: false, sender: 'S' });
-                        opponent?.chatHistory.pop();
-
-                        // We change the turn
-                        this.playAreaService.changePlayer(game);
-                        return false;
                     }
+
+                    for(let spectator of game.mapSpectators.values()){
+                        spectator.chatHistory.pop();
+                    }
+                    //we don't want to explicitly switch the player's turn for now 
+                    //bc it the following timeout would make problems so we control his actions
+                    this.playAreaService.sio.sockets.sockets.get(player.idPlayer)?.emit('changeIsTurnOursStatus', false);
+
+                    // timeout bc this is the time before the letter are back to the player
+                    setTimeout(() => {
+                        //sending to the player and spectators in the game that the player
+                        //tried a word
+                        for(let playerElem of game.mapPlayers.values()){
+                            if(playerElem.name === player.name){
+                                continue;
+                            }
+                            playerElem.chatHistory.push({ 
+                                message: "Le joueur " + player.name + 
+                                        GlobalConstants.PLAYER_TRIED_A_WORD, 
+                                isCommand: false, sender: 'S' });
+                        }
+                        for(let spectator of game.mapSpectators.values()){
+                            spectator.chatHistory.push({ 
+                                message: "Le joueur " + player.name + 
+                                        GlobalConstants.PLAYER_TRIED_A_WORD, 
+                                isCommand: false, sender: 'S' });
+                        }
+                        //remove the word from the board bc it isn't valid
+                        this.putLogicService.boardLogicRemove(game, dataSeparated[1], dataSeparated[2]);
+                        //switch the turn of the player
+                        this.playAreaService.changePlayer(game);
+                    }, GlobalConstants.TIME_DELAY_RM_BAD_WORD);
+                    return false;
                 }
                 break;
             }
@@ -49,7 +83,7 @@ export class CommunicationBoxService {
                 if (this.chatService.sendMessage(input, game, player)) {
                     this.putLogicService.computeWordToExchange(game, player, dataSeparated[1]);
                     // We check if an objective has been completed
-                    const playerThatJustPlayed = game.mapPlayers.get(game.currentPlayerId);
+                    const playerThatJustPlayed =  Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
                     if (playerThatJustPlayed && game.isLog2990Enabled) {
                         this.objectiveService.isPlayerObjectivesCompleted(game, playerThatJustPlayed, input);
                     }
@@ -61,7 +95,7 @@ export class CommunicationBoxService {
             case '!passer': {
                 if (this.chatService.sendMessage(input, game, player)) {
                     // We check if an objective has been completed
-                    const playerThatJustPlayed = game.mapPlayers.get(game.currentPlayerId);
+                    const playerThatJustPlayed =  Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
                     if (playerThatJustPlayed && game.isLog2990Enabled) {
                         this.objectiveService.isPlayerObjectivesCompleted(game, playerThatJustPlayed, input);
                     }
