@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
@@ -60,10 +61,18 @@ export class SocketService {
 
             //update the player object locally 
             //(this object is here to access easily the player's data)
-            let tmpPlayer = this.infoClientService.actualRoom.players.find(
+            let tmpPlayer = this.infoClientService.actualRoom.players?.find(
                 player => player.name === this.infoClientService.playerName);
             if(tmpPlayer){
                 this.infoClientService.player = tmpPlayer;
+            }
+
+            //useful when spectators connect in middle of game
+            //update the name of the person playing for the spectator
+            //TODO doesn't update the timer for the spectator
+            if(this.infoClientService.isSpectator && this.infoClientService.game.gameStarted &&
+              !this.infoClientService.game.gameFinished){
+                this.updateUiForSpectator(this.infoClientService.game);
             }
         });
         
@@ -120,19 +129,13 @@ export class SocketService {
         this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, 
                                                 isLog2990Enabled , players, spectators}) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
-            console.log("START");
-            console.log("nbPlayers: " + players.length);
-            console.log("nbSpectators: " + spectators.length);
             if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
                 this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, 
                                                                isLog2990Enabled, players, spectators));
             }else{
                 this.infoClientService.rooms[idxExistingRoom].players = players;
                 this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
-                console.log("nbPlayers2: " + this.infoClientService.rooms[idxExistingRoom].players.length);
-                console.log("nbSpectators2: " + this.infoClientService.rooms[idxExistingRoom].spectators.length);
             }
-            console.log("END\n");
         });
 
         this.socket.on('removeElementListRoom', (roomNameToDelete) => {
@@ -179,5 +182,16 @@ export class SocketService {
                 clearInterval(timerInterval);
             }
         }, oneSecond);
+    }
+
+    private updateUiForSpectator(game: GameServer){
+        if(game.idxPlayerPlaying < 0){
+            //means game has not started even tho game.isStarted is true
+            //it is a double safety check
+            return;
+        }
+
+        const playerPlaying = this.infoClientService.actualRoom.players[game.idxPlayerPlaying];
+        this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + " de jouer !";
     }
 }

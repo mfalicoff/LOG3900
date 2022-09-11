@@ -84,6 +84,19 @@ export class SidebarComponent {
         return answer;
     }
 
+    shouldLeaveGameBe(){
+        if(this.infoClientService.isSpectator){ 
+            return true;
+        }
+
+        let answer = true;
+
+        if (this.infoClientService.displayTurn !== "En attente d'un autre joueur...") {
+            answer = false;
+        }
+        return answer;
+    }
+
     convertGameInSolo(vpLevel: string) {
         if(this.infoClientService.isSpectator){ 
             return;

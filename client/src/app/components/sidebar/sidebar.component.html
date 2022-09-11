@@ -27,10 +27,10 @@
         </button>
     </div>
     
-    <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
+    <div class="buttonContainer">
         <button
             mat-raised-button
-            *ngIf="shouldConvertSoloBe()"
+            *ngIf="shouldLeaveGameBe()"
             id="cancelGame"
             class="optionButton"
             (click)="leaveGame()"
@@ -59,7 +59,8 @@
             class="optionButton" 
             (click)="spectWantsToBePlayer()"
         >
-            Prendre la place d'un joueur virtuel
+            Prendre la place d'un
+            joueur virtuel
         </button>
     </div>
 </div>

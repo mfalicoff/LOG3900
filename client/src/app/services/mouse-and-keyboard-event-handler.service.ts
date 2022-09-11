@@ -25,6 +25,9 @@ export class MouseKeyboardEventHandlerService {
     }
 
     onLeftClickStand(event: MouseEvent) {
+        if (!this.infoClientService.game?.gameStarted) {
+            return;
+        }
         this.isStandClicked = true;
         this.isCommBoxJustBeenClicked = false;
 
@@ -38,7 +41,9 @@ export class MouseKeyboardEventHandlerService {
 
     onBoardClick(event: MouseEvent) {
         this.isCommBoxJustBeenClicked = false;
-
+        if (!this.infoClientService.game?.gameStarted) {
+            return;
+        }
         event.preventDefault();
         const coordinateClick: Vec2 = { x: event.offsetX, y: event.offsetY };
 
@@ -57,7 +62,7 @@ export class MouseKeyboardEventHandlerService {
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {
-        if (this.isCommunicationBoxFocus) {
+        if (this.isCommunicationBoxFocus || !this.infoClientService.game?.gameStarted) {
             return;
         }
         if (this.drawingBoardService.isArrowPlaced) {
@@ -69,15 +74,16 @@ export class MouseKeyboardEventHandlerService {
     }
 
     handleArrowEvent(event: KeyboardEvent) {
-        if (this.isCommunicationBoxFocus) {
+        if (this.isCommunicationBoxFocus || !this.infoClientService.game?.gameStarted) {
             return;
         }
+
         const eventString: string = event.key.toString();
         this.socketService.socket.emit('keyboardAndMouseManipulation', eventString);
     }
 
     handleScrollEvent(event: WheelEvent) {
-        if (this.isCommunicationBoxFocus) {
+        if (this.isCommunicationBoxFocus || !this.infoClientService.game?.gameStarted) {
             return;
         }
 
@@ -87,7 +93,9 @@ export class MouseKeyboardEventHandlerService {
 
     onRightClickStand(event: MouseEvent) {
         this.isCommBoxJustBeenClicked = false;
-
+        if(!this.infoClientService.game?.gameStarted){
+            return;
+        }
         event.preventDefault();
         const coordinateXClick: number = event.offsetX;
         if (this.drawingBoardService.lettersDrawn) {
@@ -99,6 +107,9 @@ export class MouseKeyboardEventHandlerService {
     onLeftClickGamePage() {
         if (!this.isCommBoxJustBeenClicked) {
             this.isCommunicationBoxFocus = false;
+        }
+        if(!this.infoClientService.game?.gameStarted){
+            return;
         }
         this.isCommBoxJustBeenClicked = false;
         if (!this.isStandClicked) {

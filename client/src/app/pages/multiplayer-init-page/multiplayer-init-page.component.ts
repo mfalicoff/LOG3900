@@ -19,6 +19,9 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     }
 
     onClickGame(roomName: string) {
+        //useful to reset the ui
+        this.infoClientService.initializeService();
+        //joins the room
         this.socketService.socket.emit('joinRoom', {
             roomName,
             playerId: this.socketService.socket.id,

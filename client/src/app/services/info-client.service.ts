@@ -48,19 +48,24 @@ export class InfoClientService {
     creatorShouldBeAbleToStartGame: boolean;
 
     constructor() {
-        this.game = new GameServer(
-            0, false, 
-            GlobalConstants.MODE_SOLO, false, 
-            "defaultLevel", "defaultRoom");
-        this.player = new Player('DefaultPlayerObject', false);
         this.gameMode = GlobalConstants.MODE_MULTI;
         this.isLog2990Enabled = true;
         this.minutesByTurn = 1;
         this.randomBonusesOn = false;
         this.playerName = 'DefaultPlayerName';
+        this.rooms = [];
+        this.initializeService();
+    }
+
+    //public bc it is reused to reset for new games
+    initializeService(){
+        this.game = new GameServer(
+            0, false, 
+            GlobalConstants.MODE_SOLO, false, 
+            "defaultLevel", "defaultRoom");
+        this.player = new Player('DefaultPlayerObject', false);
         this.displayTurn = "En attente d'un autre joueur...";
         this.isTurnOurs = false;
-        this.rooms = [];
         this.nameVP1dictionary0 = 0;
         this.vpLevel = 'debutant';
         this.isSpectator = false;

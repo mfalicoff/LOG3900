@@ -75,7 +75,7 @@ export class GameServer {
         this.nbLetterReserve = GlobalConstants.DEFAULT_NB_LETTER_BANK;
         this.gameStarted = false;
         this.gameFinished = false;
-        this.idxPlayerPlaying = 0;
+        this.idxPlayerPlaying = -1;
         this.masterTimer = '';
         this.displaySkipTurn = "En attente d'un autre joueur..";
         this.noTileOnBoard = true;

@@ -331,15 +331,6 @@ export class SocketManager {
         newSpectator.socketId = socket.id;
         game?.mapSpectators.set(socket.id, newSpectator);
 
-        // We send to the client a gameState and a scoreBoardState\
-        socket.emit('gameBoardUpdate', this.rooms.get(roomName));
-
-        socket.emit('playersSpectatorsUpdate', {
-            roomName: game.roomName,
-            players: Array.from(game.mapPlayers.values()),
-            spectators: Array.from(game.mapSpectators.values()),
-        });
-
         //tell the client to his state as a person
         socket.emit('isSpectator', true);
     }
@@ -539,7 +530,8 @@ export class SocketManager {
             game.mapSpectators.delete(socket.id);
 
             let virtualPlayer = undefined;
-            for(let player of game.mapPlayers.values()){
+            //take the first virtualPlayer that the server founds
+            for(const player of game.mapPlayers.values()){
                 if(player.idPlayer === "virtualPlayer"){
                     virtualPlayer = player;
                     break;
@@ -551,6 +543,11 @@ export class SocketManager {
             }
             virtualPlayer.idPlayer = socket.id;
             virtualPlayer.name = user.name;
+
+            //TODO en fait c'est de la merde lul
+            //faire la map en fonction du nom des joueurs et non leur id kappa
+            game.mapPlayers.delete("virtualPlayer");
+            game.mapPlayers.set(virtualPlayer.idPlayer, virtualPlayer);
 
             socket.emit('isSpectator', false);
             this.gameUpdateClients(game);
@@ -630,24 +627,26 @@ export class SocketManager {
         const playerThatLeaves = game.mapPlayers.get(socket.id);
         const specThatLeaves = game.mapSpectators.get(socket.id);
         //if it is a spectator that leaves
-        if (specThatLeaves) {
+        if (playerThatLeaves) {
+            //if there are only virtualPlayers in the game we delete the game
+            const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
+                (player) => player.idPlayer !== 'virtualPlayer' && 
+                            player.idPlayer !== playerThatLeaves?.idPlayer).length;
+
+            if (nbRealPlayer >= 1 && playerThatLeaves) {
+                // we send to the opponent a update of the game
+                const waitBeforeAbandonment = 3000;
+                setTimeout(() => {
+                    this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
+                    this.gameUpdateClients(game);
+                }, waitBeforeAbandonment);
+            } else {
+                this.gameFinishedAction(game);
+            }
+        } else if(specThatLeaves){ // if it is a spectator that leaves
             game.mapSpectators.delete(socket.id);
-        }
-
-        //if there are only virtualPlayers in the game we delete the game
-        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
-            (player) => player.idPlayer !== 'virtualPlayer' && 
-                        player.idPlayer !== playerThatLeaves?.idPlayer).length;
-
-        if (nbRealPlayer >= 1 && playerThatLeaves) {
-            // we send to the opponent a update of the game
-            const waitBeforeAbandonment = 3000;
-            setTimeout(() => {
-                this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
-                this.gameUpdateClients(game);
-            }, waitBeforeAbandonment);
-        } else {
-            this.gameFinishedAction(game);
+        } else { //should never go there
+            console.log("Game is broken in socketManager::leaveGame. Good luck to u who got this error :)");
         }
 
         socket.leave(user.roomName);
