@@ -74,14 +74,17 @@ export class PlayAreaService {
 
         // determine the first player to play and also set this player to the master time
         // (reminder: the master time is the player that controls the timer for the game)
-        let keys = Array.from(game.mapPlayers.keys());
         game.idxPlayerPlaying = Math.floor(Math.random() * game.mapPlayers.size);
         
         //we set the master timer, it has to be a human client not a virtual player
-        //gets rid of the virtual player
-        //TODO probably is a better way to do this lul
-        keys = keys.filter((key) => key !== 'virtualPlayer');
-        game.masterTimer = keys[Math.floor(Math.random() * game.mapPlayers.size - (game.mapPlayers.size - keys.length))];
+        for(const player of game.mapPlayers.values()){
+            if(player.idPlayer === 'virtualPlayer'){
+                continue;
+            }
+            game.masterTimer = player.idPlayer;
+            break;
+        }
+
 
         // we send the game to all the players
         this.sendGameToAllClientInRoom(game);
@@ -106,36 +109,34 @@ export class PlayAreaService {
             }
             namesAlrdyUsed.push(player.name);
         }
-
         const nbVPNames = this.databaseService.namesVP.length;
         let randomNumber = this.giveRandomNbOpponent(nbVPNames);
-        let newName : string = this.databaseService.namesVP[randomNumber].firstName + " "  
-                             + this.databaseService.namesVP[randomNumber].lastName;
-        while (namesAlrdyUsed.indexOf(newName) <= -1) {
-            if (randomNumber === nbVPNames - 1) {
-                randomNumber--;
-            } else {
-                randomNumber++;
+        for(let i = 0; i < nbVPNames; i++){
+            let newName : string = this.databaseService.namesVP[randomNumber + i % nbVPNames].firstName + " "  
+            + this.databaseService.namesVP[randomNumber + i % nbVPNames].lastName;
+            if (!namesAlrdyUsed.includes(newName)){
+                return newName;
             }
         }
-        return newName;
+        return 'no newNameFound';
     }
 
     //function that transforms the playerThatLeaves into a virtual player
     replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
-        // we send to everyone that the player has left and has been replaced by a bot
-        
+        // we send to everyone that the player has left and has been replaced by a bot   
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
 
+        // we keep the old id to determine later to change the old player's turn or not
         const oldIdPlayer = playerThatLeaves.idPlayer;
 
+        // we delete the old player
+        game.mapPlayers.delete(playerThatLeaves.name);
+
+        // we replace him with the virtual player
         playerThatLeaves.idPlayer = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
-
-        // we delete the old player and replacer him with the virtual player
-        game.mapPlayers.delete(oldIdPlayer);
-        game.mapPlayers.set(playerThatLeaves.idPlayer, playerThatLeaves);
+        game.mapPlayers.set(playerThatLeaves.name, playerThatLeaves);
 
         // we change the player turn if it was the player that left's turn
         const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
@@ -145,10 +146,10 @@ export class PlayAreaService {
     }
 
     sendMsgToAllInRoom(game: GameServer, message: string) {
-        for(let player of game.mapPlayers.values()){
+        for(const player of game.mapPlayers.values()){
             player.chatHistory.push({ message: message, isCommand: false, sender: 'S' });
         }
-        for(let spectator of game.mapSpectators.values()){
+        for(const spectator of game.mapSpectators.values()){
             spectator.chatHistory.push({ message: message, isCommand: false, sender: 'S' });
         }
     }
@@ -277,7 +278,6 @@ export class PlayAreaService {
     }
 
     private giveRandomNbOpponent(sizeArrayVPOptions: number): number {
-        const returnValue = Math.floor(Math.random() * sizeArrayVPOptions);
-        return returnValue;
+        return Math.floor(Math.random() * sizeArrayVPOptions);
     }
 }

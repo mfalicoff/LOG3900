@@ -62,14 +62,16 @@ export class SocketManager {
 
     // The virtual player never calls this function
     private manageNewMessageClient(placeMsg: string, socket: io.Socket) {
-        const roomName = this.users.get(socket.id)?.roomName;
-        let game;
-        let player;
-        if (roomName) {
-            game = this.rooms.get(roomName);
-            player = game?.mapPlayers.get(socket.id);
+        const user = this.users.get(socket.id);
+        if(!user){
+            return;
         }
-        if (!game || !player || !roomName) {
+        let game = this.rooms.get(user.roomName);
+        if(!game){
+            return;
+        }
+        let player = game.mapPlayers.get(user.name);
+        if (!player) {
             return;
         }
         if (!game.gameStarted) {
@@ -82,15 +84,18 @@ export class SocketManager {
         // We update the chatHistory and the game of each client
         this.gameUpdateClients(game);
         if(game.gameFinished){
-            this.triggerStopTimer(roomName);
+            this.triggerStopTimer(user.roomName);
         }
     }
 
     private clientEventHandler(socket: io.Socket) {
         socket.on('turnFinished', () => {
             const user = this.users.get(socket.id);
-            const game = user ? this.rooms.get(user.roomName) : undefined;
-            const player = game?.mapPlayers.get(socket.id);
+            if(!user){
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            const player = game?.mapPlayers.get(user.name);
             if (game && player) {
                 this.chatService.passCommand('!passer', game, player);
                 this.playAreaService.changePlayer(game);
@@ -98,12 +103,11 @@ export class SocketManager {
         });
 
         socket.on('boardClick', (coordinateClick) => {
-            const roomName = this.users.get(socket.id)?.roomName;
-
-            let player;
-            if (roomName) {
-                player = this.rooms.get(roomName)?.mapPlayers.get(socket.id);
+            const user = this.users.get(socket.id);
+            if(!user){
+                return;
             }
+            let player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
 
             if (player) {
                 this.mouseEventService.boardClick(player, coordinateClick);
@@ -111,35 +115,36 @@ export class SocketManager {
         });
 
         socket.on('onExchangeClick', () => {
-            const roomName = this.users.get(socket.id)?.roomName;
-            let player;
-            if (roomName) {
-                player = this.rooms.get(roomName)?.mapPlayers.get(socket.id);
-            }
             const user = this.users.get(socket.id);
-            const game = user ? this.rooms.get(user.roomName) : undefined;
+            if(!user){
+                return;
+            }
+            let player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
+            
+            const game = this.rooms.get(user.roomName);
             if (game && player) {
                 this.mouseEventService.exchangeButtonClicked(game, player);
             }
         });
 
         socket.on('onAnnulerClick', () => {
-            const roomName = this.users.get(socket.id)?.roomName;
-            let player;
-            if (roomName) {
-                player = this.rooms.get(roomName)?.mapPlayers.get(socket.id);
+            const user = this.users.get(socket.id);
+            if(!user){
+                return;
             }
+            let player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
+            
             if (player) {
                 this.mouseEventService.cancelButtonClicked(player);
             }
         });
 
         socket.on('keyboardSelection', (eventString: string) => {
-            const roomName = this.users.get(socket.id)?.roomName;
-            let player;
-            if (roomName) {
-                player = this.rooms.get(roomName)?.mapPlayers.get(socket.id);
+            const user = this.users.get(socket.id);
+            if(!user){
+                return;
             }
+            let player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
 
             if (player) {
                 this.mouseEventService.keyboardSelection(player, eventString);
@@ -147,13 +152,12 @@ export class SocketManager {
         });
 
         socket.on('keyboardAndMouseManipulation', (eventString: string) => {
-            const roomName = this.users.get(socket.id)?.roomName;
-            let player;
-            let game;
-            if (roomName) {
-                player = this.rooms.get(roomName)?.mapPlayers.get(socket.id);
-                game = this.rooms.get(roomName);
+            const user = this.users.get(socket.id);
+            if(!user){
+                return;
             }
+            let player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
+            let game = this.rooms.get(user.roomName);
 
             if (player && game) {
                 this.mouseEventService.keyboardAndMouseManipulation(game, player, eventString);
@@ -161,11 +165,11 @@ export class SocketManager {
         });
 
         socket.on('leftClickSelection', (coordinateXClick) => {
-            const roomName = this.users.get(socket.id)?.roomName;
-            let player;
-            if (roomName) {
-                player = this.rooms.get(roomName)?.mapPlayers.get(socket.id);
+            const user = this.users.get(socket.id);
+            if(!user){
+                return;
             }
+            let player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
 
             if (player) {
                 this.mouseEventService.leftClickSelection(player, coordinateXClick);
@@ -173,22 +177,22 @@ export class SocketManager {
         });
 
         socket.on('rightClickExchange', (coordinateXClick) => {
-            const roomName = this.users.get(socket.id)?.roomName;
-            let player;
-            if (roomName) {
-                player = this.rooms.get(roomName)?.mapPlayers.get(socket.id);
+            const user = this.users.get(socket.id);
+            if(!user){
+                return;
             }
+            let player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
             if (player) {
                 this.mouseEventService.rightClickExchange(player, coordinateXClick);
             }
         });
 
         socket.on('resetAllTilesStand', () => {
-            const roomName = this.users.get(socket.id)?.roomName;
-            let player;
-            if (roomName) {
-                player = this.rooms.get(roomName)?.mapPlayers.get(socket.id);
+            const user = this.users.get(socket.id);
+            if(!user){
+                return;
             }
+            let player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
 
             if (player) {
                 this.mouseEventService.resetAllTilesStand(player);
@@ -217,7 +221,7 @@ export class SocketManager {
         socket.on('callTestFunction', () => {
             const gameStub = new GameServer(1, false, "null", false, "expert", "test");
             const userStub = { name: "test", roomName: "test" };
-            this.joinGameAsSpectator(socket, gameStub, userStub, "test");
+            this.joinGameAsSpectator(socket, gameStub, userStub);
         });
     }
 
@@ -249,7 +253,7 @@ export class SocketManager {
                                            + this.databaseService.namesVP[i].lastName, false);
 
             newOpponent.idPlayer = virtualPlayerId;
-            newGame.mapPlayers.set(virtualPlayerId, newOpponent);
+            newGame.mapPlayers.set(newOpponent.name, newOpponent);
         }
 
         // We send a waiting message (while game not started) on chatHistory
@@ -265,7 +269,7 @@ export class SocketManager {
             }
         }
 
-        newGame.mapPlayers.set(socket.id, newPlayer);
+        newGame.mapPlayers.set(newPlayer.name, newPlayer);
         this.rooms.set(roomName, newGame);
 
         // Joining the room
@@ -323,9 +327,8 @@ export class SocketManager {
         socket.emit('isSpectator', false);
     }
 
-    private joinGameAsSpectator(socket: io.Socket, game: 
-                                GameServer, userData: 
-                                User, roomName: string){
+    private joinGameAsSpectator(socket: io.Socket, game: GameServer, 
+                                userData: User){
         // we add the new observator to the map of observators
         const newSpectator= new Spectator(userData.name);
         newSpectator.socketId = socket.id;
@@ -433,7 +436,7 @@ export class SocketManager {
             if(game.mapPlayers.size < GlobalConstants.MAX_PERSON_PLAYING){ 
                 this.joinGameAsPlayer(socket, game, userData);
             }else{
-                this.joinGameAsSpectator(socket, game, userData, roomName);
+                this.joinGameAsSpectator(socket, game, userData);
             }
 
             // we send the game state to all clients in the room
@@ -460,23 +463,7 @@ export class SocketManager {
         });
 
         socket.on('listRoom', () => {
-            for (const roomName of this.rooms.keys()) {
-                const game = this.rooms.get(roomName);
-                if (!game || game?.gameFinished) {
-                    continue;
-                }
-
-                const players = Array.from(game.mapPlayers.values());
-                const spectators = Array.from(game.mapSpectators.values());
-                socket.emit('addElementListRoom', {
-                    roomName,
-                    timeTurn: game.minutesByTurn,
-                    isBonusRandom: game.randomBonusesOn,
-                    isLog2990Enabled: game.isLog2990Enabled,
-                    players: players,
-                    spectators: spectators,
-                });
-            }
+            this.sendListOfRooms(socket);
         });
 
         socket.on('convertGameInSolo', (vpLevel) => {
@@ -484,9 +471,8 @@ export class SocketManager {
             if (!user) {
                 return;
             }
-            const roomName = user?.roomName;
-            const game = this.rooms.get(roomName);
-            const player = game?.mapPlayers.get(socket.id);
+            const game = this.rooms.get(user.roomName);
+            const player = game?.mapPlayers.get(user.name);
             if (!game || !player) {
                 return;
             }
@@ -507,10 +493,10 @@ export class SocketManager {
             );
 
             // deleting old room
-            this.rooms.delete(roomName);
+            this.rooms.delete(user.roomName);
 
             // Remove the room from the view of other players
-            this.sio.sockets.emit('removeElementListRoom', roomName);
+            this.sio.sockets.emit('removeElementListRoom', user.roomName);
         });
 
         socket.on('spectWantsToBePlayer', () => {
@@ -529,27 +515,39 @@ export class SocketManager {
             }
             game.mapSpectators.delete(socket.id);
 
-            let virtualPlayer = undefined;
+            let oldVirtualPlayer = undefined;
             //take the first virtualPlayer that the server founds
             for(const player of game.mapPlayers.values()){
                 if(player.idPlayer === "virtualPlayer"){
-                    virtualPlayer = player;
+                    oldVirtualPlayer = player;
                     break;
                 }
             }
-            if(!virtualPlayer){
+            if(!oldVirtualPlayer){
                 console.log("Error: virtual player not found in 'spectWantsToBePlayer'");
                 return;
             }
-            virtualPlayer.idPlayer = socket.id;
-            virtualPlayer.name = user.name;
+            //delete the old virtual player from the map
+            game.mapPlayers.delete(oldVirtualPlayer.name);
 
-            //TODO en fait c'est de la merde lul
-            //faire la map en fonction du nom des joueurs et non leur id kappa
-            game.mapPlayers.delete("virtualPlayer");
-            game.mapPlayers.set(virtualPlayer.idPlayer, virtualPlayer);
+            //set the new player attribute and add it to the map
+            oldVirtualPlayer.idPlayer = socket.id;
+            oldVirtualPlayer.name = user.name;
+            game.mapPlayers.set(oldVirtualPlayer.name, oldVirtualPlayer);
 
             socket.emit('isSpectator', false);
+
+            //sending game info to all client to update nbPlayers and nbSpectators
+            //in the room
+            this.sio.sockets.emit('addElementListRoom', {
+                roomName,
+                timeTurn: game.minutesByTurn,
+                isBonusRandom: game.randomBonusesOn,
+                isLog2990Enabled: game.isLog2990Enabled,
+                players: Array.from(game.mapPlayers.values()),
+                spectators: Array.from(game.mapSpectators.values()),
+            });
+
             this.gameUpdateClients(game);
             this.shouldCreatorBeAbleToStartGame(game);
         });
@@ -618,13 +616,12 @@ export class SocketManager {
         if (!game) {
             return;
         }
-            
         if (game.gameFinished) {
             this.gameFinishedAction(game);
             return;
         }
 
-        const playerThatLeaves = game.mapPlayers.get(socket.id);
+        const playerThatLeaves = game.mapPlayers.get(user.name);
         const specThatLeaves = game.mapSpectators.get(socket.id);
         //if it is a spectator that leaves
         if (playerThatLeaves) {
@@ -633,7 +630,7 @@ export class SocketManager {
                 (player) => player.idPlayer !== 'virtualPlayer' && 
                             player.idPlayer !== playerThatLeaves?.idPlayer).length;
 
-            if (nbRealPlayer >= 1 && playerThatLeaves) {
+            if (nbRealPlayer >= 1) {
                 // we send to the opponent a update of the game
                 const waitBeforeAbandonment = 3000;
                 setTimeout(() => {
@@ -665,6 +662,25 @@ export class SocketManager {
         }
     }
 
+    private sendListOfRooms(socket: io.Socket) {
+        for (const roomName of this.rooms.keys()) {
+            const game = this.rooms.get(roomName);
+            if (!game || game?.gameFinished) {
+                continue;
+            }
+
+            const players = Array.from(game.mapPlayers.values());
+            const spectators = Array.from(game.mapSpectators.values());
+            socket.emit('addElementListRoom', {
+                roomName,
+                timeTurn: game.minutesByTurn,
+                isBonusRandom: game.randomBonusesOn,
+                isLog2990Enabled: game.isLog2990Enabled,
+                players: players,
+                spectators: spectators,
+            });
+        }
+    }
     private commBoxInputHandler(socket: io.Socket) {
         socket.on('newMessageClient', (inputClient) => {
             this.manageNewMessageClient(inputClient, socket);
