@@ -40,7 +40,9 @@ export class SocketService {
     private gameUpdateHandler() {
         this.socket.on('playerAndStandUpdate', (player) => {
             this.infoClientService.player = player;
-            this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
+            setTimeout(() => {
+                this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
+            }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
 
         this.socket.on('gameBoardUpdate', (game) => {

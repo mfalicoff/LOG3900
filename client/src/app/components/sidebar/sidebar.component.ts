@@ -1,9 +1,7 @@
 /* eslint-disable deprecation/deprecation */
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSliderChange } from '@angular/material/slider';
 import { Router } from '@angular/router';
-import { ModalVpLevelsComponent } from '@app/components/modal-vp-levels/modal-vp-levels.component';
 import { DrawingBoardService } from '@app/services/drawing-board-service';
 import { DrawingService } from '@app/services/drawing.service';
 import { InfoClientService } from '@app/services/info-client.service';
@@ -18,7 +16,6 @@ export class SidebarComponent {
     private fontSize: number;
 
     constructor(
-        private modal: MatDialog,
         private drawingBoardService: DrawingBoardService,
         private drawingService: DrawingService,
         private socketService: SocketService,
@@ -71,21 +68,8 @@ export class SidebarComponent {
         this.router.navigate(['/home']);
     }
 
-    shouldConvertSoloBe(): boolean {
-        if(this.infoClientService.isSpectator){ 
-            return false;
-        }
-
-        let answer = true;
-
-        if (this.infoClientService.displayTurn !== "En attente d'un autre joueur...") {
-            answer = false;
-        }
-        return answer;
-    }
-
     shouldLeaveGameBe(){
-        if(this.infoClientService.isSpectator){ 
+        if(this.infoClientService.isSpectator || this.infoClientService.game.gameFinished){ 
             return true;
         }
 
@@ -97,31 +81,8 @@ export class SidebarComponent {
         return answer;
     }
 
-    convertGameInSolo(vpLevel: string) {
-        if(this.infoClientService.isSpectator){ 
-            return;
-        }
-
-        this.infoClientService.vpLevel = vpLevel;
-        this.socketService.socket.emit('convertGameInSolo', vpLevel);
-    }
-
     leaveGame() {
         this.socketService.socket.emit('leaveGame');
-    }
-
-    openModal() {
-        if(this.infoClientService.isSpectator){ 
-            return;
-        }
-        
-        const modalRef = this.modal.open(ModalVpLevelsComponent, {
-            panelClass: 'modalVPContainer',
-        });
-
-        modalRef.afterClosed().subscribe((result) => {
-            this.convertGameInSolo(result);
-        });
     }
 
     startGame(){

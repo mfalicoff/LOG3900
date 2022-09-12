@@ -275,14 +275,12 @@ export class SocketManager {
         // Joining the room
         socket.join(roomName);
 
-        this.gameUpdateClients(newGame);
-
-        const timeForClientToInitialize = 1000;
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
         this.putLogicService.initSioPutLogic(this.sio);
         this.mouseEventService.initSioMouseEvent(this.sio);
         this.playAreaService.initSioPlayArea(this.sio);
 
+        const timeForClientToInitialize = 1000;
         //launches the game automatically if the mode is solo
         if (gameMode === GlobalConstants.MODE_SOLO){
             setTimeout(() => {
@@ -373,13 +371,7 @@ export class SocketManager {
                 spectators,
             });
 
-            // we send to all clients an update of the players and spectators
-            // to update list of players and spectators on client's ui
-            this.sio.to(createdGame.roomName).emit('playersSpectatorsUpdate', {
-                roomName: createdGame.roomName,
-                players: players,
-                spectators: spectators,
-            });
+            this.gameUpdateClients(createdGame);
             
             // emit to change page on client after verification
             socket.emit('roomChangeAccepted', '/game');
@@ -464,39 +456,6 @@ export class SocketManager {
 
         socket.on('listRoom', () => {
             this.sendListOfRooms(socket);
-        });
-
-        socket.on('convertGameInSolo', (vpLevel) => {
-            const user = this.users.get(socket.id);
-            if (!user) {
-                return;
-            }
-            const game = this.rooms.get(user.roomName);
-            const player = game?.mapPlayers.get(user.name);
-            if (!game || !player) {
-                return;
-            }
-            game.gameMode = GlobalConstants.MODE_SOLO;
-            game.vpLevel = vpLevel;
-            // creating new game/room
-            const newRoomName = 'roomOf' + socket.id;
-            user.roomName = newRoomName;
-            this.createGameAndPlayer(
-                game.gameMode,
-                game.isLog2990Enabled,
-                game.minutesByTurn,
-                game.randomBonusesOn,
-                player.name,
-                socket,
-                newRoomName,
-                game.vpLevel,
-            );
-
-            // deleting old room
-            this.rooms.delete(user.roomName);
-
-            // Remove the room from the view of other players
-            this.sio.sockets.emit('removeElementListRoom', user.roomName);
         });
 
         socket.on('spectWantsToBePlayer', () => {

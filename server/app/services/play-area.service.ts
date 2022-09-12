@@ -123,6 +123,11 @@ export class PlayAreaService {
 
     //function that transforms the playerThatLeaves into a virtual player
     replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
+        if(!playerThatLeaves){
+            console.log("game is:");
+            console.log(game);
+            return;
+        }
         // we send to everyone that the player has left and has been replaced by a bot   
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);

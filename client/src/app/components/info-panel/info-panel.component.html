@@ -7,7 +7,7 @@
         <button
             *ngIf="!infoClientService.isSpectator"
             mat-raised-button
-            [disabled]="!infoClientService.isTurnOurs" 
+            [disabled]="!infoClientService.isTurnOurs || infoClientService.game.gameFinished" 
             id="passBtn"
             class="btnStyle"
             (click)="skipTurnButton()"
@@ -20,7 +20,7 @@
             id="exchangeBtn"
             class="btnStyle"
             (click)="this.onExchangeClick()"
-            [disabled]= "!infoClientService.isTurnOurs || !this.drawingService.areLettersRightClicked(infoClientService.player.stand)"
+            [disabled]= "!infoClientService.isTurnOurs || !this.drawingService.areLettersRightClicked(infoClientService.player.stand) || infoClientService.game.gameFinished"
         >Échanger
         </button>
         <button
@@ -28,7 +28,7 @@
             id="cancelBtn"
             class="btnStyle"
             (click)="this.onCancelClick()"
-            [disabled]= "!infoClientService.isTurnOurs|| !this.drawingService.areLettersRightClicked(infoClientService.player.stand)"
+            [disabled]= "!infoClientService.isTurnOurs|| !this.drawingService.areLettersRightClicked(infoClientService.player.stand) || infoClientService.game.gameFinished"
         >Annuler
         </button>
         <button
@@ -36,7 +36,7 @@
             id="playBtn"
             class="btnStyle"
             (click)= "this.placeGraphicService.manageKeyBoardEvent(infoClientService.game, infoClientService.player, enter)"
-            [disabled]= "!infoClientService.isTurnOurs || !this.placeGraphicService.isLettersDrawnSizeAboveZero()"
+            [disabled]= "!infoClientService.isTurnOurs || !this.placeGraphicService.isLettersDrawnSizeAboveZero() || infoClientService.game.gameFinished"
         >Jouer
          </button>
     </div>

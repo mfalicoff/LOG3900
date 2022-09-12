@@ -3,7 +3,8 @@
     <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
         <button 
             mat-raised-button 
-            matTooltip="Abandonner" 
+            matTooltip="Abandonner"
+            *ngIf="!infoClientService.game.gameFinished"
             (click)="onClickGiveUpButton()" 
             class="optionButton"
         >
@@ -15,17 +16,6 @@
         <p>Taille de police tuiles : {{ fontSize.value }} (px).</p>
         <mat-slider #fontSize (change)="updateSetting($event)" tickInterval="2" step="1" min="15" max="23" value="19"> </mat-slider>
     </div>
-    <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
-        <button 
-            mat-raised-button 
-            *ngIf="shouldConvertSoloBe()" 
-            id="convertSolo" 
-            class="optionButton" 
-            (click)="openModal()"
-        >
-            Convertir en partie Solo
-        </button>
-    </div>
     
     <div class="buttonContainer">
         <button
@@ -36,7 +26,7 @@
             (click)="leaveGame()"
             routerLink="/multiplayer-init"
         >
-            Annuler Partie
+            Quitter Partie
         </button>
     </div>
 
@@ -59,8 +49,7 @@
             class="optionButton" 
             (click)="spectWantsToBePlayer()"
         >
-            Prendre la place d'un
-            joueur virtuel
+            Prendre la place d'un joueur virtuel
         </button>
     </div>
 </div>
