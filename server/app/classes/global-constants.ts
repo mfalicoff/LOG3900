@@ -97,6 +97,7 @@ export const LETTERS_MUST_TOUCH_OTHERS = ' : les lettres que vous avez placées 
 export const FIRST_LETTER_NOT_IN_H8 = ' : votre premier mot doit commencer dans la case h8!';
 export const LETTERS_FROM_BOARD_WRONG = ' : lettres du plateau de jeu mal utilisées!';
 export const REPLACEMENT_BY_BOT = 'Un bot a maintenant remplacé votre adversaire.';
+export const REPLACEMENT_BY_PLAYER = " a remplacé le joueur virtuel: ";
 export const NB_MIN_LETTER_BANK = 6;
 export const WAITING_FOR_CREATOR = "En attente du créateur pour demarrer la partie...";
 export const PLAYER_TRIED_A_WORD = " a placé un mot non valide, son tour passe !";

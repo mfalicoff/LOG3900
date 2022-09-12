@@ -4,6 +4,7 @@ import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
+import { Player } from '@app/classes/player';
 import { RoomData } from '@app/classes/room-data';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
@@ -72,10 +73,9 @@ export class SocketService {
             //useful when spectators connect in middle of game
             //update the name of the person playing for the spectator
             //TODO doesn't update the timer for the spectator
-            if(this.infoClientService.isSpectator && this.infoClientService.game.gameStarted &&
-              !this.infoClientService.game.gameFinished){
-                this.updateUiForSpectator(this.infoClientService.game);
-            }
+            this.updateUiForSpectator(this.infoClientService.game);
+            //update display turn to show that we are waiting for creator or other players
+            this.updateUiBeforeStartGame(players);
         });
         
         this.socket.on('findTileToPlaceArrow', (realPosInBoardPx) => {
@@ -187,13 +187,21 @@ export class SocketService {
     }
 
     private updateUiForSpectator(game: GameServer){
-        if(game.idxPlayerPlaying < 0){
-            //means game has not started even tho game.isStarted is true
-            //it is a double safety check
+        if(!this.infoClientService.isSpectator || !this.infoClientService.game.gameStarted ||
+            this.infoClientService.game.gameFinished || game.idxPlayerPlaying < 0){
             return;
         }
 
         const playerPlaying = this.infoClientService.actualRoom.players[game.idxPlayerPlaying];
         this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + " de jouer !";
+    }
+
+    private updateUiBeforeStartGame(players: Player[]){
+        const nbRealPlayer = players?.filter((player : Player) => player.idPlayer !== 'virtualPlayer').length;
+        if(nbRealPlayer >= GlobalConstants.MIN_PERSON_PLAYING) {
+            this.infoClientService.displayTurn = GlobalConstants.WAITING_FOR_CREATOR;
+        }else{
+            this.infoClientService.displayTurn = GlobalConstants.WAIT_FOR_OTHER_PLAYERS;
+        }
     }
 }

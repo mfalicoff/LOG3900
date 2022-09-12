@@ -28,6 +28,15 @@ export const INPUT_MAX_LENGTH = 512;
 export const WAIT_FOR_CANVAS_INI = 10;
 
 /// ////////////////////////////////////////////////////////////////////////
+// VARIABLE ui
+/// ////////////////////////////////////////////////////////////////////////
+//TODO switch this to 4 when 4 game players will be enabled
+export const MIN_PERSON_PLAYING = 2;
+export const MAX_PERSON_PLAYING = 2;
+export const WAITING_FOR_CREATOR = "En attente du créateur pour demarrer la partie...";
+export const WAIT_FOR_OTHER_PLAYERS = "En attente d'autres joueurs...";
+
+/// ////////////////////////////////////////////////////////////////////////
 // INFO PANNEL CONSTANTS
 /// ////////////////////////////////////////////////////////////////////////
 export const DEFAULT_NB_LETTER_STAND = 7;

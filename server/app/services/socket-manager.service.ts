@@ -256,19 +256,6 @@ export class SocketManager {
             newGame.mapPlayers.set(newOpponent.name, newOpponent);
         }
 
-        // We send a waiting message (while game not started) on chatHistory
-        if (gameMode !== GlobalConstants.MODE_SOLO) {
-            const nbRealPlayer = Array.from(newGame.mapPlayers.values()).filter(
-                                            (player) => player.idPlayer !== 'virtualPlayer').length;
-            if(nbRealPlayer >= GlobalConstants.MIN_PERSON_PLAYING) {
-                newPlayer?.chatHistory.push({ message: GlobalConstants.WAITING_FOR_CREATOR, 
-                    isCommand: false, sender: 'S' });
-            }else{
-                newPlayer?.chatHistory.push({ message: GlobalConstants.WAIT_FOR_OTHER_PLAYERS, 
-                    isCommand: false, sender: 'S' });
-            }
-        }
-
         newGame.mapPlayers.set(newPlayer.name, newPlayer);
         this.rooms.set(roomName, newGame);
 
@@ -486,6 +473,7 @@ export class SocketManager {
                 console.log("Error: virtual player not found in 'spectWantsToBePlayer'");
                 return;
             }
+            const oldVPName = oldVirtualPlayer.name;
             //delete the old virtual player from the map
             game.mapPlayers.delete(oldVirtualPlayer.name);
 
@@ -495,6 +483,12 @@ export class SocketManager {
             game.mapPlayers.set(oldVirtualPlayer.name, oldVirtualPlayer);
 
             socket.emit('isSpectator', false);
+
+            for(const player of game.mapPlayers.values()){
+                player.chatHistory.push({ 
+                    message: user.name + GlobalConstants.REPLACEMENT_BY_PLAYER + oldVPName + ".", 
+                    isCommand: false, sender: 'S' });
+            }
 
             //sending game info to all client to update nbPlayers and nbSpectators
             //in the room

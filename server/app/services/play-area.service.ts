@@ -123,11 +123,6 @@ export class PlayAreaService {
 
     //function that transforms the playerThatLeaves into a virtual player
     replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
-        if(!playerThatLeaves){
-            console.log("game is:");
-            console.log(game);
-            return;
-        }
         // we send to everyone that the player has left and has been replaced by a bot   
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
@@ -143,10 +138,14 @@ export class PlayAreaService {
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
         game.mapPlayers.set(playerThatLeaves.name, playerThatLeaves);
 
-        // we change the player turn if it was the player that left's turn
-        const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-        if (playerPlaying.idPlayer === oldIdPlayer) {
-            this.changePlayer(game);
+        //if the game is not started we don't need to change the turn
+        //furthermore if we entered here game.idxPlayerPlaying would be -1 so server would crash
+        if(game.gameStarted){
+            // we change the player turn if it was the player that left's turn
+            const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
+            if (playerPlaying.idPlayer === oldIdPlayer) {
+                this.changePlayer(game);
+            }
         }
     }
 
