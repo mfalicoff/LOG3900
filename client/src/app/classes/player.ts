@@ -3,10 +3,11 @@ import { Command } from './command';
 import { Tile } from './tile';
 
 export class Player {
-    idOpponent: string;
     idPlayer: string;
     name: string;
     stand: Tile[];
+
+    isCreatorOfGame: boolean;
 
     // we are obliged to put the esLint disable because the object class we use isnt stable
     // we therefore need to use any
@@ -29,9 +30,9 @@ export class Player {
     allLetterSwapped: boolean;
     isMoveBingo: boolean;
 
-    constructor(namePlayer: string) {
+    constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
-        this.idOpponent = '';
+        this.isCreatorOfGame = isCreatorOfGame;
         this.idPlayer = '';
         this.stand = [];
         this.mapLetterOnStand = new Map();

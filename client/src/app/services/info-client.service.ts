@@ -14,14 +14,8 @@ export class InfoClientService {
     game: GameServer;
     player: Player;
 
-    actualRoom: string;
     gameMode: string;
     isLog2990Enabled: boolean;
-
-    // Some opponent info that we need for the html
-    nameOpponent: string;
-    nbLetterStandOpponent: number;
-    scoreOpponent: number;
 
     // Game parameters
     minutesByTurn: number;
@@ -35,29 +29,47 @@ export class InfoClientService {
     nameVPExpert: NameVP[];
 
     displayTurn: string;
+    isTurnOurs: boolean;
 
     rooms: RoomData[];
+    //this old the array of players and spectators in the room
+    //it is not in "game" object bc it is stored as maps which canned be sent to the client
+    //and we use the players/spectators array to display the players/spectators in the room
+    //when on the multiplayer page
+    actualRoom : RoomData;
 
     letterBank: Map<string, LetterData>;
 
     vpLevel: string;
 
+    //useful to know to hide stands or not
+    isSpectator: boolean;
+
+    creatorShouldBeAbleToStartGame: boolean;
+
     constructor() {
-        this.actualRoom = '';
         this.gameMode = GlobalConstants.MODE_MULTI;
         this.isLog2990Enabled = true;
-        this.nameOpponent = 'NomAdversaire';
-        this.nbLetterStandOpponent = GlobalConstants.NUMBER_SLOT_STAND;
-        this.scoreOpponent = 0;
         this.minutesByTurn = 1;
         this.randomBonusesOn = false;
         this.playerName = 'DefaultPlayerName';
-        this.displayTurn = "En attente d'un autre joueur...";
-        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, false);
-        this.player = new Player('DefaultPlayerObject');
         this.rooms = [];
+        this.initializeService();
+    }
+
+    //public bc it is reused to reset for new games
+    initializeService(){
+        this.game = new GameServer(
+            0, false, 
+            GlobalConstants.MODE_SOLO, false, 
+            "defaultLevel", "defaultRoom");
+        this.player = new Player('DefaultPlayerObject', false);
+        this.displayTurn = "En attente d'un autre joueur...";
+        this.isTurnOurs = false;
         this.nameVP1dictionary0 = 0;
         this.vpLevel = 'debutant';
+        this.isSpectator = false;
+        this.creatorShouldBeAbleToStartGame = false;
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
@@ -92,34 +104,5 @@ export class InfoClientService {
         this.nameVPBeginner = [];
         this.nameVPExpert = [];
         this.dictionaries = [];
-    }
-
-    generateNameOpponent(namePLayer: string): void {
-        let randomNumber = this.giveRandomNbOpponent();
-
-        if (this.vpLevel === 'debutant') {
-            while (namePLayer === this.nameVPBeginner[randomNumber].firstName + this.nameVPBeginner[randomNumber].lastName) {
-                if (randomNumber === this.nameVPBeginner.length - 1) {
-                    randomNumber--;
-                } else {
-                    randomNumber++;
-                }
-            }
-            this.nameOpponent = this.nameVPBeginner[randomNumber].firstName + this.nameVPBeginner[randomNumber].lastName;
-        } else {
-            while (namePLayer === this.nameVPExpert[randomNumber].firstName + this.nameVPExpert[randomNumber].lastName) {
-                if (randomNumber === this.nameVPExpert.length - 1) {
-                    randomNumber--;
-                } else {
-                    randomNumber++;
-                }
-            }
-            this.nameOpponent = this.nameVPExpert[randomNumber].firstName + this.nameVPExpert[randomNumber].lastName;
-        }
-    }
-
-    private giveRandomNbOpponent(): number {
-        const returnValue = Math.floor(Math.random() * this.nameVPBeginner.length);
-        return returnValue;
     }
 }

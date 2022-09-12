@@ -16,8 +16,6 @@ import { ScoreCountService } from './score-count.service';
 
 @Service()
 export class VirtualPlayerService {
-    // TODO TRIE A BOUGER ABSOLUMENT (mettre la gameServer)
-
     private validEntries: Map<Vec2, Set<string>>;
     private direction: string;
     private anchorSquares: Vec2[];

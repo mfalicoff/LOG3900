@@ -4,6 +4,7 @@ import { Player } from '@app/classes/player';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
 import { ChatService } from './chat.service';
+import { DatabaseService } from './database.service';
 import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
 import { ObjectiveService } from './objective.service';
@@ -20,6 +21,7 @@ export class PlayAreaService {
         private chatService: ChatService,
         private expertVPService: ExpertVP,
         private objectiveService: ObjectiveService,
+        private databaseService: DatabaseService,
     ) {
         this.sio = new io.Server();
     }
@@ -31,7 +33,7 @@ export class PlayAreaService {
     changePlayer(game: GameServer) {
         // Update les tiles du board en old
         this.updateOldTiles(game);
-        const playerThatJustPlayed = game.mapPlayers.get(game.currentPlayerId);
+        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
 
         if (playerThatJustPlayed) {
             // update the variable that contains the number of letter in the reserve
@@ -39,37 +41,23 @@ export class PlayAreaService {
             // add a turn to the player that just played
             playerThatJustPlayed.turn += 1;
         }
-        // We verify that the game isn't finished, if it is, we stop the game
+        // is the game is finished we stop the game
         if (game.gameFinished && playerThatJustPlayed) {
-            const opponent = game.mapPlayers.get(playerThatJustPlayed.idOpponent);
-            if (opponent) {
-                this.sendGameToBothPlayer(game, playerThatJustPlayed, opponent);
-            }
-            this.triggerStopTimer(playerThatJustPlayed);
+            this.sendGameToAllClientInRoom(game);
+            this.triggerStopTimer(game.roomName);
             return;
         }
 
-        // Changes the current player
-        for (const key of game.mapPlayers.keys()) {
-            if (key !== game.currentPlayerId) {
-                game.currentPlayerId = key;
-                break;
-            }
+        // changes the current player
+        game.idxPlayerPlaying = (game.idxPlayerPlaying + 1) % game.mapPlayers.size;
+        const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
+        if (playerPlaying.idPlayer === 'virtualPlayer') {
+            this.virtualPlayerAction(game, playerPlaying);
         }
 
-        // make the virtual player play if it is his turn and he is activated
-        if (game.currentPlayerId === 'virtualPlayer') {
-            const virtualPlayer = game.mapPlayers.get('virtualPlayer');
-            if (virtualPlayer) {
-                this.virtualPlayerAction(game, virtualPlayer);
-            }
-        }
-
-        const newPlayerToPlay = game.mapPlayers.get(game.currentPlayerId);
-        if (newPlayerToPlay && playerThatJustPlayed) {
-            // Updates the game of both player
-            this.sendGameToBothPlayer(game, playerThatJustPlayed, newPlayerToPlay);
-        }
+        // Updates the game of all players
+        this.sendGameToAllClientInRoom(game);
+        
         // reset le timer pour les deux clients
         this.triggerTimer(game);
     }
@@ -79,69 +67,90 @@ export class PlayAreaService {
         game.nbLetterReserve = this.letterBankService.getNbLettersInLetterBank(game.letterBank);
         game.gameStarted = true;
 
-        // DETERMINER FIRST PLAYER
-        const keys = Array.from(game.mapPlayers.keys());
-        game.currentPlayerId = keys[Math.floor(Math.random() * game.mapPlayers.size)];
-
-        const player = game.mapPlayers.get(game.currentPlayerId);
-
-        if (game.gameMode === 'Multi') {
-            game.masterTimer = game.currentPlayerId;
-        } else if (player) {
-            game.masterTimer = player.idPlayer === 'virtualPlayer' ? player.idOpponent : player.idPlayer;
+        //init the stand for each player
+        for(let player of game.mapPlayers.values()){
+            this.standService.onInitStandPlayer(game.letters, game.letterBank, player);
         }
 
-        // tell our two client to start the timer
-        let opponent;
-        if (player) {
-            opponent = game.mapPlayers.get(player.idOpponent);
-            if (opponent) {
-                this.sendGameToBothPlayer(game, opponent, player);
+        // determine the first player to play and also set this player to the master time
+        // (reminder: the master time is the player that controls the timer for the game)
+        game.idxPlayerPlaying = Math.floor(Math.random() * game.mapPlayers.size);
+        
+        //we set the master timer, it has to be a human client not a virtual player
+        for(const player of game.mapPlayers.values()){
+            if(player.idPlayer === 'virtualPlayer'){
+                continue;
             }
-            this.triggerTimer(game);
+            game.masterTimer = player.idPlayer;
+            break;
         }
 
+
+        // we send the game to all the players
+        this.sendGameToAllClientInRoom(game);
+        // tell all our clients to start the timer
+        this.triggerTimer(game);
+
+        const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         // make the virtual player play
-        if (player && game.currentPlayerId === 'virtualPlayer') {
-            this.virtualPlayerAction(game, player);
+        if (playerPlaying && playerPlaying.idPlayer === 'virtualPlayer') {
+            this.virtualPlayerAction(game, playerPlaying);
         }
         // update board tiles to old
         this.updateOldTiles(game);
     }
 
-    generateNameOpponent(namePLayer: string): string {
-        const nameVPOptions = ['Mike Oxmol', 'Lee Hwak', 'Hugh Jass'];
-
-        let randomNumber = this.giveRandomNbOpponent(nameVPOptions.length);
-        while (namePLayer === nameVPOptions[randomNumber]) {
-            if (randomNumber === nameVPOptions.length - 1) {
-                randomNumber--;
-            } else {
-                randomNumber++;
+    generateNameOpponent(game: GameServer, nameFree: string): string {
+        let namesAlrdyUsed : string[] = [];
+        for(let player of game.mapPlayers.values()){
+            //we don't add the name that is going to be delete because this is the old player
+            if(player.name === nameFree){
+                continue;
+            }
+            namesAlrdyUsed.push(player.name);
+        }
+        const nbVPNames = this.databaseService.namesVP.length;
+        let randomNumber = this.giveRandomNbOpponent(nbVPNames);
+        for(let i = 0; i < nbVPNames; i++){
+            let newName : string = this.databaseService.namesVP[randomNumber + i % nbVPNames].firstName + " "  
+            + this.databaseService.namesVP[randomNumber + i % nbVPNames].lastName;
+            if (!namesAlrdyUsed.includes(newName)){
+                return newName;
             }
         }
-        return nameVPOptions[randomNumber];
+        return 'no newNameFound';
     }
 
-    replaceHumanByBot(playerThatLeaves: Player, opponent: Player, game: GameServer, message: string) {
-        // we send to the opponent the fact that the player disconnected
-        opponent.chatHistory.push({ message: 'Le joueur ' + playerThatLeaves?.name + message, isCommand: false, sender: 'S' });
-        opponent.chatHistory.push({ message: GlobalConstants.REPLACEMENT_BY_BOT, isCommand: false, sender: 'S' });
+    //function that transforms the playerThatLeaves into a virtual player
+    replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
+        // we send to everyone that the player has left and has been replaced by a bot   
+        this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
+        this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
 
+        // we keep the old id to determine later to change the old player's turn or not
         const oldIdPlayer = playerThatLeaves.idPlayer;
 
-        game.gameMode = GlobalConstants.MODE_SOLO;
-        playerThatLeaves.idPlayer = 'virtualPlayer';
-        playerThatLeaves.name = this.generateNameOpponent(opponent.name);
-        opponent.idOpponent = 'virtualPlayer';
+        // we delete the old player
+        game.mapPlayers.delete(playerThatLeaves.name);
 
-        // we delete the old player and replacer him with the virtual player
-        game.mapPlayers.delete(oldIdPlayer);
-        game.mapPlayers.set(playerThatLeaves.idPlayer, playerThatLeaves);
+        // we replace him with the virtual player
+        playerThatLeaves.idPlayer = 'virtualPlayer';
+        playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
+        game.mapPlayers.set(playerThatLeaves.name, playerThatLeaves);
 
         // we change the player turn if it was the player that left's turn
-        if (game.currentPlayerId === oldIdPlayer) {
+        const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
+        if (playerPlaying.idPlayer === oldIdPlayer) {
             this.changePlayer(game);
+        }
+    }
+
+    sendMsgToAllInRoom(game: GameServer, message: string) {
+        for(const player of game.mapPlayers.values()){
+            player.chatHistory.push({ message: message, isCommand: false, sender: 'S' });
+        }
+        for(const spectator of game.mapSpectators.values()){
+            spectator.chatHistory.push({ message: message, isCommand: false, sender: 'S' });
         }
     }
 
@@ -152,13 +161,8 @@ export class PlayAreaService {
         if (!choosedMoved) {
             if (game.letterBank.size > GlobalConstants.DEFAULT_NB_LETTER_STAND) {
                 const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank, game.vpLevel);
-                game.mapPlayers
-                    .get(player.idOpponent)
-                    ?.chatHistory.push({ message: player.name + ' : !échanger ' + lettersExchanged, isCommand: true, sender: 'O' });
-                game.mapPlayers
-                    .get(player.idOpponent)
-                    ?.chatHistory.push({ message: GlobalConstants.EXCHANGE_OPPONENT_CMD, isCommand: false, sender: 'O' });
-
+                this.chatService.pushMsgToAllPlayers(game, player.name, "!échanger" + lettersExchanged, true, 'O');
+                this.chatService.pushMsgToAllPlayers(game, player.name, GlobalConstants.EXCHANGE_OPPONENT_CMD, false, 'O');
                 resultCommand = '!échanger ' + lettersExchanged;
             } else {
                 this.chatService.passCommand('!passer', game, player);
@@ -209,9 +213,7 @@ export class PlayAreaService {
                 resultCommand = '!passer';
             } else {
                 const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank, game.vpLevel);
-                game.mapPlayers
-                    .get(player.idOpponent)
-                    ?.chatHistory.push({ message: player.name + ' : !échanger ' + lettersExchanged, isCommand: true, sender: 'O' });
+                this.chatService.pushMsgToAllPlayers(game, player.name, "!échanger " + lettersExchanged, true, 'O');
                 resultCommand = '!échanger ' + lettersExchanged;
             }
         } else if (probaMove < neinyPercent) {
@@ -247,82 +249,35 @@ export class PlayAreaService {
     }
 
     private triggerTimer(game: GameServer) {
-        const player = game.mapPlayers.get(game.currentPlayerId);
-        if (!player) {
-            return;
-        }
-        if (game.gameMode === 'Multi') {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('startClearTimer', {
-                minutesByTurn: game.minutesByTurn,
-                currentPlayerId: game.currentPlayerId,
-            });
-            this.sio.sockets.sockets.get(player.idOpponent)?.emit('startClearTimer', {
-                minutesByTurn: game.minutesByTurn,
-                currentPlayerId: game.currentPlayerId,
-            });
-        } else {
-            if (player.idPlayer === 'virtualPlayer') {
-                this.sio.sockets.sockets.get(player.idOpponent)?.emit('startClearTimer', {
-                    minutesByTurn: game.minutesByTurn,
-                    currentPlayerId: game.currentPlayerId,
-                });
-            } else {
-                this.sio.sockets.sockets.get(player.idPlayer)?.emit('startClearTimer', {
-                    minutesByTurn: game.minutesByTurn,
-                    currentPlayerId: game.currentPlayerId,
-                });
-            }
+        this.sio.to(game.roomName).emit('startClearTimer', {
+            minutesByTurn: game.minutesByTurn,
+            currentPlayerId: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].idPlayer,
+        });
+    }
+
+    private sendGameToAllClientInRoom(game: GameServer) {
+        // We send to all clients a gameState and a scoreBoardState\
+        this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+
+        // we send to all clients an update of the players and spectators
+        this.sio.to(game.roomName).emit('playersSpectatorsUpdate', {
+            roomName: game.roomName,
+            players: Array.from(game.mapPlayers.values()),
+            spectators: Array.from(game.mapSpectators.values()),
+        });
+
+        // we send an update of the player object for each respective client
+        for(const player of game.mapPlayers.values()){
+            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
         }
     }
 
-    private sendGameToBothPlayer(game: GameServer, opponent: Player, player: Player) {
-        // we send a version of the game to both players
-        if (game.gameMode === 'Multi') {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('gameUpdateClient', {
-                game,
-                player,
-                scoreOpponent: opponent.score,
-                nbLetterStandOpponent: opponent.nbLetterStand,
-            });
-            this.sio.sockets.sockets.get(player.idOpponent)?.emit('gameUpdateClient', {
-                game,
-                player: opponent,
-                scoreOpponent: player.score,
-                nbLetterStandOpponent: player.nbLetterStand,
-            });
-        } else {
-            if (player.idPlayer === 'virtualPlayer') {
-                this.sio.sockets.sockets.get(player.idOpponent)?.emit('gameUpdateClient', {
-                    game,
-                    player: opponent,
-                    scoreOpponent: player.score,
-                    nbLetterStandOpponent: player.nbLetterStand,
-                });
-            } else {
-                this.sio.sockets.sockets.get(player.idPlayer)?.emit('gameUpdateClient', {
-                    game,
-                    player,
-                    scoreOpponent: opponent.score,
-                    nbLetterStandOpponent: opponent.nbLetterStand,
-                });
-            }
-        }
-    }
-
-    private triggerStopTimer(player: Player) {
-        if (player.idOpponent !== 'virtualPlayer') {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('stopTimer');
-            this.sio.sockets.sockets.get(player.idOpponent)?.emit('stopTimer');
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
-            this.sio.sockets.sockets.get(player.idOpponent)?.emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
-        } else {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('stopTimer');
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
-        }
+    private triggerStopTimer(roomName: string) {
+        this.sio.to(roomName).emit('stopTimer');
+        this.sio.to(roomName).emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
     }
 
     private giveRandomNbOpponent(sizeArrayVPOptions: number): number {
-        const returnValue = Math.floor(Math.random() * sizeArrayVPOptions);
-        return returnValue;
+        return Math.floor(Math.random() * sizeArrayVPOptions);
     }
 }

@@ -58,6 +58,8 @@ export class ParametresSelectionPageComponent implements OnInit {
     }
 
     createRoom() {
+        //useful to reset the ui
+        this.infoClientService.initializeService();
         let roomName = '';
         if (this.infoClientService.gameMode === GlobalConstants.MODE_MULTI) {
             const inputElement = document.getElementById('roomName') as HTMLInputElement;
@@ -69,7 +71,6 @@ export class ParametresSelectionPageComponent implements OnInit {
                 isBonusRandom: this.infoClientService.randomBonusesOn,
                 gameMode: this.infoClientService.gameMode,
                 isLog2990Enabled: this.infoClientService.isLog2990Enabled,
-                nameOpponent: '',
                 vpLevel: '',
             });
         } else {
@@ -81,13 +82,10 @@ export class ParametresSelectionPageComponent implements OnInit {
                 isBonusRandom: this.infoClientService.randomBonusesOn,
                 gameMode: this.infoClientService.gameMode,
                 isLog2990Enabled: this.infoClientService.isLog2990Enabled,
-                nameOpponent: this.infoClientService.nameOpponent,
                 vpLevel: this.infoClientService.vpLevel,
             });
         }
-        this.infoClientService.actualRoom = roomName;
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
-        this.infoClientService.generateNameOpponent(this.infoClientService.playerName);
     }
 
     private timeSelection(interval: string) {

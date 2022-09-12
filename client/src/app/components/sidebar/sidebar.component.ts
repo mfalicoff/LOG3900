@@ -22,7 +22,7 @@ export class SidebarComponent {
         private drawingBoardService: DrawingBoardService,
         private drawingService: DrawingService,
         private socketService: SocketService,
-        private infoClientService: InfoClientService,
+        public infoClientService: InfoClientService,
         private router: Router,
     ) {}
 
@@ -44,6 +44,10 @@ export class SidebarComponent {
     }
 
     onClickGiveUpButton() {
+        if(this.infoClientService.isSpectator){ 
+            return;
+        }
+
         if (this.infoClientService.game.gameFinished) {
             alert("La game est finie, plus d'abandon possible.");
             return;
@@ -57,6 +61,10 @@ export class SidebarComponent {
     }
 
     finishGameClick() {
+        if(this.infoClientService.isSpectator){ 
+            return;
+        }
+
         if (!this.infoClientService.game.gameFinished) {
             return;
         }
@@ -64,6 +72,23 @@ export class SidebarComponent {
     }
 
     shouldConvertSoloBe(): boolean {
+        if(this.infoClientService.isSpectator){ 
+            return false;
+        }
+
+        let answer = true;
+
+        if (this.infoClientService.displayTurn !== "En attente d'un autre joueur...") {
+            answer = false;
+        }
+        return answer;
+    }
+
+    shouldLeaveGameBe(){
+        if(this.infoClientService.isSpectator){ 
+            return true;
+        }
+
         let answer = true;
 
         if (this.infoClientService.displayTurn !== "En attente d'un autre joueur...") {
@@ -73,17 +98,23 @@ export class SidebarComponent {
     }
 
     convertGameInSolo(vpLevel: string) {
+        if(this.infoClientService.isSpectator){ 
+            return;
+        }
+
         this.infoClientService.vpLevel = vpLevel;
-        this.infoClientService.generateNameOpponent(this.infoClientService.playerName);
-        this.socketService.socket.emit('convertGameInSolo', this.infoClientService.nameOpponent, vpLevel);
+        this.socketService.socket.emit('convertGameInSolo', vpLevel);
     }
 
     leaveGame() {
         this.socketService.socket.emit('leaveGame');
-        this.infoClientService.actualRoom = '';
     }
 
     openModal() {
+        if(this.infoClientService.isSpectator){ 
+            return;
+        }
+        
         const modalRef = this.modal.open(ModalVpLevelsComponent, {
             panelClass: 'modalVPContainer',
         });
@@ -91,5 +122,24 @@ export class SidebarComponent {
         modalRef.afterClosed().subscribe((result) => {
             this.convertGameInSolo(result);
         });
+    }
+
+    startGame(){
+        this.socketService.socket.emit('startGame', this.infoClientService.game.roomName);
+        this.infoClientService.creatorShouldBeAbleToStartGame = false;
+    }
+
+    shouldSpecBeAbleToBePlayer(){
+        const nbVirtualPlayer = Array.from(this.infoClientService.actualRoom.players).filter(
+            (player) => player.idPlayer === 'virtualPlayer').length;
+        if(nbVirtualPlayer > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    spectWantsToBePlayer(){
+        this.socketService.socket.emit('spectWantsToBePlayer');
     }
 }

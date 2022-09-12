@@ -112,7 +112,7 @@ export class MouseEventService {
             }
         }
 
-        const playerThatJustPlayed = game.mapPlayers.get(game.currentPlayerId);
+        const playerThatJustPlayed =  Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         if (playerThatJustPlayed && game.isLog2990Enabled) {
             this.objectiveService.isPlayerObjectivesCompleted(game, playerThatJustPlayed, exchangeCmd);
         }
@@ -212,6 +212,6 @@ export class MouseEventService {
     }
 
     private sendStandToClient(player: Player) {
-        this.sio.sockets.sockets.get(player.idPlayer)?.emit('sendStand', player);
+        this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
     }
 }
