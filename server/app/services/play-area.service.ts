@@ -112,8 +112,11 @@ export class PlayAreaService {
         const nbVPNames = this.databaseService.namesVP.length;
         let randomNumber = this.giveRandomNbOpponent(nbVPNames);
         for(let i = 0; i < nbVPNames; i++){
-            let newName : string = this.databaseService.namesVP[randomNumber + i % nbVPNames].firstName + " "  
-            + this.databaseService.namesVP[randomNumber + i % nbVPNames].lastName;
+            console.log("index is: ", (randomNumber + i) % nbVPNames);
+            console.log("names available are: ", this.databaseService.namesVP);
+            const randomIdx = (randomNumber + i) % nbVPNames;
+            let newName : string = this.databaseService.namesVP[randomIdx].firstName + " "  
+            + this.databaseService.namesVP[randomIdx].lastName;
             if (!namesAlrdyUsed.includes(newName)){
                 return newName;
             }
@@ -130,6 +133,16 @@ export class PlayAreaService {
         // we keep the old id to determine later to change the old player's turn or not
         const oldIdPlayer = playerThatLeaves.idPlayer;
 
+        let isTurnTurnNeccesary = false;
+        //we check if we will have to change the turn of the player that just left
+        if(game.gameStarted){
+            // we change the player turn if it was the player that left's turn
+            const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
+            if (playerPlaying.idPlayer === oldIdPlayer) {
+                isTurnTurnNeccesary = true;
+            }
+        }
+
         // we delete the old player
         game.mapPlayers.delete(playerThatLeaves.name);
 
@@ -140,12 +153,8 @@ export class PlayAreaService {
 
         //if the game is not started we don't need to change the turn
         //furthermore if we entered here game.idxPlayerPlaying would be -1 so server would crash
-        if(game.gameStarted){
-            // we change the player turn if it was the player that left's turn
-            const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-            if (playerPlaying.idPlayer === oldIdPlayer) {
-                this.changePlayer(game);
-            }
+        if(isTurnTurnNeccesary){
+            this.changePlayer(game);
         }
     }
 
@@ -255,7 +264,7 @@ export class PlayAreaService {
     private triggerTimer(game: GameServer) {
         this.sio.to(game.roomName).emit('startClearTimer', {
             minutesByTurn: game.minutesByTurn,
-            currentPlayerId: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].idPlayer,
+            currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
         });
     }
 

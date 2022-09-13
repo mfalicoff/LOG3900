@@ -284,8 +284,7 @@ export class SocketManager {
     private shouldCreatorBeAbleToStartGame(game: GameServer,){
         const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
             (player) => player.idPlayer !== 'virtualPlayer').length;
-        //TODO WARNING : REMOVE THE / 2 LATER WHEN THERE IS 4 PLAYERS
-        if (nbRealPlayer < GlobalConstants.MIN_PERSON_PLAYING/2) {
+        if (nbRealPlayer < GlobalConstants.MIN_PERSON_PLAYING) {
             return;
         }
         //if we have enough real player, we send a message to the creator to start the game

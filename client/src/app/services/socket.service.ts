@@ -75,7 +75,9 @@ export class SocketService {
             //TODO doesn't update the timer for the spectator
             this.updateUiForSpectator(this.infoClientService.game);
             //update display turn to show that we are waiting for creator or other players
-            this.updateUiBeforeStartGame(players);
+            if(!this.infoClientService.game.gameStarted){
+                this.updateUiBeforeStartGame(players);
+            }
         });
         
         this.socket.on('findTileToPlaceArrow', (realPosInBoardPx) => {
@@ -105,12 +107,12 @@ export class SocketService {
     private timerHandler() {
         this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
 
-        this.socket.on('startClearTimer', ({ minutesByTurn, currentPlayerId }) => {
-            if (currentPlayerId === this.socket.id) {
+        this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
+            if (currentNamePlayerPlaying === this.infoClientService.playerName){
                 this.infoClientService.displayTurn = "C'est votre tour !";
                 this.infoClientService.isTurnOurs = true;
             } else {
-                const playerPlaying = this.infoClientService.actualRoom.players.find((player) => player.idPlayer === currentPlayerId);
+                const playerPlaying = this.infoClientService.actualRoom.players.find((player) => player.name === currentNamePlayerPlaying);
                 this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + " de jouer !";
                 this.infoClientService.isTurnOurs = false;
             }
