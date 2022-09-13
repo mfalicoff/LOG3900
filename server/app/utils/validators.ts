@@ -6,10 +6,10 @@ import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 
 export class CreateUserValidator {
     @IsEmail()
-    public email: string;
+    email: string;
 
     @IsString()
-    public password: string;
+    password: string;
 }
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */

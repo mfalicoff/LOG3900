@@ -4,6 +4,7 @@
  * @returns true & false
  * @description this value is Empty Check
  */
+// eslint-disable-next-line @typescript-eslint/ban-types
 export const isEmpty = (value: string | number | object): boolean => {
     if (value === null) {
         return true;

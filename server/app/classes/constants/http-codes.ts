@@ -1,5 +1,4 @@
 export const enum HTTPStatusCode {
-
     OK = 200,
     Created = 201,
     Accepted = 202,

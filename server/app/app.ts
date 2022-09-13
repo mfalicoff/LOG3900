@@ -10,7 +10,7 @@ import * as swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
 import UsersRoute from '@app/routes/users.route';
 import { Routes } from '@app/classes/routes.interface';
-import {HTTPStatusCode} from "@app/classes/constants/http-codes";
+import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 
 @Service()
 export class Application {
