@@ -37,9 +37,8 @@ export class GamePageComponent {
         this.mouseKeyboardEventHandler.onLeftClickGamePage();
     }
 
-    //TODO REMOVE THAT LATER
-    testFunction(){
+    // TODO REMOVE THAT LATER
+    testFunction() {
         this.socketService.socket.emit('callTestFunction');
-        console.log("testFunction called");
     }
 }

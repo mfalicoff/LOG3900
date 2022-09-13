@@ -112,7 +112,7 @@ export class MouseEventService {
             }
         }
 
-        const playerThatJustPlayed =  Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
+        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         if (playerThatJustPlayed && game.isLog2990Enabled) {
             this.objectiveService.isPlayerObjectivesCompleted(game, playerThatJustPlayed, exchangeCmd);
         }

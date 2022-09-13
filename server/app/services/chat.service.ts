@@ -17,10 +17,7 @@ enum Commands {
 
 @Service()
 export class ChatService {
-    constructor(
-        private validator: ValidationService,
-        private endGameService: EndGameService,
-        private objectiveService: ObjectiveService) {}
+    constructor(private validator: ValidationService, private endGameService: EndGameService, private objectiveService: ObjectiveService) {}
 
     // verify if a command is entered and redirect to corresponding function
     sendMessage(input: string, game: GameServer, player: Player): boolean {
@@ -100,8 +97,8 @@ export class ChatService {
         player.chatHistory.push({ message: GlobalConstants.PASS_CMD, isCommand: false, sender: 'S' });
 
         let didEveryonePass3Times = false;
-        for (let player of game.mapPlayers.values()) {
-            if (player.passInARow < 3) {
+        for (const playerElem of game.mapPlayers.values()) {
+            if (playerElem.passInARow < 3) {
                 didEveryonePass3Times = false;
                 break;
             } else {
@@ -112,6 +109,32 @@ export class ChatService {
             this.showEndGameStats(game, player, false);
             game.gameFinished = true;
         }
+    }
+
+    // functions that psuh to chatHistory the msg to all players in the game
+    // then the chatHistory is sent to the client each time a player send a message
+    // TODO REFACTORING messageSender and command are too much we only need one of them
+    pushMsgToAllPlayers(game: GameServer, playerSendingMsg: string, msg: string, command: boolean, messageSender: string) {
+        game.mapPlayers.forEach((player) => {
+            if (messageSender !== 'S') {
+                if (player.name === playerSendingMsg) {
+                    messageSender = 'P';
+                } else {
+                    messageSender = 'O';
+                }
+                player.chatHistory.push({ message: playerSendingMsg + ': ' + msg, isCommand: command, sender: messageSender });
+            } else {
+                player.chatHistory.push({ message: msg, isCommand: command, sender: messageSender });
+            }
+        });
+
+        game.mapSpectators.forEach((spectator) => {
+            if (messageSender !== 'S') {
+                spectator.chatHistory.push({ message: playerSendingMsg + ': ' + msg, isCommand: command, sender: 'O' });
+            } else {
+                spectator.chatHistory.push({ message: msg, isCommand: command, sender: messageSender });
+            }
+        });
     }
 
     // filter the command to call the correct function
@@ -167,8 +190,8 @@ export class ChatService {
     }
 
     private debugCommand(input: string, player: Player, game: GameServer) {
-        for (let playerElem of game.mapPlayers.values()) {
-            if (playerElem.idPlayer === "virtualPlayer") {
+        for (const playerElem of game.mapPlayers.values()) {
+            if (playerElem.idPlayer === 'virtualPlayer') {
                 playerElem.debugOn = !playerElem.debugOn;
             }
         }
@@ -183,8 +206,14 @@ export class ChatService {
 
     private showEndGameStats(game: GameServer, player: Player, gameAbandoned: boolean) {
         this.pushMsgToAllPlayers(game, player.name, GlobalConstants.END_OF_GAME, false, 'S');
-        for (let player of game.mapPlayers.values()) {
-            this.pushMsgToAllPlayers(game, player.name, player.name + ' : ' + this.endGameService.listLetterStillOnStand(player), false, 'S');
+        for (const playerElem of game.mapPlayers.values()) {
+            this.pushMsgToAllPlayers(
+                game,
+                playerElem.name,
+                playerElem.name + ' : ' + this.endGameService.listLetterStillOnStand(playerElem),
+                false,
+                'S',
+            );
         }
 
         if (!gameAbandoned) {
@@ -200,53 +229,16 @@ export class ChatService {
                 player.name,
                 GlobalConstants.WINNER_MSG_PT1 + winners[0].name + GlobalConstants.WINNER_MSG_PT2 + winners[0].score,
                 false,
-                'S');
+                'S',
+            );
         } else if (winners.length > 1) {
-            this.pushMsgToAllPlayers(
-                game,
-                player.name,
-                GlobalConstants.DRAW_MSG,
-                false,
-                'S');
+            this.pushMsgToAllPlayers(game, player.name, GlobalConstants.DRAW_MSG, false, 'S');
 
-            for (let winner of winners) {
-                this.pushMsgToAllPlayers(
-                    game,
-                    player.name,
-                    "Score final pour: " + winner.name + " est: " + winner.score,
-                    false,
-                    'S');
+            for (const winner of winners) {
+                this.pushMsgToAllPlayers(game, player.name, 'Score final pour: ' + winner.name + ' est: ' + winner.score, false, 'S');
             }
         } else {
             this.pushMsgToAllPlayers(game, player.name, GlobalConstants.GAME_NOT_UNDERSTOOD, false, 'S');
         }
-    }
-
-    //functions that psuh to chatHistory the msg to all players in the game
-    //then the chatHistory is sent to the client each time a player send a message
-    //TODO REFACTORING messageSender and command are too much we only need one of them
-    pushMsgToAllPlayers(game: GameServer, playerSendingMsg: string,
-        msg: string, command: boolean,
-        messageSender: string) {
-        game.mapPlayers.forEach((player) => {
-            if (messageSender !== 'S') {
-                if (player.name === playerSendingMsg) {
-                    messageSender = 'P';
-                } else {
-                    messageSender = 'O';
-                }
-                player.chatHistory.push({ message: playerSendingMsg + ": " + msg, isCommand: command, sender: messageSender });
-            } else {
-                player.chatHistory.push({ message: msg, isCommand: command, sender: messageSender });
-            }
-        });
-
-        game.mapSpectators.forEach((spectator) => {
-            if (messageSender !== 'S') {
-                spectator.chatHistory.push({ message: playerSendingMsg + ": " + msg, isCommand: command, sender: 'O' });
-            } else {
-                spectator.chatHistory.push({ message: msg, isCommand: command, sender: messageSender });
-            }
-        });
     }
 }

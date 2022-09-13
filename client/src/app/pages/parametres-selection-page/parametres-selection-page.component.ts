@@ -58,7 +58,7 @@ export class ParametresSelectionPageComponent implements OnInit {
     }
 
     createRoom() {
-        //useful to reset the ui
+        // useful to reset the ui
         this.infoClientService.initializeService();
         let roomName = '';
         if (this.infoClientService.gameMode === GlobalConstants.MODE_MULTI) {

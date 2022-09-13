@@ -32,17 +32,17 @@ export class InfoClientService {
     isTurnOurs: boolean;
 
     rooms: RoomData[];
-    //this old the array of players and spectators in the room
-    //it is not in "game" object bc it is stored as maps which canned be sent to the client
-    //and we use the players/spectators array to display the players/spectators in the room
-    //when on the multiplayer page
-    actualRoom : RoomData;
+    // this old the array of players and spectators in the room
+    // it is not in "game" object bc it is stored as maps which canned be sent to the client
+    // and we use the players/spectators array to display the players/spectators in the room
+    // when on the multiplayer page
+    actualRoom: RoomData;
 
     letterBank: Map<string, LetterData>;
 
     vpLevel: string;
 
-    //useful to know to hide stands or not
+    // useful to know to hide stands or not
     isSpectator: boolean;
 
     creatorShouldBeAbleToStartGame: boolean;
@@ -57,12 +57,9 @@ export class InfoClientService {
         this.initializeService();
     }
 
-    //public bc it is reused to reset for new games
-    initializeService(){
-        this.game = new GameServer(
-            0, false, 
-            GlobalConstants.MODE_SOLO, false, 
-            "defaultLevel", "defaultRoom");
+    // public bc it is reused to reset for new games
+    initializeService() {
+        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, false, 'defaultLevel', 'defaultRoom');
         this.player = new Player('DefaultPlayerObject', false);
         this.displayTurn = "En attente d'un autre joueur...";
         this.isTurnOurs = false;

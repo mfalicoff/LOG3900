@@ -45,9 +45,10 @@ export class PutLogicService {
     }
 
     /**
-    * check if word to draw is valid
-    * @returns true is word valid, false otherwise
-    */
+     * check if word to draw is valid
+     *
+     * @returns true is word valid, false otherwise
+     */
     computeWordToDraw(game: GameServer, player: Player, position: string, word: string): boolean {
         // we verify the validity of the word
         this.boardLogicUpdate(game, position, word);
@@ -186,7 +187,6 @@ export class PutLogicService {
         // player update for stand
         this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
         if (!isWordValid) {
-            console.log("Word is not valid");
             this.cancelUpdateOperation(game, player, arrayIndexWord, arrayLetter);
         }
     }
@@ -198,12 +198,12 @@ export class PutLogicService {
         // we send to all clients an update of the players and spectators
         this.sio.to(game.roomName).emit('playersSpectatorsUpdate', {
             roomName: game.roomName,
-            players: Array.from(game.mapPlayers.values()), 
+            players: Array.from(game.mapPlayers.values()),
             spectators: Array.from(game.mapSpectators.values()),
         });
 
         // we send an update of the player object for each respective client
-        for(const player of game.mapPlayers.values()){
+        for (const player of game.mapPlayers.values()) {
             this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
         }
     }
@@ -215,12 +215,9 @@ export class PutLogicService {
                 this.standService.writeLetterStandLogic(positionIndex, arrayLetter[indexWord], game.letterBank, player);
                 indexWord++;
             }
-            console.log("letters to writeL:");
-            console.log(arrayLetter);
-            console.log("cancel stand operation");
             // Game update
             this.sendGameToAllClientInRoom(game);
-        },  GlobalConstants.TIME_DELAY_RM_BAD_WORD);
+        }, GlobalConstants.TIME_DELAY_RM_BAD_WORD);
     }
 
     private verifyIfTileOnBoardAlready(game: GameServer, letterToCheck: string, indexLetter: number, position: string): boolean {

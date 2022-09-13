@@ -43,9 +43,9 @@ export class DebugCommandService {
     }
 
     /*
-    * this function push the debug msg in the player's output
-    * TODO make !debug command only accesible to admin accounts ?
-    */
+     * this function push the debug msg in the player's output
+     * TODO make !debug command only accesible to admin accounts ?
+     */
     debugPrint(player: Player, moveToPlay: Move, game: GameServer) {
         if (!player.debugOn || !moveToPlay) {
             return;
@@ -58,8 +58,8 @@ export class DebugCommandService {
             message += msg + ' ';
         }
 
-        for(const playerElem of game.mapPlayers.values()){
-            if(playerElem.idPlayer === "virtualPlayer"){
+        for (const playerElem of game.mapPlayers.values()) {
+            if (playerElem.idPlayer === 'virtualPlayer') {
                 continue;
             }
             playerElem.chatHistory.push({ message: message + '(' + moveToPlay.score + ')', isCommand: false, sender: 'O' });

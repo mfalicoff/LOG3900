@@ -93,7 +93,7 @@ export class MouseKeyboardEventHandlerService {
 
     onRightClickStand(event: MouseEvent) {
         this.isCommBoxJustBeenClicked = false;
-        if(!this.infoClientService.game?.gameStarted){
+        if (!this.infoClientService.game?.gameStarted) {
             return;
         }
         event.preventDefault();
@@ -108,7 +108,7 @@ export class MouseKeyboardEventHandlerService {
         if (!this.isCommBoxJustBeenClicked) {
             this.isCommunicationBoxFocus = false;
         }
-        if(!this.infoClientService.game?.gameStarted){
+        if (!this.infoClientService.game?.gameStarted) {
             return;
         }
         this.isCommBoxJustBeenClicked = false;

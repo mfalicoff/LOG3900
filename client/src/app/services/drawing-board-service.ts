@@ -38,7 +38,6 @@ export class DrawingBoardService {
     }
 
     drawBoardInit(bonusBoard: string[][]) {
-        console.log("bonus board", bonusBoard);
         // we take out the first line and column because they aren't used for the drawing of the board
         bonusBoard.splice(0, 1);
         bonusBoard = this.removeEl(bonusBoard, 0);

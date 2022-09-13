@@ -41,7 +41,7 @@ export class SidebarComponent {
     }
 
     onClickGiveUpButton() {
-        if(this.infoClientService.isSpectator){ 
+        if (this.infoClientService.isSpectator) {
             return;
         }
 
@@ -58,7 +58,7 @@ export class SidebarComponent {
     }
 
     finishGameClick() {
-        if(this.infoClientService.isSpectator){ 
+        if (this.infoClientService.isSpectator) {
             return;
         }
 
@@ -68,8 +68,8 @@ export class SidebarComponent {
         this.router.navigate(['/home']);
     }
 
-    shouldLeaveGameBe(){
-        if(this.infoClientService.isSpectator || this.infoClientService.game.gameFinished){ 
+    shouldLeaveGameBe() {
+        if (this.infoClientService.isSpectator || this.infoClientService.game.gameFinished) {
             return true;
         }
 
@@ -85,22 +85,21 @@ export class SidebarComponent {
         this.socketService.socket.emit('leaveGame');
     }
 
-    startGame(){
+    startGame() {
         this.socketService.socket.emit('startGame', this.infoClientService.game.roomName);
         this.infoClientService.creatorShouldBeAbleToStartGame = false;
     }
 
-    shouldSpecBeAbleToBePlayer(){
-        const nbVirtualPlayer = Array.from(this.infoClientService.actualRoom.players).filter(
-            (player) => player.idPlayer === 'virtualPlayer').length;
-        if(nbVirtualPlayer > 0){
+    shouldSpecBeAbleToBePlayer() {
+        const nbVirtualPlayer = Array.from(this.infoClientService.actualRoom.players).filter((player) => player.idPlayer === 'virtualPlayer').length;
+        if (nbVirtualPlayer > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    spectWantsToBePlayer(){
+    spectWantsToBePlayer() {
         this.socketService.socket.emit('spectWantsToBePlayer');
     }
 }

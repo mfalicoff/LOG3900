@@ -54,9 +54,7 @@ export class GameServer {
 
     vpLevel: string;
 
-    constructor(minutesByTurn: number, randomBonusesOn: boolean, 
-                gameMode: string, isLog2990Enabled: boolean, 
-                vpLevel: string, roomName: string) {
+    constructor(minutesByTurn: number, randomBonusesOn: boolean, gameMode: string, isLog2990Enabled: boolean, vpLevel: string, roomName: string) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;
         this.randomBonusesOn = randomBonusesOn;

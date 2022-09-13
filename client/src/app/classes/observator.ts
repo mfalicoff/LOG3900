@@ -1,2 +1,1 @@
-export class Observator {
-}
+export class Observator {}

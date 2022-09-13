@@ -29,52 +29,53 @@ export class CommunicationBoxService {
                     // We change the turn if word is valid
                     this.playAreaService.changePlayer(game);
                 } else {
-                    //word isn't valid
-                    //pops the msg that shoulnd't have beent sent
-                    for (let playerElem of game.mapPlayers.values()) {
-                        //poping the msg "PlayerName: !placer pos foo"
+                    // word isn't valid
+                    // pops the msg that shoulnd't have beent sent
+                    for (const playerElem of game.mapPlayers.values()) {
+                        // poping the msg "PlayerName: !placer pos foo"
                         playerElem.chatHistory.pop();
                         if (playerElem.name === player.name) {
-                            //poping the msg "Vous avez placé vos lettres"
+                            // poping the msg "Vous avez placé vos lettres"
                             playerElem.chatHistory.pop();
                             playerElem.chatHistory.push({
                                 message: GlobalConstants.WORD_DOESNT_EXIST,
-                                isCommand: false, sender: 'S'
+                                isCommand: false,
+                                sender: 'S',
                             });
                         }
                     }
 
-                    for (let spectator of game.mapSpectators.values()) {
+                    for (const spectator of game.mapSpectators.values()) {
                         spectator.chatHistory.pop();
                     }
-                    //we don't want to explicitly switch the player's turn for now 
-                    //bc it the following timeout would make problems so we control his actions
+                    // we don't want to explicitly switch the player's turn for now
+                    // bc it the following timeout would make problems so we control his actions
                     this.playAreaService.sio.sockets.sockets.get(player.idPlayer)?.emit('changeIsTurnOursStatus', false);
 
                     // timeout bc this is the time before the letter are back to the player
                     setTimeout(() => {
-                        //sending to the player and spectators in the game that the player
-                        //tried a word
-                        for (let playerElem of game.mapPlayers.values()) {
+                        // sending to the player and spectators in the game that the player
+                        // tried a word
+                        for (const playerElem of game.mapPlayers.values()) {
                             if (playerElem.name === player.name) {
                                 continue;
                             }
                             playerElem.chatHistory.push({
-                                message: "Le joueur " + player.name +
-                                    GlobalConstants.PLAYER_TRIED_A_WORD,
-                                isCommand: false, sender: 'S'
+                                message: 'Le joueur ' + player.name + GlobalConstants.PLAYER_TRIED_A_WORD,
+                                isCommand: false,
+                                sender: 'S',
                             });
                         }
-                        for (let spectator of game.mapSpectators.values()) {
+                        for (const spectator of game.mapSpectators.values()) {
                             spectator.chatHistory.push({
-                                message: "Le joueur " + player.name +
-                                    GlobalConstants.PLAYER_TRIED_A_WORD,
-                                isCommand: false, sender: 'S'
+                                message: 'Le joueur ' + player.name + GlobalConstants.PLAYER_TRIED_A_WORD,
+                                isCommand: false,
+                                sender: 'S',
                             });
                         }
-                        //remove the word from the board bc it isn't valid
+                        // remove the word from the board bc it isn't valid
                         this.putLogicService.boardLogicRemove(game, dataSeparated[1], dataSeparated[2]);
-                        //switch the turn of the player
+                        // switch the turn of the player
                         this.playAreaService.changePlayer(game);
                     }, GlobalConstants.TIME_DELAY_RM_BAD_WORD);
                     return false;

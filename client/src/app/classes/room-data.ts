@@ -1,5 +1,5 @@
-import { Player } from "./player";
-import { Spectator } from "./spectator";
+import { Player } from './player';
+import { Spectator } from './spectator';
 
 export class RoomData {
     name: string;
@@ -9,9 +9,7 @@ export class RoomData {
     players: Player[];
     spectators: Spectator[];
 
-    constructor(name: string, timeTurn: string, 
-                isBonusRandom: boolean, isLog2990Enabled: boolean,
-                players: Player[], spectators: Spectator[]) {
+    constructor(name: string, timeTurn: string, isBonusRandom: boolean, isLog2990Enabled: boolean, players: Player[], spectators: Spectator[]) {
         this.name = name;
         this.timeTurn = timeTurn;
         this.isBonusRandom = isBonusRandom;

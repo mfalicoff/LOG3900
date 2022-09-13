@@ -44,9 +44,9 @@ export const DEFAULT_VALUE_NUMBER = -1;
 /// ////////////////////////////////////////////////////////////////////////
 // VARIABLE socketManager
 /// ////////////////////////////////////////////////////////////////////////
-//TODO switch this to 4 when 4 game players will be enabled
+// TODO switch this to 4 when 4 game players will be enabled
 export const MIN_PERSON_PLAYING = 2;
-export const MAX_PERSON_PLAYING = 2;
+export const MAX_PERSON_PLAYING = 4;
 export const TIME_PER_ROUND_DEFAULT = 1000;
 
 /// ////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,8 @@ export const WINNER_MSG_PT1 = 'Bravo ';
 export const WINNER_MSG_PT2 = ' a gagne la partie avec un score de: ';
 export const GAME_WON = 'Vous avez gagné la partie !';
 export const DRAW_MSG = 'La partie a fini a égalité, bravo !';
-export const GAME_NOT_UNDERSTOOD = "Vous jouer tellement bien que le système ne comprend pas ce qu'il se passe donc personne n'a gagne (ou tout le monde on ne sait pas) !";
+export const GAME_NOT_UNDERSTOOD =
+    "Vous jouer tellement bien que le système ne comprend pas ce qu'il se passe donc personne n'a gagne (ou tout le monde on ne sait pas) !";
 export const LETTER_LIST = ' - ListeDeLettres: ';
 export const POINTS_DEDUCTED = ' point(s) qui ont été déduit de votre score: ';
 export const INVALID_LENGTH = ' La taille maximale de 512 caractère a ete depassée';
@@ -98,9 +99,10 @@ export const LETTERS_MUST_TOUCH_OTHERS = ' : les lettres que vous avez placées 
 export const FIRST_LETTER_NOT_IN_H8 = ' : votre premier mot doit commencer dans la case h8!';
 export const LETTERS_FROM_BOARD_WRONG = ' : lettres du plateau de jeu mal utilisées!';
 export const REPLACEMENT_BY_BOT = 'Un bot a maintenant remplacé votre adversaire.';
+export const REPLACEMENT_BY_PLAYER = ' a remplacé le joueur virtuel: ';
 export const NB_MIN_LETTER_BANK = 6;
-export const WAITING_FOR_CREATOR = "En attente du créateur pour demarrer la partie...";
-export const PLAYER_TRIED_A_WORD = " a placé un mot non valide, son tour passe !";
+export const WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
+export const PLAYER_TRIED_A_WORD = ' a placé un mot non valide, son tour passe !';
 
 /// ///////////////////////////////////////////////////////////////////////////
 // /////////////// databaseService constants//////////////////////////////////
