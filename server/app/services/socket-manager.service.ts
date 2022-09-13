@@ -7,7 +7,7 @@ import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { Score } from '@app/classes/score';
 import { Spectator } from '@app/classes/spectator';
-import { User } from '@app/classes/user';
+import { User } from '@app/classes/users.interface';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';

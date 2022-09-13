@@ -8,6 +8,9 @@ import * as logger from 'morgan';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
+import UsersRoute from '@app/routes/users.route';
+import { Routes } from '@app/classes/routes.interface';
+import {HTTPStatusCode} from "@app/classes/constants/http-codes";
 
 @Service()
 export class Application {
@@ -31,15 +34,15 @@ export class Application {
 
         this.config();
 
-        this.bindRoutes();
+        this.bindRoutes([new UsersRoute()]);
     }
 
-    bindRoutes(): void {
+    bindRoutes(routes: Routes[]): void {
         this.app.use('/admin', this.dictionariesController.router);
-        this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
-        this.app.use('/', (req, res) => {
-            res.redirect('/api/docs');
+        routes.forEach((route) => {
+            this.app.use('/', route.router);
         });
+        this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.errorHandling();
     }
 
@@ -55,7 +58,7 @@ export class Application {
     private errorHandling(): void {
         // When previous handlers have not served a request: path wasn't found
         this.app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-            const err: HttpException = new HttpException('Not Found');
+            const err: HttpException = new HttpException(HTTPStatusCode.NotFound, 'Not Found');
             next(err);
         });
 
