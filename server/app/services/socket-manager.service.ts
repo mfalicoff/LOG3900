@@ -71,15 +71,15 @@ export class SocketManager {
             return;
         }
         const player = game.mapPlayers.get(user.name);
-        if (!player) {
+        const spectator = game.mapSpectators.get(socket.id);
+        if (!player && !spectator) {
             return;
         }
-        if (!game.gameStarted) {
-            player.chatHistory.push({ message: GlobalConstants.GAME_NOT_STARTED, isCommand: false, sender: 'S' });
-            socket.emit('playerAndStandUpdate', player);
-            return;
+        if(player){
+            this.communicationBoxService.onEnterPlayer(game, player, placeMsg);
+        }else if(spectator){
+            this.communicationBoxService.onEnterSpectator(game, spectator, placeMsg);
         }
-        this.communicationBoxService.onEnter(game, player, placeMsg);
 
         // We update the chatHistory and the game of each client
         this.gameUpdateClients(game);

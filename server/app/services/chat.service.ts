@@ -17,7 +17,10 @@ enum Commands {
 
 @Service()
 export class ChatService {
-    constructor(private validator: ValidationService, private endGameService: EndGameService, private objectiveService: ObjectiveService) {}
+    constructor(
+        public validator: ValidationService, 
+        private endGameService: EndGameService, 
+        private objectiveService: ObjectiveService) {}
 
     // verify if a command is entered and redirect to corresponding function
     sendMessage(input: string, game: GameServer, player: Player): boolean {
