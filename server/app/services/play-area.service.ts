@@ -57,7 +57,7 @@ export class PlayAreaService {
 
         // Updates the game of all players
         this.sendGameToAllClientInRoom(game);
-        
+
         // reset le timer pour les deux clients
         this.triggerTimer(game);
     }
@@ -67,24 +67,23 @@ export class PlayAreaService {
         game.nbLetterReserve = this.letterBankService.getNbLettersInLetterBank(game.letterBank);
         game.gameStarted = true;
 
-        //init the stand for each player
-        for(let player of game.mapPlayers.values()){
+        // init the stand for each player
+        for (const player of game.mapPlayers.values()) {
             this.standService.onInitStandPlayer(game.letters, game.letterBank, player);
         }
 
         // determine the first player to play and also set this player to the master time
         // (reminder: the master time is the player that controls the timer for the game)
         game.idxPlayerPlaying = Math.floor(Math.random() * game.mapPlayers.size);
-        
-        //we set the master timer, it has to be a human client not a virtual player
-        for(const player of game.mapPlayers.values()){
-            if(player.idPlayer === 'virtualPlayer'){
+
+        // we set the master timer, it has to be a human client not a virtual player
+        for (const player of game.mapPlayers.values()) {
+            if (player.idPlayer === 'virtualPlayer') {
                 continue;
             }
             game.masterTimer = player.idPlayer;
             break;
         }
-
 
         // we send the game to all the players
         this.sendGameToAllClientInRoom(game);
@@ -101,32 +100,29 @@ export class PlayAreaService {
     }
 
     generateNameOpponent(game: GameServer, nameFree: string): string {
-        let namesAlrdyUsed : string[] = [];
-        for(let player of game.mapPlayers.values()){
-            //we don't add the name that is going to be delete because this is the old player
-            if(player.name === nameFree){
+        const namesAlrdyUsed: string[] = [];
+        for (const player of game.mapPlayers.values()) {
+            // we don't add the name that is going to be delete because this is the old player
+            if (player.name === nameFree) {
                 continue;
             }
             namesAlrdyUsed.push(player.name);
         }
         const nbVPNames = this.databaseService.namesVP.length;
-        let randomNumber = this.giveRandomNbOpponent(nbVPNames);
-        for(let i = 0; i < nbVPNames; i++){
-            console.log("index is: ", (randomNumber + i) % nbVPNames);
-            console.log("names available are: ", this.databaseService.namesVP);
+        const randomNumber = this.giveRandomNbOpponent(nbVPNames);
+        for (let i = 0; i < nbVPNames; i++) {
             const randomIdx = (randomNumber + i) % nbVPNames;
-            let newName : string = this.databaseService.namesVP[randomIdx].firstName + " "  
-            + this.databaseService.namesVP[randomIdx].lastName;
-            if (!namesAlrdyUsed.includes(newName)){
+            const newName: string = this.databaseService.namesVP[randomIdx].firstName + ' ' + this.databaseService.namesVP[randomIdx].lastName;
+            if (!namesAlrdyUsed.includes(newName)) {
                 return newName;
             }
         }
         return 'no newNameFound';
     }
 
-    //function that transforms the playerThatLeaves into a virtual player
+    // function that transforms the playerThatLeaves into a virtual player
     replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
-        // we send to everyone that the player has left and has been replaced by a bot   
+        // we send to everyone that the player has left and has been replaced by a bot
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
 
@@ -134,8 +130,8 @@ export class PlayAreaService {
         const oldIdPlayer = playerThatLeaves.idPlayer;
 
         let isTurnTurnNeccesary = false;
-        //we check if we will have to change the turn of the player that just left
-        if(game.gameStarted){
+        // we check if we will have to change the turn of the player that just left
+        if (game.gameStarted) {
             // we change the player turn if it was the player that left's turn
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
             if (playerPlaying.idPlayer === oldIdPlayer) {
@@ -151,19 +147,19 @@ export class PlayAreaService {
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
         game.mapPlayers.set(playerThatLeaves.name, playerThatLeaves);
 
-        //if the game is not started we don't need to change the turn
-        //furthermore if we entered here game.idxPlayerPlaying would be -1 so server would crash
-        if(isTurnTurnNeccesary){
+        // if the game is not started we don't need to change the turn
+        // furthermore if we entered here game.idxPlayerPlaying would be -1 so server would crash
+        if (isTurnTurnNeccesary) {
             this.changePlayer(game);
         }
     }
 
     sendMsgToAllInRoom(game: GameServer, message: string) {
-        for(const player of game.mapPlayers.values()){
-            player.chatHistory.push({ message: message, isCommand: false, sender: 'S' });
+        for (const player of game.mapPlayers.values()) {
+            player.chatHistory.push({ message, isCommand: false, sender: 'S' });
         }
-        for(const spectator of game.mapSpectators.values()){
-            spectator.chatHistory.push({ message: message, isCommand: false, sender: 'S' });
+        for (const spectator of game.mapSpectators.values()) {
+            spectator.chatHistory.push({ message, isCommand: false, sender: 'S' });
         }
     }
 
@@ -174,7 +170,7 @@ export class PlayAreaService {
         if (!choosedMoved) {
             if (game.letterBank.size > GlobalConstants.DEFAULT_NB_LETTER_STAND) {
                 const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank, game.vpLevel);
-                this.chatService.pushMsgToAllPlayers(game, player.name, "!échanger" + lettersExchanged, true, 'O');
+                this.chatService.pushMsgToAllPlayers(game, player.name, '!échanger' + lettersExchanged, true, 'O');
                 this.chatService.pushMsgToAllPlayers(game, player.name, GlobalConstants.EXCHANGE_OPPONENT_CMD, false, 'O');
                 resultCommand = '!échanger ' + lettersExchanged;
             } else {
@@ -226,7 +222,7 @@ export class PlayAreaService {
                 resultCommand = '!passer';
             } else {
                 const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank, game.vpLevel);
-                this.chatService.pushMsgToAllPlayers(game, player.name, "!échanger " + lettersExchanged, true, 'O');
+                this.chatService.pushMsgToAllPlayers(game, player.name, '!échanger ' + lettersExchanged, true, 'O');
                 resultCommand = '!échanger ' + lettersExchanged;
             }
         } else if (probaMove < neinyPercent) {
@@ -280,7 +276,7 @@ export class PlayAreaService {
         });
 
         // we send an update of the player object for each respective client
-        for(const player of game.mapPlayers.values()){
+        for (const player of game.mapPlayers.values()) {
             this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
         }
     }

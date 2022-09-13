@@ -9,81 +9,81 @@ import { SocketService } from '@app/services/socket.service';
     styleUrls: ['./multiplayer-init-page.component.scss'],
 })
 export class MultiplayerInitPageComponent implements AfterViewInit {
-    constructor(
-        private socketService: SocketService, 
-        public infoClientService: InfoClientService) {}
     displayStyleModal: string;
+
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
 
     ngAfterViewInit() {
         this.socketService.socket.emit('listRoom');
     }
 
     onClickGame(roomName: string) {
-        //useful to reset the ui
+        // useful to reset the ui
         this.infoClientService.initializeService();
-        //joins the room
+        // joins the room
         this.socketService.socket.emit('joinRoom', {
             roomName,
             playerId: this.socketService.socket.id,
         });
     }
 
-    //shows the list of players in the room
-    onClickMoreInfo(roomName: string){
-        this.displayStyleModal = "block";
-        let listPlayer = document.getElementById("listPlayer");
-        let listVP = document.getElementById("listVP");
-        listPlayer!.innerHTML = "";
-        listVP!.innerHTML = "";
+    // shows the list of players in the room
+    onClickMoreInfo(roomName: string) {
+        this.displayStyleModal = 'block';
+        const listPlayer = document.getElementById('listPlayer');
+        const listVP = document.getElementById('listVP');
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        listPlayer!.innerHTML = '';
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        listVP!.innerHTML = '';
 
         const idxExistingRoom = this.infoClientService.rooms.findIndex((room) => room.name === roomName);
         const nbPlayer = this.infoClientService.rooms[idxExistingRoom].players.length;
-        
-        if(nbPlayer <= 0){
-            let titleList = document.createElement("li");
+
+        if (nbPlayer <= 0) {
+            const titleList = document.createElement('li');
             titleList.innerHTML = "Il n'y a pas de joueur dans cette salle.";
-            titleList.style.fontWeight = "bold";
+            titleList.style.fontWeight = 'bold';
             listPlayer?.appendChild(titleList);
             return;
         }
 
         let nbRealPlayer = 0;
         let nbVirtualPlayer = 0;
-        this.infoClientService.rooms[idxExistingRoom].players.forEach(player => {
-            if(player.idPlayer === "virtualPlayer"){
+        this.infoClientService.rooms[idxExistingRoom].players.forEach((player) => {
+            if (player.idPlayer === 'virtualPlayer') {
                 nbVirtualPlayer++;
-            }else{
+            } else {
                 nbRealPlayer++;
             }
         });
 
-        if(nbRealPlayer > 0){
-            let titleList = document.createElement("li");
-            titleList.innerHTML = "Liste des joueurs reels :";
-            titleList.style.fontWeight = "bold";
+        if (nbRealPlayer > 0) {
+            const titleList = document.createElement('li');
+            titleList.innerHTML = 'Liste des joueurs reels :';
+            titleList.style.fontWeight = 'bold';
             listPlayer?.appendChild(titleList);
         }
-        if(nbVirtualPlayer > 0){
-            let titleList = document.createElement("li");
-            titleList.innerHTML = "Liste des joueurs virtuels :";
-            titleList.style.fontWeight = "bold";
+        if (nbVirtualPlayer > 0) {
+            const titleList = document.createElement('li');
+            titleList.innerHTML = 'Liste des joueurs virtuels :';
+            titleList.style.fontWeight = 'bold';
             listVP?.appendChild(titleList);
         }
-        this.infoClientService.rooms[idxExistingRoom].players.forEach(player => {
-            let li = document.createElement("li");
-            li.classList.add("elementList");
+        this.infoClientService.rooms[idxExistingRoom].players.forEach((player) => {
+            const li = document.createElement('li');
+            li.classList.add('elementList');
             li.appendChild(document.createTextNode(player.name));
-            if(player.idPlayer === "virtualPlayer"){
+            if (player.idPlayer === 'virtualPlayer') {
                 listVP?.appendChild(li);
-            }else{
+            } else {
                 listPlayer?.appendChild(li);
             }
         });
     }
 
-    closeListPlayerModal(){
-        console.log("yo");
-        this.displayStyleModal = "none";
+    closeListPlayerModal() {
+        this.displayStyleModal = 'none';
     }
 
     onClickRandom() {

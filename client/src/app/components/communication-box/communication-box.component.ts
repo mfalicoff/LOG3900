@@ -38,21 +38,21 @@ export class CommunicationBoxComponent implements AfterViewInit {
         this.mouseKeyboardEventHandler.onCommunicationBoxEnter(input);
     }
 
-    getPlayerHistory(){
-        let chatHistory = this.infoClientService.actualRoom.players.find(
-            player => player.name === this.infoClientService.playerName)?.chatHistory;
-        if(chatHistory){
+    getPlayerHistory() {
+        const chatHistory = this.infoClientService.actualRoom.players.find(
+            (player) => player.name === this.infoClientService.playerName,
+        )?.chatHistory;
+        if (chatHistory) {
             return chatHistory;
-        }else{
+        } else {
             return [];
         }
     }
-    getSpecHistory(){
-        let chatHistory = this.infoClientService.actualRoom.spectators.find(
-            spec => spec.name === this.infoClientService.playerName)?.chatHistory;
-        if(chatHistory){
+    getSpecHistory() {
+        const chatHistory = this.infoClientService.actualRoom.spectators.find((spec) => spec.name === this.infoClientService.playerName)?.chatHistory;
+        if (chatHistory) {
             return chatHistory;
-        }else{
+        } else {
             return [];
         }
     }
