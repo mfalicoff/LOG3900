@@ -13,6 +13,7 @@ Content-Type: application/json
 
 {
     "email": "example@email.com",
+    "name": "username",
     "password": "password"
 }
 
@@ -28,4 +29,4 @@ Content-Type: application/json
 
 ###
 # Delete User By Id
-DELETE  http://localhost:3000/users/id
+DELETE  http://localhost:3000/users/6320bcc2a977a560aaafb1d1

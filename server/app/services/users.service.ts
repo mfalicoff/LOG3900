@@ -35,13 +35,18 @@ class UserService {
         return await this.users.create({ ...userData, password: hashedPassword });
     }
 
-    // On ne peut que changer le email ou password pour l'instant
+    // On ne peut que changer le email, username ou password pour l'instant
     async updateUser(userId: string, userData: CreateUserValidator): Promise<User> {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
         if (userData.email) {
             const findUser: User = (await this.users.findOne({ email: userData.email })) as User;
             if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `You're email ${userData.email} already exists`);
+        }
+
+        if (userData.name) {
+            const findUser: User = (await this.users.findOne({ name: userData.name })) as User;
+            if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
         }
 
         if (userData.password) {

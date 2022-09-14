@@ -1,4 +1,4 @@
-import { IsEmail, IsString, ValidationError, validate } from 'class-validator';
+import { IsEmail, IsString, ValidationError, validate, IsAlphanumeric } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { RequestHandler } from 'express';
 import { HttpException } from '@app/classes/http.exception';
@@ -7,6 +7,9 @@ import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 export class CreateUserValidator {
     @IsEmail()
     email: string;
+
+    @IsAlphanumeric()
+    name: string;
 
     @IsString()
     password: string;
