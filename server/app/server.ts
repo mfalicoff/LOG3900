@@ -14,17 +14,19 @@ import { PlayAreaService } from './services/play-area.service';
 import { PutLogicService } from './services/put-logic.service';
 import { connect } from 'mongoose';
 import * as GlobalConstants from './classes/global-constants';
+import { DATABASE_NAME } from "./classes/global-constants";
 
 const baseDix = 10;
 
 export const dbConnection = {
-    url: GlobalConstants.DATABASE_URL,
+    url: `${GlobalConstants.DATABASE_URL}`,
     options: {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         user: 'Stephane',
         pass: 'HarryP0tter7',
         authSource: 'admin',
+        dbName: DATABASE_NAME,
     },
 };
 
