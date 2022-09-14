@@ -92,6 +92,21 @@ build:client:
         paths:
             - client/dist/
 
+build:desktop:
+    image: electronuserland/builder:wine-mono
+    stage: build
+    <<: *only-client
+    script:
+        - rm -rf /root/.wine
+        - winecfg
+        - cd client
+        - npm ci
+        - npm run build
+        - npm run build:electron
+    artifacts:
+        paths:
+            - client/build/
+
 build:server:
     stage: build
     <<: *only-server
