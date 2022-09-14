@@ -1,3 +1,4 @@
+// eslint-disable-next-line max-classes-per-file
 import { IsEmail, IsString, ValidationError, validate, IsAlphanumeric } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import { RequestHandler } from 'express';
@@ -10,6 +11,14 @@ export class CreateUserValidator {
 
     @IsAlphanumeric()
     name: string;
+
+    @IsString()
+    password: string;
+}
+
+export class LoginUserValidator {
+    @IsEmail()
+    email: string;
 
     @IsString()
     password: string;

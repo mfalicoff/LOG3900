@@ -28,8 +28,11 @@ class UserService {
     async createUser(userData: CreateUserValidator): Promise<User> {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
-        const findUser: User = (await this.users.findOne({ email: userData.email })) as User;
+        let findUser: User = (await this.users.findOne({ email: userData.email })) as User;
         if (findUser) throw new HttpException(HTTPStatusCode.Conflict, `You're email ${userData.email} already exists`);
+
+        findUser = (await this.users.findOne({ name: userData.name })) as User;
+        if (findUser) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
 
         const hashedPassword = await hash(userData.password, SALT_ROUNDS);
         return await this.users.create({ ...userData, password: hashedPassword });
@@ -65,6 +68,17 @@ class UserService {
         if (!deleteUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
 
         return deleteUserById;
+    }
+
+    async findUserByEmail(userEmail: string): Promise<User> {
+        if (isEmpty(userEmail)) {
+            throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no email sent');
+        }
+
+        const findUser: User = (await this.users.findOne({ email: userEmail })) as User;
+        if (!findUser) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+
+        return findUser;
     }
 }
 

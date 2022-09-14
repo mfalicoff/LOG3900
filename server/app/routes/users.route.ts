@@ -2,6 +2,7 @@ import { Router } from 'express';
 import UsersController from '@app/controllers/users.controller';
 import { CreateUserValidator, validationMiddleware } from '@app//utils/validators';
 import { Routes } from '@app/classes/routes.interface';
+import authMiddleware from '@app/utils/auth';
 
 class UsersRoute implements Routes {
     path = '/users';
@@ -14,12 +15,11 @@ class UsersRoute implements Routes {
 
     private initializeRoutes() {
         this.router.get(`${this.path}`, this.usersController.getUsers);
+        // TODO Should this be protected too?
         this.router.get(`${this.path}/:id`, this.usersController.getUserById);
         this.router.post(`${this.path}`, validationMiddleware(CreateUserValidator, 'body'), this.usersController.createUser);
-        // TODO this route should be protected
-        this.router.put(`${this.path}/:id`, validationMiddleware(CreateUserValidator, 'body', true), this.usersController.updateUser);
-        // TODO this route should be protected
-        this.router.delete(`${this.path}/:id`, this.usersController.deleteUser);
+        this.router.put(`${this.path}/:id`, authMiddleware, validationMiddleware(CreateUserValidator, 'body', true), this.usersController.updateUser);
+        this.router.delete(`${this.path}/:id`, authMiddleware, this.usersController.deleteUser);
     }
 }
 

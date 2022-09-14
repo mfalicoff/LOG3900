@@ -1,17 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { CreateUserValidator } from '@app/utils/validators';
 import { User } from '@app/classes/users.interface';
-import UserService from '@app/services/users.service';
+import UserService from '@app/services/user.service';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 
 /* eslint-disable no-invalid-this */
 
 class UsersController {
-    userService: UserService;
-
-    constructor() {
-        this.userService = new UserService();
-    }
+    userService = new UserService();
 
     getUsers = async (req: Request, res: Response, next: NextFunction) => {
         try {
