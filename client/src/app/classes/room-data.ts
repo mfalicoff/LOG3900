@@ -9,10 +9,7 @@ export class RoomData {
     players: Player[];
     spectators: Spectator[];
 
-    constructor(
-        name: string, timeTurn: string, 
-        isBonusRandom: boolean, passwd: string,
-        players: Player[], spectators: Spectator[]) {
+    constructor(name: string, timeTurn: string, isBonusRandom: boolean, passwd: string, players: Player[], spectators: Spectator[]) {
         this.name = name;
         this.timeTurn = timeTurn;
         this.isBonusRandom = isBonusRandom;

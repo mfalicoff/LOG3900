@@ -11,11 +11,7 @@ import { StandService } from './stand.service';
 @Service()
 export class MouseEventService {
     sio: io.Server;
-    constructor(
-        private standService: StandService,
-        private chatService: ChatService,
-        private playAreaService: PlayAreaService,
-    ) {
+    constructor(private standService: StandService, private chatService: ChatService, private playAreaService: PlayAreaService) {
         this.sio = new io.Server();
     }
 

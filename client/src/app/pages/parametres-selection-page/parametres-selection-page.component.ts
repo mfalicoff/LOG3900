@@ -57,8 +57,8 @@ export class ParametresSelectionPageComponent implements OnInit {
         this.infoClientService.randomBonusesOn = !this.infoClientService.randomBonusesOn;
     }
 
-    onTypeGameChange(event: any){
-        switch(event.target.value){
+    onTypeGameChange(event: unknown) {
+        switch (event.target.value) {
             case 'public':
                 this.infoClientService.isGamePrivate = false;
                 break;
@@ -102,11 +102,6 @@ export class ParametresSelectionPageComponent implements OnInit {
             });
         }
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
-        console.log(passwd.value);
-    }
-
-    isMdpEnabled(){
-        console.log(this.isChecked);
     }
 
     private timeSelection(interval: string) {

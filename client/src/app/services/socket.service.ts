@@ -173,11 +173,10 @@ export class SocketService {
         });
 
         this.socket.on('askForEntrance', (newPlayerName, newPlayerId) => {
-            console.log("yo");
-            const resultAccept = confirm("Voulez-vous accepter " + newPlayerName + " dans la partie?");
-            if(resultAccept) {
+            const resultAccept = confirm('Voulez-vous accepter ' + newPlayerName + ' dans la partie?');
+            if (resultAccept) {
                 this.socket.emit('acceptPlayer', true, newPlayerId);
-            }else{
+            } else {
                 this.socket.emit('acceptPlayer', false, newPlayerId);
             }
         });

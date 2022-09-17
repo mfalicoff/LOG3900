@@ -75,9 +75,9 @@ export class SocketManager {
         if (!player && !spectator) {
             return;
         }
-        if(player){
+        if (player) {
             this.communicationBoxService.onEnterPlayer(game, player, placeMsg);
-        }else if(spectator){
+        } else if (spectator) {
             this.communicationBoxService.onEnterSpectator(game, spectator, placeMsg);
         }
 
@@ -220,8 +220,8 @@ export class SocketManager {
         socket.on('callTestFunction', () => {
             socket.emit('askForEntrance');
             // const gameStub = new GameServer(
-            //     1, false, 
-            //     'null', false, 
+            //     1, false,
+            //     'null', false,
             //     'expert', 'test', false);
             // const userStub = { name: 'test', roomName: 'test' };
             // this.joinGameAsSpectator(socket, gameStub, userStub);
@@ -240,11 +240,7 @@ export class SocketManager {
         passwd: string,
     ) {
         // We create the game and add it to the rooms map
-        const newGame: GameServer = new GameServer(
-            timeTurn, isBonusRandom, 
-            gameMode, vpLevel, 
-            roomName, isGamePrivate,
-            passwd);
+        const newGame: GameServer = new GameServer(timeTurn, isBonusRandom, gameMode, vpLevel, roomName, isGamePrivate, passwd);
         const newPlayer = new Player(playerName, true);
         newPlayer.idPlayer = socket.id;
         this.boardService.initBoardArray(newGame);
@@ -326,11 +322,7 @@ export class SocketManager {
             this.users.set(socket.id, { name, roomName: '' });
         });
 
-        socket.on('createRoomAndGame', ({ 
-            roomName, playerName, 
-            timeTurn, isBonusRandom, 
-            gameMode, vpLevel, 
-            isGamePrivate, passwd }) => {
+        socket.on('createRoomAndGame', ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
                 socket.emit('messageServer', 'Une salle avec ce nom existe déjà.');
@@ -341,12 +333,7 @@ export class SocketManager {
             if (user) {
                 user.roomName = roomName;
             }
-            this.createGameAndPlayer(
-                gameMode, timeTurn, 
-                isBonusRandom, playerName, 
-                socket, roomName, 
-                vpLevel, isGamePrivate,
-                passwd);
+            this.createGameAndPlayer(gameMode, timeTurn, isBonusRandom, playerName, socket, roomName, vpLevel, isGamePrivate, passwd);
             const createdGame = this.rooms.get(roomName);
             if (!createdGame) {
                 return;
@@ -384,11 +371,11 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            
-            if(game.isGamePrivate){
+
+            if (game.isGamePrivate) {
                 userData.roomName = game.roomName;
-                for(const creatorOfGame of game.mapPlayers.values()){
-                    if(creatorOfGame.isCreatorOfGame){
+                for (const creatorOfGame of game.mapPlayers.values()) {
+                    if (creatorOfGame.isCreatorOfGame) {
                         this.sio.sockets.sockets.get(creatorOfGame.idPlayer)?.emit('askForEntrance', userData.name, playerId);
                         return;
                     }
@@ -409,15 +396,15 @@ export class SocketManager {
                 return;
             }
 
-            let socketNewPlayer = this.sio.sockets.sockets.get(newPlayerId);
-            if(!socketNewPlayer){
+            const socketNewPlayer = this.sio.sockets.sockets.get(newPlayerId);
+            if (!socketNewPlayer) {
                 return;
             }
-            
-            if(isAccepted){
+
+            if (isAccepted) {
                 this.joinRoom(socketNewPlayer, userData, game);
-            }else{
-                userData.roomName = "";
+            } else {
+                userData.roomName = '';
                 this.sio.sockets.sockets.get(newPlayerId)?.emit('messageServer', "Vous n'avez pas été accepté dans la salle.");
             }
         });
@@ -667,7 +654,7 @@ export class SocketManager {
             if (!game || game?.gameFinished) {
                 continue;
             }
-            
+
             socket.emit('addElementListRoom', {
                 roomName,
                 timeTurn: game.minutesByTurn,

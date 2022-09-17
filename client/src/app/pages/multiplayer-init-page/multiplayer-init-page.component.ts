@@ -24,16 +24,15 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         // useful to reset the ui
         this.infoClientService.initializeService();
         const roomClicked = this.infoClientService.rooms.find((room) => room.name === roomName);
-        if(!roomClicked){
+        if (!roomClicked) {
             return;
         }
 
-        console.log("roomClicked.passwd", roomClicked.passwd);
         this.actualPassword = roomClicked.passwd;
         this.roomNameClicked = roomName;
-        if(this.actualPassword !== '') {
+        if (this.actualPassword !== '') {
             this.passwdModalStyle = 'block';
-        }else{
+        } else {
             this.joinRoom(roomName);
         }
     }
@@ -42,10 +41,10 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         this.passwdModalStyle = 'none';
         if (this.passwordText !== this.actualPassword) {
             alert('Mot de passe incorrect');
-        }else{
+        } else {
             this.joinRoom(this.roomNameClicked);
         }
-      }
+    }
 
     // shows the list of players in the room
     onClickMoreInfo(roomName: string) {

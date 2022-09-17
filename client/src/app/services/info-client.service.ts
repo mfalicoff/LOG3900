@@ -61,7 +61,7 @@ export class InfoClientService {
 
     // public bc it is reused to reset for new games
     initializeService() {
-        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, 'defaultLevel', 'defaultRoom', false, "");
+        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, 'defaultLevel', 'defaultRoom', false, '');
         this.player = new Player('DefaultPlayerObject', false);
         this.displayTurn = "En attente d'un autre joueur...";
         this.isTurnOurs = false;
