@@ -82,6 +82,13 @@
             </div>
             <p id="instructionRoomName" class="roomName">Min 4 lettres, pas de charactere special.</p>
 
+            <div class="radioTypeGame">
+                <p class="roomName">Mode de partie:</p>
+                <input type="radio" id="publicGame" name="unique" value="public" [checked]="true"(change)="onTypeGameChange($event)">
+                <label for="publique">publique</label><br>
+                <input type="radio" id="privateGame" name="unique" value="private" (change)="onTypeGameChange($event)">
+                <label for="privee">privee</label><br>
+            </div>
             <div class="container-2">
                 <div class="container-2-box">
                     <h6 class="MPButton" routerLink="/main-page">

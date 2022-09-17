@@ -57,6 +57,19 @@ export class ParametresSelectionPageComponent implements OnInit {
         this.infoClientService.randomBonusesOn = !this.infoClientService.randomBonusesOn;
     }
 
+    onTypeGameChange(event: any){
+        switch(event.target.value){
+            case 'public':
+                this.infoClientService.isGamePrivate = false;
+                break;
+            case 'private':
+                this.infoClientService.isGamePrivate = true;
+                break;
+            default:
+                break;
+        }
+    }
+
     createRoom() {
         // useful to reset the ui
         this.infoClientService.initializeService();
@@ -72,6 +85,7 @@ export class ParametresSelectionPageComponent implements OnInit {
                 gameMode: this.infoClientService.gameMode,
                 isLog2990Enabled: this.infoClientService.isLog2990Enabled,
                 vpLevel: '',
+                isGamePrivate: this.infoClientService.isGamePrivate,
             });
         } else {
             roomName = 'roomOf' + this.socketService.socket.id.toString();
@@ -83,6 +97,7 @@ export class ParametresSelectionPageComponent implements OnInit {
                 gameMode: this.infoClientService.gameMode,
                 isLog2990Enabled: this.infoClientService.isLog2990Enabled,
                 vpLevel: this.infoClientService.vpLevel,
+                isGamePrivate: this.infoClientService.isGamePrivate,
             });
         }
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);

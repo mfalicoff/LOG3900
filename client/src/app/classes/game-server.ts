@@ -39,6 +39,7 @@ export class GameServer {
     gameMode: string;
     isLog2990Enabled: boolean;
     minutesByTurn: number;
+    isGamePrivate: boolean;
 
     // PLAY AREA SERVICE DATA
     nbLetterReserve: number;
@@ -54,16 +55,21 @@ export class GameServer {
 
     vpLevel: string;
 
-    constructor(minutesByTurn: number, randomBonusesOn: boolean, gameMode: string, isLog2990Enabled: boolean, vpLevel: string, roomName: string) {
+    constructor(
+        minutesByTurn: number, randomBonusesOn: boolean, 
+        gameMode: string, isLog2990Enabled: boolean, 
+        vpLevel: string, roomName: string,
+        isGamePrivate: boolean) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;
         this.randomBonusesOn = randomBonusesOn;
         this.gameMode = gameMode;
         this.isLog2990Enabled = isLog2990Enabled;
         this.vpLevel = vpLevel;
-        this.trie = new Trie();
+        this.isGamePrivate = isGamePrivate;
 
         // Initializing the rest of the variables
+        this.trie = new Trie();
         this.letters = [];
         this.board = [];
         this.roomName = roomName;
