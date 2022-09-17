@@ -129,10 +129,10 @@ export class SocketService {
     }
 
     private roomManipulationHandler() {
-        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, isLog2990Enabled, players, spectators }) => {
+        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, passwd, players, spectators }) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
             if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, isLog2990Enabled, players, spectators));
+                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, passwd, players, spectators));
             } else {
                 this.infoClientService.rooms[idxExistingRoom].players = players;
                 this.infoClientService.rooms[idxExistingRoom].spectators = spectators;

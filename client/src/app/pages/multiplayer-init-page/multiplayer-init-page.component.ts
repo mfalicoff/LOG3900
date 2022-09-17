@@ -10,7 +10,10 @@ import { SocketService } from '@app/services/socket.service';
 })
 export class MultiplayerInitPageComponent implements AfterViewInit {
     displayStyleModal: string;
-
+    passwdModalStyle: string;
+    passwordText: string;
+    actualPassword: string;
+    roomNameClicked: string;
     constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
 
     ngAfterViewInit() {
@@ -20,12 +23,29 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     onClickGame(roomName: string) {
         // useful to reset the ui
         this.infoClientService.initializeService();
-        // joins the room
-        this.socketService.socket.emit('joinRoom', {
-            roomName,
-            playerId: this.socketService.socket.id,
-        });
+        const roomClicked = this.infoClientService.rooms.find((room) => room.name === roomName);
+        if(!roomClicked){
+            return;
+        }
+
+        console.log("roomClicked.passwd", roomClicked.passwd);
+        this.actualPassword = roomClicked.passwd;
+        this.roomNameClicked = roomName;
+        if(this.actualPassword !== '') {
+            this.passwdModalStyle = 'block';
+        }else{
+            this.joinRoom(roomName);
+        }
     }
+
+    askForPasswd() {
+        this.passwdModalStyle = 'none';
+        if (this.passwordText !== this.actualPassword) {
+            alert('Mot de passe incorrect');
+        }else{
+            this.joinRoom(this.roomNameClicked);
+        }
+      }
 
     // shows the list of players in the room
     onClickMoreInfo(roomName: string) {
@@ -97,5 +117,13 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         } else {
             alert("Il n'y a pas de salle disponible.");
         }
+    }
+
+    private joinRoom(roomName: string) {
+        // joins the room
+        this.socketService.socket.emit('joinRoom', {
+            roomName,
+            playerId: this.socketService.socket.id,
+        });
     }
 }

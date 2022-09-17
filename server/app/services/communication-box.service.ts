@@ -5,7 +5,6 @@ import { Spectator } from '@app/classes/spectator';
 import { PutLogicService } from '@app/services/put-logic.service';
 import { Service } from 'typedi';
 import { ChatService } from './chat.service';
-import { ObjectiveService } from './objective.service';
 import { PlayAreaService } from './play-area.service';
 
 @Service()
@@ -14,7 +13,6 @@ export class CommunicationBoxService {
         private chatService: ChatService,
         private putLogicService: PutLogicService,
         private playAreaService: PlayAreaService,
-        private objectiveService: ObjectiveService,
     ) {}
 
     // function that shows the content of the input, place it in the array of message then delte the input field
@@ -103,12 +101,6 @@ export class CommunicationBoxService {
             case '!échanger': {
                 if (this.chatService.sendMessage(input, game, player)) {
                     this.putLogicService.computeWordToExchange(game, player, dataSeparated[1]);
-                    // We check if an objective has been completed
-                    const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-                    if (playerThatJustPlayed && game.isLog2990Enabled) {
-                        this.objectiveService.isPlayerObjectivesCompleted(
-                            game, playerThatJustPlayed, input);
-                    }
                     // We change the turn
                     this.playAreaService.changePlayer(game);
                 }
@@ -116,12 +108,6 @@ export class CommunicationBoxService {
             }
             case '!passer': {
                 if (this.chatService.sendMessage(input, game, player)) {
-                    // We check if an objective has been completed
-                    const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-                    if (playerThatJustPlayed && game.isLog2990Enabled) {
-                        this.objectiveService.isPlayerObjectivesCompleted(
-                            game, playerThatJustPlayed, input);
-                    }
                     // We change the turn
                     this.playAreaService.changePlayer(game);
                 }

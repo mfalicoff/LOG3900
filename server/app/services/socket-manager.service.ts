@@ -230,7 +230,6 @@ export class SocketManager {
 
     private createGameAndPlayer(
         gameMode: string,
-        isLog2990Enabled: boolean,
         timeTurn: number,
         isBonusRandom: boolean,
         playerName: string,
@@ -238,17 +237,15 @@ export class SocketManager {
         roomName: string,
         vpLevel: string,
         isGamePrivate: boolean,
+        passwd: string,
     ) {
         // We create the game and add it to the rooms map
         const newGame: GameServer = new GameServer(
             timeTurn, isBonusRandom, 
-            gameMode, isLog2990Enabled, 
-            vpLevel, roomName, isGamePrivate);
+            gameMode, vpLevel, 
+            roomName, isGamePrivate,
+            passwd);
         const newPlayer = new Player(playerName, true);
-        if (isLog2990Enabled) {
-            // Gives a private objective to the player
-            newGame.setObjectivePlayer(socket.id);
-        }
         newPlayer.idPlayer = socket.id;
         this.boardService.initBoardArray(newGame);
 
@@ -332,8 +329,8 @@ export class SocketManager {
         socket.on('createRoomAndGame', ({ 
             roomName, playerName, 
             timeTurn, isBonusRandom, 
-            gameMode, isLog2990Enabled, 
-            vpLevel, isGamePrivate }) => {
+            gameMode, vpLevel, 
+            isGamePrivate, passwd }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
                 socket.emit('messageServer', 'Une salle avec ce nom existe déjà.');
@@ -345,11 +342,11 @@ export class SocketManager {
                 user.roomName = roomName;
             }
             this.createGameAndPlayer(
-                gameMode, isLog2990Enabled, 
-                timeTurn, isBonusRandom, 
-                playerName, socket, 
-                roomName, vpLevel,
-                isGamePrivate);
+                gameMode, timeTurn, 
+                isBonusRandom, playerName, 
+                socket, roomName, 
+                vpLevel, isGamePrivate,
+                passwd);
             const createdGame = this.rooms.get(roomName);
             if (!createdGame) {
                 return;
@@ -361,7 +358,7 @@ export class SocketManager {
                 roomName,
                 timeTurn,
                 isBonusRandom,
-                isLog2990Enabled,
+                passwd,
                 players,
                 spectators,
             });
@@ -483,7 +480,7 @@ export class SocketManager {
                 roomName,
                 timeTurn: game.minutesByTurn,
                 isBonusRandom: game.randomBonusesOn,
-                isLog2990Enabled: game.isLog2990Enabled,
+                passwd: game.passwd,
                 players: Array.from(game.mapPlayers.values()),
                 spectators: Array.from(game.mapSpectators.values()),
             });
@@ -572,7 +569,7 @@ export class SocketManager {
             roomName: game.roomName,
             timeTurn: game.minutesByTurn,
             isBonusRandom: game.randomBonusesOn,
-            isLog2990Enabled: game.isLog2990Enabled,
+            passwd: game.passwd,
             players,
             spectators,
         });
@@ -670,16 +667,14 @@ export class SocketManager {
             if (!game || game?.gameFinished) {
                 continue;
             }
-
-            const players = Array.from(game.mapPlayers.values());
-            const spectators = Array.from(game.mapSpectators.values());
+            
             socket.emit('addElementListRoom', {
                 roomName,
                 timeTurn: game.minutesByTurn,
                 isBonusRandom: game.randomBonusesOn,
-                isLog2990Enabled: game.isLog2990Enabled,
-                players,
-                spectators,
+                passwd: game.passwd,
+                players: Array.from(game.mapPlayers.values()),
+                spectators: Array.from(game.mapSpectators.values()),
             });
         }
     }

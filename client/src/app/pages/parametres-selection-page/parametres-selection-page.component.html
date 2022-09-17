@@ -78,7 +78,14 @@
 
             <p class="roomName">Nom de la salle:</p>
             <div id="roomNameInputContainer">
-                <input id="roomName" #name="ngModel" required minlength="4" maxlength="19" type="text" pattern="^[a-zA-Z0-9]+$" ngModel />
+                <input 
+                    id="roomName" 
+                    #name="ngModel" 
+                    required minlength="4" 
+                    maxlength="19" 
+                    type="text" 
+                    pattern="^[a-zA-Z0-9]+$" 
+                    ngModel />
             </div>
             <p id="instructionRoomName" class="roomName">Min 4 lettres, pas de charactere special.</p>
 
@@ -88,6 +95,28 @@
                 <label for="publique">publique</label><br>
                 <input type="radio" id="privateGame" name="unique" value="private" (change)="onTypeGameChange($event)">
                 <label for="privee">privee</label><br>
+            </div>
+            <div id="passwdDiv">
+                <mat-checkbox 
+                    id="mdpCheckbox"
+                    [(ngModel)]="isChecked"
+                    (change)="isMdpEnabled()">
+                Mot de passe
+            </mat-checkbox>
+                <input
+                        id="passwdInput"
+                        placeholder="mot de passe"
+                        #mdp="ngModel"
+                        required
+                        minlength="1"
+                        maxlength="20"
+                        type="text"
+                        name="mdp"
+                        [hidden]="!isChecked"
+                        pattern="^[a-zA-Z0-9]+$" 
+                        ngModel
+                    />
+                <p id="instructionRoomName" class="roomName" [hidden]="!isChecked">Min 1 lettre, pas de charactère special.</p>
             </div>
             <div class="container-2">
                 <div class="container-2-box">
@@ -129,6 +158,6 @@
                 </div>
             </div>
         </div>
-        <button id="startButtonMulti" class="startbutton" (click)="createRoom()" [disabled]="name.invalid">Demarrer</button>
+        <button id="startButtonMulti" class="startbutton" (click)="createRoom()" [disabled]="name.invalid || (isChecked && mdp.invalid)">Demarrer</button>
     </div>
 </body>

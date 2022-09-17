@@ -18,7 +18,7 @@ export class ParametresSelectionPageComponent implements OnInit {
     timeIntervals: TimeIntervals[];
     vpLevels: string[];
     mockDictionary: MockDict;
-
+    isChecked: false;
     constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
 
     ngOnInit() {
@@ -74,6 +74,7 @@ export class ParametresSelectionPageComponent implements OnInit {
         // useful to reset the ui
         this.infoClientService.initializeService();
         let roomName = '';
+        const passwd = document.getElementById('passwdInput') as HTMLInputElement;
         if (this.infoClientService.gameMode === GlobalConstants.MODE_MULTI) {
             const inputElement = document.getElementById('roomName') as HTMLInputElement;
             roomName = inputElement.value;
@@ -83,9 +84,9 @@ export class ParametresSelectionPageComponent implements OnInit {
                 timeTurn: this.infoClientService.minutesByTurn,
                 isBonusRandom: this.infoClientService.randomBonusesOn,
                 gameMode: this.infoClientService.gameMode,
-                isLog2990Enabled: this.infoClientService.isLog2990Enabled,
                 vpLevel: '',
                 isGamePrivate: this.infoClientService.isGamePrivate,
+                passwd: passwd.value,
             });
         } else {
             roomName = 'roomOf' + this.socketService.socket.id.toString();
@@ -95,12 +96,17 @@ export class ParametresSelectionPageComponent implements OnInit {
                 timeTurn: this.infoClientService.minutesByTurn,
                 isBonusRandom: this.infoClientService.randomBonusesOn,
                 gameMode: this.infoClientService.gameMode,
-                isLog2990Enabled: this.infoClientService.isLog2990Enabled,
                 vpLevel: this.infoClientService.vpLevel,
                 isGamePrivate: this.infoClientService.isGamePrivate,
+                passwd: passwd.value,
             });
         }
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
+        console.log(passwd.value);
+    }
+
+    isMdpEnabled(){
+        console.log(this.isChecked);
     }
 
     private timeSelection(interval: string) {
