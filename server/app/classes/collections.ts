@@ -1,4 +1,5 @@
 /* eslint-disable */
+// @ts-nocheck
 import { MockDict } from '@app/classes/mock-dict';
 import { Collection, Db, Filter, ModifyResult, UpdateFilter } from 'mongodb';
 import 'reflect-metadata';
@@ -73,7 +74,7 @@ export class Collections {
         await this.checkNotSameTitles(dictionary.title);
         if (!this.sameTitleFound) {
             await this.collection.insertOne(dictionary).catch((error: Error) => {
-                throw new HttpException('500: Failed to insert dictionary ' + error.message);
+                throw new HttpException(500, 'Failed to insert dictionary ' + error.message);
             });
         } else {
             throw new Error('Un dictionaire au titre identique à celui que vous avez tenté de téléverser existe déjà.\n Saisissez un autre titre.');
@@ -82,7 +83,7 @@ export class Collections {
 
     async addNameVP(nameVP: NameVP): Promise<void> {
         await this.collection.insertOne(nameVP).catch((error: Error) => {
-            throw new HttpException('500: Failed to insert name ' + error);
+            throw new HttpException(500, 'Failed to insert name ' + error);
         });
     }
 
