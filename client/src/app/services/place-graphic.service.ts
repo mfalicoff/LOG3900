@@ -186,7 +186,7 @@ export class PlaceGraphicService {
         }
         this.drawingBoardService.lettersDrawn = this.drawingBoardService.lettersDrawn.substr(0, this.drawingBoardService.lettersDrawn.length - 1);
         if (this.drawingBoardService.isArrowVertical) {
-            if ((this.drawingBoardService.arrowPosY - 1) === this.startLettersPlacedPosY || this.areAllLettersBeforeOld(game)) {
+            if (this.drawingBoardService.arrowPosY - 1 === this.startLettersPlacedPosY || this.areAllLettersBeforeOld(game)) {
                 this.drawingBoardService.isArrowVertical = true;
                 this.drawingBoardService.lettersDrawn = '';
                 this.drawingBoardService.arrowPosX = GlobalConstants.NUMBER_SQUARE_H_AND_W + 1;
@@ -195,7 +195,7 @@ export class PlaceGraphicService {
             }
             this.drawingBoardService.drawVerticalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY - 1);
         } else {
-            if ((this.drawingBoardService.arrowPosX - 1) === this.startLettersPlacedPosX || this.areAllLettersBeforeOld(game)) {
+            if (this.drawingBoardService.arrowPosX - 1 === this.startLettersPlacedPosX || this.areAllLettersBeforeOld(game)) {
                 this.drawingBoardService.isArrowVertical = true;
                 this.drawingBoardService.lettersDrawn = '';
                 this.drawingBoardService.arrowPosX = GlobalConstants.NUMBER_SQUARE_H_AND_W + 1;
