@@ -7,6 +7,7 @@ import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { Score } from '@app/classes/score';
 import { User } from '@app/classes/user';
+import { Vec2 } from '@app/classes/vec2';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
@@ -101,7 +102,7 @@ export class SocketManager {
             }
         });
 
-        socket.on('boardClick', (coordinateClick) => {
+        socket.on('boardClick', (coordinateClick: Vec2) => {
             const roomName = this.users.get(socket.id)?.roomName;
 
             let player;
@@ -164,7 +165,7 @@ export class SocketManager {
             }
         });
 
-        socket.on('leftClickSelection', (coordinateXClick) => {
+        socket.on('leftClickSelection', (coordinateXClick: number) => {
             const roomName = this.users.get(socket.id)?.roomName;
             let player;
             if (roomName) {
