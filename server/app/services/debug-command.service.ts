@@ -41,9 +41,14 @@ export class DebugCommandService {
         }
         return debugOutputs;
     }
-    debugPrint(player: Player, moveToPlay: Move | undefined, game: GameServer) {
+
+    /*
+     * this function push the debug msg in the player's output
+     * TODO make !debug command only accesible to admin accounts ?
+     */
+    debugPrint(player: Player, moveToPlay: Move, game: GameServer) {
         if (!player.debugOn || !moveToPlay) {
-            return null;
+            return;
         }
 
         const debugOutputs = this.setDebugOutputs(moveToPlay, game);
@@ -53,18 +58,18 @@ export class DebugCommandService {
             message += msg + ' ';
         }
 
-        const opponent = game.mapPlayers.get(player.idOpponent);
-
-        if (opponent) {
-            opponent.chatHistory.push({ message: message + '(' + moveToPlay.score + ')', isCommand: false, sender: 'O' });
+        for (const playerElem of game.mapPlayers.values()) {
+            if (playerElem.idPlayer === 'virtualPlayer') {
+                continue;
+            }
+            playerElem.chatHistory.push({ message: message + '(' + moveToPlay.score + ')', isCommand: false, sender: 'O' });
             for (const wordTiles of moveToPlay.crossWords) {
                 let wordString = '';
                 wordTiles.words.forEach((tile) => {
                     wordString += tile.letter.value;
                 });
-                opponent.chatHistory.push({ message: wordString + ' (' + wordTiles.score + ')', isCommand: false, sender: 'O' });
+                playerElem.chatHistory.push({ message: wordString + ' (' + wordTiles.score + ')', isCommand: false, sender: 'O' });
             }
         }
-        return;
     }
 }

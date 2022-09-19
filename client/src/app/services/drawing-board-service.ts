@@ -38,7 +38,7 @@ export class DrawingBoardService {
     }
 
     drawBoardInit(bonusBoard: string[][]) {
-        // we take out the first line and column because she isn't used for the drawing of the board
+        // we take out the first line and column because they aren't used for the drawing of the board
         bonusBoard.splice(0, 1);
         bonusBoard = this.removeEl(bonusBoard, 0);
         if (this.boardCanvas.font === '10px sans-serif') {

@@ -22,7 +22,7 @@ export class GamePageComponent {
         // eslint-disable-next-line deprecation/deprecation
         router.events.subscribe((event) => {
             const isAtCorrectPage: boolean = event instanceof NavigationStart && this.router.url === '/game';
-            if (isAtCorrectPage && !this.infoClientService.game.gameFinished) {
+            if (isAtCorrectPage && !this.infoClientService.game.gameFinished && !this.infoClientService.isSpectator) {
                 const resultLeave = confirm('Voulez vous vraiment quitter cette page ? \nCela équivaudrait à un abandon de partie !');
                 if (!resultLeave) {
                     this.router.navigate(['/game']);
@@ -35,5 +35,10 @@ export class GamePageComponent {
 
     onLeftClickGamePage() {
         this.mouseKeyboardEventHandler.onLeftClickGamePage();
+    }
+
+    // TODO REMOVE THAT LATER
+    testFunction() {
+        this.socketService.socket.emit('callTestFunction');
     }
 }

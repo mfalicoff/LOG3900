@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
@@ -37,55 +38,64 @@ export class SocketService {
         this.timerHandler();
     }
 
-    private playerUpdateCallBack(player: Player) {
-        this.infoClientService.player = player;
-        this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
-    }
-
     private gameUpdateHandler() {
-        this.socket.on('playerUpdate', (player) => this.playerUpdateCallBack(player));
-
-        this.socket.on('gameUpdateClient', ({ game, player, scoreOpponent, nbLetterStandOpponent }) => {
-            this.infoClientService.game = game;
+        this.socket.on('playerAndStandUpdate', (player) => {
             this.infoClientService.player = player;
-            this.infoClientService.scoreOpponent = scoreOpponent;
-            this.infoClientService.nbLetterStandOpponent = nbLetterStandOpponent;
-            const savedFont: string = this.drawingBoardService.boardCanvas.font;
-            this.drawingBoardService.reDrawBoard(game.bonusBoard, game.board, this.infoClientService.letterBank);
-            this.drawingBoardService.boardCanvas.font = savedFont;
+            setTimeout(() => {
+                this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
+            }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+        });
 
-            this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
-            if (game.currentPlayerId !== this.socket.id) {
-                this.drawingService.resetColorTileStand(player, this.infoClientService.letterBank);
+        this.socket.on('gameBoardUpdate', (game) => {
+            this.infoClientService.game = game;
+            setTimeout(() => {
+                this.drawingBoardService.reDrawBoard(game.bonusBoard, game.board, this.infoClientService.letterBank);
+            }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+        });
+
+        // updates the players and spectators list for each rooms
+        this.socket.on('playersSpectatorsUpdate', ({ roomName, players, spectators }) => {
+            // gets the room used by the client and stores it for ez access
+            const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
+            this.infoClientService.actualRoom = this.infoClientService.rooms[idxExistingRoom];
+            // update the players and spectators of the room
+            this.infoClientService.rooms[idxExistingRoom].players = players;
+            this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
+
+            // update the player object locally
+            // (this object is here to access easily the player's data)
+            const tmpPlayer = this.infoClientService.actualRoom.players?.find((player) => player.name === this.infoClientService.playerName);
+            if (tmpPlayer) {
+                this.infoClientService.player = tmpPlayer;
+            }
+
+            // useful when spectators connect in middle of game
+            // update the name of the person playing for the spectator
+            // TODO doesn't update the timer for the spectator
+            this.updateUiForSpectator(this.infoClientService.game);
+            // update display turn to show that we are waiting for creator or other players
+            if (!this.infoClientService.game.gameStarted) {
+                this.updateUiBeforeStartGame(players);
             }
         });
 
-        this.socket.on('gameUpdateStart', ({ roomName, game, player }) => {
-            const waitTimeInitCanvas = 10;
-            setTimeout(() => {
-                this.infoClientService.actualRoom = roomName;
-                this.infoClientService.game = game;
-                this.infoClientService.player = player;
-                if (this.infoClientService.displayTurn === "C'est votre tour !") {
-                    this.infoClientService.game.currentPlayerId = this.socket.id;
-                }
-                this.drawingBoardService.drawBoardInit(game.bonusBoard);
-                this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
-            }, waitTimeInitCanvas);
-        });
-        this.socket.on('sendStand', (player) => {
-            this.infoClientService.player = player;
-            this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
-        });
-        this.socket.on('nameOpponentUpdate', (nameOpponent) => {
-            this.infoClientService.nameOpponent = nameOpponent;
-        });
         this.socket.on('findTileToPlaceArrow', (realPosInBoardPx) => {
             this.drawingBoardService.findTileToPlaceArrow(
                 realPosInBoardPx,
                 this.infoClientService.game.board,
                 this.infoClientService.game.bonusBoard,
             );
+        });
+
+        this.socket.on('creatorShouldBeAbleToStartGame', () => {
+            this.infoClientService.creatorShouldBeAbleToStartGame = true;
+        });
+
+        // for now this socket is only used when the player doesn't put a valid word on the board
+        // we don't want to explicitly switch the playeer's turn so we control his actions
+        // by settings this variable to true (see server side in comm-box service)
+        this.socket.on('changeIsTurnOursStatus', (isTurnOurs) => {
+            this.infoClientService.isTurnOurs = isTurnOurs;
         });
     }
 
@@ -96,11 +106,14 @@ export class SocketService {
     private timerHandler() {
         this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
 
-        this.socket.on('startClearTimer', ({ minutesByTurn, currentPlayerId }) => {
-            if (currentPlayerId === this.socket.id) {
+        this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
+            if (currentNamePlayerPlaying === this.infoClientService.playerName) {
                 this.infoClientService.displayTurn = "C'est votre tour !";
+                this.infoClientService.isTurnOurs = true;
             } else {
-                this.infoClientService.displayTurn = "C'est au tour de votre adversaire !";
+                const playerPlaying = this.infoClientService.actualRoom.players.find((player) => player.name === currentNamePlayerPlaying);
+                this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + ' de jouer !';
+                this.infoClientService.isTurnOurs = false;
             }
             this.timerService.clearTimer();
             this.timerService.startTimer(minutesByTurn);
@@ -116,9 +129,13 @@ export class SocketService {
     }
 
     private roomManipulationHandler() {
-        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, isLog2990Enabled }) => {
-            if (this.infoClientService.rooms.findIndex((element) => element.name === roomName) === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, isLog2990Enabled));
+        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, isLog2990Enabled, players, spectators }) => {
+            const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
+            if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
+                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, isLog2990Enabled, players, spectators));
+            } else {
+                this.infoClientService.rooms[idxExistingRoom].players = players;
+                this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
             }
         });
 
@@ -126,8 +143,7 @@ export class SocketService {
             this.infoClientService.rooms = this.infoClientService.rooms.filter((room) => room.name !== roomNameToDelete);
         });
 
-        this.socket.on('roomChangeAccepted', ({ roomName, page }) => {
-            this.infoClientService.actualRoom = roomName;
+        this.socket.on('roomChangeAccepted', (page) => {
             this.router.navigate([page]);
         });
     }
@@ -151,6 +167,10 @@ export class SocketService {
         this.socket.on('SendExpertVPNamesToClient', (namesVP: NameVP[]) => {
             this.infoClientService.nameVPExpert = namesVP;
         });
+
+        this.socket.on('isSpectator', (isSpectator) => {
+            this.infoClientService.isSpectator = isSpectator;
+        });
     }
 
     private setTimeoutForTimer() {
@@ -163,5 +183,28 @@ export class SocketService {
                 clearInterval(timerInterval);
             }
         }, oneSecond);
+    }
+
+    private updateUiForSpectator(game: GameServer) {
+        if (
+            !this.infoClientService.isSpectator ||
+            !this.infoClientService.game.gameStarted ||
+            this.infoClientService.game.gameFinished ||
+            game.idxPlayerPlaying < 0
+        ) {
+            return;
+        }
+
+        const playerPlaying = this.infoClientService.actualRoom.players[game.idxPlayerPlaying];
+        this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + ' de jouer !';
+    }
+
+    private updateUiBeforeStartGame(players: Player[]) {
+        const nbRealPlayer = players?.filter((player: Player) => player.idPlayer !== 'virtualPlayer').length;
+        if (nbRealPlayer >= GlobalConstants.MIN_PERSON_PLAYING) {
+            this.infoClientService.displayTurn = GlobalConstants.WAITING_FOR_CREATOR;
+        } else {
+            this.infoClientService.displayTurn = GlobalConstants.WAIT_FOR_OTHER_PLAYERS;
+        }
     }
 }

@@ -3,17 +3,22 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers*/
 import * as GlobalConstants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
+import { Spectator } from './spectator';
 import { Objective } from './objective';
 import { Player } from './player';
 import { Tile } from './tile';
+import { Trie } from './trie';
 
 export class GameServer {
     // LETTER BANK SERVICE DATA
     letterBank: Map<string, LetterData>;
     letters: string[];
 
+    roomName: string;
+
     // BOARD SERVICE DATA
     board: Tile[][];
+    trie: Trie;
     // we are obliged to put the esLint disable because the object class we use isnt stable
     // we therefore need to use any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,6 +29,10 @@ export class GameServer {
 
     // EQUIVALENT STAND PLAYER SERVICE DATA
     mapPlayers: Map<string, Player>;
+    mapSpectators: Map<string, Spectator>;
+
+    // VALIDATION SERVICE
+    noTileOnBoard: boolean;
 
     // GAME PARAMETERS SERVICE DATA
     randomBonusesOn: boolean;
@@ -35,32 +44,39 @@ export class GameServer {
     nbLetterReserve: number;
     gameStarted: boolean;
     gameFinished: boolean;
+    idxPlayerPlaying: number;
     masterTimer: string;
     objectiveArray: Objective[];
     objectivesOfGame: Objective[];
 
     // SKIP TURN SERVICE DATA
     displaySkipTurn: string;
-    currentPlayerId: string;
 
-    constructor(minutesByTurn: number, randomBonusesOn: boolean, gameMode: string, isLog2990Enabled: boolean) {
+    vpLevel: string;
+
+    constructor(minutesByTurn: number, randomBonusesOn: boolean, gameMode: string, isLog2990Enabled: boolean, vpLevel: string, roomName: string) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;
         this.randomBonusesOn = randomBonusesOn;
         this.gameMode = gameMode;
         this.isLog2990Enabled = isLog2990Enabled;
+        this.vpLevel = vpLevel;
+        this.trie = new Trie();
 
         // Initializing the rest of the variables
         this.letters = [];
         this.board = [];
+        this.roomName = roomName;
         this.mapLetterOnBoard = new Map();
         this.mapPlayers = new Map();
+        this.mapSpectators = new Map();
         this.nbLetterReserve = GlobalConstants.DEFAULT_NB_LETTER_BANK;
         this.gameStarted = false;
         this.gameFinished = false;
+        this.idxPlayerPlaying = 0;
         this.masterTimer = '';
         this.displaySkipTurn = "En attente d'un autre joueur..";
-        this.currentPlayerId = '';
+        this.noTileOnBoard = true;
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
@@ -106,9 +122,6 @@ export class GameServer {
                 this.returnRandomObjectiveNotUsed(''),
                 this.returnRandomObjectiveNotUsed(''),
             );
-            // this.objectivesOfGame.push(this.returnRandomObjectiveNotUsed('public'));
-            // this.objectivesOfGame.push(this.returnRandomObjectiveNotUsed(''));
-            // this.objectivesOfGame.push(this.returnRandomObjectiveNotUsed(''));
         }
     }
 

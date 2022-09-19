@@ -33,13 +33,7 @@ export class PutLogicService {
         // we verify the validity of the word
         this.boardLogicUpdate(game, move.command, move.word);
         // Game update
-        const opponent = game.mapPlayers.get(player.idOpponent);
-        this.sio.sockets.sockets.get(player.idOpponent)?.emit('gameUpdateClient', {
-            game,
-            player: opponent,
-            scoreOpponent: player?.score,
-            nbLetterStandOpponent: player?.nbLetterStand,
-        });
+        this.sendGameToAllClientInRoom(game);
 
         this.updateStandOpponent(game, player, move.stand);
         this.scoreCountService.updateScore(move.score, player);
@@ -50,22 +44,28 @@ export class PutLogicService {
         }
     }
 
+    /**
+     * check if word to draw is valid
+     *
+     * @returns true is word valid, false otherwise
+     */
     computeWordToDraw(game: GameServer, player: Player, position: string, word: string): boolean {
         // we verify the validity of the word
         this.boardLogicUpdate(game, position, word);
         // Game update
-        const opponent = game.mapPlayers.get(player.idOpponent);
-        this.sio.sockets.sockets.get(player.idPlayer)?.emit('gameUpdateClient', {
-            game,
-            player,
-            scoreOpponent: opponent?.score,
-            nbLetterStandOpponent: opponent?.nbLetterStand,
-        });
+        this.sendGameToAllClientInRoom(game);
 
         const isWordValid: boolean = this.checkWordsValidity(game, position);
-        if (!isWordValid) {
-            this.boardLogicRemove(game, position, word);
-        } else {
+        // if (!isWordValid) {
+        //     this.boardLogicRemove(game, position, word);
+        // } else {
+        //     // Update the score
+        //     const score = this.scoreCountService.countScoreArray(this.boardExplorerService.getWordArray(position, game.board));
+        //     this.scoreCountService.updateScore(score, player);
+        //     game.noTileOnBoard = false;
+        // }
+
+        if (isWordValid) {
             // Update the score
             const score = this.scoreCountService.countScoreArray(this.boardExplorerService.getWordArray(position, game.board));
             this.scoreCountService.updateScore(score, player);
@@ -185,14 +185,30 @@ export class PutLogicService {
         player.isMoveBingo = areAllLetterOnStand;
 
         // player update for stand
-        this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerUpdate', player);
+        this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
         if (!isWordValid) {
             this.cancelUpdateOperation(game, player, arrayIndexWord, arrayLetter);
         }
     }
 
+    private sendGameToAllClientInRoom(game: GameServer) {
+        // We send to all clients a gameState and a scoreBoardState\
+        this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+
+        // we send to all clients an update of the players and spectators
+        this.sio.to(game.roomName).emit('playersSpectatorsUpdate', {
+            roomName: game.roomName,
+            players: Array.from(game.mapPlayers.values()),
+            spectators: Array.from(game.mapSpectators.values()),
+        });
+
+        // we send an update of the player object for each respective client
+        for (const player of game.mapPlayers.values()) {
+            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
+        }
+    }
+
     private cancelUpdateOperation(game: GameServer, player: Player, arrayIndexWord: number[], arrayLetter: string[]) {
-        const timeToWait = 4000;
         setTimeout(() => {
             let indexWord = 0;
             for (const positionIndex of arrayIndexWord) {
@@ -200,14 +216,8 @@ export class PutLogicService {
                 indexWord++;
             }
             // Game update
-            const opponent = game.mapPlayers.get(player.idOpponent);
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('gameUpdateClient', {
-                game,
-                player,
-                scoreOpponent: opponent?.score,
-                nbLetterStandOpponent: opponent?.nbLetterStand,
-            });
-        }, timeToWait);
+            this.sendGameToAllClientInRoom(game);
+        }, GlobalConstants.TIME_DELAY_RM_BAD_WORD);
     }
 
     private verifyIfTileOnBoardAlready(game: GameServer, letterToCheck: string, indexLetter: number, position: string): boolean {

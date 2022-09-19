@@ -12,9 +12,23 @@ import { DatabaseService } from './services/database.service';
 import { DictionaryService } from './services/dictionary.service';
 import { PlayAreaService } from './services/play-area.service';
 import { PutLogicService } from './services/put-logic.service';
-import { StandService } from './services/stand.service';
+import { connect } from 'mongoose';
+import * as GlobalConstants from './classes/global-constants';
+import { DATABASE_NAME } from './classes/global-constants';
 
 const baseDix = 10;
+
+export const dbConnection = {
+    url: `${GlobalConstants.DATABASE_URL}`,
+    options: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        user: 'Stephane',
+        pass: 'HarryP0tter7',
+        authSource: 'admin',
+        dbName: DATABASE_NAME,
+    },
+};
 
 @Service()
 export class Server {
@@ -29,7 +43,6 @@ export class Server {
         private communicationBoxService: CommunicationBoxService,
         private playAreaService: PlayAreaService,
         private chatService: ChatService,
-        private standService: StandService,
         private boardService: BoardService,
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
@@ -57,7 +70,6 @@ export class Server {
             this.communicationBoxService,
             this.playAreaService,
             this.chatService,
-            this.standService,
             this.boardService,
             this.putLogicService,
             this.databaseService,
@@ -71,6 +83,10 @@ export class Server {
         try {
             await this.databaseService.start();
             console.log('Connexion à la base de donnée MongoDB établie !');
+
+            connect(dbConnection.url, dbConnection.options).then((res) =>
+                console.log(`Connected to: ${GlobalConstants.DATABASE_URL}, with response: ${res.connection.id}`),
+            );
         } catch {
             console.error('Connexion à la base de donnée a échoué ! Redémarrez le serveur et vérifier votre connexion Internet.');
             // process.exit(1);

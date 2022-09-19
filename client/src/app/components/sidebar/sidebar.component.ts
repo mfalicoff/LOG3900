@@ -1,9 +1,7 @@
 /* eslint-disable deprecation/deprecation */
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSliderChange } from '@angular/material/slider';
 import { Router } from '@angular/router';
-import { ModalVpLevelsComponent } from '@app/components/modal-vp-levels/modal-vp-levels.component';
 import { DrawingBoardService } from '@app/services/drawing-board-service';
 import { DrawingService } from '@app/services/drawing.service';
 import { InfoClientService } from '@app/services/info-client.service';
@@ -18,11 +16,10 @@ export class SidebarComponent {
     private fontSize: number;
 
     constructor(
-        private modal: MatDialog,
         private drawingBoardService: DrawingBoardService,
         private drawingService: DrawingService,
         private socketService: SocketService,
-        private infoClientService: InfoClientService,
+        public infoClientService: InfoClientService,
         private router: Router,
     ) {}
 
@@ -44,6 +41,10 @@ export class SidebarComponent {
     }
 
     onClickGiveUpButton() {
+        if (this.infoClientService.isSpectator) {
+            return;
+        }
+
         if (this.infoClientService.game.gameFinished) {
             alert("La game est finie, plus d'abandon possible.");
             return;
@@ -57,13 +58,21 @@ export class SidebarComponent {
     }
 
     finishGameClick() {
+        if (this.infoClientService.isSpectator) {
+            return;
+        }
+
         if (!this.infoClientService.game.gameFinished) {
             return;
         }
         this.router.navigate(['/home']);
     }
 
-    shouldConvertSoloBe(): boolean {
+    shouldLeaveGameBe() {
+        if (this.infoClientService.isSpectator || this.infoClientService.game.gameFinished) {
+            return true;
+        }
+
         let answer = true;
 
         if (this.infoClientService.displayTurn !== "En attente d'un autre joueur...") {
@@ -72,24 +81,25 @@ export class SidebarComponent {
         return answer;
     }
 
-    convertGameInSolo(vpLevel: string) {
-        this.infoClientService.vpLevel = vpLevel;
-        this.infoClientService.generateNameOpponent(this.infoClientService.playerName);
-        this.socketService.socket.emit('convertGameInSolo', this.infoClientService.nameOpponent, vpLevel);
-    }
-
     leaveGame() {
         this.socketService.socket.emit('leaveGame');
-        this.infoClientService.actualRoom = '';
     }
 
-    openModal() {
-        const modalRef = this.modal.open(ModalVpLevelsComponent, {
-            panelClass: 'modalVPContainer',
-        });
+    startGame() {
+        this.socketService.socket.emit('startGame', this.infoClientService.game.roomName);
+        this.infoClientService.creatorShouldBeAbleToStartGame = false;
+    }
 
-        modalRef.afterClosed().subscribe((result) => {
-            this.convertGameInSolo(result);
-        });
+    shouldSpecBeAbleToBePlayer() {
+        const nbVirtualPlayer = Array.from(this.infoClientService.actualRoom.players).filter((player) => player.idPlayer === 'virtualPlayer').length;
+        if (nbVirtualPlayer > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    spectWantsToBePlayer() {
+        this.socketService.socket.emit('spectWantsToBePlayer');
     }
 }
