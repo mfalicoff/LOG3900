@@ -8,7 +8,6 @@ import { Player } from '@app/classes/player';
 import { Score } from '@app/classes/score';
 import { Spectator } from '@app/classes/spectator';
 import { User } from '@app/classes/users.interface';
-import { Vec2 } from '@app/classes/vec2';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
@@ -103,7 +102,7 @@ export class SocketManager {
             }
         });
 
-        socket.on('boardClick', (coordinateClick: Vec2) => {
+        socket.on('boardClick', (coordinateClick) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -165,7 +164,7 @@ export class SocketManager {
             }
         });
 
-        socket.on('leftClickSelection', (coordinateXClick: number) => {
+        socket.on('leftClickSelection', (coordinateXClick) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
