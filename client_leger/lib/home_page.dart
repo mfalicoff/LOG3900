@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -63,7 +66,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ElevatedButton(onPressed: _toGameListPage, child: const Text("Mode Classique"))
+                    ElevatedButton(onPressed: _toGameListPage, child: const Text("Mode Classique")),
+                    ElevatedButton(onPressed: _testHTTP, child: const Text("Test HTTP get users")),
+                    ElevatedButton(onPressed: _testHTTPCreate, child: const Text("Test HTTP create user")),
+                    ElevatedButton(onPressed: _testHTTPLogin, child: const Text("Test HTTP login user")),
                   ],
                 )
             )
@@ -78,6 +84,73 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (context) => const Text("Chat page")
         )
     );
+  }
+
+  void _testHTTP() async {
+    print("test get");
+    final response = await http
+        .get(Uri.parse('http://192.168.2.43:3000/users'));
+    print("test get, ${response.body}");
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  void _testHTTPCreate() async {
+    print("test post");
+
+    final response = await http.post(
+      Uri.parse('http://192.168.2.43:3000/users'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "email": "example@email.com",
+        "name": "username",
+        "password": "password"
+      }),
+    );
+    print("test post, ${response.body}");
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
+  }
+
+  void _testHTTPLogin() async {
+    print("test post");
+
+    final response = await http.post(
+      Uri.parse('http://192.168.2.43:3000/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "email": "example@email.com",
+        "password": "password"
+      }),
+    );
+    print("test post, ${response.body}");
+    if (response.statusCode == 200) {
+      // If the server did return a 200 OK response,
+      // then parse the JSON.
+
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
+    }
   }
 
   void _toGameListPage() {
