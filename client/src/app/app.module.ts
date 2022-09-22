@@ -23,6 +23,7 @@ import { ModalVpLevelsComponent } from './components/modal-vp-levels/modal-vp-le
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
 import { ModalComponent } from './pages/modal/modal.component';
+import { ChatComponent } from './pages/chat/chat.component';
 
 /**
  * Main module that is used in main.ts.
@@ -49,6 +50,7 @@ import { ModalComponent } from './pages/modal/modal.component';
         AdminPageComponent,
         ModalComponent,
         ModalVpLevelsComponent,
+        ChatComponent,
     ],
     imports: [
         AppMaterialModule,

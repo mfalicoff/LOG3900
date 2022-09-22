@@ -5,6 +5,11 @@ import { SocketService } from '@app/services/socket.service';
 import { DrawingBoardService } from './drawing-board-service';
 import { InfoClientService } from './info-client.service';
 
+interface Chat {
+    id: string;
+    msg: string;
+}
+
 @Injectable({
     providedIn: 'root',
 })
@@ -57,6 +62,12 @@ export class MouseKeyboardEventHandlerService {
 
     onCommunicationBoxEnter(input: string) {
         this.socketService.socket.emit('newMessageClient', input);
+        this.isCommBoxJustBeenClicked = false;
+        this.isCommunicationBoxFocus = true;
+    }
+
+    onCommunicationBoxEnterChat(chat: Chat) {
+        this.socketService.socket.emit('chat msg', chat);
         this.isCommBoxJustBeenClicked = false;
         this.isCommunicationBoxFocus = true;
     }

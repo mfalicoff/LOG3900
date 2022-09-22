@@ -20,6 +20,11 @@ import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PutLogicService } from './put-logic.service';
 
+interface Chat {
+    id: string;
+    msg: string;
+}
+
 @Service()
 export class SocketManager {
     sio: io.Server;
@@ -29,6 +34,7 @@ export class SocketManager {
     rooms: Map<string, GameServer>;
     scoreClassic: Score[];
     scoreLOG2990: Score[];
+    chatHistory: Chat[] = [];
 
     constructor(
         server: http.Server,
@@ -633,6 +639,12 @@ export class SocketManager {
     private commBoxInputHandler(socket: io.Socket) {
         socket.on('newMessageClient', (inputClient) => {
             this.manageNewMessageClient(inputClient, socket);
+        });
+
+        socket.on('chat msg', (chat: Chat) => {
+            this.chatHistory.push(chat);
+            console.log(chat, this.chatHistory);
+            socket.broadcast.emit('chat msg', chat);
         });
     }
 
