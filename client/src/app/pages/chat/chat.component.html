@@ -3,12 +3,14 @@
     <div>
         <div>
             <input
+                id="usernameBox"
                 class="inputField"
                 type="text"
                 placeholder="Ecrivez un nom d'utilisateur"
                 [(ngModel)]="username"
                 (keydown.enter)="onEnterUsernameBox(username)"
             />
+            {{username}}
         </div>
         <div  id="commBox">
             <div class="wrapper">
@@ -23,7 +25,8 @@
                     id="inputCommBox"
                     class="inputField"
                     type="text"
-                    placeholder="Ecrivez une commande avec ! ou un message"
+                    placeholder="Écrivez un message"
+                    [readOnly]="username === ''"
                     [(ngModel)]="inputInComBox"
                     (keydown.enter)="onEnterComBox(inputInComBox)"
                 />

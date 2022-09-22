@@ -67,9 +67,13 @@ export class MouseKeyboardEventHandlerService {
     }
 
     onCommunicationBoxEnterChat(chat: Chat) {
-        this.socketService.socket.emit('chat msg', chat);
-        this.isCommBoxJustBeenClicked = false;
-        this.isCommunicationBoxFocus = true;
+        if (this.socketService.socket.connected) {
+            this.socketService.socket.emit('chat msg', chat);
+            this.isCommBoxJustBeenClicked = false;
+            this.isCommunicationBoxFocus = true;
+        } else {
+            throw new Error('not connected to server');
+        }
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {

@@ -34,6 +34,7 @@ export class ChatComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
+        // eslint-disable-next-line deprecation/deprecation
         this.itemElements.changes.subscribe(() => this.scrollToBottom());
     }
 
@@ -46,11 +47,16 @@ export class ChatComponent implements AfterViewInit {
             msg: input,
         };
 
-        this.mouseKeyboardEventHandler.onCommunicationBoxEnterChat(chat);
-        this.chatHistory.push(chat);
+        try {
+            this.mouseKeyboardEventHandler.onCommunicationBoxEnterChat(chat);
+            this.chatHistory.push(chat);
+        } catch (e) {
+            console.log(e);
+        }
     }
 
     onEnterUsernameBox(input: string): void {
+        (document.getElementById('usernameBox') as HTMLInputElement).value = '';
         this.username = input;
     }
 
