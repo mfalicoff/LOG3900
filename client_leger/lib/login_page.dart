@@ -51,7 +51,8 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-
+  String? username = "";
+  String? password = "";
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -64,6 +65,7 @@ class _LoginFormState extends State<LoginForm> {
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           TextFormField(
+            onSaved: (String? value){username=value;},
             validator: _userNameValidator,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
@@ -74,6 +76,7 @@ class _LoginFormState extends State<LoginForm> {
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           TextFormField(
+            onSaved: (String? value){password=value;},
             validator: _passwordValidator,
             obscureText: true,
             decoration: InputDecoration(
@@ -132,6 +135,8 @@ class _LoginFormState extends State<LoginForm> {
 
   void _submit() {
     if ( _formKey.currentState!.validate()){
+      _formKey.currentState?.save();
+
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const MyHomePage()));
     }
