@@ -2,9 +2,9 @@ import 'dart:ui';
 
 import 'package:client_leger/home_page.dart';
 import 'package:client_leger/services/controller.dart';
+import 'package:client_leger/signup_page.dart';
 import 'package:flutter/material.dart';
 
-import 'models/user.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -178,9 +178,7 @@ class _LoginFormState extends State<LoginForm> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try{
-        User user = await controller.login(email: email, password: password);
-        print(user.username);
-        print(user.email);
+        await controller.login(email: email, password: password);
         Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const MyHomePage()));
       } on Exception{
@@ -194,6 +192,6 @@ class _LoginFormState extends State<LoginForm> {
 
   void _toSignUpPage() {
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const Text("Sign up page")));
+        MaterialPageRoute(builder: (context) => const SignUpPage()));
   }
 }
