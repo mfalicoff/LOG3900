@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
@@ -10,7 +11,7 @@ import { environment } from 'src/environments/environment';
     styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent implements OnInit {
-    form: unknown = {
+    form: any = {
         username: null,
         email: null,
         password: null,
@@ -45,9 +46,8 @@ export class LoginPageComponent implements OnInit {
     }
 
     async signUp() {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.http
-            .post<unknown>(this.serverUrl + 'signup', {
+            .post<any>(this.serverUrl + 'signup', {
                 name: this.form.username,
                 email: this.form.email,
                 password: this.form.password,
@@ -66,9 +66,8 @@ export class LoginPageComponent implements OnInit {
     }
 
     async signIn() {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return this.http
-            .post<unknown>(this.serverUrl + 'login', {
+            .post<any>(this.serverUrl + 'login', {
                 email: this.form.email,
                 password: this.form.password,
             })
@@ -92,3 +91,5 @@ export class LoginPageComponent implements OnInit {
         }
     }
 }
+
+/* eslint-enable  @typescript-eslint/no-explicit-any */
