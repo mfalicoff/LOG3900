@@ -18,7 +18,7 @@ export class ChatComponent implements AfterViewInit {
     @ViewChildren('commands') itemElements: QueryList<Element>;
 
     inputInComBox: string = '';
-    username: string = '';
+    // username: string = '';
     chatHistory: Chat[] = [];
     private scrollContainer: Element;
 
@@ -43,7 +43,7 @@ export class ChatComponent implements AfterViewInit {
     onEnterComBox(input: string): void {
         (document.getElementById('inputCommBox') as HTMLInputElement).value = '';
         const chat: Chat = {
-            id: this.username,
+            id: this.infoClientService.playerName,
             msg: input,
         };
 
@@ -55,10 +55,10 @@ export class ChatComponent implements AfterViewInit {
         }
     }
 
-    onEnterUsernameBox(input: string): void {
-        (document.getElementById('usernameBox') as HTMLInputElement).value = '';
-        this.username = input;
-    }
+    // onEnterUsernameBox(input: string): void {
+    //     (document.getElementById('usernameBox') as HTMLInputElement).value = '';
+    //     this.username = input;
+    // }
 
     getChatHistory() {
         return this.chatHistory;

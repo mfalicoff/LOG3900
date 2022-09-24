@@ -28,13 +28,6 @@ export class LoginPageComponent implements OnInit {
     ngOnInit(): void {}
 
     onSubmit(): void {
-        console.log('isSuccessful: ' + this.isSuccessful);
-        console.log('isSignUpFailed: ' + this.isSignUpFailed);
-        console.log('errorMessage: ' + this.errorMessage);
-        console.log('form: ' + this.form);
-        console.log('forn.username: ' + this.form.username);
-        console.log('forn.email: ' + this.form.email);
-        console.log('forn.password: ' + this.form.password);
         if (this.showSignup) {
             this.signUp();
         } else {
@@ -54,12 +47,10 @@ export class LoginPageComponent implements OnInit {
             })
             .subscribe({
                 next: (data) => {
-                    console.log(data);
                     this.infoClientService.playerName = data.data.name;
                     this.router.navigate(['/chat']);
                 },
                 error: (error) => {
-                    console.error('There was an error!', error);
                     this.handleErrorPOST(error);
                 },
             });
@@ -77,7 +68,6 @@ export class LoginPageComponent implements OnInit {
                     this.router.navigate(['/chat']);
                 },
                 error: (error) => {
-                    console.error('There was an error!', error);
                     this.handleErrorPOST(error);
                 },
             });
