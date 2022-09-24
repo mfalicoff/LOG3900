@@ -8,7 +8,6 @@ import { environment } from 'src/environments/environment';
     providedIn: 'root',
 })
 export class AdminRequestService {
-    // serverUrl = 'http://localhost:3000/admin';
     serverUrl = environment.serverUrl + 'admin';
 
     constructor(private httpClient: HttpClient) {}
