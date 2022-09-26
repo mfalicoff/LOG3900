@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -25,34 +24,36 @@ class ChatPage extends StatefulWidget {
 class _MyChatPageState extends State<ChatPage> {
 
   String message = "";
-  late List<ChatMessage> chatHistory;
+  late List<ChatMessage> chatHistory = [];
 
-  IO.Socket socket = IO.io('http://10.0.2.2:3000',
-      OptionBuilder()
-          .setTransports(['websocket']) // for Flutter or Dart VM
-          .setExtraHeaders({'foo': 'bar'}) // optional
-          .build());
-
-  _MyChatPageState(){
-    socket.onConnect((_) {
-      print('connect');
-    });
-
-    initSockets();
-    chatHistory = [];
-  }
+  late IO.Socket socket;
 
   @override
   void initState() {
+    socket = IO.io('http://10.0.2.2:3000',
+        OptionBuilder()
+            .setTransports(['websocket']) // for Flutter or Dart VM
+            .setExtraHeaders({'foo': 'bar'}) // optional
+            .build());
+
+    initSockets();
     super.initState();
-    chatHistory = [];
+  }
+
+  void initSockets() {
+      socket.on('chat msg', (data) {
+        if(mounted){
+          setState(() {
+            chatHistory.add(ChatMessage(msg: data['msg'], id: data['id']));
+          });
+        }
+      });
   }
 
   @override
   Widget build(BuildContext context) {
 
-    return WillPopScope(
-        child:  Scaffold(
+    return Scaffold(
             body:(
                 Stack(
                   children: <Widget>[
@@ -145,12 +146,7 @@ class _MyChatPageState extends State<ChatPage> {
                   ],
                 )
             )
-        ),
-        onWillPop: () async {
-          return false;
-        }
-    );
-
+        );
   }
 
   void _toChatPage() {
@@ -174,16 +170,5 @@ class _MyChatPageState extends State<ChatPage> {
     });
     print(chatHistory);
     socket.emit("chat msg", chat);
-  }
-
-  void initSockets() {
-    socket.on('chat msg', (data) {
-      print(mounted);
-      if(mounted) {
-        setState(() {
-          chatHistory.add(ChatMessage(msg: data['msg'], id: data['id']));
-        });
-      } else initPage();
-    });
   }
 }
