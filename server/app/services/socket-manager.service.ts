@@ -19,11 +19,7 @@ import { DictionaryService } from './dictionary.service';
 import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PutLogicService } from './put-logic.service';
-
-interface Chat {
-    id: string;
-    msg: string;
-}
+import { ChatMessage } from '@app/classes/chat-message.interface';
 
 @Service()
 export class SocketManager {
@@ -34,7 +30,7 @@ export class SocketManager {
     rooms: Map<string, GameServer>;
     scoreClassic: Score[];
     scoreLOG2990: Score[];
-    chatHistory: Chat[] = [];
+    chatHistory: ChatMessage[] = [];
 
     constructor(
         server: http.Server,
@@ -641,7 +637,7 @@ export class SocketManager {
             this.manageNewMessageClient(inputClient, socket);
         });
 
-        socket.on('chat msg', (chat: Chat) => {
+        socket.on('chat msg', (chat: ChatMessage) => {
             this.chatHistory.push(chat);
             console.log(chat, this.chatHistory);
             socket.broadcast.emit('chat msg', chat);

@@ -32,15 +32,6 @@ class AuthService {
         return { cookie, findUser };
     }
 
-    async logout(userData: User): Promise<User> {
-        if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
-
-        const findUser: User = (await this.users.findOne({ email: userData.email, password: userData.password })) as User;
-        if (!findUser) throw new HttpException(HTTPStatusCode.Conflict, `You're email ${userData.email} not found`);
-
-        return findUser;
-    }
-
     createToken(user: User): TokenData {
         const dataStoredInToken: DataStoredInToken = { _id: user.id as string };
         const secretKey: string = WEB_TOKEN_SECRET;

@@ -2,11 +2,7 @@ import { AfterViewInit, Component, ElementRef, QueryList, ViewChild, ViewChildre
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
-
-interface Chat {
-    id: string;
-    msg: string;
-}
+import { ChatMessage } from '@app/classes/chat-message.interface';
 
 @Component({
     selector: 'app-chat',
@@ -19,7 +15,7 @@ export class ChatComponent implements AfterViewInit {
 
     inputInComBox: string = '';
     // username: string = '';
-    chatHistory: Chat[] = [];
+    chatHistory: ChatMessage[] = [];
     private scrollContainer: Element;
 
     constructor(
@@ -27,7 +23,7 @@ export class ChatComponent implements AfterViewInit {
         public infoClientService: InfoClientService,
         private socketService: SocketService,
     ) {
-        this.socketService.socket.on('chat msg', (chat: Chat) => {
+        this.socketService.socket.on('chat msg', (chat: ChatMessage) => {
             this.chatHistory.push(chat);
         });
     }
@@ -42,9 +38,10 @@ export class ChatComponent implements AfterViewInit {
     // and delete the input field
     onEnterComBox(input: string): void {
         (document.getElementById('inputCommBox') as HTMLInputElement).value = '';
-        const chat: Chat = {
-            id: this.infoClientService.playerName,
+        const chat: ChatMessage = {
+            sender: this.infoClientService.playerName,
             msg: input,
+            timestamp: new Date(),
         };
 
         try {

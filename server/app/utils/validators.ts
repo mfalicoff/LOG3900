@@ -24,6 +24,11 @@ export class LoginUserValidator {
     password: string;
 }
 
+export class EmailValidator {
+    @IsEmail()
+    email: string;
+}
+
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export const validationMiddleware = (
     type: any,

@@ -17,7 +17,7 @@
             <div class="wrapper">
                 <div class="sidebar" #scrollFrame>
                     <div *ngFor="let msg of getChatHistory()" #commands>
-                        <p class="messagePlayer">client: {{msg.id}} message: {{ msg.msg }}</p>
+                        <p class="messagePlayer">client: {{msg.sender}} message: {{ msg.msg }} {{msg.timestamp}}</p>
                     </div>
                 </div>
             </div>

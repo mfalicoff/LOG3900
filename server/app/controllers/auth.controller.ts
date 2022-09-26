@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { CreateUserValidator } from '@app/utils/validators';
-import { RequestWithUser } from '@app/classes/auth.interface';
 import { User } from '@app/classes/users.interface';
 import AuthService from '@app/services/auth.service';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
@@ -33,13 +32,10 @@ class AuthController {
         }
     };
 
-    logOut = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    logOut = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const userData: User = req.user;
-            const logOutUserData: User = await this.authService.logout(userData);
-
             res.setHeader('Set-Cookie', ['Authorization=; Max-age=0']);
-            res.status(HTTPStatusCode.OK).json({ data: logOutUserData, message: 'logged out' });
+            res.status(HTTPStatusCode.OK).json({ message: 'logged out' });
         } catch (error) {
             next(error);
         }
