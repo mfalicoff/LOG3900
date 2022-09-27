@@ -12,6 +12,7 @@ cache:
         refs:
             - master
             - merge_requests
+            - dev
         changes:
             - client/**/*
     cache:
