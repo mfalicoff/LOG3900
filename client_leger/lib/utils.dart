@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 //Taken from https://medium.com/@nickysong/creating-a-custom-color-swatch-in-flutter-554bcdcb27f3
 MaterialColor createMaterialColor(Color color) {
@@ -20,3 +21,9 @@ MaterialColor createMaterialColor(Color color) {
   }
   return MaterialColor(color.value, swatch);
 }
+
+String readableTime(String timestamp){
+  DateTime dateTime = DateTime.parse(timestamp);
+  return DateFormat('kk:mm:ss').format(dateTime);
+}
+

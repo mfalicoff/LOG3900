@@ -3,6 +3,7 @@ import 'package:client_leger/home_page.dart';
 import 'package:client_leger/login_page.dart';
 import 'package:client_leger/utils/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'env/environment.dart';
 
@@ -16,12 +17,15 @@ void main() {
 
   Environment().initConfig(environment);
   print(Environment().config?.serverURL);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+  ]);
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
