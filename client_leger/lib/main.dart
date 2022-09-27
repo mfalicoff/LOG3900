@@ -4,8 +4,18 @@ import 'package:client_leger/login_page.dart';
 import 'package:client_leger/utils/theme.dart';
 import 'package:flutter/material.dart';
 
+import 'env/environment.dart';
+
 
 void main() {
+
+  const String environment = String.fromEnvironment(
+    'ENVIRONMENT',
+    defaultValue: Environment.DEVEMU,
+  );
+
+  Environment().initConfig(environment);
+  print(Environment().config?.serverURL);
   runApp(const MyApp());
 }
 

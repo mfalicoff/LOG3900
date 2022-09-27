@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
+import 'env/environment.dart';
 import 'models/chat.dart';
 
 class ChatPage extends StatefulWidget {
@@ -30,7 +31,7 @@ class _MyChatPageState extends State<ChatPage> {
 
   @override
   void initState() {
-    socket = IO.io('http://10.0.2.2:3000',
+    socket = IO.io(Environment().config?.serverURL,
         OptionBuilder()
             .setTransports(['websocket']) // for Flutter or Dart VM
             .setExtraHeaders({'foo': 'bar'}) // optional
@@ -44,7 +45,7 @@ class _MyChatPageState extends State<ChatPage> {
       socket.on('chat msg', (data) {
         if(mounted){
           setState(() {
-            chatHistory.add(ChatMessage(msg: data['msg'], id: data['id']));
+            chatHistory.add(ChatMessage(msg: data['msg'], sender: data['sender'], timestamp: data['timestamp']));
           });
         }
       });
@@ -163,7 +164,7 @@ class _MyChatPageState extends State<ChatPage> {
 
   void sendMessage() {
     print(message);
-    ChatMessage chat = ChatMessage(msg: message, id: "test");
+    ChatMessage chat = ChatMessage(msg: message, sender: "test", timestamp: DateTime.now().toString());
     setState(() {
       chatHistory.add(chat);
       message = "";
