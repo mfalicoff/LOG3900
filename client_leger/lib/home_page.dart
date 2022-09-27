@@ -1,3 +1,4 @@
+import 'package:client_leger/services/controller.dart';
 import 'dart:convert';
 
 import 'package:client_leger/chat_page.dart';
@@ -22,14 +23,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  final Controller controller = Controller();
+
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
+
     return Stack(
       children: <Widget>[
         Container(
@@ -53,6 +51,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 onPressed: _toChatPage,
                 child: const Icon(Icons.chat))
+        ),
+        Positioned(
+            top: 10.0,
+            left: 30.0,
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0)
+                        )
+                    )
+                ),
+                onPressed: _logout,
+                child: const Icon(Icons.logout))
         ),
         Center(
             child: Column(
@@ -144,5 +159,10 @@ class _MyHomePageState extends State<MyHomePage> {
             builder: (context) => const Text("Game list page")
         )
     );
+  }
+
+  void _logout() {
+    controller.logout();
+    Navigator.of(context).pop();
   }
 }
