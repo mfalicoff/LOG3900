@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:client_leger/env/environment.dart';
 import 'package:http/http.dart' as http;
@@ -10,7 +9,6 @@ class Controller {
   final String? serverAddress = Environment().config?.serverURL;
 
   Future<User> login({email = String, password = String}) async {
-    print("sending $email $password $serverAddress");
     final response = await http.post(
       Uri.parse("$serverAddress/login"),
       headers: <String, String>{
@@ -21,7 +19,6 @@ class Controller {
         "password": password,
       }),
     );
-    inspect(response);
     if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
     } else {
