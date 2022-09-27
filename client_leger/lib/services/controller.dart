@@ -20,7 +20,9 @@ class Controller {
       }),
     );
     if (response.statusCode == 200) {
-      return User.fromJson(json.decode(response.body));
+      User user = User.fromJson(json.decode(response.body));
+      user.cookie = response.headers["set-cookie"];
+      return user;
     } else {
       throw Exception('Failed to login');
     }
@@ -47,18 +49,19 @@ class Controller {
     }
   }
 
-  Future<void> logout() async {
+  Future<User> logout(User user) async {
     final response = await http.post(
       Uri.parse("$serverAddress/logout"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
       },
       body: jsonEncode(<String, String>{
       }),
     );
 
     if (response.statusCode == 200) {
-      return;
+      return user.clear();
     } else {
       throw Exception('Failed to login');
     }

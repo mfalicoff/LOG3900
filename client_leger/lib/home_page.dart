@@ -2,8 +2,12 @@ import 'package:client_leger/services/controller.dart';
 
 import 'package:flutter/material.dart';
 
+import 'models/user.dart';
+
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  const MyHomePage({required this.user,super.key});
+
+  final User user;
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -15,12 +19,15 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MyHomePage> createState() => _MyHomePageState(this.user);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
 
   final Controller controller = Controller();
+  final User user;
+
+  _MyHomePageState(this.user);
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _logout() {
-    controller.logout();
+    controller.logout(user);
     Navigator.of(context).pop();
   }
 }

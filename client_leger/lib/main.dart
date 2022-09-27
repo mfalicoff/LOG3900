@@ -33,7 +33,6 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: appTheme,
       routes: <String, WidgetBuilder> {
-        '/home': (BuildContext context) => new MyHomePage(),
         '/chat' : (BuildContext context) => new ChatPage(),
       },      home: const Scaffold(
         resizeToAvoidBottomInset: false,
