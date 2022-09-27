@@ -26,6 +26,7 @@ cache:
         refs:
             - master
             - merge_requests
+            - dev
         changes:
             - server/**/*
     cache:
@@ -33,6 +34,15 @@ cache:
         paths:
             - server/node_modules/
         policy: pull
+
+.only-client_leger: &only_clientleger
+    only:
+        refs:
+            - master
+            - merge_requests
+            - dev
+        changes:
+            - client_leger/**/*
 
 stages:
     - install
@@ -118,6 +128,19 @@ build:server:
         paths:
             - server/out/
 
+
+build:client_leger:
+    image: "cirrusci/flutter:3.3.1"
+    stage: build
+    <<: *only_clientleger
+    script:
+        - cd client_leger
+        - flutter pub get
+        - flutter build apk --dart-define=ENVIRONMENT=PROD
+    artifacts:
+        paths:
+            - client_leger/build/app/outputs/flutter-apk/app-release.apk
+
 #test:client:
 #    stage: test
 #    <<: *only-client
@@ -193,3 +216,4 @@ deploy:server:
                 # Launch the server in background and append output to /var/log/messages for CloudWatch
                 forever start -a -l /var/log/messages out/index.js
             "
+
