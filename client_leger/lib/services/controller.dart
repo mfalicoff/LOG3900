@@ -50,20 +50,18 @@ class Controller {
     }
   }
 
-  Future<User> logout({email = String, password = String}) async {
+  Future<void> logout() async {
     final response = await http.post(
       Uri.parse("$serverAddress/logout"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
       body: jsonEncode(<String, String>{
-        "email": email,
-        "password": password,
       }),
     );
 
     if (response.statusCode == 200) {
-      return User("test", "test");
+      return;
     } else {
       throw Exception('Failed to login');
     }
