@@ -9,7 +9,7 @@ import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
         /* eslint-disable */
-        const Authorization = req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization')?.split('Bearer ')[1] : null);
+        const Authorization = req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization') : null);
         /* eslint-enable */
 
         if (Authorization) {
