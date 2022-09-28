@@ -12,3 +12,5 @@ coverage/
 /node_modules
 
 .idea/libraries/
+
+client/build/
