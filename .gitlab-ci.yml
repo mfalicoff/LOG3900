@@ -215,3 +215,26 @@ deploy:server:
                 forever start -a -l /var/log/messages out/index.js
             "
 
+deploy:desktop:
+    image: electronuserland/builder:wine-mono
+    stage: deploy
+    script:
+        - rm -rf /root/.wine
+        - winecfg
+        - cd client
+        - npm ci
+        - npm run build:electron
+    artifacts:
+        paths:
+            - client/build/
+
+deploy:client_leger:
+    image: "cirrusci/flutter:3.3.1"
+    stage: deploy
+    script:
+        - cd client_leger
+        - flutter pub get
+        - flutter build apk --dart-define=ENVIRONMENT=PROD
+    artifacts:
+        paths:
+            - client_leger/build/app/outputs/flutter-apk/app-release.apk
