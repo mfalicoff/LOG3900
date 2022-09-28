@@ -3,6 +3,9 @@ import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboa
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import { ChatMessage } from '@app/classes/chat-message.interface';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-chat',
@@ -22,6 +25,8 @@ export class ChatComponent implements AfterViewInit {
         private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
         public infoClientService: InfoClientService,
         private socketService: SocketService,
+        private http: HttpClient,
+        private router: Router,
     ) {
         this.socketService.socket.on('chat msg', (chat: ChatMessage) => {
             this.chatHistory.push(chat);
@@ -37,7 +42,7 @@ export class ChatComponent implements AfterViewInit {
     // function that shows the content of the input, the place in the message array
     // and delete the input field
     onEnterComBox(input: string): void {
-        (document.getElementById('inputCommBox') as HTMLInputElement).value = '';
+        (document.getElementById('inputField') as HTMLInputElement).value = '';
         const chat: ChatMessage = {
             sender: this.infoClientService.playerName,
             msg: input,
@@ -52,10 +57,27 @@ export class ChatComponent implements AfterViewInit {
         }
     }
 
-    // onEnterUsernameBox(input: string): void {
-    //     (document.getElementById('usernameBox') as HTMLInputElement).value = '';
-    //     this.username = input;
-    // }
+    async logOut(){
+        return this.http
+            .post<any>(environment.serverUrl + 'logout', {})
+            .subscribe({
+                next: (data) => {
+                    this.infoClientService.playerName = data.data.name;
+                    this.router.navigate(['/chat']);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
+    private handleErrorPOST(error: HttpErrorResponse) {
+        if (error.error instanceof ErrorEvent) {
+            alert('Erreur: ' + error.status + error.error.message);
+        } else {
+            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
+        }
+    }
 
     getChatHistory() {
         return this.chatHistory;

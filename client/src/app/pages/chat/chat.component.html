@@ -1,37 +1,23 @@
-<!-- <app-communication-box></app-communication-box> -->
 <div class="container justified">
+    <button id="logoutBtn" (click)="logOut()">LOGOUT</button>
     <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
-    <div>
-        <!-- <div>
-            <input
-                id="usernameBox"
-                class="inputField"
-                type="text"
-                placeholder="Ecrivez un nom d'utilisateur"
-                [(ngModel)]="username"
-                (keydown.enter)="onEnterUsernameBox(username)"
-            />
-            {{username}}
-        </div> -->
-        <div  id="commBox">
-            <div class="wrapper">
-                <div class="sidebar" #scrollFrame>
-                    <div *ngFor="let msg of getChatHistory()" #commands>
-                        <p class="messagePlayer">client: {{msg.sender}} message: {{ msg.msg }} {{msg.timestamp}}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="Input">
-                <input
-                    id="inputCommBox"
-                    class="inputField"
-                    type="text"
-                    placeholder="Écrivez un message"
-                    [readOnly]="infoClientService.playerName === ''"
-                    [(ngModel)]="inputInComBox"
-                    (keydown.enter)="onEnterComBox(inputInComBox)"
-                />
+    <div id="chatWrapper">
+        <div class="sidebar" #scrollFrame>
+            <div *ngFor="let msg of getChatHistory()" #commands>
+                <p class="messagePlayer">
+                    {{msg.timestamp.getDate()}}/{{msg.timestamp.getMonth()}}/{{msg.timestamp.getFullYear()}} 
+                    {{msg.timestamp.getHours()}}:{{msg.timestamp.getMinutes()}}:{{msg.timestamp.getSeconds()}}
+                    : {{msg.sender}} : {{ msg.msg }}
+                </p>
             </div>
         </div>
+        <input
+            id="inputField"
+            type="text"
+            placeholder="Écrivez un message"
+            [readOnly]="infoClientService.playerName === ''"
+            [(ngModel)]="inputInComBox"
+            (keydown.enter)="onEnterComBox(inputInComBox)"
+        />
     </div>
 </div>
