@@ -3,7 +3,7 @@ import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboa
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import { ChatMessage } from '@app/classes/chat-message.interface';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 
@@ -58,16 +58,26 @@ export class ChatComponent implements AfterViewInit {
     }
 
     async logOut() {
-        return this.http.post<unknown>(environment.serverUrl + 'logout', {}, { withCredentials: true }).subscribe({
-            next: (data) => {
-                // @ts-ignore
-                this.infoClientService.playerName = data.data.name;
-                this.router.navigate(['/chat']);
-            },
-            error: (error) => {
-                this.handleErrorPOST(error);
-            },
-        });
+        const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
+        return this.http
+            .post<unknown>(
+                environment.serverUrl + 'logout',
+                {},
+                {
+                    headers,
+                },
+            )
+            .subscribe({
+                next: (data) => {
+                    // @ts-ignore
+                    localStorage.clear();
+                    this.infoClientService.playerName = '';
+                    this.router.navigate(['/login']);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {
