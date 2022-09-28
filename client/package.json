@@ -4,7 +4,7 @@
   "main": "main.js",
   "scripts": {
     "start": "ng serve --open",
-    "build": "ng build",
+    "build": "ng build --configuration production",
     "stage": "ng serve --configuration staging --open",
     "deploy": "ng build",
     "watch": "ng build --watch --configuration development",
@@ -14,9 +14,10 @@
     "lint": "ng lint --format stylish",
     "lint:fix": "npm run lint -- --fix",
     "start:electron": "ng build --base-href ./ && electron .",
-    "build:electron": "ng build && electron-packager . --asar --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite --out=./build --platform=win32",
+    "build:electron": "ng build --configuration production && electron-packager . --asar --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite --out=./build --platform=win32",
     "tauri": "tauri",
-    "tauri:dev": "tauri dev"
+    "tauri:dev": "tauri dev",
+    "tauri:build:prod": "tauri build"
   },
   "browser": {
     "fs": false,
