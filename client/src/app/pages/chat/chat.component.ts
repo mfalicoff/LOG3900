@@ -19,6 +19,7 @@ export class ChatComponent implements AfterViewInit {
     inputInComBox: string = '';
     // username: string = '';
     chatHistory: ChatMessage[] = [];
+    dateObject : Date;
     private scrollContainer: Element;
 
     constructor(
@@ -29,6 +30,7 @@ export class ChatComponent implements AfterViewInit {
         private router: Router,
     ) {
         this.socketService.socket.on('chat msg', (chat: ChatMessage) => {
+            console.log(chat);
             this.chatHistory.push(chat);
         });
     }
@@ -46,8 +48,10 @@ export class ChatComponent implements AfterViewInit {
         const chat: ChatMessage = {
             sender: this.infoClientService.playerName,
             msg: input,
-            timestamp: new Date(),
+            timestamp: new Date().getTime(),
         };
+
+        console.log("chat", chat)
 
         try {
             this.mouseKeyboardEventHandler.onCommunicationBoxEnterChat(chat);
@@ -57,12 +61,20 @@ export class ChatComponent implements AfterViewInit {
         }
     }
 
+    isClassOpponentOrPlayer(chatMsg: ChatMessage): string {
+        //how wacky is that :)
+        this.dateObject = new Date(chatMsg.timestamp);
+        if(chatMsg.sender == this.infoClientService.playerName){
+            return "messagePlayer";
+        }else{
+            return "messageOpponent";
+        }
+    }
+
     async logOut() {
         return this.http.post<unknown>(environment.serverUrl + 'logout', {}, { withCredentials: true }).subscribe({
-            next: (data) => {
-                // @ts-ignore
-                this.infoClientService.playerName = data.data.name;
-                this.router.navigate(['/chat']);
+            next: () => {
+                this.router.navigate(['/login']);
             },
             error: (error) => {
                 this.handleErrorPOST(error);

@@ -74,7 +74,6 @@ export class LoginPageComponent implements OnInit {
     async signIn() {
         const headers = new HttpHeaders();
         headers.set('Content-Type', 'application/json; charset=UTF-8');
-
         return this.http
             .post<any>(
                 this.serverUrl + 'login',
@@ -95,19 +94,6 @@ export class LoginPageComponent implements OnInit {
                     this.handleErrorPOST(error);
                 },
             });
-        // return fetch(this.serverUrl + 'login', {
-        //     mode: 'no-cors',
-        //     body:JSON.stringify({
-        //         email: this.form.email,
-        //         password: this.form.password,
-        //     }),
-        //     credentials: 'include',
-        //     method: 'POST',
-        //     headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        // })
-        //     .then(response => response.json())
-        //     .then(json => console.log(json))
-        //     .catch(error => console.log('Authorization failed : ' + error.message));
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {

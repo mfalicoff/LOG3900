@@ -4,9 +4,8 @@
     <div id="chatWrapper">
         <div class="sidebar" #scrollFrame>
             <div *ngFor="let msg of getChatHistory()" #commands>
-                <p class="messagePlayer">
-                    {{msg.timestamp.getDate()}}/{{msg.timestamp.getMonth()}}/{{msg.timestamp.getFullYear()}} 
-                    {{msg.timestamp.getHours()}}:{{msg.timestamp.getMinutes()}}:{{msg.timestamp.getSeconds()}}
+                <p [ngClass]="isClassOpponentOrPlayer(msg)">
+                    {{dateObject.getHours()}}:{{dateObject.getMinutes()}}:{{dateObject.getSeconds()}}
                     : {{msg.sender}} : {{ msg.msg }}
                 </p>
             </div>
