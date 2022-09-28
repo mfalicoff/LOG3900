@@ -116,7 +116,7 @@ class _MyChatPageState extends State<ChatPage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                         child: Text(
-                          readableTime(chatHistory[index].timestamp),
+                          chatHistory[index].timestamp.toString(),
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontSize: 10.0,
@@ -186,7 +186,7 @@ class _MyChatPageState extends State<ChatPage> {
   void sendMessage() {
     if (!isMessageEmpty()) {
       ChatMessage chat = ChatMessage(
-          msg: message, sender: "test", timestamp: DateTime.now().toString());
+          msg: message, sender: "test", timestamp: DateTime.now().millisecondsSinceEpoch);
       setState(() {
         chatHistory.add(chat);
         message = "";

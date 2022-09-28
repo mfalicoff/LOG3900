@@ -1,8 +1,7 @@
-
 class ChatMessage{
   late String msg;
   late String sender;
-  late String timestamp;
+  late int timestamp;
 
   ChatMessage({required this.msg, required this.sender, required this.timestamp});
 
