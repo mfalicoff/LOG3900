@@ -57,18 +57,17 @@ export class ChatComponent implements AfterViewInit {
         }
     }
 
-    async logOut(){
-        return this.http
-            .post<any>(environment.serverUrl + 'logout', {})
-            .subscribe({
-                next: (data) => {
-                    this.infoClientService.playerName = data.data.name;
-                    this.router.navigate(['/chat']);
-                },
-                error: (error) => {
-                    this.handleErrorPOST(error);
-                },
-            });
+    async logOut() {
+        return this.http.post<unknown>(environment.serverUrl + 'logout', {}, { withCredentials: true }).subscribe({
+            next: (data) => {
+                // @ts-ignore
+                this.infoClientService.playerName = data.data.name;
+                this.router.navigate(['/chat']);
+            },
+            error: (error) => {
+                this.handleErrorPOST(error);
+            },
+        });
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {

@@ -14,8 +14,8 @@ import { environment } from 'src/environments/environment';
 export class LoginPageComponent implements OnInit {
     form: any = {
         username: null,
-        email: "twoswaglol.law@gmail.com",
-        password: "123456",
+        email: 'twoswaglol.law@gmail.com',
+        password: '123456',
     };
     isSuccessful = false;
     isSignUpFailed = false;
@@ -26,11 +26,10 @@ export class LoginPageComponent implements OnInit {
 
     constructor(private http: HttpClient, private infoClientService: InfoClientService, private router: Router) {}
 
-    ngOnInit(): void {
-    }
+    ngOnInit(): void {}
 
     onSubmit(): void {
-        let response : any;
+        let response: any;
         if (this.showSignup) {
             response = this.signUp();
         } else {
@@ -43,7 +42,7 @@ export class LoginPageComponent implements OnInit {
             console.log(response.cookie);
             console.log(response.headers);
             console.log(response.header);
-        }, 1000);  
+        }, 1000);
     }
     toggleShow() {
         this.showSignup = !this.showSignup;
@@ -51,11 +50,15 @@ export class LoginPageComponent implements OnInit {
 
     async signUp() {
         return this.http
-            .post<any>(this.serverUrl + 'signup', {
-                name: this.form.username,
-                email: this.form.email,
-                password: this.form.password,
-            }, { withCredentials: true })
+            .post<any>(
+                this.serverUrl + 'signup',
+                {
+                    name: this.form.username,
+                    email: this.form.email,
+                    password: this.form.password,
+                },
+                { withCredentials: true },
+            )
             .subscribe({
                 next: (data) => {
                     console.log(data);
@@ -69,18 +72,22 @@ export class LoginPageComponent implements OnInit {
     }
 
     async signIn() {
-        let headers = new HttpHeaders();
+        const headers = new HttpHeaders();
         headers.set('Content-Type', 'application/json; charset=UTF-8');
-        
+
         return this.http
-            .post<any>(this.serverUrl + 'login', {
-                email: this.form.email,
-                password: this.form.password,
-            }, { headers: headers, observe: 'response'})
+            .post<any>(
+                this.serverUrl + 'login',
+                {
+                    email: this.form.email,
+                    password: this.form.password,
+                },
+                { headers, observe: 'response', withCredentials: true },
+            )
             .subscribe({
                 next: (response) => {
                     console.log(response);
-                    console.log(response.headers.get("Set-Cookie"));
+                    console.log(response.headers.get('Set-Cookie'));
                     this.infoClientService.playerName = response.body.data.name;
                     this.router.navigate(['/chat']);
                 },
