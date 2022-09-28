@@ -15,9 +15,7 @@ class AuthController {
             const signUpUserData: User = await this.authService.signup(userData);
 
             res.status(HTTPStatusCode.Created).json({ data: signUpUserData, message: 'signup' });
-            console.log(res);
         } catch (error) {
-            console.log("error");
             next(error);
         }
     };
@@ -26,16 +24,8 @@ class AuthController {
         try {
             const userData: CreateUserValidator = req.body;
             const { cookie, findUser } = await this.authService.login(userData);
-
-            // res.setHeader('Access-Control-Allow-Credentials', 'true');
-            // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:4200');
-            // res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept');
-            // res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-            res.setHeader('Set-Cookie', [cookie]);
-            res.status(HTTPStatusCode.OK).json({ data: findUser, message: 'logged in' });
-            console.log(res);
+            res.status(HTTPStatusCode.OK).json({ data: findUser, token: cookie, message: 'logged in' });
         } catch (error) {
-            console.log("error");
             next(error);
         }
     };

@@ -111,8 +111,6 @@ build:desktop:
         - rm -rf /root/.wine
         - winecfg
         - cd client
-        - npm ci
-        - npm run build
         - npm run build:electron
     artifacts:
         paths:
@@ -198,8 +196,8 @@ deploy:server:
                 set -x -ev
 
                 # Clone the repository
-                git clone 'https://${GITLAB_DEPLOY_TOKEN_USERNAME}:${GITLAB_DEPLOY_TOKEN_PASSWORD}@${GITLAB_REPO_URL}' repo || echo Git repository already exist
-                cd repo
+                git clone 'https://${GITLAB_DEPLOY_TOKEN_USERNAME}:${GITLAB_DEPLOY_TOKEN_PASSWORD}@${GITLAB_REPO_URL}' projet3 || echo Git repository already exist
+                cd projet3
 
                 # Checkout to the targeted commit
                 git fetch --all
@@ -217,3 +215,26 @@ deploy:server:
                 forever start -a -l /var/log/messages out/index.js
             "
 
+deploy:desktop:
+    image: electronuserland/builder:wine-mono
+    stage: deploy
+    script:
+        - rm -rf /root/.wine
+        - winecfg
+        - cd client
+        - npm ci
+        - npm run build:electron
+    artifacts:
+        paths:
+            - client/build/
+
+deploy:client_leger:
+    image: "cirrusci/flutter:3.3.1"
+    stage: deploy
+    script:
+        - cd client_leger
+        - flutter pub get
+        - flutter build apk --dart-define=ENVIRONMENT=PROD
+    artifacts:
+        paths:
+            - client_leger/build/app/outputs/flutter-apk/app-release.apk

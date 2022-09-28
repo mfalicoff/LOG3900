@@ -1,10 +1,15 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { environment } from 'src/environments/environment';
-// import { map } from "rxjs/operators";
+
+interface FormInterface {
+    username: string;
+    email: string;
+    password: string;
+}
 
 @Component({
     selector: 'app-login-page',
@@ -12,10 +17,10 @@ import { environment } from 'src/environments/environment';
     styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent implements OnInit {
-    form: any = {
-        username: null,
-        email: 'twoswaglol.law@gmail.com',
-        password: '123456',
+    form: FormInterface = {
+        username: '',
+        email: '',
+        password: '',
     };
     isSuccessful = false;
     isSignUpFailed = false;
@@ -29,20 +34,11 @@ export class LoginPageComponent implements OnInit {
     ngOnInit(): void {}
 
     onSubmit(): void {
-        let response: any;
         if (this.showSignup) {
-            response = this.signUp();
+            this.signUp();
         } else {
-            response = this.signIn();
+            this.signIn();
         }
-        setTimeout(() => {
-            console.log(document.cookie);
-            console.log(response);
-            console.log(response.cookies);
-            console.log(response.cookie);
-            console.log(response.headers);
-            console.log(response.header);
-        }, 1000);
     }
     toggleShow() {
         this.showSignup = !this.showSignup;
@@ -61,7 +57,6 @@ export class LoginPageComponent implements OnInit {
             )
             .subscribe({
                 next: (data) => {
-                    console.log(data);
                     this.infoClientService.playerName = data.data.name;
                     this.router.navigate(['/chat']);
                 },
@@ -72,22 +67,15 @@ export class LoginPageComponent implements OnInit {
     }
 
     async signIn() {
-        const headers = new HttpHeaders();
-        headers.set('Content-Type', 'application/json; charset=UTF-8');
         return this.http
-            .post<any>(
-                this.serverUrl + 'login',
-                {
-                    email: this.form.email,
-                    password: this.form.password,
-                },
-                { headers, observe: 'response', withCredentials: true },
-            )
+            .post<any>(this.serverUrl + 'login', {
+                email: this.form.email,
+                password: this.form.password,
+            })
             .subscribe({
                 next: (response) => {
-                    console.log(response);
-                    console.log(response.headers.get('Set-Cookie'));
-                    this.infoClientService.playerName = response.body.data.name;
+                    localStorage.setItem('cookie', response.token);
+                    this.infoClientService.playerName = response.data.name;
                     this.router.navigate(['/chat']);
                 },
                 error: (error) => {

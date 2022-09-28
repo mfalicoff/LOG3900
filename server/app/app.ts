@@ -53,7 +53,7 @@ export class Application {
         this.app.use(express.json({ limit: '800mb' }));
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
-        this.app.use(cors({ origin: 'http://localhost:4200', credentials: true }));
+        this.app.use(cors());
     }
 
     private errorHandling(): void {

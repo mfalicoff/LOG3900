@@ -13,7 +13,7 @@
     "coverage": "ng test --code-coverage --sourceMap=true",
     "lint": "ng lint --format stylish",
     "lint:fix": "npm run lint -- --fix",
-    "start:electron": "ng build --base-href ./ && electron .",
+    "start:electron": "ng build --configuration development --base-href ./ && electron .",
     "build:electron": "ng build --configuration production && electron-packager . --asar --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite --out=./build --platform=win32",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
