@@ -8,11 +8,12 @@ import userModel from '@app/models/users.model';
 import { isEmpty } from '@app/utils/utils';
 import UserService from '@app/services/user.service';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
-import { TOKEN_EXPIRATION, WEB_TOKEN_SECRET } from '@app/classes/global-constants';
+import { DEFAULT_VALUE_NUMBER, TOKEN_EXPIRATION, WEB_TOKEN_SECRET } from '@app/classes/global-constants';
 
 class AuthService {
     users = userModel;
     userService = new UserService();
+    loggedInIds: string[] = [];
 
     async signup(userData: CreateUserValidator): Promise<User> {
         return this.userService.createUser(userData);
@@ -26,10 +27,19 @@ class AuthService {
         const isPasswordMatching: boolean = await compare(userData.password, findUser.password as string);
         if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.Conflict, "You're password not matching");
 
+        if (this.loggedInIds.indexOf(findUser.id as string) !== DEFAULT_VALUE_NUMBER)
+            throw new HttpException(HTTPStatusCode.Conflict, 'Already logged in, log out of device and try again');
+
+        this.loggedInIds.push(findUser.id as string);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);
 
         return { cookie, findUser };
+    }
+
+    async logout(id: string): Promise<void> {
+        const filteredIds = this.loggedInIds.filter((_id) => _id !== id);
+        this.loggedInIds = filteredIds;
     }
 
     createToken(user: User): TokenData {

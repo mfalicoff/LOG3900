@@ -4,8 +4,8 @@ POST  http://localhost:3000/signup
 Content-Type: application/json
 
 {
-    "email": "example@email.com",
-    "name": "username",
+    "email": "test@email.com",
+    "name": "okokok",
     "password": "password"
 }
 
@@ -16,6 +16,16 @@ Content-Type: application/json
 
 {
     "email": "example@email.com",
+    "password": "password"
+}
+
+###
+# User Login
+POST  http://localhost:3000/login
+Content-Type: application/json
+
+{
+    "email": "test@email.com",
     "password": "password"
 }
 

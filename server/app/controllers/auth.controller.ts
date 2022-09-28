@@ -34,6 +34,10 @@ class AuthController {
 
     logOut = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            // @ts-ignore
+            // eslint-disable-next-line no-underscore-dangle
+            const id = (req as unknown).user._doc._id.valueOf();
+            await this.authService.logout(id);
             res.setHeader('Set-Cookie', ['Authorization=; Max-age=0']);
             res.status(HTTPStatusCode.OK).json({ message: 'logged out' });
         } catch (error) {
