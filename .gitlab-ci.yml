@@ -111,8 +111,6 @@ build:desktop:
         - rm -rf /root/.wine
         - winecfg
         - cd client
-        - npm ci
-        - npm run build
         - npm run build:electron
     artifacts:
         paths:
