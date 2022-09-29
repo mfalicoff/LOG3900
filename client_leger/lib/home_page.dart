@@ -19,15 +19,12 @@ class MyHomePage extends StatefulWidget {
   // always marked "final".
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState(this.user);
+  State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
 
   final Controller controller = Controller();
-  final User user;
-
-  _MyHomePageState(this.user);
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +84,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toChatPage() {
-    Navigator.of(context).pushNamed('/chat');
+    Navigator.of(context).pushNamed('/chat', arguments: widget.user
+    );
   }
 
   void _toGameListPage() {
@@ -99,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _logout() {
-    controller.logout(user);
+    controller.logout(widget.user);
     Navigator.of(context).pop();
   }
 }

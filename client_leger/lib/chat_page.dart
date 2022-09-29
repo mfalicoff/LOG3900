@@ -5,6 +5,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 
 import 'env/environment.dart';
 import 'models/chat.dart';
+import 'models/user.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -30,7 +31,7 @@ class _MyChatPageState extends State<ChatPage> {
 
   var msgController = TextEditingController();
 
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -59,7 +60,10 @@ class _MyChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    final user = ModalRoute.of(context)!.settings.arguments as User;
+
     return Scaffold(
+      appBar: AppBar(),
         body: (Stack(
       children: <Widget>[
         Container(
@@ -76,13 +80,15 @@ class _MyChatPageState extends State<ChatPage> {
             itemCount: chatHistory.length,
             shrinkWrap: true,
             padding: const EdgeInsets.only(top: 10, bottom: 10),
-            physics: const NeverScrollableScrollPhysics(),
+            //physics: const NeverScrollableScrollPhysics(),
             itemBuilder: (context, index) {
               return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: chatHistory[index].sender == user.username
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 3, 0, 3),
+                    padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
                     child: Text(
                       chatHistory[index].sender,
                       style: TextStyle(
@@ -91,7 +97,24 @@ class _MyChatPageState extends State<ChatPage> {
                     ),
                   ),
                   Row(
+                    mainAxisAlignment:
+                        chatHistory[index].sender == user.username
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
                     children: [
+                      Visibility(
+                        visible: chatHistory[index].sender == user.username,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                          child: Text(
+                            readableTime(chatHistory[index].timestamp),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 10.0,
+                            ),
+                          ),
+                        ),
+                      ),
                       Flexible(
                         child: Container(
                           decoration: BoxDecoration(
@@ -113,16 +136,19 @@ class _MyChatPageState extends State<ChatPage> {
                           ),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                        child: Text(
-                          chatHistory[index].timestamp.toString(),
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 10.0,
+                      Visibility(
+                        visible: chatHistory[index].sender != user.username,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                          child: Text(
+                            readableTime(chatHistory[index].timestamp),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 10.0,
+                            ),
                           ),
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ],
@@ -144,15 +170,16 @@ class _MyChatPageState extends State<ChatPage> {
                     controller: msgController,
                     textInputAction: TextInputAction.send,
                     onSubmitted: (value) {
-                      sendMessage();
+                      sendMessage(user);
                       _focusNode.requestFocus();
                     },
                     decoration: InputDecoration(
-                        fillColor: Theme.of(context).colorScheme.secondary,
-                        filled: true,
-                        hintText: "Write message...",
-                        hintStyle: const TextStyle(color: Colors.black54),
-                        border: InputBorder.none,),
+                      fillColor: Theme.of(context).colorScheme.secondary,
+                      filled: true,
+                      hintText: "Write message...",
+                      hintStyle: const TextStyle(color: Colors.black54),
+                      border: InputBorder.none,
+                    ),
                     onChanged: (String value) {
                       message = value;
                     },
@@ -162,7 +189,7 @@ class _MyChatPageState extends State<ChatPage> {
                   width: 15,
                 ),
                 FloatingActionButton(
-                  onPressed: () => {sendMessage()},
+                  onPressed: () => {sendMessage(user)},
                   backgroundColor: Theme.of(context).colorScheme.primary,
                   elevation: 0,
                   child: Icon(
@@ -183,10 +210,12 @@ class _MyChatPageState extends State<ChatPage> {
     initState();
   }
 
-  void sendMessage() {
+  void sendMessage(User user) {
     if (!isMessageEmpty()) {
       ChatMessage chat = ChatMessage(
-          msg: message, sender: "test", timestamp: DateTime.now().millisecondsSinceEpoch);
+          msg: message,
+          sender: user.username,
+          timestamp: DateTime.now().millisecondsSinceEpoch);
       setState(() {
         chatHistory.add(chat);
         message = "";

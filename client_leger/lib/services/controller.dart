@@ -63,7 +63,7 @@ class Controller {
     if (response.statusCode == 200) {
       return user.clear();
     } else {
-      throw Exception('Failed to login');
+      throw Exception('Failed to logout');
     }
   }
 }

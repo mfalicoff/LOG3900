@@ -23,7 +23,7 @@ MaterialColor createMaterialColor(Color color) {
 }
 
 String readableTime(int timestamp){
-  DateTime dateTime = DateTime.fromMicrosecondsSinceEpoch(timestamp);
+  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return DateFormat('kk:mm:ss').format(dateTime);
 }
 
