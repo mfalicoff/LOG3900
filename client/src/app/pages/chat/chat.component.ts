@@ -44,7 +44,12 @@ export class ChatComponent implements AfterViewInit {
     // function that shows the content of the input, the place in the message array
     // and delete the input field
     onEnterComBox(input: string): void {
+        //we don't want an empty message
+        if(this.isOnlySpaces(input)){
+            return;
+        }
         (document.getElementById('inputField') as HTMLInputElement).value = '';
+        this.inputInComBox = "";
         const chat: ChatMessage = {
             sender: this.infoClientService.playerName,
             msg: input,
@@ -94,6 +99,10 @@ export class ChatComponent implements AfterViewInit {
             });
     }
 
+    getChatHistory() {
+        return this.chatHistory;
+    }
+
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
             alert('Erreur: ' + error.status + error.error.message);
@@ -102,8 +111,8 @@ export class ChatComponent implements AfterViewInit {
         }
     }
 
-    getChatHistory() {
-        return this.chatHistory;
+    private isOnlySpaces(inputStr: string) {
+        return /^\s*$/.test(inputStr);
     }
 
     private scrollToBottom(): void {
