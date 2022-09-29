@@ -22,8 +22,8 @@ MaterialColor createMaterialColor(Color color) {
   return MaterialColor(color.value, swatch);
 }
 
-String readableTime(String timestamp){
-  DateTime dateTime = DateTime.parse(timestamp);
+String readableTime(int timestamp){
+  DateTime dateTime = DateTime.fromMicrosecondsSinceEpoch(timestamp);
   return DateFormat('kk:mm:ss').format(dateTime);
 }
 
