@@ -21,7 +21,7 @@ class Controller {
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
-      user.cookie = response.headers["set-cookie"];
+      user.cookie = json.decode(response.body)["token"];
       return user;
     } else {
       throw Exception('Failed to login');
