@@ -9,7 +9,7 @@
 .justified {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    // justify-content: space-between;
     align-items: center;
 }
 #LOG2990ModeButton:disabled,
@@ -28,6 +28,12 @@
     color: wheat;
 }
 
+#loginBtn{
+    margin-top: 3%;
+    padding: 25px;
+    font-size: 45px;
+}
+
 #classicModeButton,
 #LOG2990ModeButton {
     color: wheat;
@@ -43,15 +49,16 @@
 .header-item {
     justify-content: center;
     text-align: center;
-    transform: scale(1.5);
     margin-top: 10px;
     color: #0c483f;
 }
 
 .footer-item {
+    position: absolute;
     text-align: center;
     color: #0c483f;
     font-size: 20px;
+    bottom: 0%;
 }
 
 .server-message {
