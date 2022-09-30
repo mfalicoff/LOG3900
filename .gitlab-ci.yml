@@ -218,6 +218,9 @@ deploy:server:
 deploy:desktop:
     image: electronuserland/builder:wine-mono
     stage: deploy
+    rules:
+        -   if: "$CI_COMMIT_TAG =~ /deploy/"
+            when: manual
     script:
         - rm -rf /root/.wine
         - winecfg
@@ -231,6 +234,9 @@ deploy:desktop:
 deploy:client_leger:
     image: "cirrusci/flutter:3.3.1"
     stage: deploy
+    rules:
+        -   if: "$CI_COMMIT_TAG =~ /deploy/"
+            when: manual
     script:
         - cd client_leger
         - flutter pub get
