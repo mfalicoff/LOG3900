@@ -102,6 +102,7 @@ build:client:
     artifacts:
         paths:
             - client/dist/
+        expire_in: 2 days
 
 build:desktop:
     image: electronuserland/builder:wine-mono
@@ -115,6 +116,7 @@ build:desktop:
     artifacts:
         paths:
             - client/build/
+        expire_in: 2 days
 
 build:server:
     stage: build
@@ -125,7 +127,7 @@ build:server:
     artifacts:
         paths:
             - server/out/
-
+        expire_in: 2 days
 
 build:client_leger:
     image: "cirrusci/flutter:3.3.1"
@@ -138,6 +140,7 @@ build:client_leger:
     artifacts:
         paths:
             - client_leger/build/app/outputs/flutter-apk/app-release.apk
+        expire_in: 2 days
 
 #test:client:
 #    stage: test
