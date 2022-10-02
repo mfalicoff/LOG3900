@@ -4,6 +4,7 @@ import { PlaceGraphicService } from '@app/services/place-graphic.service';
 import { SocketService } from '@app/services/socket.service';
 import { DrawingBoardService } from './drawing-board-service';
 import { InfoClientService } from './info-client.service';
+import { ChatMessage } from '@app/classes/chat-message.interface';
 
 @Injectable({
     providedIn: 'root',
@@ -59,6 +60,16 @@ export class MouseKeyboardEventHandlerService {
         this.socketService.socket.emit('newMessageClient', input);
         this.isCommBoxJustBeenClicked = false;
         this.isCommunicationBoxFocus = true;
+    }
+
+    onCommunicationBoxEnterChat(chat: ChatMessage) {
+        if (this.socketService.socket.connected) {
+            this.socketService.socket.emit('chat msg', chat);
+            this.isCommBoxJustBeenClicked = false;
+            this.isCommunicationBoxFocus = true;
+        } else {
+            throw new Error('not connected to server');
+        }
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {

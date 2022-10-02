@@ -678,7 +678,6 @@ describe('socketManager', () => {
     it("should call the getScoreClassic and getScoreLOG2990 when emitting 'dbReception'", (done) => {
         clientSocket1.emit('dbReception');
         setTimeout(() => {
-            console.log("test");
             done();
         }, RESPONSE_DELAY);
     });

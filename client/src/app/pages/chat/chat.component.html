@@ -1,0 +1,22 @@
+<div class="container justified">
+    <button id="logoutBtn" (click)="logOut()">LOGOUT</button>
+    <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
+    <div id="chatWrapper">
+        <div class="sidebar" #scrollFrame>
+            <div *ngFor="let msg of getChatHistory()" #commands>
+                <p [ngClass]="isClassOpponentOrPlayer(msg)">
+                    {{dateObject.getHours()}}:{{dateObject.getMinutes()}}:{{dateObject.getSeconds()}}
+                    : {{msg.sender}} : {{ msg.msg }}
+                </p>
+            </div>
+        </div>
+        <input
+            id="inputField"
+            type="text"
+            placeholder="Écrivez un message"
+            [readOnly]="infoClientService.playerName === ''"
+            [(ngModel)]="inputInComBox"
+            (keydown.enter)="onEnterComBox(inputInComBox)"
+        />
+    </div>
+</div>

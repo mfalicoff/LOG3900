@@ -1,46 +1,9 @@
 <div class="container justified">
-    <h1 class="header-item">Bienvenue au projet Scrabble de la meilleure équipe : 102</h1>
     <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
-    <section id="server-message">
-        <form #form="ngForm">
-            <pre></pre>
-                <div class="form-group">
-                    <input
-                        placeholder="Entrez votre nom"
-                        #name="ngModel"
-                        required
-                        minlength="4"
-                        maxlength="20"
-                        type="text"
-                        name="Playername"
-                        pattern="^[a-zA-Z0-9]+$"
-                        ngModel
-                    />
-                    <button class="buttonName" [disabled]="!form.valid" (click)="onSubmit()">
-                        <span> {{ submitted ? 'Enregistré' : 'Enregistrer' }} </span>
-                    </button>
-                    <br>
-                    <br>
-                    <div *ngIf="name.touched && name.invalid" class="alert-danger">
-                        <p *ngIf="name.errors!.required">Vous ne pouvez pas laisser la case vide!</p>
-                        <p *ngIf="name.errors!.minlength">Le nom est trop court (minimum 4 characteres)!</p>
-                        <p *ngIf="name.errors!.pattern">Le nom comporte des charactères spéciaux ! (lettres et chiffres
-                            uniquement)</p>
-                    </div>
-                </div>
-            <pre></pre>
-        </form>
-        <div class="justified">
-            <!-- rajouter  routerLink="/game" link apres -->
-            <div (mousedown)="noNameError()">
-                <button mat-flat-button id="classicModeButton" class="button" [disabled]="!submitted"
-                            routerLink="/multiplayer-init" (click)="onClickMulti('classic')">
-                            Mode de jeu classique
-                </button>
-            </div>
-            <button mat-flat-button class="button" routerLink="/leaderboard">Meilleurs scores</button>
-        </div>
-    </section>
+    <button mat-flat-button id="loginBtn" class="button"
+            routerLink="/login">
+        Login
+    </button> 
     <div class="footer-item">
         <h4 class="team-name">Équipe Poly 102</h4>
         <p>
