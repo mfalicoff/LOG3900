@@ -9,6 +9,7 @@ import { MultiplayerInitPageComponent } from '@app/pages/multiplayer-init-page/m
 import { ParametresSelectionPageComponent } from '@app/pages/parametres-selection-page/parametres-selection-page.component';
 import { ChatComponent } from '@app/pages/chat/chat.component';
 import { LoginPageComponent } from '@app/pages/login-page/login-page.component';
+import { GamemodeoptionsPageComponent } from '@app/pages/gamemodeoptions-page/gamemodeoptions-page.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -21,6 +22,7 @@ const routes: Routes = [
     { path: 'admin', component: AdminPageComponent },
     { path: 'chat', component: ChatComponent },
     { path: 'login', component: LoginPageComponent },
+    { path: 'gamemode-options', component: GamemodeoptionsPageComponent },
     { path: '**', redirectTo: '/home' },
 ];
 

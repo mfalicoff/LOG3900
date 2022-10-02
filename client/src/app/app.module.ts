@@ -25,6 +25,7 @@ import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-p
 import { ModalComponent } from './pages/modal/modal.component';
 import { ChatComponent } from './pages/chat/chat.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
 
 /**
  * Main module that is used in main.ts.
@@ -53,6 +54,7 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
         ModalVpLevelsComponent,
         ChatComponent,
         LoginPageComponent,
+        GamemodeoptionsPageComponent,
     ],
     imports: [
         AppMaterialModule,

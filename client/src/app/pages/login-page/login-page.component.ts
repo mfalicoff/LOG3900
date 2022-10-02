@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
+import { SocketService } from '@app/services/socket.service';
 import { environment } from 'src/environments/environment';
 
 interface FormInterface {
@@ -29,7 +30,12 @@ export class LoginPageComponent {
 
     serverUrl = environment.serverUrl;
 
-    constructor(private http: HttpClient, private infoClientService: InfoClientService, private router: Router) {}
+    constructor(
+        private http: HttpClient,
+        private infoClientService: InfoClientService,
+        private router: Router,
+        private socketService: SocketService,
+    ) {}
 
     onSubmit(): void {
         if (this.showSignup) {
@@ -56,9 +62,10 @@ export class LoginPageComponent {
                 )
                 // eslint-disable-next-line deprecation/deprecation
                 .subscribe({
-                    next: (data) => {
-                        this.infoClientService.playerName = data.data.name;
-                        this.router.navigate(['/chat']);
+                    next: (response) => {
+                        this.socketService.socket.emit('new-user', response.data.name);
+                        this.infoClientService.playerName = response.data.name;
+                        this.router.navigate(['/gamemode-options']);
                     },
                     error: (error) => {
                         this.handleErrorPOST(error);
@@ -78,8 +85,9 @@ export class LoginPageComponent {
                 .subscribe({
                     next: (response) => {
                         localStorage.setItem('cookie', response.token);
+                        this.socketService.socket.emit('new-user', response.data.name);
                         this.infoClientService.playerName = response.data.name;
-                        this.router.navigate(['/chat']);
+                        this.router.navigate(['/gamemode-options']);
                     },
                     error: (error) => {
                         this.handleErrorPOST(error);
