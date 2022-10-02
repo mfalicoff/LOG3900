@@ -639,7 +639,6 @@ export class SocketManager {
 
         socket.on('chat msg', (chat: ChatMessage) => {
             this.chatHistory.push(chat);
-            console.log(chat, this.chatHistory);
             socket.broadcast.emit('chat msg', chat);
         });
     }

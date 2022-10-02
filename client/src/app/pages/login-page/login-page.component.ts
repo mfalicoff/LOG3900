@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { environment } from 'src/environments/environment';
@@ -16,7 +16,7 @@ interface FormInterface {
     templateUrl: './login-page.component.html',
     styleUrls: ['./login-page.component.scss'],
 })
-export class LoginPageComponent implements OnInit {
+export class LoginPageComponent {
     form: FormInterface = {
         username: '',
         email: '',
@@ -31,8 +31,6 @@ export class LoginPageComponent implements OnInit {
 
     constructor(private http: HttpClient, private infoClientService: InfoClientService, private router: Router) {}
 
-    ngOnInit(): void {}
-
     onSubmit(): void {
         if (this.showSignup) {
             this.signUp();
@@ -45,43 +43,49 @@ export class LoginPageComponent implements OnInit {
     }
 
     async signUp() {
-        return this.http
-            .post<any>(
-                this.serverUrl + 'signup',
-                {
-                    name: this.form.username,
-                    email: this.form.email,
-                    password: this.form.password,
-                },
-                { withCredentials: true },
-            )
-            .subscribe({
-                next: (data) => {
-                    this.infoClientService.playerName = data.data.name;
-                    this.router.navigate(['/chat']);
-                },
-                error: (error) => {
-                    this.handleErrorPOST(error);
-                },
-            });
+        return (
+            this.http
+                .post<any>(
+                    this.serverUrl + 'signup',
+                    {
+                        name: this.form.username,
+                        email: this.form.email,
+                        password: this.form.password,
+                    },
+                    { withCredentials: true },
+                )
+                // eslint-disable-next-line deprecation/deprecation
+                .subscribe({
+                    next: (data) => {
+                        this.infoClientService.playerName = data.data.name;
+                        this.router.navigate(['/chat']);
+                    },
+                    error: (error) => {
+                        this.handleErrorPOST(error);
+                    },
+                })
+        );
     }
 
     async signIn() {
-        return this.http
-            .post<any>(this.serverUrl + 'login', {
-                email: this.form.email,
-                password: this.form.password,
-            })
-            .subscribe({
-                next: (response) => {
-                    localStorage.setItem('cookie', response.token);
-                    this.infoClientService.playerName = response.data.name;
-                    this.router.navigate(['/chat']);
-                },
-                error: (error) => {
-                    this.handleErrorPOST(error);
-                },
-            });
+        return (
+            this.http
+                .post<any>(this.serverUrl + 'login', {
+                    email: this.form.email,
+                    password: this.form.password,
+                })
+                // eslint-disable-next-line deprecation/deprecation
+                .subscribe({
+                    next: (response) => {
+                        localStorage.setItem('cookie', response.token);
+                        this.infoClientService.playerName = response.data.name;
+                        this.router.navigate(['/chat']);
+                    },
+                    error: (error) => {
+                        this.handleErrorPOST(error);
+                    },
+                })
+        );
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {

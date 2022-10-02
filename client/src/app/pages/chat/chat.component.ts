@@ -19,7 +19,7 @@ export class ChatComponent implements AfterViewInit {
     inputInComBox: string = '';
     // username: string = '';
     chatHistory: ChatMessage[] = [];
-    dateObject : Date;
+    dateObject: Date;
     private scrollContainer: Element;
 
     constructor(
@@ -30,7 +30,6 @@ export class ChatComponent implements AfterViewInit {
         private router: Router,
     ) {
         this.socketService.socket.on('chat msg', (chat: ChatMessage) => {
-            console.log(chat);
             this.chatHistory.push(chat);
         });
     }
@@ -44,59 +43,61 @@ export class ChatComponent implements AfterViewInit {
     // function that shows the content of the input, the place in the message array
     // and delete the input field
     onEnterComBox(input: string): void {
-        //we don't want an empty message
-        if(this.isOnlySpaces(input)){
+        // we don't want an empty message
+        if (this.isOnlySpaces(input)) {
             return;
         }
         (document.getElementById('inputField') as HTMLInputElement).value = '';
-        this.inputInComBox = "";
+        this.inputInComBox = '';
         const chat: ChatMessage = {
             sender: this.infoClientService.playerName,
             msg: input,
             timestamp: new Date().getTime(),
         };
 
-        console.log("chat", chat)
-
         try {
             this.mouseKeyboardEventHandler.onCommunicationBoxEnterChat(chat);
             this.chatHistory.push(chat);
         } catch (e) {
+            // eslint-disable-next-line no-console
             console.log(e);
         }
     }
 
     isClassOpponentOrPlayer(chatMsg: ChatMessage): string {
-        //how wacky is that :)
+        // how wacky is that :)
         this.dateObject = new Date(chatMsg.timestamp);
-        if(chatMsg.sender == this.infoClientService.playerName){
-            return "messagePlayer";
-        }else{
-            return "messageOpponent";
+        if (chatMsg.sender === this.infoClientService.playerName) {
+            return 'messagePlayer';
+        } else {
+            return 'messageOpponent';
         }
     }
 
     async logOut() {
         const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
-        return this.http
-            .post<unknown>(
-                environment.serverUrl + 'logout',
-                {},
-                {
-                    headers,
-                },
-            )
-            .subscribe({
-                next: (data) => {
-                    // @ts-ignore
-                    localStorage.clear();
-                    this.infoClientService.playerName = '';
-                    this.router.navigate(['/login']);
-                },
-                error: (error) => {
-                    this.handleErrorPOST(error);
-                },
-            });
+        return (
+            this.http
+                .post<unknown>(
+                    environment.serverUrl + 'logout',
+                    {},
+                    {
+                        headers,
+                    },
+                )
+                // eslint-disable-next-line deprecation/deprecation
+                .subscribe({
+                    next: () => {
+                        // @ts-ignore
+                        localStorage.clear();
+                        this.infoClientService.playerName = '';
+                        this.router.navigate(['/login']);
+                    },
+                    error: (error) => {
+                        this.handleErrorPOST(error);
+                    },
+                })
+        );
     }
 
     getChatHistory() {
