@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:client_leger/utils.dart';
+import 'package:client_leger/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
-import 'env/environment.dart';
-import 'models/chat.dart';
-import 'models/user.dart';
+import '../env/environment.dart';
+import '../models/chat.dart';
+import '../models/user.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});

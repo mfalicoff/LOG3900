@@ -1,6 +1,5 @@
-import 'package:client_leger/chat_page.dart';
-import 'package:client_leger/home_page.dart';
-import 'package:client_leger/login_page.dart';
+import 'package:client_leger/screens/chat_page.dart';
+import 'package:client_leger/screens/login_page.dart';
 import 'package:client_leger/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
