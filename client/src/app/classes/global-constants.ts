@@ -3,6 +3,9 @@
 // Changing the size of the board will automatically change the size of the chevalet
 export const DEFAULT_WIDTH_BOARD = 750;
 export const DEFAULT_HEIGHT_BOARD = 750;
+
+export const DEFAULT_WIDTH_PLAY_AREA = 900;
+
 export const SIZE_OUTER_BORDER_BOARD = 40;
 
 export const NUMBER_SQUARE_H_AND_W = 15;

@@ -234,7 +234,7 @@ export class PlaceGraphicService {
         this.drawingService.drawOneLetter(
             keyEntered,
             game.board[letterTodrawPosX][letterTodrawPosY],
-            this.drawingBoardService.boardCanvas,
+            this.drawingBoardService.playArea,
             this.infoClientService.letterBank,
             '',
             '#ffaaff',

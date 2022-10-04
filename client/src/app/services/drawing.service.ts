@@ -11,12 +11,12 @@ import { Vec2 } from '@app/classes/vec2';
 export class DrawingService {
     canvasStand: CanvasRenderingContext2D;
 
-    initStandCanvas(canvas: CanvasRenderingContext2D) {
+    canvasInit(canvas: CanvasRenderingContext2D) {
         this.canvasStand = canvas;
     }
 
     reDrawStand(stand: Tile[], letterBank: Map<string, LetterData>) {
-        this.initStand();
+        this.initStand(true);
         for (let x = 0; x < GlobalConstants.NUMBER_SLOT_STAND; x++) {
             if (stand[x] !== undefined && stand[x].letter.value !== '') {
                 this.drawOneLetter(stand[x].letter.value, stand[x], this.canvasStand, letterBank, stand[x].color);
@@ -116,19 +116,35 @@ export class DrawingService {
         return this;
     }
 
-    private initStand() {
+    initStand(isPlayerSpec: boolean) {
+        const paddingStandBoard = 5;
+        const paddingForStands = GlobalConstants.DEFAULT_HEIGHT_STAND + paddingStandBoard;
+        const constPosXYForStands = paddingForStands + GlobalConstants.DEFAULT_WIDTH_BOARD/2 - GlobalConstants.DEFAULT_WIDTH_STAND/2;
+        if(isPlayerSpec){
+            //top stand
+            this.drawHorizontalStand(constPosXYForStands, 0);
+            //left stand
+            this.drawVerticalStand(0, constPosXYForStands);
+            //right stand
+            this.drawVerticalStand(paddingForStands + GlobalConstants.DEFAULT_WIDTH_BOARD + paddingStandBoard, constPosXYForStands);
+        }
+        //bottom stand
+        this.drawHorizontalStand(constPosXYForStands, GlobalConstants.DEFAULT_WIDTH_BOARD + paddingForStands + paddingStandBoard);
+    }
+
+    private drawHorizontalStand(x: number, y: number){
         this.canvasStand.font = '19px bold system-ui';
         this.canvasStand.beginPath();
         // Fill the rectangle with an initial color
         this.canvasStand.fillStyle = '#BEB9A6';
-        this.canvasStand.fillRect(0, 0, GlobalConstants.DEFAULT_WIDTH_STAND, GlobalConstants.DEFAULT_HEIGHT_STAND);
+        this.canvasStand.fillRect(x, y, GlobalConstants.DEFAULT_WIDTH_STAND, GlobalConstants.DEFAULT_HEIGHT_STAND);
 
         // Puts an outer border for style
         this.canvasStand.strokeStyle = '#AAA38E';
         this.canvasStand.lineWidth = GlobalConstants.SIZE_OUTER_BORDER_STAND;
         this.canvasStand.strokeRect(
-            GlobalConstants.SIZE_OUTER_BORDER_STAND / 2,
-            GlobalConstants.SIZE_OUTER_BORDER_STAND / 2,
+            GlobalConstants.SIZE_OUTER_BORDER_STAND / 2 + x,
+            GlobalConstants.SIZE_OUTER_BORDER_STAND / 2 + y,
             GlobalConstants.DEFAULT_WIDTH_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND,
             GlobalConstants.DEFAULT_HEIGHT_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND,
         );
@@ -136,13 +152,43 @@ export class DrawingService {
         this.canvasStand.lineWidth = GlobalConstants.WIDTH_LINE_BLOCKS;
 
         for (
-            let i = GlobalConstants.SIZE_OUTER_BORDER_STAND + GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS / 2;
-            i < GlobalConstants.DEFAULT_WIDTH_STAND;
+            let i = GlobalConstants.SIZE_OUTER_BORDER_STAND + GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS / 2 + x;
+            i < GlobalConstants.DEFAULT_WIDTH_STAND + x;
             i += GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS
         ) {
             // Put all the vertical lines of the board
-            this.canvasStand.moveTo(i, GlobalConstants.SIZE_OUTER_BORDER_STAND);
-            this.canvasStand.lineTo(i, GlobalConstants.DEFAULT_HEIGHT_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND);
+            this.canvasStand.moveTo(i, GlobalConstants.SIZE_OUTER_BORDER_STAND + y);
+            this.canvasStand.lineTo(i, GlobalConstants.DEFAULT_HEIGHT_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND + y);
+        }
+        this.canvasStand.stroke();
+    }
+
+    private drawVerticalStand(x: number, y: number){
+        this.canvasStand.font = '19px bold system-ui';
+        this.canvasStand.beginPath();
+        // Fill the rectangle with an initial color
+        this.canvasStand.fillStyle = '#BEB9A6';
+        this.canvasStand.fillRect(x, y, GlobalConstants.DEFAULT_HEIGHT_STAND, GlobalConstants.DEFAULT_WIDTH_STAND);
+
+        // Puts an outer border for style
+        this.canvasStand.strokeStyle = '#AAA38E';
+        this.canvasStand.lineWidth = GlobalConstants.SIZE_OUTER_BORDER_STAND;
+        this.canvasStand.strokeRect(
+            GlobalConstants.SIZE_OUTER_BORDER_STAND / 2 + x,
+            GlobalConstants.SIZE_OUTER_BORDER_STAND / 2 + y,
+            GlobalConstants.DEFAULT_HEIGHT_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND,
+            GlobalConstants.DEFAULT_WIDTH_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND
+        );
+        // Puts all the lines
+        this.canvasStand.lineWidth = GlobalConstants.WIDTH_LINE_BLOCKS;
+        for (
+            let i = GlobalConstants.SIZE_OUTER_BORDER_STAND + GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS / 2 + y;
+            i < GlobalConstants.DEFAULT_WIDTH_STAND + y;
+            i += GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS
+        ) {
+            // Put all the vertical lines of the board
+            this.canvasStand.moveTo(GlobalConstants.SIZE_OUTER_BORDER_STAND + x, i);
+            this.canvasStand.lineTo(GlobalConstants.DEFAULT_HEIGHT_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND + x, i);
         }
         this.canvasStand.stroke();
     }

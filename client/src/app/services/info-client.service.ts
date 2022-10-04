@@ -48,6 +48,10 @@ export class InfoClientService {
 
     creatorShouldBeAbleToStartGame: boolean;
 
+    // variables used when player wants to join a private game
+    incommingPlayer: string;
+    incommingPlayerId: string;
+
     constructor() {
         this.gameMode = GlobalConstants.MODE_MULTI;
         this.isLog2990Enabled = true;
@@ -55,6 +59,8 @@ export class InfoClientService {
         this.randomBonusesOn = false;
         this.isGamePrivate = false;
         this.playerName = 'DefaultPlayerName';
+        this.incommingPlayer = '';
+        this.incommingPlayerId = '';
         this.rooms = [];
         this.initializeService();
     }
@@ -69,6 +75,7 @@ export class InfoClientService {
         this.vpLevel = 'debutant';
         this.isSpectator = false;
         this.creatorShouldBeAbleToStartGame = false;
+        this.actualRoom = new RoomData("default", "1", false, "fake", [], []);
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],

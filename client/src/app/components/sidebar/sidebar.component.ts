@@ -30,7 +30,7 @@ export class SidebarComponent {
         }
         this.drawingService.canvasStand.beginPath();
         this.drawingService.canvasStand.font = this.fontSize.toString() + 'px bold system-ui';
-        this.drawingBoardService.boardCanvas.font = this.fontSize.toString() + 'px bold system-ui';
+        this.drawingBoardService.playArea.font = this.fontSize.toString() + 'px bold system-ui';
         const player = this.infoClientService.player;
         if (player) {
             for (const tile of player.stand) {

@@ -42,7 +42,7 @@ export class StandRPComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.drawingService.initStandCanvas(this.gridStandRP.nativeElement.getContext('2d') as CanvasRenderingContext2D);
+        this.drawingService.canvasInit(this.gridStandRP.nativeElement.getContext('2d') as CanvasRenderingContext2D);
     }
 
     onLeftClickStand(event: MouseEvent) {
