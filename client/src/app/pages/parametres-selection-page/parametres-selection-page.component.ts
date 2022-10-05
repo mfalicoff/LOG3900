@@ -56,7 +56,7 @@ export class ParametresSelectionPageComponent implements OnInit {
     randomizeBonuses() {
         this.infoClientService.randomBonusesOn = !this.infoClientService.randomBonusesOn;
     }
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onTypeGameChange(event: any) {
         switch (event.target.value) {
             case 'public':

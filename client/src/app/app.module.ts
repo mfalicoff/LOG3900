@@ -8,7 +8,6 @@ import { BoardStandComponent } from '@app/components/board-stand/board-stand.com
 import { CommunicationBoxComponent } from '@app/components/communication-box/communication-box.component';
 import { InfoPanelComponent } from '@app/components/info-panel/info-panel.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-import { StandRPComponent } from '@app/components/stand-rp/stand-rp.component';
 import { TimerComponent } from '@app/components/timer/timer.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
@@ -37,7 +36,6 @@ import { ModalComponent } from './pages/modal/modal.component';
         SidebarComponent,
         MaterialPageComponent,
         BoardStandComponent,
-        StandRPComponent,
         ParametresSelectionPageComponent,
         MultiplayerInitPageComponent,
         CommunicationBoxComponent,

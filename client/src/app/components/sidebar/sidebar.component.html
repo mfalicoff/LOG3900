@@ -4,7 +4,7 @@
         <button 
             mat-raised-button 
             matTooltip="Abandonner"
-            *ngIf="!infoClientService.game.gameFinished"
+            *ngIf="!infoClientService.game.gameFinished && infoClientService.game.gameStarted"
             (click)="onClickGiveUpButton()" 
             class="optionButton"
         >

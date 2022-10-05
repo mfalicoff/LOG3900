@@ -42,15 +42,15 @@ export class GamePageComponent {
         this.socketService.socket.emit('callTestFunction');
     }
 
-    isPlayerIncomming(){
-        if (this.infoClientService.incommingPlayer === ''){
+    isPlayerIncomming() {
+        if (this.infoClientService.incommingPlayer === '') {
             return 'none';
-        }else{
+        } else {
             return 'block';
         }
     }
 
-    acceptPlayer(isPlayerAccepted: boolean){
+    acceptPlayer(isPlayerAccepted: boolean) {
         if (isPlayerAccepted) {
             this.socketService.socket.emit('acceptPlayer', true, this.infoClientService.incommingPlayerId);
         } else {

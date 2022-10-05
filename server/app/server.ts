@@ -12,7 +12,6 @@ import { DatabaseService } from './services/database.service';
 import { DictionaryService } from './services/dictionary.service';
 import { PlayAreaService } from './services/play-area.service';
 import { PutLogicService } from './services/put-logic.service';
-import { StandService } from './services/stand.service';
 
 const baseDix = 10;
 
@@ -33,7 +32,6 @@ export class Server {
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
-        private standService: StandService,
     ) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -61,7 +59,6 @@ export class Server {
             this.putLogicService,
             this.databaseService,
             this.dictionaryService,
-            this.standService,
         );
         this.socketManager.handleSockets();
 

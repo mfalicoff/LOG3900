@@ -10,11 +10,7 @@ import { SocketService } from '@app/services/socket.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    constructor(
-        private socketService: SocketService,
-        public infoClientService: InfoClientService,
-        private router: Router,
-    ) {}
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private router: Router) {}
 
     onClickGiveUpButton() {
         if (this.infoClientService.isSpectator) {
@@ -45,7 +41,7 @@ export class SidebarComponent {
     }
 
     shouldLeaveGameBe() {
-        if (this.infoClientService.isSpectator || this.infoClientService.game.gameFinished) {
+        if (this.infoClientService.isSpectator || this.infoClientService.game.gameFinished || !this.infoClientService.game.gameStarted) {
             return true;
         }
 
@@ -67,7 +63,7 @@ export class SidebarComponent {
     }
 
     shouldSpecBeAbleToBePlayer() {
-        if(this.infoClientService.game.gameFinished || !this.infoClientService.isSpectator){
+        if (this.infoClientService.game.gameFinished || !this.infoClientService.isSpectator) {
             return false;
         }
         const nbVirtualPlayer = Array.from(this.infoClientService.actualRoom.players).filter((player) => player.idPlayer === 'virtualPlayer').length;

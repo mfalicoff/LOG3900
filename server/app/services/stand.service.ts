@@ -135,8 +135,12 @@ export class StandService {
             const newLetter = new Letter();
 
             // Initialising the position
-            newPosition.x1 = j + Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD/2 - Constants.DEFAULT_WIDTH_STAND/2;
-            newPosition.y1 = Constants.PADDING_BET_BOARD_AND_STAND + Constants.SIZE_OUTER_BORDER_STAND + Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD;
+            newPosition.x1 = j + Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
+            newPosition.y1 =
+                Constants.PADDING_BET_BOARD_AND_STAND +
+                Constants.SIZE_OUTER_BORDER_STAND +
+                Constants.PADDING_BOARD_FOR_STANDS +
+                Constants.DEFAULT_WIDTH_BOARD;
             newPosition.width = Constants.WIDTH_EACH_SQUARE;
             newPosition.height = Constants.WIDTH_EACH_SQUARE;
             newTile.position = newPosition;

@@ -9,13 +9,23 @@ import { Service } from 'typedi';
 export class BoardService {
     initBoardArray(game: GameServer) {
         for (
-            let i = 0, l = Constants.SIZE_OUTER_BORDER_BOARD - Constants.WIDTH_EACH_SQUARE - Constants.WIDTH_LINE_BLOCKS + Constants.PADDING_BOARD_FOR_STANDS;
+            let i = 0,
+                l =
+                    Constants.SIZE_OUTER_BORDER_BOARD -
+                    Constants.WIDTH_EACH_SQUARE -
+                    Constants.WIDTH_LINE_BLOCKS +
+                    Constants.PADDING_BOARD_FOR_STANDS;
             i < Constants.NUMBER_SQUARE_H_AND_W + 2;
             i++, l += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
         ) {
             game.board[i] = new Array<Tile>();
             for (
-                let j = 0, k = Constants.SIZE_OUTER_BORDER_BOARD - Constants.WIDTH_EACH_SQUARE - Constants.WIDTH_LINE_BLOCKS + Constants.PADDING_BOARD_FOR_STANDS;
+                let j = 0,
+                    k =
+                        Constants.SIZE_OUTER_BORDER_BOARD -
+                        Constants.WIDTH_EACH_SQUARE -
+                        Constants.WIDTH_LINE_BLOCKS +
+                        Constants.PADDING_BOARD_FOR_STANDS;
                 j < Constants.NUMBER_SQUARE_H_AND_W + 2;
                 j++, k += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
             ) {

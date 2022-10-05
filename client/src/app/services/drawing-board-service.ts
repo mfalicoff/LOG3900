@@ -39,9 +39,9 @@ export class DrawingBoardService {
     }
 
     drawBoardInit(bonusBoard: string[][]) {
-        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + 5;
-        // we take out the first line and column because they aren't used 
-        //for the drawing of the board
+        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
+        // we take out the first line and column because they aren't used
+        // for the drawing of the board
         bonusBoard.splice(0, 1);
         bonusBoard = this.removeEl(bonusBoard, 0);
         if (this.playArea.font === '10px sans-serif') {
@@ -87,9 +87,7 @@ export class DrawingBoardService {
 
         // Draws the  star
         if (shouldDrawStar) {
-            this.drawStar(
-                Constants.DEFAULT_HEIGHT_BOARD / 2 + paddingForStands, 
-                Constants.DEFAULT_WIDTH_BOARD / 2 + paddingForStands);
+            this.drawStar(Constants.DEFAULT_HEIGHT_BOARD / 2 + paddingForStands, Constants.DEFAULT_WIDTH_BOARD / 2 + paddingForStands);
         }
 
         // Set parameters to draw the lines of the grid
@@ -105,7 +103,7 @@ export class DrawingBoardService {
         // in the next function
         const roundedRest = 1;
         for (
-            let i = Constants.SIZE_OUTER_BORDER_BOARD + Constants.WIDTH_EACH_SQUARE + (Constants.WIDTH_LINE_BLOCKS / 2) + paddingForStands, j = 1;
+            let i = Constants.SIZE_OUTER_BORDER_BOARD + Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS / 2 + paddingForStands, j = 1;
             i < Constants.WIDTH_BOARD_NOBORDER + roundedRest + paddingForStands;
             i += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS, j++
         ) {
@@ -144,12 +142,8 @@ export class DrawingBoardService {
             // for the 15th number
             if (j === Constants.NUMBER_SQUARE_H_AND_W - 1) {
                 j++;
-                this.playArea.fillText(
-                    j.toString(), i + borderTopAndLeftLittle, 
-                    jumpOfATile + paddingForStands);
-                this.playArea.fillText(
-                    String.fromCharCode(asciiCodeStartLetters + j), 
-                    borderTopAndLeftBig + paddingForStands, i + jumpOfATile);
+                this.playArea.fillText(j.toString(), i + borderTopAndLeftLittle, jumpOfATile + paddingForStands);
+                this.playArea.fillText(String.fromCharCode(asciiCodeStartLetters + j), borderTopAndLeftBig + paddingForStands, i + jumpOfATile);
             }
         }
         this.playArea.font = savedFont;
@@ -162,9 +156,7 @@ export class DrawingBoardService {
         for (let x = 0; x < Constants.NUMBER_SQUARE_H_AND_W + 2; x++) {
             for (let y = 0; y < Constants.NUMBER_SQUARE_H_AND_W + 2; y++) {
                 if (board[x][y] !== undefined && board[x][y].letter.value !== '') {
-                    this.drawingService.drawOneLetter(
-                        board[x][y].letter.value, board[x][y], 
-                        this.playArea, letterBank);
+                    this.drawingService.drawOneLetter(board[x][y].letter.value, board[x][y], this.playArea, letterBank);
                 }
             }
         }
@@ -174,9 +166,7 @@ export class DrawingBoardService {
         for (let x = 0; x < Constants.NUMBER_SQUARE_H_AND_W + 2; x++) {
             for (let y = 0; y < Constants.NUMBER_SQUARE_H_AND_W + 2; y++) {
                 if (board[x][y] !== undefined && board[x][y].letter.value !== '') {
-                    this.drawingService.drawOneLetter(
-                        board[x][y].letter.value, board[x][y], 
-                        this.playArea, letterBank);
+                    this.drawingService.drawOneLetter(board[x][y].letter.value, board[x][y], this.playArea, letterBank);
                 }
             }
         }
@@ -190,29 +180,14 @@ export class DrawingBoardService {
         const oneFifthOfTileInDecimal = 1.25;
         const startPosXPx = this.startingPosPxOfTile(verticalPosTile - 1);
         const startPosYPx = this.startingPosPxOfTile(horizontalPosTile - 1);
-        this.playArea.moveTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / 2,
-        );
-        this.playArea.lineTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / 2,
-        );
+        this.playArea.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
         this.playArea.stroke();
-        this.playArea.lineTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / 2,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal,
-        );
+        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
         this.playArea.stroke();
-        this.playArea.lineTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / 2,
-        );
+        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
         this.playArea.stroke();
-        this.playArea.lineTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / 2,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile,
-        );
+        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
         this.playArea.stroke();
         this.arrowPosX = verticalPosTile;
         this.arrowPosY = horizontalPosTile;
@@ -227,29 +202,14 @@ export class DrawingBoardService {
         const oneFifthOfTileInDecimal = 1.25;
         const startPosXPx = this.startingPosPxOfTile(verticalPosTile - 1);
         const startPosYPx = this.startingPosPxOfTile(horizontalPosTile - 1);
-        this.playArea.moveTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / 2,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile,
-        );
-        this.playArea.lineTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / 2,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal,
-        );
+        this.playArea.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
+        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
         this.playArea.stroke();
-        this.playArea.lineTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / 2,
-        );
+        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
         this.playArea.stroke();
-        this.playArea.lineTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / 2,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal,
-        );
+        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
         this.playArea.stroke();
-        this.playArea.lineTo(
-            startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile,
-            startPosYPx + Constants.WIDTH_EACH_SQUARE / 2,
-        );
+        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
         this.playArea.stroke();
         this.arrowPosX = verticalPosTile;
         this.arrowPosY = horizontalPosTile;
@@ -257,7 +217,7 @@ export class DrawingBoardService {
     }
 
     drawTileAtPos(xPos: number, bonusBoard: string[][], yPos: number, width?: number) {
-        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + 5;
+        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
         if (xPos > Constants.NUMBER_SQUARE_H_AND_W || yPos > Constants.NUMBER_SQUARE_H_AND_W) {
             return;
         }
@@ -270,13 +230,14 @@ export class DrawingBoardService {
         const xPosPx =
             xPos * (Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS) +
             Constants.SIZE_OUTER_BORDER_BOARD -
-            marginForRoundedNumberAndLook / 2 + paddingForStands;
+            marginForRoundedNumberAndLook / 2 +
+            paddingForStands;
         const yPosPx =
             yPos * (Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS) +
             Constants.SIZE_OUTER_BORDER_BOARD -
-            marginForRoundedNumberAndLook / 2 + paddingForStands;
-        
-        
+            marginForRoundedNumberAndLook / 2 +
+            paddingForStands;
+
         if (width || width === 0) {
             yPos += 1;
         }
@@ -309,9 +270,7 @@ export class DrawingBoardService {
             if (bonusBoard[xPos][yPos].includes('letter')) {
                 this.playArea.fillText(
                     'LETTRE',
-                    xPosPx +
-                        (Constants.WIDTH_EACH_SQUARE - this.playArea.measureText('LETTRE').width) / 2 +
-                        marginForRoundedNumberAndLook / 2,
+                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playArea.measureText('LETTRE').width) / 2 + marginForRoundedNumberAndLook / 2,
                     yPosPx + Constants.WIDTH_EACH_SQUARE / 2 + marginForRoundedNumberAndLook / 2,
                 );
             } else {
@@ -350,10 +309,8 @@ export class DrawingBoardService {
         if (this.lettersDrawn) {
             return;
         }
-        const verticalPosTile: number =
-            Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / positionPx.x)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
-        const horizontalPosTile: number =
-            Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / positionPx.y)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
+        const verticalPosTile: number = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / positionPx.x)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
+        const horizontalPosTile: number = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / positionPx.y)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
         if (board[horizontalPosTile][verticalPosTile].old) {
             // check if the tile has a letter
             return; // if it does then we dont draw an arrow
@@ -390,12 +347,7 @@ export class DrawingBoardService {
 
     private redrawStar(xPosPx: number, yPosPx: number, width?: number) {
         if (width) {
-            this.playArea.fillRect(
-                xPosPx + width,
-                yPosPx + width,
-                Constants.WIDTH_EACH_SQUARE - width,
-                Constants.WIDTH_EACH_SQUARE - width,
-            );
+            this.playArea.fillRect(xPosPx + width, yPosPx + width, Constants.WIDTH_EACH_SQUARE - width, Constants.WIDTH_EACH_SQUARE - width);
         } else {
             return;
         }

@@ -19,7 +19,6 @@ import { DictionaryService } from './dictionary.service';
 import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PutLogicService } from './put-logic.service';
-import { StandService } from './stand.service';
 
 @Service()
 export class SocketManager {
@@ -41,7 +40,6 @@ export class SocketManager {
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
-        private standService: StandService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -50,15 +48,6 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
-            //TODO REMOVE LATER
-            const game = new GameServer(0, false, GlobalConstants.MODE_SOLO, 'defaultLevel', 'defaultRoom', false, '');
-            // this.boardService.initBoardArray(game);
-            // socket.emit('gameBoardUpdate', game);
-
-            const player = new Player('defaultPlayer', true);
-            this.standService.onInitStandPlayer(game.letters, game.letterBank, player);
-            // socket.emit('playerAndStandUpdate', player);
-
             this.clientAndRoomHandler(socket);
             // handling event from client
             this.clientEventHandler(socket);

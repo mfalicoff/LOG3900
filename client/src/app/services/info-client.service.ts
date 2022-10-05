@@ -75,7 +75,7 @@ export class InfoClientService {
         this.vpLevel = 'debutant';
         this.isSpectator = false;
         this.creatorShouldBeAbleToStartGame = false;
-        this.actualRoom = new RoomData("default", "1", false, "fake", [], []);
+        this.actualRoom = new RoomData('default', '1', false, 'fake', [], []);
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
