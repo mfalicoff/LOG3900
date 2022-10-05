@@ -4,10 +4,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { BoardComponent } from '@app/components/board/board.component';
+import { BoardStandComponent } from '@app/components/board-stand/board-stand.component';
 import { CommunicationBoxComponent } from '@app/components/communication-box/communication-box.component';
 import { InfoPanelComponent } from '@app/components/info-panel/info-panel.component';
-import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { StandRPComponent } from '@app/components/stand-rp/stand-rp.component';
 import { TimerComponent } from '@app/components/timer/timer.component';
@@ -35,10 +34,9 @@ import { ModalComponent } from './pages/modal/modal.component';
         AppComponent,
         GamePageComponent,
         MainPageComponent,
-        PlayAreaComponent,
         SidebarComponent,
         MaterialPageComponent,
-        BoardComponent,
+        BoardStandComponent,
         StandRPComponent,
         ParametresSelectionPageComponent,
         MultiplayerInitPageComponent,

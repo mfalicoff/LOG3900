@@ -19,6 +19,7 @@ export const SIZE_OUTER_BORDER_STAND = 6;
 export const DEFAULT_WIDTH_STAND = WIDTH_EACH_SQUARE * NUMBER_SLOT_STAND + WIDTH_LINE_BLOCKS * (NUMBER_SLOT_STAND - 1) + SIZE_OUTER_BORDER_STAND * 2;
 export const DEFAULT_HEIGHT_STAND = WIDTH_EACH_SQUARE + SIZE_OUTER_BORDER_STAND * 2;
 
+export const PADDING_BOARD_FOR_STANDS = DEFAULT_HEIGHT_STAND + 5;
 /// ////////////////////////////////////////////////////////////////////////
 // CHAT VALIDATION CONSTANTS
 /// ////////////////////////////////////////////////////////////////////////

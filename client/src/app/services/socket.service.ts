@@ -43,13 +43,16 @@ export class SocketService {
             this.infoClientService.player = player;
             setTimeout(() => {
                 this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
+                // //TODO REMOVE LATER
+                // this.drawingService.drawSpectatorStands([player]);
             }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
 
         this.socket.on('gameBoardUpdate', (game) => {
             this.infoClientService.game = game;
             setTimeout(() => {
-                this.drawingBoardService.reDrawBoard(game.bonusBoard, game.board, this.infoClientService.letterBank);
+                this.drawingBoardService.reDrawBoard(
+                    game.bonusBoard, game.board, this.infoClientService.letterBank);
             }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
 
@@ -60,6 +63,13 @@ export class SocketService {
             this.infoClientService.actualRoom = this.infoClientService.rooms[idxExistingRoom];
             // update the players and spectators of the room
             this.infoClientService.rooms[idxExistingRoom].players = players;
+            console.log("receiving players", players);
+            if(this.infoClientService.isSpectator){
+                setTimeout(() => {
+                    this.drawingService.drawSpectatorStands(players);
+                }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+                console.log("drawingSpecStands");
+            }
             this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
 
             // update the player object locally
@@ -175,7 +185,6 @@ export class SocketService {
         this.socket.on('askForEntrance', (newPlayerName, newPlayerId) => {
             this.infoClientService.incommingPlayer = newPlayerName;
             this.infoClientService.incommingPlayerId = newPlayerId;
-            console.log(newPlayerName, newPlayerId)
         });
     }
 

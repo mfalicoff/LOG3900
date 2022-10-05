@@ -180,7 +180,7 @@ export class PlaceGraphicService {
             this.drawingService.drawOneLetter(
                 letterTofind,
                 player.stand[letterPos],
-                this.drawingService.canvasStand,
+                this.drawingService.canvasBoardStand,
                 this.infoClientService.letterBank,
             );
         }
