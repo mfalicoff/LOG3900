@@ -21,6 +21,7 @@ export class InfoClientService {
     minutesByTurn: number;
     randomBonusesOn: boolean;
     playerName: string;
+    isGamePrivate: boolean;
 
     // The string displayed in the info pannel
     nameVP1dictionary0: number;
@@ -47,19 +48,26 @@ export class InfoClientService {
 
     creatorShouldBeAbleToStartGame: boolean;
 
+    // variables used when player wants to join a private game
+    incommingPlayer: string;
+    incommingPlayerId: string;
+
     constructor() {
         this.gameMode = GlobalConstants.MODE_MULTI;
         this.isLog2990Enabled = true;
         this.minutesByTurn = 1;
         this.randomBonusesOn = false;
+        this.isGamePrivate = false;
         this.playerName = 'DefaultPlayerName';
+        this.incommingPlayer = '';
+        this.incommingPlayerId = '';
         this.rooms = [];
         this.initializeService();
     }
 
     // public bc it is reused to reset for new games
     initializeService() {
-        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, false, 'defaultLevel', 'defaultRoom');
+        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, 'defaultLevel', 'defaultRoom', false, '');
         this.player = new Player('DefaultPlayerObject', false);
         this.displayTurn = "En attente d'un autre joueur...";
         this.isTurnOurs = false;
@@ -67,6 +75,7 @@ export class InfoClientService {
         this.vpLevel = 'debutant';
         this.isSpectator = false;
         this.creatorShouldBeAbleToStartGame = false;
+        this.actualRoom = new RoomData('default', '1', false, 'fake', [], []);
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],

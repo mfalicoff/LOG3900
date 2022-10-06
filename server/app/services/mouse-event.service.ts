@@ -5,19 +5,13 @@ import { Vec2 } from '@app/classes/vec2';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
 import { ChatService } from './chat.service';
-import { ObjectiveService } from './objective.service';
 import { PlayAreaService } from './play-area.service';
 import { StandService } from './stand.service';
 
 @Service()
 export class MouseEventService {
     sio: io.Server;
-    constructor(
-        private standService: StandService,
-        private chatService: ChatService,
-        private playAreaService: PlayAreaService,
-        private objectiveService: ObjectiveService,
-    ) {
+    constructor(private standService: StandService, private chatService: ChatService, private playAreaService: PlayAreaService) {
         this.sio = new io.Server();
     }
 
@@ -110,11 +104,6 @@ export class MouseEventService {
             if (player.stand[i].color === '#AEB1D9') {
                 this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
             }
-        }
-
-        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-        if (playerThatJustPlayed && game.isLog2990Enabled) {
-            this.objectiveService.isPlayerObjectivesCompleted(game, playerThatJustPlayed, exchangeCmd);
         }
 
         this.resetExchangeTiles(player);

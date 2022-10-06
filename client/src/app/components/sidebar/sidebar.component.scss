@@ -36,7 +36,8 @@ button {
 
 .buttonContainer{
     text-align: center;
-    display: flex;
     justify-content: center;
     align-items: center;
+    white-space: normal;
+    word-wrap: break-word;
 }
