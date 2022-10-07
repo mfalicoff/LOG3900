@@ -9,6 +9,7 @@ import { isEmpty } from '@app/utils/utils';
 import UserService from '@app/services/user.service';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import { DEFAULT_VALUE_NUMBER, TOKEN_EXPIRATION, WEB_TOKEN_SECRET } from '@app/classes/global-constants';
+import { addActionHistory } from '@app/utils/auth';
 
 class AuthService {
     users = userModel;
@@ -33,12 +34,14 @@ class AuthService {
         this.loggedInIds.push(findUser.id as string);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);
-
+        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: [addActionHistory('login')] } });
         return { cookie, findUser };
     }
 
     async logout(id: string): Promise<void> {
         const filteredIds = this.loggedInIds.filter((_id) => _id !== id);
+        const findUser = await this.userService.findUserById(id);
+        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: [addActionHistory('logout')] } });
         this.loggedInIds = filteredIds;
     }
 

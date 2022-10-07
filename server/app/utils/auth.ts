@@ -6,7 +6,7 @@ import userModel from '@app/models/users.model';
 import { WEB_TOKEN_SECRET } from '@app/classes/global-constants';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 
-const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
         /* eslint-disable */
         const Authorization = req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization') : null);
@@ -33,4 +33,14 @@ const authMiddleware = async (req: RequestWithUser, res: Response, next: NextFun
     }
 };
 
-export default authMiddleware;
+export const addActionHistory = (type: string) => {
+    switch (type) {
+        case 'creation':
+            return `Creation de compte: ${new Date().getTime()}`;
+        case 'login':
+            return `Login: ${new Date().getTime()}`;
+        case 'logout':
+            return `Logout: ${new Date().getTime()}`;
+    }
+    return '';
+};

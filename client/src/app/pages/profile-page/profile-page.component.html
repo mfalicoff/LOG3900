@@ -1,0 +1,25 @@
+<div class="container justified">
+    <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
+    <div>
+        <img src="https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg" id="profile"/>
+        <h1>{{user.name}}</h1>
+        <div>
+            <h2>Statistiques</h2>
+            <ul>
+                <li>Parties jouees: {{user.gamesPlayed}}</li>
+                <li>Parties gagnes: {{user.gamesWon}}</li>
+                <li>Score moyen par partie: {{user.averagePointsPerGame}}</li>
+                <li>Temps moyen par partie: {{user.averageTimePerGame}}</li>
+            </ul>
+        </div>
+        <div>
+            <h2>Historique des actions</h2>
+            <div>
+                <h3 (click)="openActionHistoryComponent()">Hisotrique des connections</h3>
+            </div>
+            <div>
+                <h3>Historique des parties</h3>
+            </div>
+        </div>
+    </div>
+</div>

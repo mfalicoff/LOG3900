@@ -19,9 +19,9 @@ interface FormInterface {
 })
 export class LoginPageComponent {
     form: FormInterface = {
-        username: '',
+        username: 'example@email.com',
         email: '',
-        password: '',
+        password: 'password',
     };
     isSuccessful = false;
     isSignUpFailed = false;
@@ -85,6 +85,7 @@ export class LoginPageComponent {
                 .subscribe({
                     next: (response) => {
                         localStorage.setItem('cookie', response.token);
+                        localStorage.setItem('user-info', JSON.stringify(response.data));
                         this.socketService.socket.emit('new-user', response.data.name);
                         this.infoClientService.playerName = response.data.name;
                         this.router.navigate(['/gamemode-options']);

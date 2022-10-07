@@ -214,6 +214,7 @@ export class ChatService {
                 false,
                 'S',
             );
+            // TODO stats
         }
 
         if (!gameAbandoned) {

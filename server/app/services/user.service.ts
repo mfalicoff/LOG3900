@@ -6,6 +6,7 @@ import { CreateUserValidator } from '@app/utils/validators';
 import userModel from '@app/models/users.model';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import { SALT_ROUNDS } from '@app/classes/global-constants';
+import { addActionHistory } from '@app/utils/auth';
 
 class UserService {
     users = userModel;
@@ -35,7 +36,16 @@ class UserService {
         if (findUser) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
 
         const hashedPassword = await hash(userData.password, SALT_ROUNDS);
-        return await this.users.create({ ...userData, password: hashedPassword });
+        return await this.users.create({
+            ...userData,
+            password: hashedPassword,
+            averagePointsPerGame: 0,
+            averageTimePerGame: 0,
+            gamesPlayed: 0,
+            gamesWon: 0,
+            actionHistory: [addActionHistory('creation')],
+            gameHistory: [],
+        });
     }
 
     // On ne peut que changer le email, username ou password pour l'instant

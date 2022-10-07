@@ -1,6 +1,5 @@
 export interface User {
     avatar?: string;
-    actionHistory?: string[];
     averagePointsPerGame?: number;
     averageTimePerGame?: number;
     email?: string;
@@ -8,7 +7,6 @@ export interface User {
     gamesWon?: number;
     id?: string;
     loggedIn?: boolean;
-    loginHistory?: string[];
     password?: string;
 
     name: string;

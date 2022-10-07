@@ -17,6 +17,34 @@ const userSchema: Schema = new Schema({
         type: String,
         required: true,
     },
+    averagePointsPerGame: {
+        type: Number,
+        required: true,
+    },
+    averageTimePerGame: {
+        type: Number,
+        required: true,
+    },
+    gamesPlayed: {
+        type: Number,
+        required: true,
+    },
+    gamesWon: {
+        type: Number,
+        required: true,
+    },
+    avatar: {
+        type: Schema.Types.ObjectId,
+        ref: 'Avatar',
+    },
+    actionHistory: {
+        type: [String],
+        required: true,
+    },
+    loginHistory: {
+        type: [String],
+        required: true,
+    },
 });
 
 const userModel = model<User & Document>('User', userSchema);
