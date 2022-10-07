@@ -54,6 +54,10 @@ export class GameServer {
 
     vpLevel: string;
 
+    // Start and end Times
+    startTime: number;
+    endTime: number;
+
     constructor(minutesByTurn: number, randomBonusesOn: boolean, gameMode: string, isLog2990Enabled: boolean, vpLevel: string, roomName: string) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;

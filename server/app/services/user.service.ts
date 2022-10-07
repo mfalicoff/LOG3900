@@ -7,7 +7,10 @@ import userModel from '@app/models/users.model';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import { SALT_ROUNDS } from '@app/classes/global-constants';
 import { addActionHistory } from '@app/utils/auth';
+import { Player } from '@app/classes/player';
+import { Service } from 'typedi';
 
+@Service()
 class UserService {
     users = userModel;
 
@@ -89,6 +92,41 @@ class UserService {
         if (!findUser) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
 
         return findUser;
+    }
+
+    async updateStatsAtEndOfGame(gameLength: number, player: Player): Promise<void> {
+        const findUser: User = (await this.users.findOne({ name: player.name })) as User;
+
+        const currentAverageTime = findUser.averageTimePerGame as number;
+        const currentAveragePoints = findUser.averagePointsPerGame as number;
+
+        const newGamesPlayed = (findUser.gamesPlayed as number) + 1;
+        const newAverageTimePerGame = currentAverageTime + (gameLength - currentAverageTime) / newGamesPlayed;
+        const newAveragePointsPerGame = currentAveragePoints + (player.score - currentAveragePoints) / newGamesPlayed;
+
+        await this.users.updateOne({ name: player.name }, { gamesPlayed: newGamesPlayed });
+        await this.users.updateOne({ name: player.name }, { averageTimePerGame: newAverageTimePerGame });
+        await this.users.updateOne({ name: player.name }, { averagePointsPerGame: newAveragePointsPerGame });
+    }
+
+    async updateWinHistory(player: Player): Promise<void> {
+        const findUser: User = (await this.users.findOne({ name: player.name })) as User;
+        const newGamesWon = (findUser.gamesWon as number) + 1;
+        await this.users.updateOne({ name: player.name }, { gamesWon: newGamesWon });
+    }
+
+    async updateGameHistory(player: Player, didPlayerWin: boolean, gameStart: number): Promise<void> {
+        const start = new Date(gameStart);
+        if (didPlayerWin)
+            await this.users.updateOne(
+                { name: player.name },
+                { $push: { gameHistory: `Partie Gagne le ${start.toLocaleString()}:${start.toDateString()}` } },
+            );
+        else
+            await this.users.updateOne(
+                { name: player.name },
+                { $push: { gameHistory: `Partie Perdu le ${start.toLocaleString()}:${start.toDateString()}` } },
+            );
     }
 }
 

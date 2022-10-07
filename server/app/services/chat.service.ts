@@ -5,6 +5,8 @@ import { EndGameService } from '@app/services/end-game.service';
 import { ValidationService } from '@app/services/validation.service';
 import { Service } from 'typedi';
 import { ObjectiveService } from './objective.service';
+import UserService from '@app/services/user.service';
+import { DEFAULT_VALUE_NUMBER } from '@app/classes/global-constants';
 
 enum Commands {
     Place = '!placer',
@@ -17,7 +19,12 @@ enum Commands {
 
 @Service()
 export class ChatService {
-    constructor(private validator: ValidationService, private endGameService: EndGameService, private objectiveService: ObjectiveService) {}
+    constructor(
+        private validator: ValidationService,
+        private endGameService: EndGameService,
+        private objectiveService: ObjectiveService,
+        private userService: UserService,
+    ) {}
 
     // verify if a command is entered and redirect to corresponding function
     sendMessage(input: string, game: GameServer, player: Player): boolean {
@@ -204,7 +211,8 @@ export class ChatService {
         }
     }
 
-    private showEndGameStats(game: GameServer, player: Player, gameAbandoned: boolean) {
+    private async showEndGameStats(game: GameServer, player: Player, gameAbandoned: boolean) {
+        game.endTime = new Date().getTime();
         this.pushMsgToAllPlayers(game, player.name, GlobalConstants.END_OF_GAME, false, 'S');
         for (const playerElem of game.mapPlayers.values()) {
             this.pushMsgToAllPlayers(
@@ -214,7 +222,8 @@ export class ChatService {
                 false,
                 'S',
             );
-            // TODO stats
+            const gameLength = game.endTime - game.startTime;
+            await this.userService.updateStatsAtEndOfGame(gameLength, playerElem);
         }
 
         if (!gameAbandoned) {
@@ -222,7 +231,7 @@ export class ChatService {
         }
     }
 
-    private sendWinnerMessage(game: GameServer, player: Player) {
+    private async sendWinnerMessage(game: GameServer, player: Player) {
         const winners = this.endGameService.chooseWinner(game);
         if (winners.length === 1) {
             this.pushMsgToAllPlayers(
@@ -232,14 +241,22 @@ export class ChatService {
                 false,
                 'S',
             );
+            await this.userService.updateWinHistory(winners[0]);
         } else if (winners.length > 1) {
             this.pushMsgToAllPlayers(game, player.name, GlobalConstants.DRAW_MSG, false, 'S');
 
             for (const winner of winners) {
                 this.pushMsgToAllPlayers(game, player.name, 'Score final pour: ' + winner.name + ' est: ' + winner.score, false, 'S');
+                await this.userService.updateWinHistory(winner);
             }
         } else {
             this.pushMsgToAllPlayers(game, player.name, GlobalConstants.GAME_NOT_UNDERSTOOD, false, 'S');
+        }
+        const winnerNames = winners.map((winner) => winner.name);
+        for (const playerElem of game.mapPlayers.values()) {
+            if (winnerNames.indexOf(playerElem.name) === DEFAULT_VALUE_NUMBER)
+                await this.userService.updateGameHistory(playerElem, false, game.startTime);
+            else await this.userService.updateGameHistory(playerElem, true, game.startTime);
         }
     }
 }
