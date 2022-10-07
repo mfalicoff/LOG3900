@@ -34,13 +34,15 @@ export const authMiddleware = async (req: RequestWithUser, res: Response, next: 
 };
 
 export const addActionHistory = (type: string) => {
+    const date = new Date();
+    const formattedDate = `${date.toLocaleString()}:${date.toDateString()}`;
     switch (type) {
         case 'creation':
-            return `Creation de compte: ${new Date().getTime()}`;
+            return `Creation de compte: ${formattedDate}`;
         case 'login':
-            return `Login: ${new Date().getTime()}`;
+            return `Login: ${formattedDate}`;
         case 'logout':
-            return `Logout: ${new Date().getTime()}`;
+            return `Logout: ${formattedDate}`;
     }
     return '';
 };

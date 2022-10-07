@@ -34,7 +34,7 @@ class AuthService {
         this.loggedInIds.push(findUser.id as string);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);
-        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: [addActionHistory('login')] } });
+        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('login') } });
         return { cookie, findUser };
     }
 

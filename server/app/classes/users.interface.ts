@@ -4,11 +4,11 @@ export interface User {
     averagePointsPerGame?: number;
     averageTimePerGame?: number;
     email?: string;
+    gameHistory?: string[];
     gamesPlayed?: number;
     gamesWon?: number;
     id?: string;
     loggedIn?: boolean;
-    loginHistory?: string[];
     password?: string;
 
     name: string;

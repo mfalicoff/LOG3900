@@ -42,11 +42,12 @@
     transform: translate(-50%, -50%);
 }
 
-.messagePlayer, .messageOpponent{
+.actionHistory{
     padding: 1%;
     color: wheat;
     font-size: large;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-align: left;
 }
 
 .messagePlayer{

@@ -27,7 +27,7 @@ import { ChatComponent } from './pages/chat/chat.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
-import { ActionHistoryComponent } from './pages/profile-page/action-history/action-history.component';
+import { UserHistoryComponent } from './components/user-history/user-history.component';
 
 /**
  * Main module that is used in main.ts.
@@ -58,7 +58,7 @@ import { ActionHistoryComponent } from './pages/profile-page/action-history/acti
         LoginPageComponent,
         GamemodeoptionsPageComponent,
         ProfilePageComponent,
-        ActionHistoryComponent,
+        UserHistoryComponent,
     ],
     imports: [
         AppMaterialModule,

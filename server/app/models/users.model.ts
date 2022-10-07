@@ -41,7 +41,7 @@ const userSchema: Schema = new Schema({
         type: [String],
         required: true,
     },
-    loginHistory: {
+    gameHistory: {
         type: [String],
         required: true,
     },
