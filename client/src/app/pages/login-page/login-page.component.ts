@@ -51,15 +51,11 @@ export class LoginPageComponent {
     async signUp() {
         return (
             this.http
-                .post<any>(
-                    this.serverUrl + 'signup',
-                    {
-                        name: this.form.username,
-                        email: this.form.email,
-                        password: this.form.password,
-                    },
-                    { withCredentials: true },
-                )
+                .post<any>(this.serverUrl + 'signup', {
+                    name: this.form.username,
+                    email: this.form.email,
+                    password: this.form.password,
+                })
                 // eslint-disable-next-line deprecation/deprecation
                 .subscribe({
                     next: (response) => {
@@ -100,7 +96,7 @@ export class LoginPageComponent {
         if (error.error instanceof ErrorEvent) {
             alert('Erreur: ' + error.status + error.error.message);
         } else {
-            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
+            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error.message}`);
         }
     }
 }
