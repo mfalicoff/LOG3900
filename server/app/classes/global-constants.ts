@@ -112,7 +112,8 @@ export const PLAYER_TRIED_A_WORD = ' a placé un mot non valide, son tour passe 
 // /////////////// databaseService constants//////////////////////////////////
 /// /////////////////////////////////////////////////////////////////////////
 export const DATABASE_URL = 'mongodb+srv://Stephane:HarryP0tter7@project-database.m7fal.mongodb.net/?retryWrites=true&w=majority';
-export const DATABASE_NAME = 'Project-Database';
+export const DATABASE_PROD = 'Project-Database';
+export const DATABASE_DEV = 'test';
 export const DATABASE_COLLECTION_DICTIONARIES = 'Dictionaries';
 export const DATABASE_COLLECTION_BESTSCORECLASSIC = 'BestScoreClassic';
 export const DATABASE_COLLECTION_BESTSCORELOG2990 = 'BestScoreLOG2990';
