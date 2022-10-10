@@ -9,7 +9,7 @@
                 <li>Parties jouees: {{user.gamesPlayed}}</li>
                 <li>Parties gagnes: {{user.gamesWon}}</li>
                 <li>Score moyen par partie: {{user.averagePointsPerGame}}</li>
-                <li>Temps moyen par partie: {{user.averageTimePerGame}}</li>
+                <li>Temps moyen par partie: {{this.millisToMinutesAndSeconds()}}</li>
             </ul>
         </div>
         <div>

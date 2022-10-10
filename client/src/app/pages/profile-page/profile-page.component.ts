@@ -42,4 +42,11 @@ export class ProfilePageComponent implements OnInit {
             },
         });
     }
+
+    millisToMinutesAndSeconds() {
+        const date = new Date(this.user.averageTimePerGame as number);
+        const m = date.getMinutes();
+        const s = date.getSeconds();
+        return `Le temps moyen par partie est de: ${m}m:${s}s.`;
+    }
 }
