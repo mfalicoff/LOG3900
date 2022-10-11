@@ -1,0 +1,7 @@
+TODO
+- Select Avatars
+- Decide how to store them
+- Add avatar to user model
+- Add avatar sign up UI
+- Add avatar to pages
+- add avatar modification page
