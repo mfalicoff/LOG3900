@@ -93,7 +93,6 @@ export class SocketService {
         });
 
         this.socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) => {
-            console.log('creatorCanStart', creatorCanStart);
             this.infoClientService.creatorShouldBeAbleToStartGame = creatorCanStart;
         });
 

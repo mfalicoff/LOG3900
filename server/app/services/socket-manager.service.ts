@@ -611,9 +611,6 @@ export class SocketManager {
 
         const playerThatLeaves = game.mapPlayers.get(user.name);
         const specThatLeaves = game.mapSpectators.get(socket.id);
-
-        console.log("PLAYER", playerThatLeaves)
-        console.log("SPEC", specThatLeaves)
         // if it is a spectator that leaves
         if (playerThatLeaves) {
             // if there are only virtualPlayers in the game we delete the game
@@ -628,15 +625,14 @@ export class SocketManager {
                     this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
                     this.gameUpdateClients(game);
 
-                    //if the game hasn't started we check if the button start game should be present
-                    if(!game.gameStarted){
+                    // if the game hasn't started we check if the button start game should be present
+                    if (!game.gameStarted) {
                         this.shouldCreatorBeAbleToStartGame(game);
                     }
                 }, waitBeforeAbandonment);
             } else {
                 this.gameFinishedAction(game);
             }
-
         } else if (specThatLeaves) {
             // if it is a spectator that leaves
             game.mapSpectators.delete(socket.id);
