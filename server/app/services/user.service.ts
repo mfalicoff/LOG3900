@@ -55,25 +55,17 @@ class UserService {
     async updateUser(userId: string, userData: CreateUserValidator): Promise<User> {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
-        if (userData.email) {
-            const findUser: User = (await this.users.findOne({ email: userData.email })) as User;
-            if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `You're email ${userData.email} already exists`);
-        }
+        let updateUserById: User;
 
         if (userData.name) {
             const findUser: User = (await this.users.findOne({ name: userData.name })) as User;
             if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
+            updateUserById = (await this.users.findByIdAndUpdate(userId, { name: userData.name }, { new: true })) as User;
+            if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+            return updateUserById;
         }
 
-        if (userData.password) {
-            const hashedPassword = await hash(userData.password, SALT_ROUNDS);
-            userData = { ...userData, password: hashedPassword };
-        }
-
-        const updateUserById: User = (await this.users.findByIdAndUpdate(userId, { userData })) as User;
-        if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
-
-        return updateUserById;
+        throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
     }
 
     async deleteUser(userId: string): Promise<User> {

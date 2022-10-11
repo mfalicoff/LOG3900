@@ -28,6 +28,8 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
 import { UserHistoryComponent } from './components/user-history/user-history.component';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
 
 /**
  * Main module that is used in main.ts.
@@ -59,6 +61,7 @@ import { UserHistoryComponent } from './components/user-history/user-history.com
         GamemodeoptionsPageComponent,
         ProfilePageComponent,
         UserHistoryComponent,
+        ProfileEditComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -69,6 +72,7 @@ import { UserHistoryComponent } from './components/user-history/user-history.com
         HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
+        MatGridListModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

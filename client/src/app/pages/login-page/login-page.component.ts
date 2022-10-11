@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import { environment } from 'src/environments/environment';
+import { UserService } from '@app/services/user.service';
 
 interface FormInterface {
     username: string;
@@ -35,6 +36,7 @@ export class LoginPageComponent {
         private infoClientService: InfoClientService,
         private router: Router,
         private socketService: SocketService,
+        private userService: UserService,
     ) {}
 
     onSubmit(): void {
@@ -85,7 +87,7 @@ export class LoginPageComponent {
                 .subscribe({
                     next: (response) => {
                         localStorage.setItem('cookie', response.token);
-                        localStorage.setItem('user-info', JSON.stringify(response.data));
+                        this.userService.updateUserInstance(response.data);
                         this.socketService.socket.emit('new-user', response.data.name);
                         this.infoClientService.playerName = response.data.name;
                         this.router.navigate(['/gamemode-options']);

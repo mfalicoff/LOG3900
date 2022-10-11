@@ -1,0 +1,14 @@
+<div>
+    <div>
+        <h1>Nom actuel: {{this.getUsername()}}</h1>
+        <label>Editer nom: </label>
+        <input matInput [(ngModel)]="name">
+        <button (click)="updateUsername()">sauvegarder</button>
+    </div>
+    <div>
+        <label>Editer Avatar</label>
+    </div>
+    <div>
+        <button (click)="closeDialog()">Fermer</button>
+    </div>
+</div>
