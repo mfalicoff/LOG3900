@@ -13,6 +13,7 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        color: Theme.of(context).colorScheme.primary,
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
         child: const GameBoard(),
       ),
