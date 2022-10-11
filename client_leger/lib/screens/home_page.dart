@@ -1,3 +1,4 @@
+import 'package:client_leger/screens/game_page.dart';
 import 'package:client_leger/services/controller.dart';
 
 import 'package:flutter/material.dart';
@@ -91,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _toGameListPage() {
     Navigator.of(context).push(
         MaterialPageRoute(
-            builder: (context) => const Text("Game list page")
+            builder: (context) => const GamePage()
         )
     );
   }

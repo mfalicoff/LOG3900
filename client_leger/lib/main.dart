@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: appTheme,
       routes: <String, WidgetBuilder> {
-        '/chat' : (BuildContext context) => new ChatPage(),
+        '/chat' : (BuildContext context) => const ChatPage(),
       },      home: const Scaffold(
         resizeToAvoidBottomInset: false,
         body: LoginPage(),
