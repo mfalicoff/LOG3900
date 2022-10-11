@@ -92,8 +92,9 @@ export class SocketService {
             );
         });
 
-        this.socket.on('creatorShouldBeAbleToStartGame', () => {
-            this.infoClientService.creatorShouldBeAbleToStartGame = true;
+        this.socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) => {
+            console.log('creatorCanStart', creatorCanStart);
+            this.infoClientService.creatorShouldBeAbleToStartGame = creatorCanStart;
         });
 
         // for now this socket is only used when the player doesn't put a valid word on the board
