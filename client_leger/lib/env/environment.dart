@@ -1,4 +1,4 @@
-import 'base_config.dart';
+import 'BaseConfig.dart';
 
 class Environment {
   static final Environment _singleton = Environment._internal();

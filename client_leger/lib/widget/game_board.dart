@@ -1,3 +1,4 @@
+import 'package:client_leger/constants/constants_test.dart';
 import 'package:flutter/material.dart';
 
 import '../services/board_painter.dart';
@@ -17,7 +18,7 @@ class _GameBoardState extends State<GameBoard> {
       width: constraints.maxWidth < constraints.maxHeight ? constraints.maxWidth : constraints.maxHeight,
       height: constraints.maxWidth < constraints.maxHeight ? constraints.maxWidth : constraints.maxHeight,
       color: Colors.yellow,
-      child: CustomPaint(painter: BoardPainter(),),
+      child: CustomPaint(painter: BoardPainter(board),),
     ));
   }
 }
