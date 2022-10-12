@@ -13,10 +13,6 @@
     align-items: center;
 }
 
-.small {
-    height: 20%;
-}
-
 .button {
     margin-top: 20px;
     text-align: center;
@@ -27,14 +23,10 @@
     color: wheat;
 }
 
-.content{
-    position: relative;
-    width: 100%;
-}
-
 .profile {
     border-radius: 50%;
     background: transparent;
     height: 125px;
     position: absolute;
+    right: 10%;
 }

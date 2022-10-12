@@ -31,6 +31,7 @@ import { UserHistoryComponent } from './components/user-history/user-history.com
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
+import { GalleryComponent } from './components/gallery/gallery.component';
 
 /**
  * Main module that is used in main.ts.
@@ -63,6 +64,7 @@ import { NgxGalleryModule } from '@kolkov/ngx-gallery';
         ProfilePageComponent,
         UserHistoryComponent,
         ProfileEditComponent,
+        GalleryComponent,
     ],
     imports: [
         AppMaterialModule,

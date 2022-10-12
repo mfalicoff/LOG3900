@@ -1,11 +1,11 @@
-    <div id="chatWrapper">
-        <h1>{{this.data.title}}</h1>
-        <div class="sidebar" #scrollFrame>
-            <div *ngFor="let action of actionHistory" #commands>
-                <p class="actionHistory">
-                    {{action}}
-                </p>
-
-            </div>
+<div id="historyWrapper">
+    <h1>{{this.data.title}}</h1>
+    <div class="sidebar" #scrollFrame>
+        <div *ngFor="let action of actionHistory" #commands>
+            <p class="actionHistory">
+                {{action}}
+            </p>
         </div>
     </div>
+    <button (click)="closeDialog()">Fermer</button>
+</div>

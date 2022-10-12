@@ -12,7 +12,6 @@ import UsersRoute from '@app/routes/users.route';
 import { Routes } from '@app/classes/routes.interface';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import AuthRoute from '@app/routes/auth.route';
-import AvatarRoute from '@app/routes/avatar.route';
 
 @Service()
 export class Application {
@@ -36,7 +35,7 @@ export class Application {
 
         this.config();
 
-        this.bindRoutes([new UsersRoute(), new AuthRoute(), new AvatarRoute()]);
+        this.bindRoutes([new UsersRoute(), new AuthRoute()]);
     }
 
     bindRoutes(routes: Routes[]): void {

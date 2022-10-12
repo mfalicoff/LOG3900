@@ -1,6 +1,6 @@
 import { User } from '@app/classes/user.interface';
 
-export interface ResponseInterface {
+export interface UserResponseInterface {
     data: User;
     message: string;
 }

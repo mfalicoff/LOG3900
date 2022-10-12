@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { User } from '@app/classes/user.interface';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { ResponseInterface } from '@app/classes/response.interface';
+import { UserResponseInterface } from '@app/classes/response.interface';
 
 @Injectable({
     providedIn: 'root',
@@ -13,8 +13,8 @@ export class UserService {
 
     constructor(private http: HttpClient) {}
 
-    getUser(user: User): Observable<ResponseInterface> {
-        return this.http.get<ResponseInterface>(`${environment.serverUrl}users/${user._id}`);
+    getUser(user: User): Observable<UserResponseInterface> {
+        return this.http.get<UserResponseInterface>(`${environment.serverUrl}users/${user._id}`);
     }
 
     updateUserInstance(user: User) {
@@ -35,7 +35,7 @@ export class UserService {
         this.user = this.getUserFromStorage();
         const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
         return this.http
-            .put<ResponseInterface>(
+            .put<UserResponseInterface>(
                 environment.serverUrl + 'users/' + this.user._id,
                 {
                     name: newName,
@@ -58,7 +58,7 @@ export class UserService {
         this.user = this.getUserFromStorage();
         const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
         return this.http
-            .put<ResponseInterface>(
+            .put<UserResponseInterface>(
                 environment.serverUrl + 'users/' + this.user._id,
                 {
                     avatarPath: `avatar${newAvatarIndex + 1}`,

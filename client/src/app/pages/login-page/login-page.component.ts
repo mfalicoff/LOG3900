@@ -6,7 +6,8 @@ import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import { environment } from 'src/environments/environment';
 import { UserService } from '@app/services/user.service';
-import { NgxGalleryAnimation, NgxGalleryComponent, NgxGalleryImage, NgxGalleryOptions } from '@kolkov/ngx-gallery';
+import { Avatar } from '@app/classes/avatar.interface';
+import { GalleryComponent } from '@app/components/gallery/gallery.component';
 
 interface FormInterface {
     avatar: string;
@@ -15,22 +16,13 @@ interface FormInterface {
     password: string;
 }
 
-interface Avatar {
-    uri: string;
-}
-
-interface AvatarInterfaceRes {
-    data: Avatar[];
-    message: string;
-}
-
 @Component({
     selector: 'app-login-page',
     templateUrl: './login-page.component.html',
     styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent implements OnInit {
-    @ViewChild(NgxGalleryComponent) ngxGalleryComponent: NgxGalleryComponent;
+    @ViewChild(GalleryComponent) galleryComponent: GalleryComponent;
 
     form: FormInterface = {
         avatar: '',
@@ -38,9 +30,6 @@ export class LoginPageComponent implements OnInit {
         email: '',
         password: 'password',
     };
-
-    galleryOptions: NgxGalleryOptions[];
-    galleryImages: NgxGalleryImage[];
 
     isSuccessful = false;
     isSignUpFailed = false;
@@ -58,60 +47,7 @@ export class LoginPageComponent implements OnInit {
         private userService: UserService,
     ) {}
 
-    async ngOnInit() {
-        this.http.get<AvatarInterfaceRes>(this.serverUrl + 'avatar').subscribe((res: AvatarInterfaceRes) => {
-            this.avatars = res.data;
-            this.galleryOptions = [
-                {
-                    width: '300px',
-                    height: '400px',
-                    imageAnimation: NgxGalleryAnimation.Slide,
-                    image: true,
-                    fullWidth: false,
-                    preview: false,
-                    thumbnailsColumns: 4,
-                    thumbnailsRows: 2,
-                    thumbnailsMargin: 5,
-                    thumbnailsPercent: 75,
-                    imagePercent: 125,
-                },
-            ];
-            this.galleryImages = [
-                {
-                    small: this.avatars[0].uri,
-                    medium: this.avatars[0].uri,
-                },
-                {
-                    small: this.avatars[1].uri,
-                    medium: this.avatars[1].uri,
-                },
-                {
-                    small: this.avatars[2].uri,
-                    medium: this.avatars[2].uri,
-                },
-                {
-                    small: this.avatars[3].uri,
-                    medium: this.avatars[3].uri,
-                },
-                {
-                    small: this.avatars[4].uri,
-                    medium: this.avatars[4].uri,
-                },
-                {
-                    small: this.avatars[5].uri,
-                    medium: this.avatars[5].uri,
-                },
-                {
-                    small: this.avatars[6].uri,
-                    medium: this.avatars[6].uri,
-                },
-                {
-                    small: this.avatars[7].uri,
-                    medium: this.avatars[7].uri,
-                },
-            ];
-        });
-    }
+    ngOnInit() {}
 
     onSubmit(): void {
         if (this.showSignup) {
@@ -125,7 +61,6 @@ export class LoginPageComponent implements OnInit {
     }
 
     async signUp() {
-        this.form.avatar = `avatar${this.ngxGalleryComponent.selectedIndex + 1}`;
         return (
             this.http
                 .post<any>(
@@ -134,7 +69,7 @@ export class LoginPageComponent implements OnInit {
                         name: this.form.username,
                         email: this.form.email,
                         password: this.form.password,
-                        avatarPath: this.form.avatar,
+                        avatarPath: `avatar${this.galleryComponent.ngxGalleryComponent.selectedIndex + 1}`,
                     },
                     { withCredentials: true },
                 )
@@ -196,10 +131,6 @@ export class LoginPageComponent implements OnInit {
         } else {
             alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
         }
-    }
-
-    test() {
-        console.log(this.ngxGalleryComponent.selectedIndex);
     }
 }
 

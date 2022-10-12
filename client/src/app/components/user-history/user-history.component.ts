@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Inject, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 
 interface Data {
     title: string;
@@ -15,14 +15,19 @@ export class UserHistoryComponent implements AfterViewInit {
     @ViewChild('scrollFrame', { static: false }) scrollFrame: ElementRef;
     @ViewChildren('commands') itemElements: QueryList<Element>;
 
+    // eslint-disable-next-line no-invalid-this
     actionHistory: string[] = this.data.data as string[];
     private scrollContainer: Element;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: Data) {}
+    constructor(@Inject(MAT_DIALOG_DATA) public data: Data, private dialog: MatDialog) {}
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
         this.itemElements.changes.subscribe(() => this.scrollToBottom());
+    }
+
+    closeDialog(): void {
+        this.dialog.closeAll();
     }
 
     private scrollToBottom(): void {
