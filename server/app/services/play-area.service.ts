@@ -7,7 +7,6 @@ import { ChatService } from './chat.service';
 import { DatabaseService } from './database.service';
 import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
-import { ObjectiveService } from './objective.service';
 import { StandService } from './stand.service';
 import { VirtualPlayerService } from './virtual-player.service';
 
@@ -20,7 +19,6 @@ export class PlayAreaService {
         private virtualPService: VirtualPlayerService,
         private chatService: ChatService,
         private expertVPService: ExpertVP,
-        private objectiveService: ObjectiveService,
         private databaseService: DatabaseService,
     ) {
         this.sio = new io.Server();
@@ -187,17 +185,11 @@ export class PlayAreaService {
 
     private virtualPlayerAction(game: GameServer, player: Player) {
         const fourSecondsWait = 4000;
-        let resultCommand = '';
-
         const intervalId = setInterval(() => {
             if (game.vpLevel === 'expert') {
-                resultCommand = this.randomActionExpertVP(game, player);
+                this.randomActionExpertVP(game, player);
             } else {
-                resultCommand = this.randomActionVP(game, player);
-            }
-
-            if (player && game.isLog2990Enabled) {
-                this.objectiveService.isPlayerObjectivesCompleted(game, player, resultCommand);
+                this.randomActionVP(game, player);
             }
 
             this.changePlayer(game);

@@ -41,4 +41,23 @@ export class GamePageComponent {
     testFunction() {
         this.socketService.socket.emit('callTestFunction');
     }
+
+    isPlayerIncomming() {
+        if (this.infoClientService.incommingPlayer === '') {
+            return 'none';
+        } else {
+            return 'block';
+        }
+    }
+
+    acceptPlayer(isPlayerAccepted: boolean) {
+        if (isPlayerAccepted) {
+            this.socketService.socket.emit('acceptPlayer', true, this.infoClientService.incommingPlayerId);
+        } else {
+            this.socketService.socket.emit('acceptPlayer', false, this.infoClientService.incommingPlayerId);
+        }
+
+        this.infoClientService.incommingPlayer = '';
+        this.infoClientService.incommingPlayerId = '';
+    }
 }

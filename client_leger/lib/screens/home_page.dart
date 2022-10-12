@@ -2,7 +2,7 @@ import 'package:client_leger/services/controller.dart';
 
 import 'package:flutter/material.dart';
 
-import 'models/user.dart';
+import '../models/user.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({required this.user,super.key});

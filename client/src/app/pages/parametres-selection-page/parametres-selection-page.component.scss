@@ -77,8 +77,8 @@ input {
     margin-top: 20px;
 }
 .container-2-box {
-    margin-top: 50px;
-    height: 80%;
+    margin-top: 3%;
+    height: 70%;
     text-align: center;
 }
 
@@ -150,7 +150,6 @@ html {
 .spanBonus {
     text-align: center;
     position: relative;
-    margin-top: -5%;
     margin-bottom: 3%;
 }
 
@@ -253,4 +252,28 @@ mat-option {
     margin-top: 2%;
     margin-left : 2%;
     color: wheat;
+}
+
+
+.radioTypeGame{
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  text-align: center;
+  margin-left: 40%;
+  margin-top: 1%;
+}
+
+#passwdDiv{
+  flex-flow: row wrap;
+  align-items: center;
+  text-align: center;
+}
+
+#mdpCheckbox{
+    border-color: wheat;
+    margin-right: 20px;
+    color: wheat;
+    background-color: #0c483f;
+    margin-bottom: 1%;
 }

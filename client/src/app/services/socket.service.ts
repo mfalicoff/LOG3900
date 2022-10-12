@@ -60,6 +60,11 @@ export class SocketService {
             this.infoClientService.actualRoom = this.infoClientService.rooms[idxExistingRoom];
             // update the players and spectators of the room
             this.infoClientService.rooms[idxExistingRoom].players = players;
+            if (this.infoClientService.isSpectator) {
+                setTimeout(() => {
+                    this.drawingService.drawSpectatorStands(players);
+                }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+            }
             this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
 
             // update the player object locally
@@ -87,8 +92,8 @@ export class SocketService {
             );
         });
 
-        this.socket.on('creatorShouldBeAbleToStartGame', () => {
-            this.infoClientService.creatorShouldBeAbleToStartGame = true;
+        this.socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) => {
+            this.infoClientService.creatorShouldBeAbleToStartGame = creatorCanStart;
         });
 
         // for now this socket is only used when the player doesn't put a valid word on the board
@@ -129,10 +134,10 @@ export class SocketService {
     }
 
     private roomManipulationHandler() {
-        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, isLog2990Enabled, players, spectators }) => {
+        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, passwd, players, spectators }) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
             if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, isLog2990Enabled, players, spectators));
+                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, passwd, players, spectators));
             } else {
                 this.infoClientService.rooms[idxExistingRoom].players = players;
                 this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
@@ -170,6 +175,11 @@ export class SocketService {
 
         this.socket.on('isSpectator', (isSpectator) => {
             this.infoClientService.isSpectator = isSpectator;
+        });
+
+        this.socket.on('askForEntrance', (newPlayerName, newPlayerId) => {
+            this.infoClientService.incommingPlayer = newPlayerName;
+            this.infoClientService.incommingPlayerId = newPlayerId;
         });
     }
 

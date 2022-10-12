@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Player } from '@app/classes/player';
 import { Tile } from '@app/classes/tile';
@@ -9,25 +9,25 @@ import { Vec2 } from '@app/classes/vec2';
     providedIn: 'root',
 })
 export class DrawingService {
-    canvasStand: CanvasRenderingContext2D;
+    canvasBoardStand: CanvasRenderingContext2D;
 
-    initStandCanvas(canvas: CanvasRenderingContext2D) {
-        this.canvasStand = canvas;
+    canvasInit(canvas: CanvasRenderingContext2D) {
+        this.canvasBoardStand = canvas;
     }
 
     reDrawStand(stand: Tile[], letterBank: Map<string, LetterData>) {
-        this.initStand();
-        for (let x = 0; x < GlobalConstants.NUMBER_SLOT_STAND; x++) {
+        this.initStand(true);
+        for (let x = 0; x < Constants.NUMBER_SLOT_STAND; x++) {
             if (stand[x] !== undefined && stand[x].letter.value !== '') {
-                this.drawOneLetter(stand[x].letter.value, stand[x], this.canvasStand, letterBank, stand[x].color);
+                this.drawOneLetter(stand[x].letter.value, stand[x], this.canvasBoardStand, letterBank, stand[x].color);
             }
         }
     }
 
     resetColorTileStand(player: Player, letterBank: Map<string, LetterData>) {
-        for (let x = 0; x < GlobalConstants.NUMBER_SLOT_STAND; x++) {
+        for (let x = 0; x < Constants.NUMBER_SLOT_STAND; x++) {
             if (player.stand[x] !== undefined && player.stand[x].letter.value !== '') {
-                this.drawOneLetter(player.stand[x].letter.value, player.stand[x], this.canvasStand, letterBank, '#F7F7E3');
+                this.drawOneLetter(player.stand[x].letter.value, player.stand[x], this.canvasBoardStand, letterBank, '#F7F7E3');
             }
         }
     }
@@ -48,15 +48,17 @@ export class DrawingService {
             canvas.fillStyle = '#F7F7E3';
         }
         canvas.strokeStyle = '#F7F7E3';
+        // draws background of tile
         canvas.fillRect(tileArray.position.x1 + 1, tileArray.position.y1 + 1, tileArray.position.width - 2, tileArray.position.height - 2);
         // the number are so the letter tiles are smaller than the tile of the board
         canvas.strokeStyle = '#54534A';
-        canvas.lineWidth = GlobalConstants.WIDTH_LINE_BLOCKS / 2;
+        canvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
         if (rectColor) {
             canvas.strokeStyle = rectColor;
         } else {
             canvas.strokeStyle = '#54534A';
         }
+        // draws border of tile
         this.roundRect(tileArray.position.x1 + 1, tileArray.position.y1 + 1, tileArray.position.width - 2, tileArray.position.height - 2, canvas);
         // the number are so the letter tiles are smaller than the tile of the board
         canvas.fillStyle = '#212121';
@@ -68,13 +70,11 @@ export class DrawingService {
         }
         const spaceForLetter: Vec2 = { x: 4, y: 25 };
         const spaceForNumber: Vec2 = { x: 23, y: 25 };
-        const differenceSizeBetweenFonts = 6;
         const actualFont = canvas.font;
-        canvas.font = actualFont;
+        canvas.font = '18px bold system-ui';
         canvas.fillText(letterToDrawUpper, tileArray.position.x1 + spaceForLetter.x, tileArray.position.y1 + spaceForLetter.y);
 
-        const sizeFontNumber = Number(actualFont.split('p')[0]) - differenceSizeBetweenFonts;
-        canvas.font = sizeFontNumber.toString() + 'px bold system-ui';
+        canvas.font = '12px bold system-ui';
         if (letterWeight) {
             canvas.fillText(letterWeight.toString(), tileArray.position.x1 + spaceForNumber.x, tileArray.position.y1 + spaceForNumber.y);
         } else {
@@ -86,10 +86,10 @@ export class DrawingService {
 
     removeTile(tile: Tile) {
         tile.isOnBoard = true;
-        this.canvasStand.beginPath();
-        this.canvasStand.fillStyle = '#BEB9A6';
-        this.canvasStand.fillRect(tile.position.x1, tile.position.y1, tile.position.width, tile.position.height);
-        this.canvasStand.stroke();
+        this.canvasBoardStand.beginPath();
+        this.canvasBoardStand.fillStyle = '#BEB9A6';
+        this.canvasBoardStand.fillRect(tile.position.x1, tile.position.y1, tile.position.width, tile.position.height);
+        this.canvasBoardStand.stroke();
     }
 
     areLettersRightClicked(stand: Tile[]) {
@@ -99,6 +99,33 @@ export class DrawingService {
             }
         }
         return false;
+    }
+
+    initStand(isPlayerSpec: boolean) {
+        const paddingStandBoard = 5;
+        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + paddingStandBoard;
+        const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
+        if (isPlayerSpec) {
+            // top stand
+            this.drawHorizStand(constPosXYForStands, 0);
+            // left stand
+            this.drawVertiStand(0, constPosXYForStands);
+            // right stand
+            this.drawVertiStand(paddingForStands + Constants.DEFAULT_WIDTH_BOARD + paddingStandBoard, constPosXYForStands);
+        }
+        // bottom stand
+        this.drawHorizStand(constPosXYForStands, Constants.DEFAULT_WIDTH_BOARD + paddingForStands + paddingStandBoard);
+    }
+
+    // function that draws all the stands in the game
+    drawSpectatorStands(players: Player[]) {
+        const paddingStandBoard = 5;
+        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + paddingStandBoard;
+        const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
+        this.drawVertiStand(0, constPosXYForStands, players[0]);
+        this.drawVertiStand(paddingForStands + Constants.DEFAULT_WIDTH_BOARD + paddingStandBoard, constPosXYForStands, players[1]);
+        this.drawHorizStand(constPosXYForStands, 0, players[2]);
+        this.drawHorizStand(constPosXYForStands, Constants.DEFAULT_WIDTH_BOARD + paddingForStands + paddingStandBoard, players[3]);
     }
 
     // Function to draw a rounded rectangle with a default radius of 8
@@ -116,34 +143,156 @@ export class DrawingService {
         return this;
     }
 
-    private initStand() {
-        this.canvasStand.font = '19px bold system-ui';
-        this.canvasStand.beginPath();
+    // the x and y are coords of the point in the top left corner of the stand
+    private drawHorizStand(x: number, y: number, player?: Player) {
+        this.canvasBoardStand.font = '19px bold system-ui';
+        this.canvasBoardStand.beginPath();
         // Fill the rectangle with an initial color
-        this.canvasStand.fillStyle = '#BEB9A6';
-        this.canvasStand.fillRect(0, 0, GlobalConstants.DEFAULT_WIDTH_STAND, GlobalConstants.DEFAULT_HEIGHT_STAND);
+        this.canvasBoardStand.fillStyle = '#BEB9A6';
+        this.canvasBoardStand.fillRect(x, y, Constants.DEFAULT_WIDTH_STAND, Constants.DEFAULT_HEIGHT_STAND);
 
         // Puts an outer border for style
-        this.canvasStand.strokeStyle = '#AAA38E';
-        this.canvasStand.lineWidth = GlobalConstants.SIZE_OUTER_BORDER_STAND;
-        this.canvasStand.strokeRect(
-            GlobalConstants.SIZE_OUTER_BORDER_STAND / 2,
-            GlobalConstants.SIZE_OUTER_BORDER_STAND / 2,
-            GlobalConstants.DEFAULT_WIDTH_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND,
-            GlobalConstants.DEFAULT_HEIGHT_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND,
+        this.canvasBoardStand.strokeStyle = '#AAA38E';
+        this.canvasBoardStand.lineWidth = Constants.SIZE_OUTER_BORDER_STAND;
+        this.canvasBoardStand.strokeRect(
+            Constants.SIZE_OUTER_BORDER_STAND / 2 + x,
+            Constants.SIZE_OUTER_BORDER_STAND / 2 + y,
+            Constants.DEFAULT_WIDTH_STAND - Constants.SIZE_OUTER_BORDER_STAND,
+            Constants.DEFAULT_HEIGHT_STAND - Constants.SIZE_OUTER_BORDER_STAND,
         );
         // Puts all the lines
-        this.canvasStand.lineWidth = GlobalConstants.WIDTH_LINE_BLOCKS;
+        this.canvasBoardStand.lineWidth = Constants.WIDTH_LINE_BLOCKS;
 
         for (
-            let i = GlobalConstants.SIZE_OUTER_BORDER_STAND + GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS / 2;
-            i < GlobalConstants.DEFAULT_WIDTH_STAND;
-            i += GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS
+            let i = Constants.SIZE_OUTER_BORDER_STAND + Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS / 2 + x;
+            i < Constants.DEFAULT_WIDTH_STAND + x;
+            i += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
         ) {
             // Put all the vertical lines of the board
-            this.canvasStand.moveTo(i, GlobalConstants.SIZE_OUTER_BORDER_STAND);
-            this.canvasStand.lineTo(i, GlobalConstants.DEFAULT_HEIGHT_STAND - GlobalConstants.SIZE_OUTER_BORDER_STAND);
+            this.canvasBoardStand.moveTo(i, Constants.SIZE_OUTER_BORDER_STAND + y);
+            this.canvasBoardStand.lineTo(i, Constants.DEFAULT_HEIGHT_STAND - Constants.SIZE_OUTER_BORDER_STAND + y);
         }
-        this.canvasStand.stroke();
+        this.canvasBoardStand.stroke();
+
+        if (!player) {
+            return;
+        }
+        // If a player has been given, draw the player's stand
+        for (
+            let i = x + Constants.SIZE_OUTER_BORDER_STAND, j = 0;
+            i < Constants.DEFAULT_WIDTH_STAND + x - Constants.SIZE_OUTER_BORDER_STAND && j < player.stand.length;
+            i += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS, j++
+        ) {
+            if (!player.stand[j].letter || player.stand[j].letter.value === '') {
+                continue;
+            }
+
+            // draws the background of the tile
+            this.canvasBoardStand.fillStyle = '#F7F7E3';
+            this.canvasBoardStand.fillRect(i, Constants.SIZE_OUTER_BORDER_STAND + y, Constants.WIDTH_EACH_SQUARE, Constants.WIDTH_EACH_SQUARE);
+
+            // draws the border of the tile
+            this.canvasBoardStand.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
+            this.canvasBoardStand.strokeStyle = '#54534A';
+            this.roundRect(i, y + Constants.SIZE_OUTER_BORDER_STAND, Constants.WIDTH_EACH_SQUARE, Constants.WIDTH_EACH_SQUARE, this.canvasBoardStand);
+
+            const spaceForLetter: Vec2 = { x: 4, y: 25 };
+            const spaceForNumber: Vec2 = { x: 23, y: 25 };
+            // draws the letter on the tile
+            this.canvasBoardStand.fillStyle = '#212121';
+            this.canvasBoardStand.font = '18px bold system-ui';
+            this.canvasBoardStand.fillText(
+                player.stand[j].letter.value.toUpperCase(),
+                i + spaceForLetter.x,
+                y + Constants.SIZE_OUTER_BORDER_STAND + spaceForLetter.y,
+            );
+            // draws the weight of the letter on the tile
+            this.canvasBoardStand.font = '12px bold system-ui';
+            const letterWeight = player.stand[j].letter.weight;
+            if (letterWeight) {
+                this.canvasBoardStand.fillText(
+                    letterWeight.toString(),
+                    i + spaceForNumber.x,
+                    y + Constants.SIZE_OUTER_BORDER_STAND + spaceForNumber.y,
+                );
+            }
+            this.canvasBoardStand.stroke();
+        }
+    }
+
+    // the x and y are coords of the point in the top left corner of the stand
+    private drawVertiStand(x: number, y: number, player?: Player) {
+        this.canvasBoardStand.font = '19px bold system-ui';
+        this.canvasBoardStand.beginPath();
+        // Fill the rectangle with an initial color
+        this.canvasBoardStand.fillStyle = '#BEB9A6';
+        this.canvasBoardStand.fillRect(x, y, Constants.DEFAULT_HEIGHT_STAND, Constants.DEFAULT_WIDTH_STAND);
+
+        // Puts an outer border for style
+        this.canvasBoardStand.strokeStyle = '#AAA38E';
+        this.canvasBoardStand.lineWidth = Constants.SIZE_OUTER_BORDER_STAND;
+        this.canvasBoardStand.strokeRect(
+            Constants.SIZE_OUTER_BORDER_STAND / 2 + x,
+            Constants.SIZE_OUTER_BORDER_STAND / 2 + y,
+            Constants.DEFAULT_HEIGHT_STAND - Constants.SIZE_OUTER_BORDER_STAND,
+            Constants.DEFAULT_WIDTH_STAND - Constants.SIZE_OUTER_BORDER_STAND,
+        );
+        // Puts all the lines
+        this.canvasBoardStand.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        for (
+            let i = Constants.SIZE_OUTER_BORDER_STAND + Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS / 2 + y;
+            i < Constants.DEFAULT_WIDTH_STAND + y;
+            i += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
+        ) {
+            // Put all the vertical lines of the board
+            this.canvasBoardStand.moveTo(Constants.SIZE_OUTER_BORDER_STAND + x, i);
+            this.canvasBoardStand.lineTo(Constants.DEFAULT_HEIGHT_STAND - Constants.SIZE_OUTER_BORDER_STAND + x, i);
+        }
+        this.canvasBoardStand.stroke();
+
+        if (!player) {
+            return;
+        }
+        // If a player has been given, draw the player's stand
+        for (
+            let i = y + Constants.SIZE_OUTER_BORDER_STAND, j = 0;
+            i < Constants.DEFAULT_WIDTH_STAND + y - Constants.SIZE_OUTER_BORDER_STAND && j < player.stand.length;
+            i += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS, j++
+        ) {
+            if (!player.stand[j].letter || player.stand[j].letter.value === '') {
+                continue;
+            }
+
+            // draws the background of the tile
+            this.canvasBoardStand.fillStyle = '#F7F7E3';
+            this.canvasBoardStand.fillRect(x + Constants.SIZE_OUTER_BORDER_STAND, i, Constants.WIDTH_EACH_SQUARE, Constants.WIDTH_EACH_SQUARE);
+
+            // draws the border of the tile
+            this.canvasBoardStand.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
+            this.canvasBoardStand.strokeStyle = '#54534A';
+            this.roundRect(x + Constants.SIZE_OUTER_BORDER_STAND, i, Constants.WIDTH_EACH_SQUARE, Constants.WIDTH_EACH_SQUARE, this.canvasBoardStand);
+
+            const spaceForLetter: Vec2 = { x: 4, y: 25 };
+            const spaceForNumber: Vec2 = { x: 23, y: 25 };
+            // draws the letter on the tile
+            this.canvasBoardStand.fillStyle = '#212121';
+            this.canvasBoardStand.font = '18px bold system-ui';
+            this.canvasBoardStand.fillText(
+                player.stand[j].letter.value.toUpperCase(),
+                x + Constants.SIZE_OUTER_BORDER_STAND + spaceForLetter.x,
+                i + spaceForLetter.y,
+            );
+            // draws the weight of the letter on the tile
+            this.canvasBoardStand.font = '12px bold system-ui';
+            const letterWeight = player.stand[j].letter.weight;
+            if (letterWeight) {
+                this.canvasBoardStand.fillText(
+                    letterWeight.toString(),
+                    x + Constants.SIZE_OUTER_BORDER_STAND + spaceForNumber.x,
+                    i + spaceForNumber.y,
+                );
+            }
+            this.canvasBoardStand.stroke();
+        }
     }
 }

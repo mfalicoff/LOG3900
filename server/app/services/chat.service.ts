@@ -4,7 +4,6 @@ import { Player } from '@app/classes/player';
 import { EndGameService } from '@app/services/end-game.service';
 import { ValidationService } from '@app/services/validation.service';
 import { Service } from 'typedi';
-import { ObjectiveService } from './objective.service';
 import UserService from '@app/services/user.service';
 import { DEFAULT_VALUE_NUMBER } from '@app/classes/global-constants';
 
@@ -19,12 +18,7 @@ enum Commands {
 
 @Service()
 export class ChatService {
-    constructor(
-        private validator: ValidationService,
-        private endGameService: EndGameService,
-        private objectiveService: ObjectiveService,
-        private userService: UserService,
-    ) {}
+    constructor(public validator: ValidationService, private endGameService: EndGameService, private userService: UserService) {}
 
     // verify if a command is entered and redirect to corresponding function
     sendMessage(input: string, game: GameServer, player: Player): boolean {
@@ -95,10 +89,6 @@ export class ChatService {
 
     // function to pass turn
     passCommand(input: string, game: GameServer, player: Player) {
-        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-        if (playerThatJustPlayed && game.isLog2990Enabled) {
-            this.objectiveService.isPlayerObjectivesCompleted(game, playerThatJustPlayed, input);
-        }
         player.passInARow++;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
         player.chatHistory.push({ message: GlobalConstants.PASS_CMD, isCommand: false, sender: 'S' });

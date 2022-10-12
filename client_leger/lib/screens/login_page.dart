@@ -1,11 +1,11 @@
 import 'dart:ui';
 
-import 'package:client_leger/home_page.dart';
+import 'package:client_leger/screens/home_page.dart';
 import 'package:client_leger/services/controller.dart';
-import 'package:client_leger/signup_page.dart';
+import 'package:client_leger/screens/signup_page.dart';
 import 'package:flutter/material.dart';
 
-import 'models/user.dart';
+import '../models/user.dart';
 
 
 class LoginPage extends StatelessWidget {

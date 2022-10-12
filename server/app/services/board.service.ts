@@ -1,5 +1,5 @@
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { Letter } from '@app/classes/letter';
 import { Tile } from '@app/classes/tile';
 import { Vec4 } from '@app/classes/vec4';
@@ -9,15 +9,25 @@ import { Service } from 'typedi';
 export class BoardService {
     initBoardArray(game: GameServer) {
         for (
-            let i = 0, l = GlobalConstants.SIZE_OUTER_BORDER_BOARD - GlobalConstants.WIDTH_EACH_SQUARE - GlobalConstants.WIDTH_LINE_BLOCKS;
-            i < GlobalConstants.NUMBER_SQUARE_H_AND_W + 2;
-            i++, l += GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS
+            let i = 0,
+                l =
+                    Constants.SIZE_OUTER_BORDER_BOARD -
+                    Constants.WIDTH_EACH_SQUARE -
+                    Constants.WIDTH_LINE_BLOCKS +
+                    Constants.PADDING_BOARD_FOR_STANDS;
+            i < Constants.NUMBER_SQUARE_H_AND_W + 2;
+            i++, l += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
         ) {
             game.board[i] = new Array<Tile>();
             for (
-                let j = 0, k = GlobalConstants.SIZE_OUTER_BORDER_BOARD - GlobalConstants.WIDTH_EACH_SQUARE - GlobalConstants.WIDTH_LINE_BLOCKS;
-                j < GlobalConstants.NUMBER_SQUARE_H_AND_W + 2;
-                j++, k += GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS
+                let j = 0,
+                    k =
+                        Constants.SIZE_OUTER_BORDER_BOARD -
+                        Constants.WIDTH_EACH_SQUARE -
+                        Constants.WIDTH_LINE_BLOCKS +
+                        Constants.PADDING_BOARD_FOR_STANDS;
+                j < Constants.NUMBER_SQUARE_H_AND_W + 2;
+                j++, k += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
             ) {
                 const newTile = new Tile();
                 const newPosition = new Vec4();
@@ -25,8 +35,8 @@ export class BoardService {
 
                 newPosition.x1 = k;
                 newPosition.y1 = l;
-                newPosition.width = GlobalConstants.WIDTH_EACH_SQUARE;
-                newPosition.height = GlobalConstants.WIDTH_EACH_SQUARE;
+                newPosition.width = Constants.WIDTH_EACH_SQUARE;
+                newPosition.height = Constants.WIDTH_EACH_SQUARE;
 
                 newLetter.weight = 0;
                 newLetter.value = '';

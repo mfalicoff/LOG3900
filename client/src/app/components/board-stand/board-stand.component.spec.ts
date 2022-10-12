@@ -9,7 +9,7 @@ import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
 import { SocketService } from '@app/services/socket.service';
 import { io } from 'socket.io-client';
-import { BoardComponent } from './board.component';
+import { BoardComponent } from './board-stand.component';
 
 describe('BoardComponent', () => {
     let component: BoardComponent;

@@ -2,9 +2,9 @@
     <div class="container">
         <app-sidebar></app-sidebar>
         <section class="play-area-container">
-            <app-play-area class="play-area" tabindex="0"></app-play-area>
+            <app-board-stand class="play-area" tabindex="0"></app-board-stand>
         </section>
-        <div *ngIf="!infoClientService.game.isLog2990Enabled">
+        <div>
             <div id="playersInfoNoLog">
                 <app-info-panel></app-info-panel>
                 <!-- TODO REMOVE THAT LATER -->
@@ -13,16 +13,17 @@
             <div id="communicationBoxNoLog">
                 <app-communication-box></app-communication-box>
             </div>   
-            
         </div>
+    </div>
 
-        <div *ngIf="infoClientService.game.isLog2990Enabled">
-            <div id="playersInfoLog">
-                <app-info-panel></app-info-panel>
+    <!-- The Modal to ask for password when entering a game -->
+    <div class="modal" [style.display]="isPlayerIncomming()">
+        <div class="modal-content" >
+            <h1>Le joueur {{infoClientService.incommingPlayer}} essaye de se connecter. Voulez vous l'accepter dans la partie ?</h1>
+            <div>
+                <button (click)="acceptPlayer(true)" class="btn">Oui</button>
+                <button (click)="acceptPlayer(false)" class="btn">Non</button>
             </div>
-            <div id="communicationBoxLog">
-                <app-communication-box></app-communication-box>
-            </div>   
         </div>
     </div>
 </body>
