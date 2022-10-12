@@ -134,14 +134,27 @@ export class LoginPageComponent implements OnInit {
                         name: this.form.username,
                         email: this.form.email,
                         password: this.form.password,
-                        avatar: this.form.avatar,
+                        avatarPath: this.form.avatar,
                     },
                     { withCredentials: true },
                 )
                 // eslint-disable-next-line deprecation/deprecation
                 .subscribe({
-                    next: (response) => {
-                        this.saveUserInfo(response);
+                    next: () => {
+                        this.http
+                            .post<any>(this.serverUrl + 'login', {
+                                email: this.form.email,
+                                password: this.form.password,
+                            })
+                            // eslint-disable-next-line deprecation/deprecation
+                            .subscribe({
+                                next: (response) => {
+                                    this.saveUserInfo(response);
+                                },
+                                error: (error) => {
+                                    this.handleErrorPOST(error);
+                                },
+                            });
                     },
                     error: (error) => {
                         this.handleErrorPOST(error);

@@ -6,7 +6,9 @@
         <button (click)="updateUsername()">sauvegarder</button>
     </div>
     <div>
-        <label>Editer Avatar</label>
+        <h2>Editer Avatar</h2>
+        <ngx-gallery [options]="galleryOptions" [images]="galleryImages" class="ngx-gallery" ></ngx-gallery>
+        <button (click)="updateAvatar()">Savegarder Avatar</button>
     </div>
     <div>
         <button (click)="closeDialog()">Fermer</button>

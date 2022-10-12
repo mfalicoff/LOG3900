@@ -16,7 +16,7 @@ export class CreateUserValidator {
     password: string;
 
     @IsString()
-    avatar: string;
+    avatarPath: string;
 }
 
 export class LoginUserValidator {

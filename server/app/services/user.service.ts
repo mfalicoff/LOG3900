@@ -50,7 +50,7 @@ class UserService {
             gamesWon: 0,
             actionHistory: [addActionHistory('creation')],
             gameHistory: [],
-            avatarPath: userData.avatar,
+            avatarPath: userData.avatarPath,
             avatarUri: '',
         });
     }
@@ -60,16 +60,22 @@ class UserService {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
         let updateUserById: User;
-
+        console.log(userData);
         if (userData.name) {
+            console.log('here');
             const findUser: User = (await this.users.findOne({ name: userData.name })) as User;
             if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
             updateUserById = (await this.users.findByIdAndUpdate(userId, { name: userData.name }, { new: true })) as User;
             if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
             findUser.avatarUri = await this.populateAvatarField(findUser);
             return updateUserById;
+        } else if (userData.avatarPath) {
+            console.log('here1');
+            updateUserById = (await this.users.findByIdAndUpdate(userId, { avatarPath: userData.avatarPath }, { new: true })) as User;
+            if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+            updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
+            return updateUserById;
         }
-
         throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
     }
 

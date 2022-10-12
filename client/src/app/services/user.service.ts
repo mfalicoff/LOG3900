@@ -54,6 +54,29 @@ export class UserService {
             });
     }
 
+    async updateAvatar(newAvatarIndex: number) {
+        this.user = this.getUserFromStorage();
+        const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
+        return this.http
+            .put<ResponseInterface>(
+                environment.serverUrl + 'users/' + this.user._id,
+                {
+                    avatarPath: `avatar${newAvatarIndex + 1}`,
+                },
+                {
+                    headers,
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    this.updateUserInstance(res.data);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
             alert('Erreur: ' + error.status + error.error.message);
