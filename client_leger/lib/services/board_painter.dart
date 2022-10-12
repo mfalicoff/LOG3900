@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:math';
 
 import 'package:client_leger/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,15 @@ class BoardPainter extends CustomPainter {
     tileSize = size.width / 17;
     for(var i=0; i<board.tiles.length; i++){
       for(var j=0; j<board.tiles.length; j++){
-        if(i != 0 && i != 16 && j != 0 && j != 16){
+        if(i == 8 && j == 8){
+          paint.color = createMaterialColor(Color(colorTilesMap["wordx2"]!));
+          canvas.drawRect(
+            Rect.fromLTWH(j * tileSize + tilePadding, i * tileSize + tilePadding, tileSize - tilePadding * 2, tileSize - tilePadding * 2),
+            paint,
+          );
+          drawStar(canvas, Offset(j * tileSize, i * tileSize));
+        }
+        else if(i != 0 && i != 16 && j != 0 && j != 16){
           paint.color = createMaterialColor(Color(colorTilesMap[board.tiles[i][j]]!));
           canvas.drawRect(
             Rect.fromLTWH(j * tileSize + tilePadding, i * tileSize + tilePadding, tileSize - tilePadding * 2, tileSize - tilePadding * 2),
@@ -97,6 +106,28 @@ class BoardPainter extends CustomPainter {
     );
     textPainter.paint(canvas, Offset(tilePos.dx + ((tileSize - textPainter.width - 4) * 0.5),
         tilePos.dy + ((tileSize - textPainter.height) * 0.5)));
+  }
+
+  void drawStar(Canvas canvas, Offset tilePos){
+    final double longDistance = (tileSize / 2) - 1;
+    final double smallDistance = longDistance / 2;
+    const int numberOfPeak = 6;
+    final paint = Paint()
+      ..style = PaintingStyle.fill
+      ..color = createMaterialColor(const Color(0xFFAAA38E));
+    final center = Offset(tilePos.dx + tileSize/2, tilePos.dy + tileSize/2);
+    final Path star = Path();
+    double angle = (2 * pi)/(numberOfPeak*2);
+    star.moveTo(center.dx + longDistance, center.dy);
+    for(int i = 1; i < (numberOfPeak * 2); i++){
+      double distance = smallDistance;
+      if(i % 2 == 0) {
+        distance = longDistance;
+      }
+      star.lineTo(cos(angle*i) * distance + center.dx, sin(angle*i) * distance + center.dy);
+    }
+    star.close();
+    canvas.drawPath(star, paint);
   }
 
   @override
