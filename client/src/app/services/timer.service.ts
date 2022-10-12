@@ -28,6 +28,20 @@ export class TimerService {
         }, oneSecond);
     }
 
+    startMatchmakingTimer() {
+        const secondsInMinute = 60;
+        const displayZero = 9;
+        const oneSecond = 1000;
+        this.timerInterval = setInterval(() => {
+            this.secondsValue++;
+            if (this.secondsValue % secondsInMinute <= displayZero) {
+                this.displayTimer = `Temps écoulé : ${Math.floor(this.secondsValue / secondsInMinute)}:0${this.secondsValue % secondsInMinute}`;
+            } else {
+                this.displayTimer = `Temps écoulé : ${Math.floor(this.secondsValue / secondsInMinute)}:${this.secondsValue % secondsInMinute}`;
+            }
+        }, oneSecond);
+    }
+
     clearTimer() {
         clearInterval(this.timerInterval);
     }

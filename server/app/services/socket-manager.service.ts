@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import { ChatMessage } from '@app/classes/chat-message.interface';
 import { DictJSON } from '@app/classes/dict-json';
 import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
@@ -19,7 +20,6 @@ import { DictionaryService } from './dictionary.service';
 import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PutLogicService } from './put-logic.service';
-import { ChatMessage } from '@app/classes/chat-message.interface';
 
 @Service()
 export class SocketManager {

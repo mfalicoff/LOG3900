@@ -17,14 +17,15 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { MultiplayerInitPageComponent } from '@app/pages/multiplayer-init-page/multiplayer-init-page.component';
 import { ParametresSelectionPageComponent } from '@app/pages/parametres-selection-page/parametres-selection-page.component';
+import { RankedInitPageComponent } from '@app/pages/ranked-init-page/ranked-init-page.component';
+import { RankedMatchmakingPageComponent } from '@app/pages/ranked-matchmaking-page/ranked-matchmaking-page.component';
 import { ModalVpLevelsComponent } from './components/modal-vp-levels/modal-vp-levels.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
-import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
-import { ModalComponent } from './pages/modal/modal.component';
 import { ChatComponent } from './pages/chat/chat.component';
-import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
-
+import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { ModalComponent } from './pages/modal/modal.component';
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -41,6 +42,8 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         BoardStandComponent,
         ParametresSelectionPageComponent,
         MultiplayerInitPageComponent,
+        RankedInitPageComponent,
+        RankedMatchmakingPageComponent,
         CommunicationBoxComponent,
         TimerComponent,
         InfoPanelComponent,
