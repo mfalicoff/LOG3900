@@ -9,10 +9,12 @@ import { SALT_ROUNDS } from '@app/classes/global-constants';
 import { addActionHistory } from '@app/utils/auth';
 import { Player } from '@app/classes/player';
 import { Service } from 'typedi';
+import AvatarService from '@app/services/avatar.service';
 
 @Service()
 class UserService {
     users = userModel;
+    avatarService = new AvatarService();
 
     async findAllUser(): Promise<User[]> {
         return this.users.find();
@@ -25,7 +27,7 @@ class UserService {
 
         const findUser: User = (await this.users.findOne({ _id: userId })) as User;
         if (!findUser) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
-
+        findUser.avatarUri = await this.populateAvatarField(findUser);
         return findUser;
     }
 
@@ -48,6 +50,8 @@ class UserService {
             gamesWon: 0,
             actionHistory: [addActionHistory('creation')],
             gameHistory: [],
+            avatarPath: userData.avatar,
+            avatarUri: '',
         });
     }
 
@@ -62,6 +66,7 @@ class UserService {
             if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
             updateUserById = (await this.users.findByIdAndUpdate(userId, { name: userData.name }, { new: true })) as User;
             if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+            findUser.avatarUri = await this.populateAvatarField(findUser);
             return updateUserById;
         }
 
@@ -82,7 +87,7 @@ class UserService {
 
         const findUser: User = (await this.users.findOne({ email: userEmail })) as User;
         if (!findUser) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
-
+        findUser.avatarUri = await this.populateAvatarField(findUser);
         return findUser;
     }
 
@@ -124,6 +129,10 @@ class UserService {
                 { name: player.name },
                 { $push: { gameHistory: `Partie Perdu le ${start.toLocaleString()}:${start.toDateString()}` } },
             );
+    }
+
+    async populateAvatarField(user: User): Promise<string> {
+        return await this.avatarService.findAvatarByPath(user.avatarPath as string);
     }
 }
 

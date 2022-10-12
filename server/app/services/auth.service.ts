@@ -17,7 +17,9 @@ class AuthService {
     loggedInIds: string[] = [];
 
     async signup(userData: CreateUserValidator): Promise<User> {
-        return this.userService.createUser(userData);
+        const newUser = await this.userService.createUser(userData);
+        newUser.avatarUri = await this.userService.populateAvatarField(newUser);
+        return newUser;
     }
 
     async login(userData: CreateUserValidator): Promise<{ cookie: string; findUser: User }> {
@@ -32,6 +34,7 @@ class AuthService {
             throw new HttpException(HTTPStatusCode.Conflict, 'Already logged in, log out of device and try again');
 
         this.loggedInIds.push(findUser.id as string);
+        findUser.avatarUri = await this.userService.populateAvatarField(findUser);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);
         await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('login') } });

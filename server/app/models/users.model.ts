@@ -33,9 +33,13 @@ const userSchema: Schema = new Schema({
         type: Number,
         required: true,
     },
-    avatar: {
-        type: Schema.Types.ObjectId,
-        ref: 'Avatar',
+    avatarPath: {
+        type: String,
+        required: true,
+    },
+    avatarUri: {
+        type: String,
+        required: false,
     },
     actionHistory: {
         type: [String],

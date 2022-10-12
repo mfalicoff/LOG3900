@@ -30,6 +30,7 @@ import { ProfilePageComponent } from './pages/profile-page/profile-page.componen
 import { UserHistoryComponent } from './components/user-history/user-history.component';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
+import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 
 /**
  * Main module that is used in main.ts.
@@ -73,6 +74,7 @@ import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-
         ReactiveFormsModule,
         RouterModule,
         MatGridListModule,
+        NgxGalleryModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

@@ -3,12 +3,33 @@ import { isEmpty } from '@app/utils/utils';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import AvatarModel from '@app/models/avatar.model';
 import { Avatar } from '@app/classes/interfaces/avatar.interface';
+import * as fs from 'fs';
+import * as path from 'path';
+
+const PREFIX_URL = 'data:image/png;base64,';
 
 class AvatarService {
     avatars = AvatarModel;
+    assetDir = path.join(__dirname, '..', 'assets', 'avatars');
 
     async findAllAvatars(): Promise<Avatar[]> {
-        return this.avatars.find();
+        const avatars: Avatar[] = [];
+        for (let i = 1; i <= 8; i++) {
+            const filePath = `${this.assetDir}/avatar${i}.png`;
+            const file = fs.readFileSync(filePath);
+            const fileURL = PREFIX_URL.concat(file.toString('base64'));
+            avatars.push({
+                uri: fileURL,
+                path: filePath,
+            });
+        }
+        return avatars;
+    }
+
+    async findAvatarByPath(avatarPath: string): Promise<string> {
+        const filePath = `${this.assetDir}/${avatarPath}.png`;
+        const file = fs.readFileSync(filePath);
+        return PREFIX_URL.concat(file.toString('base64'));
     }
 
     async findAvatarById(avatarId: string): Promise<Avatar> {
