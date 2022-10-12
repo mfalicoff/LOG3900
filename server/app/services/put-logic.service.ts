@@ -100,7 +100,7 @@ export class PutLogicService {
                 this.boardService.writeLetterInGameMap(word[indexReadWord], game);
 
                 game.board[indexLine][i].letter.value = word[indexReadWord];
-                game.board[indexLine][i].letter.weight = this.letterBankService.checkLetterWeight(word[indexReadWord], game.letterBank);
+                game.board[indexLine][i].letter.weight = this.letterBankService.getLetterWeight(word[indexReadWord], game.letterBank);
             }
         } else {
             for (let i = indexLine; i < indexLine + wordLength; i++) {
@@ -111,7 +111,7 @@ export class PutLogicService {
                 this.boardService.writeLetterInGameMap(word[indexReadWord], game);
 
                 game.board[i][indexColumn].letter.value = word[indexReadWord];
-                game.board[i][indexColumn].letter.weight = this.letterBankService.checkLetterWeight(word[indexReadWord], game.letterBank);
+                game.board[i][indexColumn].letter.weight = this.letterBankService.getLetterWeight(word[indexReadWord], game.letterBank);
             }
         }
     }

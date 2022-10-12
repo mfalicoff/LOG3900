@@ -46,13 +46,19 @@ export class MouseKeyboardEventHandlerService {
             return;
         }
         event.preventDefault();
-        const coordinateClick: Vec2 = { x: event.offsetX, y: event.offsetY };
+        const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
 
         if (this.infoClientService.isTurnOurs) {
             if (this.drawingBoardService.lettersDrawn) {
                 return;
             }
-            this.socketService.socket.emit('boardClick', coordinateClick);
+            //todo remove that if all works
+            // this.socketService.socket.emit('boardClick', coordsClick);
+            this.drawingBoardService.findTileToPlaceArrow(
+                coordsClick, 
+                this.infoClientService.game.board, 
+                this.infoClientService.game.bonusBoard
+            );
         }
     }
 
@@ -73,11 +79,12 @@ export class MouseKeyboardEventHandlerService {
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {
+        //TODO uncomment this when everything works
         if (this.isCommunicationBoxFocus || !this.infoClientService.game?.gameStarted) {
             return;
         }
         if (this.drawingBoardService.isArrowPlaced) {
-            this.placeGraphicService.manageKeyBoardEvent(this.infoClientService.game, this.infoClientService.player, event.key);
+            this.placeGraphicService.manageKeyboardEvent(this.infoClientService.game, this.infoClientService.player, event.key);
             return;
         }
         const eventString: string = event.key.toString();

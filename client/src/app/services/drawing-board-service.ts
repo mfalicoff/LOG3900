@@ -5,6 +5,7 @@ import { LetterData } from '@app/classes/letter-data';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingService } from './drawing.service';
+import { InfoClientService } from './info-client.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,10 +16,15 @@ export class DrawingBoardService {
     isArrowPlaced: boolean;
     arrowPosX: number;
     arrowPosY: number;
+    //lettersDrawn is in fact the letter placed on the board
+    //TODO change the name when we have time
     lettersDrawn: string;
     private mapTileColours: Map<string, string>;
 
-    constructor(private drawingService: DrawingService) {
+    constructor(
+        private drawingService: DrawingService,
+        private infoClientService: InfoClientService
+    ) {
         this.isArrowVertical = false;
         this.isArrowPlaced = false;
         this.arrowPosX = Constants.DEFAULT_VALUE_NUMBER;
@@ -87,7 +93,7 @@ export class DrawingBoardService {
 
         // Draws the  star
         if (shouldDrawStar) {
-            this.drawStar(Constants.DEFAULT_HEIGHT_BOARD / 2 + paddingForStands, Constants.DEFAULT_WIDTH_BOARD / 2 + paddingForStands);
+            this.drawStar(Constants.DEFAULT_HEIGHT_BOARD / 2 + paddingForStands);
         }
 
         // Set parameters to draw the lines of the grid
@@ -158,6 +164,14 @@ export class DrawingBoardService {
                 if (board[x][y] !== undefined && board[x][y].letter.value !== '') {
                     this.drawingService.drawOneLetter(board[x][y].letter.value, board[x][y], this.playArea, letterBank);
                 }
+            }
+        }
+        //if this is our turn we redraw the arrow too
+        if(this.infoClientService.isTurnOurs && this.isArrowPlaced){
+            if(this.isArrowVertical){
+                this.drawVerticalArrowDirection(this.arrowPosX, this.arrowPosY);
+            }else{
+                this.drawHorizontalArrowDirection(this.arrowPosX, this.arrowPosY);
             }
         }
     }
@@ -309,29 +323,42 @@ export class DrawingBoardService {
         if (this.lettersDrawn) {
             return;
         }
-        const verticalPosTile: number = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / positionPx.x)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
-        const horizontalPosTile: number = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / positionPx.y)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
-        if (board[horizontalPosTile][verticalPosTile].old) {
+
+        const coordsIndexOnBoard = this.getIndexOnBoardLogicFromClick(positionPx);
+        if (board[coordsIndexOnBoard.y][coordsIndexOnBoard.x].old) {
             // check if the tile has a letter
             return; // if it does then we dont draw an arrow
         }
+
+        // check if there was an arrow before and check if there is no tile on top of it
         if ((this.arrowPosX <= Constants.NUMBER_SQUARE_H_AND_W, this.arrowPosY <= Constants.NUMBER_SQUARE_H_AND_W)) {
             if (this.arrowPosX >= 0 && !board[this.arrowPosY][this.arrowPosX].old) {
-                // erase the arrow if there was an arrow before and make sure there is no tile on top of it
+                //redraw empty tile if there was an arrow before
                 this.drawTileAtPos(this.arrowPosX - 1, bonusBoard, this.arrowPosY - 1, 1);
             }
         }
-        if (this.arrowPosX !== verticalPosTile || this.arrowPosY !== horizontalPosTile) {
+        if (this.arrowPosX !== coordsIndexOnBoard.x || this.arrowPosY !== coordsIndexOnBoard.y) {
             // if the tile clicked is another tile then reset the arrow direction
             this.isArrowVertical = true;
         }
         this.isArrowPlaced = true;
         if (this.isArrowVertical) {
-            this.drawHorizontalArrowDirection(verticalPosTile, horizontalPosTile);
+            this.drawHorizontalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
         } else {
-            this.drawVerticalArrowDirection(verticalPosTile, horizontalPosTile);
+            this.drawVerticalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
         }
         this.isArrowVertical = !this.isArrowVertical;
+    }
+
+    private getIndexOnBoardLogicFromClick(coords: Vec2) : Vec2 {
+        //we get rid of the border and the padding for the stands
+        let coordsCleaned: Vec2 = new Vec2();
+        coordsCleaned.x = coords.x - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
+        coordsCleaned.y = coords.y - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
+        let coordsIndexOnBoard = new Vec2();
+        coordsIndexOnBoard.x = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.x)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
+        coordsIndexOnBoard.y = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.y)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
+        return coordsIndexOnBoard;
     }
 
     private getFillTileColor(xPos: number, yPos: number, bonusBoard: string[][]) {
@@ -342,7 +369,12 @@ export class DrawingBoardService {
     }
 
     private startingPosPxOfTile(tilePos: number): number {
-        return (tilePos + 1) * Constants.WIDTH_EACH_SQUARE + tilePos * Constants.WIDTH_LINE_BLOCKS;
+        const pxPos = 
+            Constants.PADDING_BOARD_FOR_STANDS + 
+            Constants.SIZE_OUTER_BORDER_BOARD + 
+            tilePos * Constants.WIDTH_EACH_SQUARE + 
+            tilePos * Constants.WIDTH_LINE_BLOCKS;
+        return pxPos;
     }
 
     private redrawStar(xPosPx: number, yPosPx: number, width?: number) {
@@ -351,10 +383,11 @@ export class DrawingBoardService {
         } else {
             return;
         }
-        this.drawStar(Constants.DEFAULT_HEIGHT_BOARD / 2, Constants.DEFAULT_WIDTH_BOARD / 2);
+        const XYPxForStar = Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_HEIGHT_BOARD / 2;
+        this.drawStar(XYPxForStar);
     }
 
-    private drawStar(centerX: number, centerY: number) {
+    private drawStar(centerXY: number) {
         const nbSpike = 6;
         const shiftValueForCenteredStar = 5;
         const radius = Constants.WIDTH_EACH_SQUARE / 2 - shiftValueForCenteredStar;
@@ -362,7 +395,7 @@ export class DrawingBoardService {
         // star draw
         this.playArea.fillStyle = '#AAA38E';
         this.playArea.beginPath();
-        this.playArea.moveTo(centerX + radius, centerY);
+        this.playArea.moveTo(centerXY + radius, centerXY);
 
         let theta = 0;
         let x = 0;
@@ -370,12 +403,12 @@ export class DrawingBoardService {
         for (let i = 1; i <= nbSpike * 2; i++) {
             if (i % 2 === 0) {
                 theta = (i * (Math.PI * 2)) / (nbSpike * 2);
-                x = centerX + radius * Math.cos(theta);
-                y = centerY + radius * Math.sin(theta);
+                x = centerXY + radius * Math.cos(theta);
+                y = centerXY + radius * Math.sin(theta);
             } else {
                 theta = (i * (Math.PI * 2)) / (nbSpike * 2);
-                x = centerX + (radius / 2) * Math.cos(theta);
-                y = centerY + (radius / 2) * Math.sin(theta);
+                x = centerXY + (radius / 2) * Math.cos(theta);
+                y = centerXY + (radius / 2) * Math.sin(theta);
             }
             this.playArea.lineTo(x, y);
         }

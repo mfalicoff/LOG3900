@@ -3,7 +3,7 @@ import { Service } from 'typedi';
 
 @Service()
 export class LetterBankService {
-    checkLetterWeight(letter: string, letterBank: Map<string, LetterData>): number | undefined {
+    getLetterWeight(letter: string, letterBank: Map<string, LetterData>): number | undefined {
         if (letter === '') {
             return 0;
         }

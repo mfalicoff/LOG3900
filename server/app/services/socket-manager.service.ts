@@ -230,6 +230,20 @@ export class SocketManager {
             // const userStub = { name: 'test', roomName: 'test' };
             // this.joinGameAsSpectator(socket, gameStub, userStub);
         });
+
+        socket.on('addTempLetterBoard', (keyEntered, XIndex, YIndex)=>{
+            console.log("addTempLetterBoard: ", keyEntered, XIndex, YIndex);
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if(!game){
+                return;
+            }
+            this.mouseEventService.addTempLetterBoard(game, keyEntered, XIndex, YIndex);
+            this.gameUpdateClients(game);
+        });
     }
 
     private createGameAndPlayer(

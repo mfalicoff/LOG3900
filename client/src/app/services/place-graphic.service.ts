@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
+// import { Tile } from '@app/classes/tile';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
@@ -25,11 +26,13 @@ export class PlaceGraphicService {
         this.startLettersPlacedPosY = 0;
     }
 
-    manageKeyBoardEvent(game: GameServer, player: Player, keyEntered: string) {
+    manageKeyboardEvent(game: GameServer, player: Player, keyEntered: string) {
+        //TODO uncomment this when everything works
         if (this.infoClientService.displayTurn !== "C'est votre tour !") {
             return;
         }
         keyEntered = keyEntered.normalize('NFD').replace(/\p{Diacritic}/gu, '');
+        console.log(keyEntered);
         switch (keyEntered) {
             case 'Enter': {
                 if (!this.drawingBoardService.lettersDrawn) {
@@ -73,12 +76,38 @@ export class PlaceGraphicService {
             this.placeUpperCaseLetter(game, player, keyEntered); // tested
             return;
         }
+        //TODO uncomment this when everything works
         const letterPos: number = this.findIndexLetterInStandForPlacement(keyEntered, false, player);
         if (letterPos === DEFAULT_VALUE_INDEX) {
             return;
         }
         this.drawingService.removeTile(player.stand[letterPos]);
-        this.keyEnteredKeyboard(game, keyEntered);
+        // this.drawKeyEntered(game, keyEntered);
+
+        //TODO remove these lines if everything works
+        //it was just for testing
+        // const tileTest = new Tile();
+        // tileTest.letter.value = "b";
+        // tileTest.letter.weight = 10;
+
+        // //remove tile from stand canvas
+        // this.drawingService.removeTile(tileTest);
+        // //draws tile on board
+        // this.drawKeyEntered(game, keyEntered);
+        
+        //sends message to server to add a temporrary letter on the board
+        //so that everyone can see the moves being made/tried
+        let XIndex = this.drawingBoardService.arrowPosX;
+        let YIndex = this.drawingBoardService.arrowPosY;
+        console.log("XIndex: " + XIndex);
+        console.log("YIndex: " + YIndex);
+        // if (this.drawingBoardService.isArrowVertical) {
+        //     YIndex -= 1;
+        // }else{
+        //     XIndex -= 1;
+        // }
+        
+        this.socketService.socket.emit("addTempLetterBoard", keyEntered, XIndex, YIndex);
     }
 
     isLettersDrawnSizeAboveZero(): boolean {
@@ -110,7 +139,7 @@ export class PlaceGraphicService {
             return;
         }
         this.drawingService.removeTile(this.infoClientService.player.stand[letterPos]);
-        this.keyEnteredKeyboard(game, keyEntered);
+        this.drawKeyEntered(game, keyEntered);
     }
 
     private deleteEveryLetterPlacedOnBoard(game: GameServer, player: Player) {
@@ -206,13 +235,13 @@ export class PlaceGraphicService {
         }
     }
 
-    private keyEnteredKeyboard(game: GameServer, keyEntered: string) {
+    private drawKeyEntered(game: GameServer, keyEntered: string) {
         if (!this.drawingBoardService.lettersDrawn) {
             this.checkIfThereAreLettersBefore(game, true);
         }
         this.drawingBoardService.lettersDrawn += keyEntered;
-        let letterTodrawPosX = 0;
         let letterTodrawPosY = 0;
+        let letterTodrawPosX = 0;
         letterTodrawPosX = this.drawingBoardService.arrowPosY;
         letterTodrawPosY = this.drawingBoardService.arrowPosX;
         if (this.drawingBoardService.isArrowVertical) {
@@ -231,13 +260,13 @@ export class PlaceGraphicService {
             }
         }
 
+        //set special border color for tile bc it is a temp one
+        game.board[letterTodrawPosX][letterTodrawPosY].borderColor = "#ffaaff";
         this.drawingService.drawOneLetter(
             keyEntered,
             game.board[letterTodrawPosX][letterTodrawPosY],
             this.drawingBoardService.playArea,
             this.infoClientService.letterBank,
-            '',
-            '#ffaaff',
         );
         const outOfBoardPos = 16;
         if (this.drawingBoardService.arrowPosY >= outOfBoardPos || this.drawingBoardService.arrowPosX >= outOfBoardPos) {

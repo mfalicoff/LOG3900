@@ -1,1 +1,8 @@
-<canvas id="canvas" #gridBoard  [attr.width]="playAreaConvasSize.x" [attr.height]="playAreaConvasSize.y" (click)="onComponentBoardClick($event)" ></canvas>
+<canvas 
+    #canvasPlayArea
+    id="canvas" 
+    [attr.width]="playAreaConvasSize.x" 
+    [attr.height]="playAreaConvasSize.y" 
+    (click)="onCanvasLeftClick($event)"
+    (contextmenu)="onCanvasRightClick($event)" 
+></canvas>
