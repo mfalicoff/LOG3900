@@ -118,6 +118,19 @@ export class GameServer {
         this.initializeBonusBoard();
     }
 
+    // function that sets the master_timer for the game
+    // (reminder:) the master_timer is the client that make the turn stop
+    // when there is no time (it's not the server bc multiple setTimeout would be a nightmare)
+    setMasterTimer() {
+        for (const player of this.mapPlayers.values()) {
+            if (player.idPlayer === 'virtualPlayer') {
+                continue;
+            }
+            this.masterTimer = player.idPlayer;
+            break;
+        }
+    }
+
     private setMockTiles() {
         this.bonusBoard = [
             ['xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx'],

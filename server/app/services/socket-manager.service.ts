@@ -623,6 +623,9 @@ export class SocketManager {
                 const waitBeforeAbandonment = 3000;
                 setTimeout(() => {
                     this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
+                    if (socket.id === game.masterTimer) {
+                        game.setMasterTimer();
+                    }
                     this.gameUpdateClients(game);
                 }, waitBeforeAbandonment);
             } else {
