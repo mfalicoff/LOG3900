@@ -7,7 +7,7 @@
         <button
             *ngIf="!infoClientService.isSpectator"
             mat-raised-button
-            [disabled]="!infoClientService.isTurnOurs || infoClientService.game.gameFinished" 
+            [disabled]="!infoClientService.isTurnOurs || infoClientService.game.gameFinished"
             id="passBtn"
             class="btnStyle"
             (click)="skipTurnButton()"
@@ -41,7 +41,7 @@
          </button>
     </div>
     <br>
-    
+
     <table id="tableRoom">
         <thead>
           <tr>
@@ -52,6 +52,8 @@
         <tbody>
             <!-- TODO maybe change that ? It's a bit ugly but had no idea how to do otherwise -->
           <tr *ngFor="let player of infoClientService.actualRoom.players">
+            <td *ngIf="player.idPlayer !== 'virtualPlayer'"><img [src]="userService.user.avatarUri" class="profile"></td>
+            <td *ngIf="player.idPlayer === 'virtualPlayer'"><img [src]="player.avatarForVirtPlayer" class="profile"></td>
             <td>{{player.name}}</td>
             <td>{{player.score}}</td>
           </tr>

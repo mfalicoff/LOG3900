@@ -27,6 +27,13 @@ class AvatarService {
         const file = fs.readFileSync(filePath);
         return PREFIX_URL.concat(file.toString('base64'));
     }
+
+    async getRandomAvatar(): Promise<string> {
+        const randomNumber = Math.floor(Math.random() * DEFAULT_AVATAR_COUNT) + 1;
+        const filePath = `${this.assetDir}/avatar${randomNumber}.png`;
+        const file = fs.readFileSync(filePath);
+        return PREFIX_URL.concat(file.toString('base64'));
+    }
 }
 
 export default AvatarService;

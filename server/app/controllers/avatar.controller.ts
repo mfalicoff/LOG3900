@@ -16,6 +16,15 @@ class AvatarController {
             next(error);
         }
     };
+
+    getRandomAvatar = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const randomAvatar: string = await this.avatarService.getRandomAvatar();
+            res.status(HTTPStatusCode.OK).json({ data: randomAvatar, message: 'randomAvatar' });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default AvatarController;
