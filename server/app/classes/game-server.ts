@@ -118,6 +118,20 @@ export class GameServer {
         this.initializeBonusBoard();
     }
 
+    // takes the first players and makes it creator of game
+    setNewCreatorOfGame() {
+        const realPlayers = Array.from(this.mapPlayers.values()).filter((player) => !player.isCreatorOfGame && player.idPlayer !== 'virtualPlayer');
+
+        // takes the first players and makes it creator of game
+        if (realPlayers.length > 0) {
+            realPlayers[0].isCreatorOfGame = true;
+            return;
+        } else {
+            // eslint-disable-next-line no-console
+            console.log('Game is broken in GameServer::setNewCreatorOfGame', realPlayers);
+        }
+    }
+
     private setMockTiles() {
         this.bonusBoard = [
             ['xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx'],
