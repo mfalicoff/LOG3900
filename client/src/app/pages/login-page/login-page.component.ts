@@ -1,6 +1,6 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
@@ -21,7 +21,7 @@ interface FormInterface {
     templateUrl: './login-page.component.html',
     styleUrls: ['./login-page.component.scss'],
 })
-export class LoginPageComponent implements OnInit {
+export class LoginPageComponent {
     @ViewChild(GalleryComponent) galleryComponent: GalleryComponent;
 
     form: FormInterface = {
@@ -46,8 +46,6 @@ export class LoginPageComponent implements OnInit {
         private socketService: SocketService,
         private userService: UserService,
     ) {}
-
-    ngOnInit() {}
 
     onSubmit(): void {
         if (this.showSignup) {

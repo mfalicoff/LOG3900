@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { UserService } from '@app/services/user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { GalleryComponent } from '@app/components/gallery/gallery.component';
@@ -8,14 +8,12 @@ import { GalleryComponent } from '@app/components/gallery/gallery.component';
     templateUrl: './profile-edit.component.html',
     styleUrls: ['./profile-edit.component.scss'],
 })
-export class ProfileEditComponent implements OnInit {
+export class ProfileEditComponent {
     @ViewChild(GalleryComponent) galleryComponent: GalleryComponent;
 
     name = '';
 
     constructor(private userService: UserService, private dialog: MatDialog) {}
-
-    ngOnInit(): void {}
 
     getUsername() {
         return this.userService.getUserFromStorage().name;
