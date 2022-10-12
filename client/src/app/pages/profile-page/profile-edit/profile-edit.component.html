@@ -1,16 +1,14 @@
-<div>
-    <div>
+<div class="container justified">
+    <div class="nameEdit">
         <h1>Nom actuel: {{this.getUsername()}}</h1>
         <label>Editer nom: </label>
         <input matInput [(ngModel)]="name">
         <button (click)="updateUsername()">sauvegarder</button>
     </div>
-    <div>
+    <div class="avatarEdit">
         <h2>Editer Avatar</h2>
         <app-gallery></app-gallery>
-        <button (click)="updateAvatar()">Savegarder Avatar</button>
+        <button class="saveBtn" (click)="updateAvatar()">Savegarder Avatar</button>
     </div>
-    <div>
-        <button (click)="closeDialog()">Fermer</button>
-    </div>
+    <button class="saveBtn"(click)="closeDialog()">Fermer</button>
 </div>
