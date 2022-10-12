@@ -242,7 +242,9 @@ export class SocketManager {
                 return;
             }
             this.mouseEventService.addTempLetterBoard(game, keyEntered, XIndex, YIndex);
-            this.gameUpdateClients(game);
+            
+            // We send to all clients a gameState
+            this.sio.to(game.roomName).emit('gameBoardUpdate', game);
         });
     }
 

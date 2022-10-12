@@ -153,7 +153,6 @@ export class DrawingBoardService {
             }
         }
         this.playArea.font = savedFont;
-
         this.playArea.stroke();
     }
 
@@ -166,8 +165,9 @@ export class DrawingBoardService {
                 }
             }
         }
-        //if this is our turn we redraw the arrow too
-        if(this.infoClientService.isTurnOurs && this.isArrowPlaced){
+
+        //if this is our turn and we just put a letter on the board we redraw the arrow too
+        if(this.infoClientService.isTurnOurs && this.isArrowPlaced && this.lettersDrawn){
             if(this.isArrowVertical){
                 this.drawVerticalArrowDirection(this.arrowPosX, this.arrowPosY);
             }else{

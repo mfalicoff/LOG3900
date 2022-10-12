@@ -139,7 +139,6 @@ export class MouseEventService {
 
     addTempLetterBoard(game: GameServer, keyEntered: string, XIndex:number, YIndex: number){
         let tempTile = new Tile();
-        tempTile.old = true;
         tempTile.letter.value = keyEntered;
         tempTile.letter.weight = this.letterBankService.getLetterWeight(keyEntered, game.letterBank);
         tempTile.position.x1 = 

@@ -93,8 +93,10 @@ export class PutLogicService {
 
         if (letterWay === 'h') {
             for (let i = indexColumn; i < indexColumn + wordLength; i++) {
+                console.log("yo2");
                 const indexReadWord = i - indexColumn;
                 if (game.board[indexLine][i].old) {
+                    console.log("boardLogicUpdate: old letter, don't update");
                     continue;
                 }
                 this.boardService.writeLetterInGameMap(word[indexReadWord], game);
@@ -104,8 +106,10 @@ export class PutLogicService {
             }
         } else {
             for (let i = indexLine; i < indexLine + wordLength; i++) {
+                console.log("yo2");
                 const indexReadWord = i - indexLine;
                 if (game.board[i][indexColumn].old) {
+                    console.log("boardLogicUpdate: old letter, don't update");
                     continue;
                 }
                 this.boardService.writeLetterInGameMap(word[indexReadWord], game);
@@ -114,6 +118,7 @@ export class PutLogicService {
                 game.board[i][indexColumn].letter.weight = this.letterBankService.getLetterWeight(word[indexReadWord], game.letterBank);
             }
         }
+        console.log("yo3");
     }
 
     boardLogicRemove(game: GameServer, position: string, word: string) {
