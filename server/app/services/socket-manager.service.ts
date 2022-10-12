@@ -625,6 +625,7 @@ export class SocketManager {
                     this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
                     if (socket.id === game.masterTimer) {
                         game.setMasterTimer();
+                    }
                     if (playerThatLeaves.isCreatorOfGame) {
                         playerThatLeaves.isCreatorOfGame = !playerThatLeaves.isCreatorOfGame;
                         game.setNewCreatorOfGame();
