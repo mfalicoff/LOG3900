@@ -285,16 +285,16 @@ export class SocketManager {
 
     private shouldCreatorBeAbleToStartGame(game: GameServer) {
         const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
+        let creatorCanStart = true;
         if (nbRealPlayer < GlobalConstants.MIN_PERSON_PLAYING) {
-            return;
+            creatorCanStart = false;
         }
-        // if we have enough real player, we send a message to the creator to start the game
         for (const player of game.mapPlayers.values()) {
             if (!player.isCreatorOfGame) {
                 continue;
             }
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('creatorShouldBeAbleToStartGame');
-            return;
+            this.sio.sockets.sockets.get(player.idPlayer)?.emit('creatorShouldBeAbleToStartGame', creatorCanStart);
+            break;
         }
     }
 
@@ -625,8 +625,16 @@ export class SocketManager {
                     this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
                     if (socket.id === game.masterTimer) {
                         game.setMasterTimer();
+                    if (playerThatLeaves.isCreatorOfGame) {
+                        playerThatLeaves.isCreatorOfGame = !playerThatLeaves.isCreatorOfGame;
+                        game.setNewCreatorOfGame();
                     }
                     this.gameUpdateClients(game);
+
+                    // if the game hasn't started we check if the button start game should be present
+                    if (!game.gameStarted) {
+                        this.shouldCreatorBeAbleToStartGame(game);
+                    }
                 }, waitBeforeAbandonment);
             } else {
                 this.gameFinishedAction(game);
