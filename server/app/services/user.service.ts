@@ -55,7 +55,6 @@ class UserService {
         });
     }
 
-    // On ne peut que changer le email, username ou password pour l'instant
     async updateUser(userId: string, userData: CreateUserValidator): Promise<User> {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
@@ -63,13 +62,16 @@ class UserService {
         if (userData.name) {
             const findUser: User = (await this.users.findOne({ name: userData.name })) as User;
             if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
+
             updateUserById = (await this.users.findByIdAndUpdate(userId, { name: userData.name }, { new: true })) as User;
             if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
-            findUser.avatarUri = await this.populateAvatarField(findUser);
+
+            updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
             return updateUserById;
         } else if (userData.avatarPath) {
             updateUserById = (await this.users.findByIdAndUpdate(userId, { avatarPath: userData.avatarPath }, { new: true })) as User;
             if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+
             updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
             return updateUserById;
         }
