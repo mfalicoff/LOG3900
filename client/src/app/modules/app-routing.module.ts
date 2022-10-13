@@ -10,6 +10,7 @@ import { ParametresSelectionPageComponent } from '@app/pages/parametres-selectio
 import { ChatComponent } from '@app/pages/chat/chat.component';
 import { LoginPageComponent } from '@app/pages/login-page/login-page.component';
 import { GamemodeoptionsPageComponent } from '@app/pages/gamemodeoptions-page/gamemodeoptions-page.component';
+import { ProfilePageComponent } from '@app/pages/profile-page/profile-page.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -23,6 +24,7 @@ const routes: Routes = [
     { path: 'chat', component: ChatComponent },
     { path: 'login', component: LoginPageComponent },
     { path: 'gamemode-options', component: GamemodeoptionsPageComponent },
+    { path: 'profile', component: ProfilePageComponent },
     { path: '**', redirectTo: '/home' },
 ];
 

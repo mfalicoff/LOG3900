@@ -52,6 +52,8 @@ export class GameServer {
 
     vpLevel: string;
 
+    startTime: number;
+    endTime: number;
     constructor(
         minutesByTurn: number,
         randomBonusesOn: boolean,

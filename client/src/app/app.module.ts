@@ -24,6 +24,12 @@ import { ModalComponent } from './pages/modal/modal.component';
 import { ChatComponent } from './pages/chat/chat.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+import { UserHistoryComponent } from './components/user-history/user-history.component';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
+import { NgxGalleryModule } from '@kolkov/ngx-gallery';
+import { GalleryComponent } from './components/gallery/gallery.component';
 
 /**
  * Main module that is used in main.ts.
@@ -51,6 +57,10 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         ChatComponent,
         LoginPageComponent,
         GamemodeoptionsPageComponent,
+        ProfilePageComponent,
+        UserHistoryComponent,
+        ProfileEditComponent,
+        GalleryComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -61,6 +71,8 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
+        MatGridListModule,
+        NgxGalleryModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

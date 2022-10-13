@@ -64,6 +64,7 @@ export class PlayAreaService {
         // Basic set of values
         game.nbLetterReserve = this.letterBankService.getNbLettersInLetterBank(game.letterBank);
         game.gameStarted = true;
+        game.startTime = new Date().getTime();
 
         // init the stand for each player
         for (const player of game.mapPlayers.values()) {

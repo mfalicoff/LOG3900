@@ -2,7 +2,7 @@ import { Router } from 'express';
 import UsersController from '@app/controllers/users.controller';
 import { CreateUserValidator, validationMiddleware } from '@app//utils/validators';
 import { Routes } from '@app/classes/routes.interface';
-import authMiddleware from '@app/utils/auth';
+import { authMiddleware } from '@app/utils/auth';
 
 class UsersRoute implements Routes {
     path = '/users';
