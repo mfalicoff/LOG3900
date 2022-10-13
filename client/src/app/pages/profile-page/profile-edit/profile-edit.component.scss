@@ -12,7 +12,7 @@
 }
 
 .nameEdit {
-
+    text-align: center
 }
 
 .avatarEdit {
@@ -20,7 +20,12 @@
     text-align: center;
 }
 
-.saveBtn {
+.saveButton {
+    background-color: burlywood;
+    margin-left: 5px;
+}
+
+.saveButtonAvatar {
     margin-top: 10px;
     display: block;
 }

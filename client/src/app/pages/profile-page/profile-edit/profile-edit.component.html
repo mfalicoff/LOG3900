@@ -3,12 +3,12 @@
         <h1>Nom actuel: {{this.getUsername()}}</h1>
         <label>Editer nom: </label>
         <input matInput [(ngModel)]="name">
-        <button (click)="updateUsername()">sauvegarder</button>
+        <button mat-button (click)="updateUsername()" class="saveButton">sauvegarder</button>
     </div>
     <div class="avatarEdit">
         <h2>Editer Avatar</h2>
         <app-gallery></app-gallery>
-        <button class="saveBtn" (click)="updateAvatar()">Savegarder Avatar</button>
+        <button class="saveButtonAvatar saveButton" mat-button (click)="updateAvatar()">Savegarder Avatar</button>
     </div>
-    <button class="saveBtn"(click)="closeDialog()">Fermer</button>
+    <button class="saveButtonAvatar saveButton" mat-button (click)="closeDialog()">Fermer</button>
 </div>
