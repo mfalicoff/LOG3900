@@ -26,9 +26,9 @@ export class LoginPageComponent {
 
     form: FormInterface = {
         avatar: '',
-        username: 'example@email.com',
+        username: '',
         email: '',
-        password: 'password',
+        password: '',
     };
 
     isSuccessful = false;
