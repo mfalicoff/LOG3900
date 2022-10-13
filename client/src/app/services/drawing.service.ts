@@ -19,7 +19,7 @@ export class DrawingService {
         this.initStand(true);
         for (let x = 0; x < Constants.NUMBER_SLOT_STAND; x++) {
             if (stand[x] !== undefined && stand[x].letter.value !== '') {
-                this.drawOneLetter(stand[x].letter.value, stand[x], this.canvasBoardStand, letterBank, stand[x].color);
+                this.drawOneLetter(stand[x].letter.value, stand[x], this.canvasBoardStand, letterBank);
             }
         }
     }
@@ -27,42 +27,26 @@ export class DrawingService {
     resetColorTileStand(player: Player, letterBank: Map<string, LetterData>) {
         for (let x = 0; x < Constants.NUMBER_SLOT_STAND; x++) {
             if (player.stand[x] !== undefined && player.stand[x].letter.value !== '') {
-                this.drawOneLetter(player.stand[x].letter.value, player.stand[x], this.canvasBoardStand, letterBank, '#F7F7E3');
+                this.drawOneLetter(player.stand[x].letter.value, player.stand[x], this.canvasBoardStand, letterBank);
             }
         }
     }
 
-    drawOneLetter(
-        letterToDraw: string,
-        tileArray: Tile,
-        canvas: CanvasRenderingContext2D,
-        letterBank: Map<string, LetterData>,
-        color?: string,
-        rectColor?: string,
-    ) {
+    drawOneLetter(letterToDraw: string, tile: Tile, canvas: CanvasRenderingContext2D, letterBank: Map<string, LetterData>) {
         const letterToDrawUpper = letterToDraw.toUpperCase();
         canvas.beginPath();
-        if (color) {
-            canvas.fillStyle = color;
-        } else {
-            canvas.fillStyle = '#F7F7E3';
-        }
-        canvas.strokeStyle = '#F7F7E3';
+        canvas.fillStyle = tile.backgroundColor;
+        canvas.strokeStyle = tile.backgroundColor;
         // draws background of tile
-        canvas.fillRect(tileArray.position.x1 + 1, tileArray.position.y1 + 1, tileArray.position.width - 2, tileArray.position.height - 2);
+        canvas.fillRect(tile.position.x1 + 1, tile.position.y1 + 1, tile.position.width - 2, tile.position.height - 2);
         // the number are so the letter tiles are smaller than the tile of the board
         canvas.strokeStyle = '#54534A';
         canvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
-        if (rectColor) {
-            canvas.strokeStyle = rectColor;
-        } else {
-            canvas.strokeStyle = '#54534A';
-        }
+        canvas.strokeStyle = tile.borderColor;
         // draws border of tile
-        this.roundRect(tileArray.position.x1 + 1, tileArray.position.y1 + 1, tileArray.position.width - 2, tileArray.position.height - 2, canvas);
+        this.roundRect(tile.position.x1 + 1, tile.position.y1 + 1, tile.position.width - 2, tile.position.height - 2, canvas);
         // the number are so the letter tiles are smaller than the tile of the board
         canvas.fillStyle = '#212121';
-
         const letterData = letterBank.get(letterToDraw.toUpperCase());
         let letterWeight = 0;
         if (letterData) {
@@ -72,13 +56,13 @@ export class DrawingService {
         const spaceForNumber: Vec2 = { x: 23, y: 25 };
         const actualFont = canvas.font;
         canvas.font = '18px bold system-ui';
-        canvas.fillText(letterToDrawUpper, tileArray.position.x1 + spaceForLetter.x, tileArray.position.y1 + spaceForLetter.y);
+        canvas.fillText(letterToDrawUpper, tile.position.x1 + spaceForLetter.x, tile.position.y1 + spaceForLetter.y);
 
         canvas.font = '12px bold system-ui';
         if (letterWeight) {
-            canvas.fillText(letterWeight.toString(), tileArray.position.x1 + spaceForNumber.x, tileArray.position.y1 + spaceForNumber.y);
+            canvas.fillText(letterWeight.toString(), tile.position.x1 + spaceForNumber.x, tile.position.y1 + spaceForNumber.y);
         } else {
-            canvas.fillText('', tileArray.position.x1 + spaceForNumber.x, tileArray.position.y1 + spaceForNumber.y);
+            canvas.fillText('', tile.position.x1 + spaceForNumber.x, tile.position.y1 + spaceForNumber.y);
         }
         canvas.font = actualFont;
         canvas.stroke();
@@ -94,7 +78,7 @@ export class DrawingService {
 
     areLettersRightClicked(stand: Tile[]) {
         for (const tile of stand) {
-            if (tile.color === '#AEB1D9') {
+            if (tile.backgroundColor === '#AEB1D9') {
                 return true;
             }
         }
@@ -102,30 +86,41 @@ export class DrawingService {
     }
 
     initStand(isPlayerSpec: boolean) {
-        const paddingStandBoard = 5;
-        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + paddingStandBoard;
-        const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
+        const constPosXYForStands = Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
         if (isPlayerSpec) {
             // top stand
             this.drawHorizStand(constPosXYForStands, 0);
             // left stand
             this.drawVertiStand(0, constPosXYForStands);
             // right stand
-            this.drawVertiStand(paddingForStands + Constants.DEFAULT_WIDTH_BOARD + paddingStandBoard, constPosXYForStands);
+            this.drawVertiStand(
+                Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND,
+                constPosXYForStands,
+            );
         }
         // bottom stand
-        this.drawHorizStand(constPosXYForStands, Constants.DEFAULT_WIDTH_BOARD + paddingForStands + paddingStandBoard);
+        this.drawHorizStand(
+            constPosXYForStands,
+            Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BOARD_FOR_STANDS + Constants.PADDING_BET_BOARD_AND_STAND,
+        );
     }
 
     // function that draws all the stands in the game
     drawSpectatorStands(players: Player[]) {
-        const paddingStandBoard = 5;
-        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + paddingStandBoard;
+        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
         const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
         this.drawVertiStand(0, constPosXYForStands, players[0]);
-        this.drawVertiStand(paddingForStands + Constants.DEFAULT_WIDTH_BOARD + paddingStandBoard, constPosXYForStands, players[1]);
+        this.drawVertiStand(
+            paddingForStands + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND,
+            constPosXYForStands,
+            players[1],
+        );
         this.drawHorizStand(constPosXYForStands, 0, players[2]);
-        this.drawHorizStand(constPosXYForStands, Constants.DEFAULT_WIDTH_BOARD + paddingForStands + paddingStandBoard, players[3]);
+        this.drawHorizStand(
+            constPosXYForStands,
+            Constants.DEFAULT_WIDTH_BOARD + paddingForStands + Constants.PADDING_BET_BOARD_AND_STAND,
+            players[3],
+        );
     }
 
     // Function to draw a rounded rectangle with a default radius of 8

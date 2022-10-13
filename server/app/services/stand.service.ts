@@ -82,7 +82,7 @@ export class StandService {
     putNewLetterOnStand(tile: Tile, letters: string[], letterBank: Map<string, LetterData>, player: Player) {
         const newLetterToPlace = this.letterBankService.giveRandomLetter(1, letters, letterBank);
         tile.letter.value = newLetterToPlace;
-        tile.letter.weight = this.letterBankService.checkLetterWeight(newLetterToPlace, letterBank);
+        tile.letter.weight = this.letterBankService.getLetterWeight(newLetterToPlace, letterBank);
 
         this.writeLetterInStandMap(tile.letter.value, player);
     }
@@ -104,7 +104,7 @@ export class StandService {
 
     writeLetterArrayLogic(indexToWrite: number, letterToWrite: string, letterBank: Map<string, LetterData>, player: Player) {
         player.stand[indexToWrite].letter.value = letterToWrite;
-        player.stand[indexToWrite].letter.weight = this.letterBankService.checkLetterWeight(letterToWrite, letterBank);
+        player.stand[indexToWrite].letter.weight = this.letterBankService.getLetterWeight(letterToWrite, letterBank);
     }
 
     findIndexLetterInStand(letterToSearch: string, startIndex: number, player: Player): number {
@@ -147,7 +147,7 @@ export class StandService {
 
             // Fills the occupiedSquare
             if (i < nbOccupiedSquare) {
-                newLetter.weight = this.letterBankService.checkLetterWeight(letterInit[i], letterBank);
+                newLetter.weight = this.letterBankService.getLetterWeight(letterInit[i], letterBank);
                 newLetter.value = letterInit[i];
 
                 newTile.letter = newLetter;

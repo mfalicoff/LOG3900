@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
+// import { Tile } from '@app/classes/tile';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
@@ -25,7 +26,8 @@ export class PlaceGraphicService {
         this.startLettersPlacedPosY = 0;
     }
 
-    manageKeyBoardEvent(game: GameServer, player: Player, keyEntered: string) {
+    manageKeyboardEvent(game: GameServer, player: Player, keyEntered: string) {
+        // TODO uncomment this when everything works
         if (this.infoClientService.displayTurn !== "C'est votre tour !") {
             return;
         }
@@ -59,8 +61,8 @@ export class PlaceGraphicService {
             }
         }
         if (
-            this.drawingBoardService.arrowPosX > GlobalConstants.NUMBER_SQUARE_H_AND_W ||
-            this.drawingBoardService.arrowPosY > GlobalConstants.NUMBER_SQUARE_H_AND_W
+            this.drawingBoardService.arrowPosX > Constants.NUMBER_SQUARE_H_AND_W ||
+            this.drawingBoardService.arrowPosY > Constants.NUMBER_SQUARE_H_AND_W
         ) {
             return;
         }
@@ -68,17 +70,29 @@ export class PlaceGraphicService {
             this.startLettersPlacedPosX = this.drawingBoardService.arrowPosX;
             this.startLettersPlacedPosY = this.drawingBoardService.arrowPosY;
         }
+        // TODO uncomment this when everything works
+        let letterPos: number;
         if (keyEntered.toUpperCase() === keyEntered) {
-            // if the keyEntered is in capital we treat it as the *
-            this.placeUpperCaseLetter(game, player, keyEntered); // tested
-            return;
+            letterPos = this.findIndexLetterInStandForPlacement('*', false, player);
+        } else {
+            letterPos = this.findIndexLetterInStandForPlacement(keyEntered, false, player);
         }
-        const letterPos: number = this.findIndexLetterInStandForPlacement(keyEntered, false, player);
+
         if (letterPos === DEFAULT_VALUE_INDEX) {
             return;
         }
+        // removes the letter from the stand visually (not in the stand logic)
+        // TODO for the spectators, that means that they will not see the letters
+        // getting deleting from the stand when placing a temporary word
+        // do we care ? It's a bug bug maybe too small to care about
+        // to discuss
         this.drawingService.removeTile(player.stand[letterPos]);
-        this.keyEnteredKeyboard(game, keyEntered);
+
+        const xIndex = this.drawingBoardService.arrowPosX;
+        const yIndex = this.drawingBoardService.arrowPosY;
+
+        this.drawContinuousArrow(game, keyEntered);
+        this.socketService.socket.emit('addTempLetterBoard', keyEntered, xIndex, yIndex);
     }
 
     isLettersDrawnSizeAboveZero(): boolean {
@@ -88,7 +102,7 @@ export class PlaceGraphicService {
     private createPlaceMessage(): string {
         const posStartWordX: number = this.startLettersPlacedPosX;
         let posStartWordY: number = this.startLettersPlacedPosY;
-        posStartWordY += GlobalConstants.ASCII_CODE_SHIFT;
+        posStartWordY += Constants.ASCII_CODE_SHIFT;
         let placerCmd = '!placer ' + String.fromCodePoint(posStartWordY) + posStartWordX.toString();
         if (this.drawingBoardService.isArrowVertical) {
             placerCmd += 'v ' + this.drawingBoardService.lettersDrawn;
@@ -96,21 +110,6 @@ export class PlaceGraphicService {
             placerCmd += 'h ' + this.drawingBoardService.lettersDrawn;
         }
         return placerCmd;
-    }
-
-    private placeUpperCaseLetter(game: GameServer, player: Player, keyEntered: string) {
-        const letterPos: number = this.findIndexLetterInStand('*', 0, player);
-        if (letterPos === DEFAULT_VALUE_INDEX || letterPos === undefined) {
-            return;
-        }
-        if (
-            this.drawingBoardService.arrowPosY > GlobalConstants.NUMBER_SQUARE_H_AND_W ||
-            this.drawingBoardService.arrowPosX > GlobalConstants.NUMBER_SQUARE_H_AND_W
-        ) {
-            return;
-        }
-        this.drawingService.removeTile(this.infoClientService.player.stand[letterPos]);
-        this.keyEnteredKeyboard(game, keyEntered);
     }
 
     private deleteEveryLetterPlacedOnBoard(game: GameServer, player: Player) {
@@ -131,7 +130,7 @@ export class PlaceGraphicService {
         }
         this.checkIfThereAreLettersBefore(game, false);
         if (this.drawingBoardService.isArrowVertical) {
-            if (this.drawingBoardService.arrowPosY <= GlobalConstants.NUMBER_SQUARE_H_AND_W) {
+            if (this.drawingBoardService.arrowPosY <= Constants.NUMBER_SQUARE_H_AND_W) {
                 this.drawingBoardService.drawTileAtPos(
                     this.drawingBoardService.arrowPosX - 1,
                     game.bonusBoard,
@@ -152,7 +151,7 @@ export class PlaceGraphicService {
                 1,
             ); // erase tile
         } else {
-            if (this.drawingBoardService.arrowPosX <= GlobalConstants.NUMBER_SQUARE_H_AND_W) {
+            if (this.drawingBoardService.arrowPosX <= Constants.NUMBER_SQUARE_H_AND_W) {
                 this.drawingBoardService.drawTileAtPos(
                     this.drawingBoardService.arrowPosX - 1,
                     game.bonusBoard,
@@ -176,7 +175,7 @@ export class PlaceGraphicService {
             letterTofind = '*';
         }
         const letterPos = this.findIndexLetterInStandForPlacement(letterTofind, true, player);
-        if (letterPos !== GlobalConstants.DEFAULT_VALUE_NUMBER) {
+        if (letterPos !== Constants.DEFAULT_VALUE_NUMBER) {
             this.drawingService.drawOneLetter(
                 letterTofind,
                 player.stand[letterPos],
@@ -189,8 +188,8 @@ export class PlaceGraphicService {
             if (this.drawingBoardService.arrowPosY - 1 === this.startLettersPlacedPosY || this.areAllLettersBeforeOld(game)) {
                 this.drawingBoardService.isArrowVertical = true;
                 this.drawingBoardService.lettersDrawn = '';
-                this.drawingBoardService.arrowPosX = GlobalConstants.NUMBER_SQUARE_H_AND_W + 1;
-                this.drawingBoardService.arrowPosY = GlobalConstants.NUMBER_SQUARE_H_AND_W + 1;
+                this.drawingBoardService.arrowPosX = Constants.NUMBER_SQUARE_H_AND_W + 1;
+                this.drawingBoardService.arrowPosY = Constants.NUMBER_SQUARE_H_AND_W + 1;
                 return;
             }
             this.drawingBoardService.drawVerticalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY - 1);
@@ -198,23 +197,20 @@ export class PlaceGraphicService {
             if (this.drawingBoardService.arrowPosX - 1 === this.startLettersPlacedPosX || this.areAllLettersBeforeOld(game)) {
                 this.drawingBoardService.isArrowVertical = true;
                 this.drawingBoardService.lettersDrawn = '';
-                this.drawingBoardService.arrowPosX = GlobalConstants.NUMBER_SQUARE_H_AND_W + 1;
-                this.drawingBoardService.arrowPosY = GlobalConstants.NUMBER_SQUARE_H_AND_W + 1;
+                this.drawingBoardService.arrowPosX = Constants.NUMBER_SQUARE_H_AND_W + 1;
+                this.drawingBoardService.arrowPosY = Constants.NUMBER_SQUARE_H_AND_W + 1;
                 return;
             }
             this.drawingBoardService.drawHorizontalArrowDirection(this.drawingBoardService.arrowPosX - 1, this.drawingBoardService.arrowPosY);
         }
     }
 
-    private keyEnteredKeyboard(game: GameServer, keyEntered: string) {
+    private drawContinuousArrow(game: GameServer, keyEntered: string) {
         if (!this.drawingBoardService.lettersDrawn) {
             this.checkIfThereAreLettersBefore(game, true);
         }
+
         this.drawingBoardService.lettersDrawn += keyEntered;
-        let letterTodrawPosX = 0;
-        let letterTodrawPosY = 0;
-        letterTodrawPosX = this.drawingBoardService.arrowPosY;
-        letterTodrawPosY = this.drawingBoardService.arrowPosX;
         if (this.drawingBoardService.isArrowVertical) {
             this.drawingBoardService.arrowPosY += 1;
             while (game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX].old) {
@@ -230,17 +226,11 @@ export class PlaceGraphicService {
                 this.drawingBoardService.arrowPosX += 1;
             }
         }
-
-        this.drawingService.drawOneLetter(
-            keyEntered,
-            game.board[letterTodrawPosX][letterTodrawPosY],
-            this.drawingBoardService.playArea,
-            this.infoClientService.letterBank,
-            '',
-            '#ffaaff',
-        );
-        const outOfBoardPos = 16;
-        if (this.drawingBoardService.arrowPosY >= outOfBoardPos || this.drawingBoardService.arrowPosX >= outOfBoardPos) {
+        if (
+            this.drawingBoardService.arrowPosY > Constants.NUMBER_SQUARE_H_AND_W ||
+            this.drawingBoardService.arrowPosX > Constants.NUMBER_SQUARE_H_AND_W
+        ) {
+            this.drawingBoardService.isArrowPlaced = false;
             return;
         }
         if (this.drawingBoardService.isArrowVertical) {
@@ -288,21 +278,6 @@ export class PlaceGraphicService {
                 this.drawingBoardService.lettersDrawn += tmpLettersFoundBefore[tmpLettersFoundBefore.length - 1 - i];
             }
         }
-    }
-
-    private findIndexLetterInStand(letterToSearch: string, startIndex: number, player: Player): number {
-        const indexLetterToSearch = -1;
-        for (let i = startIndex; i < player.stand.length; i++) {
-            if (player.stand[i].letter.value === letterToSearch) {
-                return i;
-            }
-        }
-        for (let i = 0; i < startIndex; i++) {
-            if (player.stand[i].letter.value === letterToSearch) {
-                return i;
-            }
-        }
-        return indexLetterToSearch;
     }
 
     private findIndexLetterInStandForPlacement(letterToSearch: string, onBoard: boolean, player: Player): number {

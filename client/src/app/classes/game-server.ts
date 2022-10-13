@@ -1,7 +1,7 @@
 // magic number error are linked to the attribution of points for the objectives
 // its useless to create new variables therefore we use the following line
 /* eslint-disable @typescript-eslint/no-magic-numbers*/
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Spectator } from './spectator';
 import { Player } from './player';
@@ -77,7 +77,7 @@ export class GameServer {
         this.mapLetterOnBoard = new Map();
         this.mapPlayers = new Map();
         this.mapSpectators = new Map();
-        this.nbLetterReserve = GlobalConstants.DEFAULT_NB_LETTER_BANK;
+        this.nbLetterReserve = Constants.DEFAULT_NB_LETTER_BANK;
         this.gameStarted = false;
         this.gameFinished = false;
         this.idxPlayerPlaying = -1;
@@ -116,6 +116,7 @@ export class GameServer {
         ]);
         this.initializeLettersArray();
         this.initializeBonusBoard();
+        // this.initBoardArray(this);
     }
 
     private setMockTiles() {

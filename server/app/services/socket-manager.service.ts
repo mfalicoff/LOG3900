@@ -104,7 +104,7 @@ export class SocketManager {
             }
         });
 
-        socket.on('boardClick', (coordinateClick) => {
+        socket.on('boardClick', () => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -112,7 +112,7 @@ export class SocketManager {
             const player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
 
             if (player) {
-                this.mouseEventService.boardClick(player, coordinateClick);
+                this.mouseEventService.boardClick(player);
             }
         });
 
@@ -179,6 +179,7 @@ export class SocketManager {
         });
 
         socket.on('rightClickExchange', (coordinateXClick) => {
+            // TODO UNCOMMENT THIS LATER
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -229,6 +230,21 @@ export class SocketManager {
             //     'expert', 'test', false);
             // const userStub = { name: 'test', roomName: 'test' };
             // this.joinGameAsSpectator(socket, gameStub, userStub);
+        });
+
+        socket.on('addTempLetterBoard', (keyEntered, xIndex, yIndex) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.mouseEventService.addTempLetterBoard(game, keyEntered, xIndex, yIndex);
+
+            // We send to all clients a gameState
+            this.sio.to(game.roomName).emit('gameBoardUpdate', game);
         });
     }
 

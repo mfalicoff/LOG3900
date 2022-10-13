@@ -3,6 +3,7 @@ import * as GlobalConstants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
+import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
 import { DatabaseService } from './database.service';
 import { ExpertVP } from './expert-virtual-player.service';
@@ -20,6 +21,7 @@ export class PlayAreaService {
         private chatService: ChatService,
         private expertVPService: ExpertVP,
         private databaseService: DatabaseService,
+        private boardService: BoardService,
     ) {
         this.sio = new io.Server();
     }
@@ -29,6 +31,8 @@ export class PlayAreaService {
     }
 
     changePlayer(game: GameServer) {
+        // removes all temporary tiles
+        this.boardService.rmTempTiles(game);
         // Update les tiles du board en old
         this.updateOldTiles(game);
         const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
