@@ -32,12 +32,7 @@ export class DrawingService {
         }
     }
 
-    drawOneLetter(
-        letterToDraw: string,
-        tile: Tile,
-        canvas: CanvasRenderingContext2D,
-        letterBank: Map<string, LetterData>,
-    ) {
+    drawOneLetter(letterToDraw: string, tile: Tile, canvas: CanvasRenderingContext2D, letterBank: Map<string, LetterData>) {
         const letterToDrawUpper = letterToDraw.toUpperCase();
         canvas.beginPath();
         canvas.fillStyle = tile.backgroundColor;
@@ -91,19 +86,23 @@ export class DrawingService {
     }
 
     initStand(isPlayerSpec: boolean) {
-        const paddingStandBoard = 5;
-        const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + paddingStandBoard;
-        const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
+        const constPosXYForStands = Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
         if (isPlayerSpec) {
             // top stand
             this.drawHorizStand(constPosXYForStands, 0);
             // left stand
             this.drawVertiStand(0, constPosXYForStands);
             // right stand
-            this.drawVertiStand(paddingForStands + Constants.DEFAULT_WIDTH_BOARD + paddingStandBoard, constPosXYForStands);
+            this.drawVertiStand(
+                Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND,
+                constPosXYForStands,
+            );
         }
         // bottom stand
-        this.drawHorizStand(constPosXYForStands, Constants.DEFAULT_WIDTH_BOARD + paddingForStands + paddingStandBoard);
+        this.drawHorizStand(
+            constPosXYForStands,
+            Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BOARD_FOR_STANDS + Constants.PADDING_BET_BOARD_AND_STAND,
+        );
     }
 
     // function that draws all the stands in the game
@@ -111,9 +110,17 @@ export class DrawingService {
         const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
         const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
         this.drawVertiStand(0, constPosXYForStands, players[0]);
-        this.drawVertiStand(paddingForStands + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND, constPosXYForStands, players[1]);
+        this.drawVertiStand(
+            paddingForStands + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND,
+            constPosXYForStands,
+            players[1],
+        );
         this.drawHorizStand(constPosXYForStands, 0, players[2]);
-        this.drawHorizStand(constPosXYForStands, Constants.DEFAULT_WIDTH_BOARD + paddingForStands + Constants.PADDING_BET_BOARD_AND_STAND, players[3]);
+        this.drawHorizStand(
+            constPosXYForStands,
+            Constants.DEFAULT_WIDTH_BOARD + paddingForStands + Constants.PADDING_BET_BOARD_AND_STAND,
+            players[3],
+        );
     }
 
     // Function to draw a rounded rectangle with a default radius of 8

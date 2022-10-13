@@ -1,8 +1,6 @@
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
-import { Tile } from '@app/classes/tile';
-import { Vec2 } from '@app/classes/vec2';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
 import { ChatService } from './chat.service';
@@ -14,8 +12,8 @@ import { StandService } from './stand.service';
 export class MouseEventService {
     sio: io.Server;
     constructor(
-        private standService: StandService, 
-        private chatService: ChatService, 
+        private standService: StandService,
+        private chatService: ChatService,
         private playAreaService: PlayAreaService,
         private letterBankService: LetterBankService,
     ) {
@@ -28,22 +26,27 @@ export class MouseEventService {
 
     rightClickExchange(player: Player, positionX: number): void {
         const tilePos: number = this.tileClickedPosition(positionX);
+        if (tilePos >= Constants.NUMBER_SLOT_STAND || tilePos < 0) {
+            return;
+        }
         if (player.stand[tilePos].backgroundColor === '#ff6600') {
             return;
         }
-        if (tilePos < Constants.NUMBER_SLOT_STAND) {
-            if (player.stand[tilePos].backgroundColor === '#F7F7E3') {
-                player.stand[tilePos].backgroundColor = '#AEB1D9';
-            } else {
-                this.resetTileStandAtPos(player, tilePos);
-            }
+        if (player.stand[tilePos].backgroundColor === '#F7F7E3') {
+            player.stand[tilePos].backgroundColor = '#AEB1D9';
+        } else {
+            this.resetTileStandAtPos(player, tilePos);
         }
+
         this.sendStandToClient(player);
     }
 
     leftClickSelection(player: Player, positionX: number): void {
         const invalidIndex = -1;
         const tilePos: number = this.tileClickedPosition(positionX);
+        if (tilePos >= Constants.NUMBER_SLOT_STAND || tilePos < 0) {
+            return;
+        }
         if (player.stand[tilePos].backgroundColor === '#AEB1D9') {
             return;
         }
@@ -130,32 +133,14 @@ export class MouseEventService {
         this.sendStandToClient(player);
     }
 
-    boardClick(player: Player, position: Vec2): void {
+    boardClick(player: Player): void {
         this.resetAllTilesStand(player);
-        //TODO remove that if all works
-        // this.clickIsInBoard(player, position);
-        // this.sendStandToClient(player);
     }
 
-    addTempLetterBoard(game: GameServer, keyEntered: string, XIndex:number, YIndex: number){
-        let tempTile = new Tile();
-        tempTile.letter.value = keyEntered;
-        tempTile.letter.weight = this.letterBankService.getLetterWeight(keyEntered, game.letterBank);
-        tempTile.position.x1 = 
-            Constants.PADDING_BOARD_FOR_STANDS 
-          + Constants.SIZE_OUTER_BORDER_BOARD 
-          + Constants.WIDTH_EACH_SQUARE * (XIndex - 1)
-          + Constants.WIDTH_LINE_BLOCKS * (XIndex - 1);
-        tempTile.position.y1 = 
-            Constants.PADDING_BOARD_FOR_STANDS 
-          + Constants.SIZE_OUTER_BORDER_BOARD 
-          + Constants.WIDTH_EACH_SQUARE * (YIndex - 1)
-          + Constants.WIDTH_LINE_BLOCKS * (YIndex - 1);
-        tempTile.position.height = Constants.WIDTH_EACH_SQUARE;
-        tempTile.position.width = Constants.WIDTH_EACH_SQUARE;
-        tempTile.borderColor = "#ffaaff";
-
-        game.board[YIndex][XIndex] = tempTile;
+    addTempLetterBoard(game: GameServer, keyEntered: string, xIndex: number, yIndex: number) {
+        game.board[yIndex][xIndex].letter.value = keyEntered;
+        game.board[yIndex][xIndex].letter.weight = this.letterBankService.getLetterWeight(keyEntered, game.letterBank);
+        game.board[yIndex][xIndex].borderColor = '#ffaaff';
     }
 
     private drawChangeSelection(player: Player, newTileIndex: number, oldTileIndex: number) {
@@ -169,7 +154,13 @@ export class MouseEventService {
     }
 
     private tileClickedPosition(positionX: number): number {
-        return Math.floor(Constants.DEFAULT_NB_LETTER_STAND / (Constants.DEFAULT_WIDTH_STAND / positionX));
+        const constPosXYForStands =
+            Constants.PADDING_BOARD_FOR_STANDS +
+            Constants.DEFAULT_WIDTH_BOARD / 2 -
+            Constants.DEFAULT_WIDTH_STAND / 2 +
+            Constants.SIZE_OUTER_BORDER_STAND;
+        const posXCleaned = positionX - constPosXYForStands;
+        return Math.floor(Constants.DEFAULT_NB_LETTER_STAND / (Constants.DEFAULT_WIDTH_STAND / posXCleaned));
     }
 
     private doTheManipulation(game: GameServer, player: Player, indexTileChanged: number) {
@@ -217,7 +208,7 @@ export class MouseEventService {
         player.stand[position].backgroundColor = '#F7F7E3';
     }
 
-    //TODO remove that if all works
+    // TODO remove that if all works
     // private clickIsInBoard(player: Player, position: Vec2) {
     //     const realPosInBoardPx: Vec2 = {
     //         x: position.x - Constants.SIZE_OUTER_BORDER_BOARD,

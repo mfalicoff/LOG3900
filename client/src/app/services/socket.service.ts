@@ -184,7 +184,7 @@ export class SocketService {
     }
 
     private setTimeoutForTimer() {
-        const oneSecond = 990;
+        const oneSecond = 1000;
         const timerInterval = setInterval(() => {
             if (this.timerService.secondsValue <= 0 && this.infoClientService.game.masterTimer === this.socket.id) {
                 this.socket.emit('turnFinished');

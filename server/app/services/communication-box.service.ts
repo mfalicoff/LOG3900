@@ -31,9 +31,7 @@ export class CommunicationBoxService {
                 if (!this.chatService.sendMessage(input, game, player)) {
                     return false;
                 }
-                console.log("yo");
                 if (this.putLogicService.computeWordToDraw(game, player, dataSeparated[1], dataSeparated[2])) {
-                    console.log("nope");
                     // We change the turn if word is valid
                     this.playAreaService.changePlayer(game);
                 } else {

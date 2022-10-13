@@ -16,15 +16,12 @@ export class DrawingBoardService {
     isArrowPlaced: boolean;
     arrowPosX: number;
     arrowPosY: number;
-    //lettersDrawn is in fact the letter placed on the board
-    //TODO change the name when we have time
+    // lettersDrawn is in fact the letter placed on the board
+    // TODO change the name when we have time
     lettersDrawn: string;
     private mapTileColours: Map<string, string>;
 
-    constructor(
-        private drawingService: DrawingService,
-        private infoClientService: InfoClientService
-    ) {
+    constructor(private drawingService: DrawingService, private infoClientService: InfoClientService) {
         this.isArrowVertical = false;
         this.isArrowPlaced = false;
         this.arrowPosX = Constants.DEFAULT_VALUE_NUMBER;
@@ -166,11 +163,11 @@ export class DrawingBoardService {
             }
         }
 
-        //if this is our turn and we just put a letter on the board we redraw the arrow too
-        if(this.infoClientService.isTurnOurs && this.isArrowPlaced && this.lettersDrawn){
-            if(this.isArrowVertical){
+        // if this is our turn and we just put a letter on the board we redraw the arrow too
+        if (this.infoClientService.isTurnOurs && this.isArrowPlaced && this.lettersDrawn) {
+            if (this.isArrowVertical) {
                 this.drawVerticalArrowDirection(this.arrowPosX, this.arrowPosY);
-            }else{
+            } else {
                 this.drawHorizontalArrowDirection(this.arrowPosX, this.arrowPosY);
             }
         }
@@ -333,7 +330,7 @@ export class DrawingBoardService {
         // check if there was an arrow before and check if there is no tile on top of it
         if ((this.arrowPosX <= Constants.NUMBER_SQUARE_H_AND_W, this.arrowPosY <= Constants.NUMBER_SQUARE_H_AND_W)) {
             if (this.arrowPosX >= 0 && !board[this.arrowPosY][this.arrowPosX].old) {
-                //redraw empty tile if there was an arrow before
+                // redraw empty tile if there was an arrow before
                 this.drawTileAtPos(this.arrowPosX - 1, bonusBoard, this.arrowPosY - 1, 1);
             }
         }
@@ -350,12 +347,12 @@ export class DrawingBoardService {
         this.isArrowVertical = !this.isArrowVertical;
     }
 
-    private getIndexOnBoardLogicFromClick(coords: Vec2) : Vec2 {
-        //we get rid of the border and the padding for the stands
-        let coordsCleaned: Vec2 = new Vec2();
+    private getIndexOnBoardLogicFromClick(coords: Vec2): Vec2 {
+        // we get rid of the border and the padding for the stands
+        const coordsCleaned: Vec2 = new Vec2();
         coordsCleaned.x = coords.x - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
         coordsCleaned.y = coords.y - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
-        let coordsIndexOnBoard = new Vec2();
+        const coordsIndexOnBoard = new Vec2();
         coordsIndexOnBoard.x = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.x)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
         coordsIndexOnBoard.y = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.y)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
         return coordsIndexOnBoard;
@@ -369,10 +366,10 @@ export class DrawingBoardService {
     }
 
     private startingPosPxOfTile(tilePos: number): number {
-        const pxPos = 
-            Constants.PADDING_BOARD_FOR_STANDS + 
-            Constants.SIZE_OUTER_BORDER_BOARD + 
-            tilePos * Constants.WIDTH_EACH_SQUARE + 
+        const pxPos =
+            Constants.PADDING_BOARD_FOR_STANDS +
+            Constants.SIZE_OUTER_BORDER_BOARD +
+            tilePos * Constants.WIDTH_EACH_SQUARE +
             tilePos * Constants.WIDTH_LINE_BLOCKS;
         return pxPos;
     }
@@ -383,8 +380,8 @@ export class DrawingBoardService {
         } else {
             return;
         }
-        const XYPxForStar = Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_HEIGHT_BOARD / 2;
-        this.drawStar(XYPxForStar);
+        const xyPxForStar = Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_HEIGHT_BOARD / 2;
+        this.drawStar(xyPxForStar);
     }
 
     private drawStar(centerXY: number) {

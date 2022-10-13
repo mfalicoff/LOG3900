@@ -56,15 +56,6 @@ export class PutLogicService {
         this.sendGameToAllClientInRoom(game);
 
         const isWordValid: boolean = this.checkWordsValidity(game, position);
-        // if (!isWordValid) {
-        //     this.boardLogicRemove(game, position, word);
-        // } else {
-        //     // Update the score
-        //     const score = this.scoreCountService.countScoreArray(this.boardExplorerService.getWordArray(position, game.board));
-        //     this.scoreCountService.updateScore(score, player);
-        //     game.noTileOnBoard = false;
-        // }
-
         if (isWordValid) {
             // Update the score
             const score = this.scoreCountService.countScoreArray(this.boardExplorerService.getWordArray(position, game.board));
@@ -93,32 +84,31 @@ export class PutLogicService {
 
         if (letterWay === 'h') {
             for (let i = indexColumn; i < indexColumn + wordLength; i++) {
-                console.log("yo2");
                 const indexReadWord = i - indexColumn;
                 if (game.board[indexLine][i].old) {
-                    console.log("boardLogicUpdate: old letter, don't update");
                     continue;
                 }
                 this.boardService.writeLetterInGameMap(word[indexReadWord], game);
 
                 game.board[indexLine][i].letter.value = word[indexReadWord];
                 game.board[indexLine][i].letter.weight = this.letterBankService.getLetterWeight(word[indexReadWord], game.letterBank);
+                // the border of the tile changes so show that it is not a temp tile
+                game.board[indexLine][i].borderColor = '#212121';
             }
         } else {
             for (let i = indexLine; i < indexLine + wordLength; i++) {
-                console.log("yo2");
                 const indexReadWord = i - indexLine;
                 if (game.board[i][indexColumn].old) {
-                    console.log("boardLogicUpdate: old letter, don't update");
                     continue;
                 }
                 this.boardService.writeLetterInGameMap(word[indexReadWord], game);
 
                 game.board[i][indexColumn].letter.value = word[indexReadWord];
                 game.board[i][indexColumn].letter.weight = this.letterBankService.getLetterWeight(word[indexReadWord], game.letterBank);
+                // the border of the tile changes so show that it is not a temp tile
+                game.board[i][indexColumn].borderColor = '#212121';
             }
         }
-        console.log("yo3");
     }
 
     boardLogicRemove(game: GameServer, position: string, word: string) {

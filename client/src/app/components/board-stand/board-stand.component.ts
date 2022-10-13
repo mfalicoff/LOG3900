@@ -3,8 +3,6 @@ import * as Constants from '@app/classes/global-constants';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingBoardService } from '@app/services/drawing-board-service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
-// import { DrawingService } from '@app/services/drawing.service';
-// import { InfoClientService } from '@app/services/info-client.service';
 
 @Component({
     selector: 'app-board-stand',
@@ -13,15 +11,9 @@ import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboa
 })
 export class BoardStandComponent implements AfterViewInit {
     @ViewChild('canvasPlayArea', { static: false }) canvasPlayArea!: ElementRef<HTMLCanvasElement>;
-    playAreaConvasSize: Vec2 = { x: Constants.DEFAULT_WIDTH_PLAY_AREA, 
-                                 y: Constants.DEFAULT_WIDTH_PLAY_AREA };
+    playAreaConvasSize: Vec2 = { x: Constants.DEFAULT_WIDTH_PLAY_AREA, y: Constants.DEFAULT_WIDTH_PLAY_AREA };
 
-    constructor(
-        private drawingBoardService: DrawingBoardService, 
-        private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
-        // private infoClientService: InfoClientService,
-        // private drawingService: DrawingService,
-    ) {}
+    constructor(private drawingBoardService: DrawingBoardService, private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService) {}
 
     @HostListener('document:keydown.escape', ['$event'])
     onEscapeKeydownHandler(event: KeyboardEvent) {
@@ -51,29 +43,20 @@ export class BoardStandComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.drawingBoardService.canvasInit(this.canvasPlayArea.nativeElement.getContext('2d') as CanvasRenderingContext2D);
-
-        //TODO remove these lines later
-        // this.drawingBoardService.drawBoardInit(this.infoClientService.game.bonusBoard);
-        // this.drawingService.initStand(false);
     }
 
-    onCanvasLeftClick(event: MouseEvent){
+    onCanvasLeftClick(event: MouseEvent) {
         const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
-        if(this.areCoordsOnBoard(coordsClick)){
+        if (this.areCoordsOnBoard(coordsClick)) {
             this.mouseKeyboardEventHandler.onBoardClick(event);
-            //TODO remove this line later juste for testing
-            // this.drawingBoardService.findTileToPlaceArrow(
-            //     coordsClick,
-            //     this.infoClientService.game.board,
-            //     this.infoClientService.game.bonusBoard,
-            // );
-        }else if(this.areCoordsOnStand(coordsClick)){
+        } else if (this.areCoordsOnStand(coordsClick)) {
             this.mouseKeyboardEventHandler.onLeftClickStand(event);
         }
     }
 
     onCanvasRightClick(event: MouseEvent) {
-        if(this.areCoordsOnStand(event)){
+        const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
+        if (this.areCoordsOnStand(coordsClick)) {
             this.mouseKeyboardEventHandler.onRightClickStand(event);
         }
     }
@@ -81,25 +64,27 @@ export class BoardStandComponent implements AfterViewInit {
     private areCoordsOnBoard(coords: Vec2): boolean {
         const posXYStartForBoard = Constants.PADDING_BOARD_FOR_STANDS + Constants.SIZE_OUTER_BORDER_BOARD;
         const posXYEndForBoard = posXYStartForBoard + Constants.DEFAULT_WIDTH_BOARD - 2 * Constants.SIZE_OUTER_BORDER_BOARD;
-        if(coords.x > posXYStartForBoard && coords.x < posXYEndForBoard 
-        && coords.y > posXYStartForBoard && coords.y < posXYEndForBoard){
+        if (coords.x > posXYStartForBoard && coords.x < posXYEndForBoard && coords.y > posXYStartForBoard && coords.y < posXYEndForBoard) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     private areCoordsOnStand(coords: Vec2): boolean {
-        console.log(coords.x, coords.y)
         const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
-        const posXForStands = paddingForStands + Constants.SIZE_OUTER_BORDER_STAND + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
-        const posYForStands = Constants.DEFAULT_WIDTH_BOARD + paddingForStands + Constants.SIZE_OUTER_BORDER_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
-        if(coords.x > posXForStands 
-        && coords.x < posXForStands + Constants.DEFAULT_WIDTH_STAND - Constants.SIZE_OUTER_BORDER_STAND * 2
-        && coords.y > posYForStands
-        && coords.y < posYForStands + Constants.DEFAULT_HEIGHT_STAND - Constants.SIZE_OUTER_BORDER_STAND * 2){
+        const posXForStands =
+            paddingForStands + Constants.SIZE_OUTER_BORDER_STAND + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
+        const posYForStands =
+            Constants.DEFAULT_WIDTH_BOARD + paddingForStands + Constants.SIZE_OUTER_BORDER_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
+        if (
+            coords.x > posXForStands &&
+            coords.x < posXForStands + Constants.DEFAULT_WIDTH_STAND - Constants.SIZE_OUTER_BORDER_STAND * 2 &&
+            coords.y > posYForStands &&
+            coords.y < posYForStands + Constants.DEFAULT_HEIGHT_STAND - Constants.SIZE_OUTER_BORDER_STAND * 2
+        ) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

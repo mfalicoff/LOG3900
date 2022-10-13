@@ -7,8 +7,6 @@ import { Spectator } from './spectator';
 import { Player } from './player';
 import { Tile } from './tile';
 import { Trie } from './trie';
-import { Vec4 } from './vec4';
-import { Letter } from './letter';
 
 export class GameServer {
     // LETTER BANK SERVICE DATA
@@ -141,49 +139,6 @@ export class GameServer {
             ['xx', 'wordx3', 'xx', 'xx', 'letterx2', 'xx', 'xx', 'xx', 'wordx3', 'xx', 'xx', 'xx', 'letterx2', 'xx', 'xx', 'wordx3', 'xx'],
             ['xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx'],
         ];
-    }
-
-    initBoardArray(game: GameServer) {
-        for (
-            let i = 0,
-                l =
-                    Constants.SIZE_OUTER_BORDER_BOARD -
-                    Constants.WIDTH_EACH_SQUARE -
-                    Constants.WIDTH_LINE_BLOCKS +
-                    Constants.PADDING_BOARD_FOR_STANDS;
-            i < Constants.NUMBER_SQUARE_H_AND_W + 2;
-            i++, l += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
-        ) {
-            game.board[i] = new Array<Tile>();
-            for (
-                let j = 0,
-                    k =
-                        Constants.SIZE_OUTER_BORDER_BOARD -
-                        Constants.WIDTH_EACH_SQUARE -
-                        Constants.WIDTH_LINE_BLOCKS +
-                        Constants.PADDING_BOARD_FOR_STANDS;
-                j < Constants.NUMBER_SQUARE_H_AND_W + 2;
-                j++, k += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
-            ) {
-                const newTile = new Tile();
-                const newPosition = new Vec4();
-                const newLetter = new Letter();
-
-                newPosition.x1 = k;
-                newPosition.y1 = l;
-                newPosition.width = Constants.WIDTH_EACH_SQUARE;
-                newPosition.height = Constants.WIDTH_EACH_SQUARE;
-
-                newLetter.weight = 0;
-                newLetter.value = '';
-
-                newTile.letter = newLetter;
-                newTile.position = newPosition;
-                newTile.bonus = game.bonusBoard[i][j];
-
-                game.board[i].push(newTile);
-            }
-        }
     }
 
     private initializeBonusBoard(): void {

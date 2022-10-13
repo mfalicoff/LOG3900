@@ -76,25 +76,26 @@ export class BoardService {
     rmTempTiles(game: GameServer) {
         for (let i = 0; i < game.board.length; i++) {
             for (let j = 0; j < game.board[i].length; j++) {
-                //if the border is "#ffaaff" is means it's a tmp tile
-                if (game.board[i][j].borderColor === "#ffaaff") {
-                    let emptyTile = new Tile();
-                    const newPosition = new Vec4();
-                    const newLetter = new Letter();
-                    newPosition.x1 = game.board[i][j].position.x1;
-                    newPosition.y1 = game.board[i][j].position.y1;
-                    newPosition.height = game.board[i][j].position.height;
-                    newPosition.width = game.board[i][j].position.width;
-
-                    newLetter.weight = 0;
-                    newLetter.value = '';
-
-                    emptyTile.bonus = game.bonusBoard[i][j];
-                    emptyTile.letter = newLetter;
-                    emptyTile.position = newPosition;
-                    
-                    game.board[i][j] = emptyTile;
+                // if the border is "#ffaaff" is means it's a tmp tile
+                if (game.board[i][j].borderColor !== '#ffaaff') {
+                    continue;
                 }
+                const emptyTile = new Tile();
+                const newPosition = new Vec4();
+                const newLetter = new Letter();
+                newPosition.x1 = game.board[i][j].position.x1;
+                newPosition.y1 = game.board[i][j].position.y1;
+                newPosition.height = game.board[i][j].position.height;
+                newPosition.width = game.board[i][j].position.width;
+
+                newLetter.weight = 0;
+                newLetter.value = '';
+
+                emptyTile.bonus = game.bonusBoard[i][j];
+                emptyTile.letter = newLetter;
+                emptyTile.position = newPosition;
+
+                game.board[i][j] = emptyTile;
             }
         }
     }

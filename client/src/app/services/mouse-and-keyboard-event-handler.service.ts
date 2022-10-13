@@ -40,6 +40,19 @@ export class MouseKeyboardEventHandlerService {
         this.socketService.socket.emit('leftClickSelection', coordinateXClick);
     }
 
+    onRightClickStand(event: MouseEvent) {
+        this.isCommBoxJustBeenClicked = false;
+        if (!this.infoClientService.game?.gameStarted) {
+            return;
+        }
+        event.preventDefault();
+        const coordinateXClick: number = event.offsetX;
+        if (this.drawingBoardService.lettersDrawn) {
+            return;
+        }
+        this.socketService.socket.emit('rightClickExchange', coordinateXClick);
+    }
+
     onBoardClick(event: MouseEvent) {
         this.isCommBoxJustBeenClicked = false;
         if (!this.infoClientService.game?.gameStarted) {
@@ -52,13 +65,7 @@ export class MouseKeyboardEventHandlerService {
             if (this.drawingBoardService.lettersDrawn) {
                 return;
             }
-            //todo remove that if all works
-            // this.socketService.socket.emit('boardClick', coordsClick);
-            this.drawingBoardService.findTileToPlaceArrow(
-                coordsClick, 
-                this.infoClientService.game.board, 
-                this.infoClientService.game.bonusBoard
-            );
+            this.drawingBoardService.findTileToPlaceArrow(coordsClick, this.infoClientService.game.board, this.infoClientService.game.bonusBoard);
         }
     }
 
@@ -79,7 +86,7 @@ export class MouseKeyboardEventHandlerService {
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {
-        //TODO uncomment this when everything works
+        // TODO uncomment this when everything works
         if (this.isCommunicationBoxFocus || !this.infoClientService.game?.gameStarted) {
             return;
         }
@@ -107,19 +114,6 @@ export class MouseKeyboardEventHandlerService {
 
         const eventString: string = event.deltaY.toString();
         this.socketService.socket.emit('keyboardAndMouseManipulation', eventString);
-    }
-
-    onRightClickStand(event: MouseEvent) {
-        this.isCommBoxJustBeenClicked = false;
-        if (!this.infoClientService.game?.gameStarted) {
-            return;
-        }
-        event.preventDefault();
-        const coordinateXClick: number = event.offsetX;
-        if (this.drawingBoardService.lettersDrawn) {
-            return;
-        }
-        this.socketService.socket.emit('rightClickExchange', coordinateXClick);
     }
 
     onLeftClickGamePage() {
