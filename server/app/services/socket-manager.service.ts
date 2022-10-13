@@ -179,7 +179,6 @@ export class SocketManager {
         });
 
         socket.on('rightClickExchange', (coordinateXClick) => {
-            // TODO UNCOMMENT THIS LATER
             const user = this.users.get(socket.id);
             if (!user) {
                 return;

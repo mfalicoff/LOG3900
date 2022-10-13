@@ -5,6 +5,8 @@ import { SocketService } from '@app/services/socket.service';
 import { DrawingBoardService } from './drawing-board-service';
 import { InfoClientService } from './info-client.service';
 import { ChatMessage } from '@app/classes/chat-message.interface';
+import { Tile } from '@app/classes/tile';
+import { DrawingService } from './drawing.service';
 
 @Injectable({
     providedIn: 'root',
@@ -19,13 +21,42 @@ export class MouseKeyboardEventHandlerService {
         private socketService: SocketService,
         private placeGraphicService: PlaceGraphicService,
         private infoClientService: InfoClientService,
+        private drawingService: DrawingService,
     ) {
         this.isCommunicationBoxFocus = false;
         this.isStandClicked = false;
         this.isCommBoxJustBeenClicked = false;
     }
 
+    onMouseDownGetStandTile(event: MouseEvent) : Tile{
+        return this.placeGraphicService.getClikedStandTile(event.offsetX);
+    }
+
+    //function that get the index of a pixel position mouse up
+    //and send ask the server to place the tile as a temporary one
+    onBoardTileDrop(coordsClick: Vec2, tileDropped: Tile) {
+        const boardIndexs : Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
+        if (!this.drawingBoardService.lettersDrawn) {
+            this.placeGraphicService.startLettersPlacedPosX = boardIndexs.x;
+            this.placeGraphicService.startLettersPlacedPosY = boardIndexs.y;
+            console.log("INIT startLettersPlacedPosX: " + this.placeGraphicService.startLettersPlacedPosX);
+            console.log("INIT startLettersPlacedPosY: " + this.placeGraphicService.startLettersPlacedPosY);
+        }
+        this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
+        //remove the tile from the stand visually
+        this.drawingService.removeTile(tileDropped);
+        //ask for update board logic for a temporary tile
+        this.socketService.socket.emit(
+            'addTempLetterBoard', 
+            tileDropped.letter.value, 
+            boardIndexs.x, 
+            boardIndexs.y);
+        console.log("this.drawingBoardService.lettersDrawn", this.drawingBoardService.lettersDrawn)
+    }
+
     onLeftClickStand(event: MouseEvent) {
+        console.log("onLeftClickStand");
+
         if (!this.infoClientService.game?.gameStarted) {
             return;
         }
@@ -41,6 +72,7 @@ export class MouseKeyboardEventHandlerService {
     }
 
     onRightClickStand(event: MouseEvent) {
+        console.log("onRightClickStand");
         this.isCommBoxJustBeenClicked = false;
         if (!this.infoClientService.game?.gameStarted) {
             return;
@@ -54,6 +86,7 @@ export class MouseKeyboardEventHandlerService {
     }
 
     onBoardClick(event: MouseEvent) {
+        console.log("onClickBoard");
         this.isCommBoxJustBeenClicked = false;
         if (!this.infoClientService.game?.gameStarted) {
             return;
@@ -86,11 +119,10 @@ export class MouseKeyboardEventHandlerService {
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {
-        // TODO uncomment this when everything works
         if (this.isCommunicationBoxFocus || !this.infoClientService.game?.gameStarted) {
             return;
         }
-        if (this.drawingBoardService.isArrowPlaced) {
+        if (this.drawingBoardService.isArrowPlaced || this.drawingBoardService.lettersDrawn) {
             this.placeGraphicService.manageKeyboardEvent(this.infoClientService.game, this.infoClientService.player, event.key);
             return;
         }

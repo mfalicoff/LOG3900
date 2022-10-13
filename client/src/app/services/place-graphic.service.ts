@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
+import { Tile } from '@app/classes/tile';
+import { Vec2 } from '@app/classes/vec2';
 // import { Tile } from '@app/classes/tile';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
@@ -13,8 +15,8 @@ const DEFAULT_VALUE_INDEX = -1;
     providedIn: 'root',
 })
 export class PlaceGraphicService {
-    private startLettersPlacedPosX: number;
-    private startLettersPlacedPosY: number;
+    startLettersPlacedPosX: number;
+    startLettersPlacedPosY: number;
 
     constructor(
         private drawingBoardService: DrawingBoardService,
@@ -27,10 +29,10 @@ export class PlaceGraphicService {
     }
 
     manageKeyboardEvent(game: GameServer, player: Player, keyEntered: string) {
-        // TODO uncomment this when everything works
         if (this.infoClientService.displayTurn !== "C'est votre tour !") {
             return;
         }
+        console.log("keyEntered is: " + keyEntered);
         keyEntered = keyEntered.normalize('NFD').replace(/\p{Diacritic}/gu, '');
         switch (keyEntered) {
             case 'Enter': {
@@ -38,8 +40,10 @@ export class PlaceGraphicService {
                     return;
                 }
                 const placeMsg: string = this.createPlaceMessage();
+                console.log("placeMsg: " + placeMsg);
                 this.socketService.socket.emit('newMessageClient', placeMsg);
-                this.deleteEveryLetterPlacedOnBoard(game, player);
+                this.drawingBoardService.lettersDrawn = '';
+                // this.deleteEveryLetterPlacedOnBoard(game, player);
                 this.drawingBoardService.isArrowPlaced = false;
                 return;
             }
@@ -70,7 +74,6 @@ export class PlaceGraphicService {
             this.startLettersPlacedPosX = this.drawingBoardService.arrowPosX;
             this.startLettersPlacedPosY = this.drawingBoardService.arrowPosY;
         }
-        // TODO uncomment this when everything works
         let letterPos: number;
         if (keyEntered.toUpperCase() === keyEntered) {
             letterPos = this.findIndexLetterInStandForPlacement('*', false, player);
@@ -99,7 +102,24 @@ export class PlaceGraphicService {
         return this.drawingBoardService.lettersDrawn !== '';
     }
 
+    getClikedStandTile(positionX: number) : Tile{
+        const constPosXYForStands =
+            Constants.PADDING_BOARD_FOR_STANDS +
+            Constants.DEFAULT_WIDTH_BOARD / 2 -
+            Constants.DEFAULT_WIDTH_STAND / 2 +
+            Constants.SIZE_OUTER_BORDER_STAND;
+        const posXCleaned = positionX - constPosXYForStands;
+        const finalIndex = Math.floor(Constants.DEFAULT_NB_LETTER_STAND / (Constants.DEFAULT_WIDTH_STAND / posXCleaned));
+        return this.infoClientService.player.stand[finalIndex];
+    }
+
+    getBoardIndexFromPxPos(pxPosCoords: Vec2) : Vec2 {
+        return {x:1, y:1};
+    }
+
     private createPlaceMessage(): string {
+        console.log("this.startLettersPlacedPosX", this.startLettersPlacedPosX);
+        console.log("this.startLettersPlacedPosY", this.startLettersPlacedPosY);
         const posStartWordX: number = this.startLettersPlacedPosX;
         let posStartWordY: number = this.startLettersPlacedPosY;
         posStartWordY += Constants.ASCII_CODE_SHIFT;
@@ -179,7 +199,7 @@ export class PlaceGraphicService {
             this.drawingService.drawOneLetter(
                 letterTofind,
                 player.stand[letterPos],
-                this.drawingService.canvasBoardStand,
+                this.drawingService.playAreaCanvas,
                 this.infoClientService.letterBank,
             );
         }

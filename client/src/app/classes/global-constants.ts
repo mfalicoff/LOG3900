@@ -60,6 +60,9 @@ export const END_POSITION_INDEX_LINE = 1;
 export const DEFAULT_VALUE_NUMBER = -1;
 export const TIME_PER_ROUND_DEFAULT = 1000;
 
+export const LEFT_CLICK = 0;
+export const RIGHT_CLICK = 2;
+
 /// //OBJECTIVE CONSTANTS///////
 export const FAILED_OBJECTIVE = 'failed';
 export const COMPLETED_OBJECTIVE = 'completed';
