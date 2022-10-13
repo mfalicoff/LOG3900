@@ -1,3 +1,0 @@
-TODO
-- Add avatar to pages
-- add avatar modification page
