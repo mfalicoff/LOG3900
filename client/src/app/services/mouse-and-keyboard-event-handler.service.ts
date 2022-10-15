@@ -43,6 +43,8 @@ export class MouseKeyboardEventHandlerService {
             console.log("INIT startLettersPlacedPosY: " + this.placeGraphicService.startLettersPlacedPosY);
         }
         this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
+        this.drawingBoardService.coordsLettersDrawn.push(boardIndexs);
+        console.log("coordsLettersDrawn: " + this.drawingBoardService.coordsLettersDrawn);
         //remove the tile from the stand visually
         this.drawingService.removeTile(tileDropped);
         //ask for update board logic for a temporary tile

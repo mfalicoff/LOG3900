@@ -3,9 +3,10 @@ import * as Constants from '@app/classes/global-constants';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingBoardService } from '@app/services/drawing-board-service';
-import { DrawingService } from '@app/services/drawing.service';
-import { InfoClientService } from '@app/services/info-client.service';
+// import { DrawingService } from '@app/services/drawing.service';
+// import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-board-stand',
@@ -14,17 +15,22 @@ import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboa
 })
 export class BoardStandComponent implements AfterViewInit {
     @ViewChild('canvasPlayArea', { static: false }) playAreaElement!: ElementRef<HTMLCanvasElement>;
-    @ViewChild('canvasDragDrop', { static: false }) dragDropElement!: ElementRef<HTMLCanvasElement>;
+    @ViewChild('tmpTileCanvas', { static: false }) tmpTileElement!: ElementRef<HTMLCanvasElement>;
     playAreaCanvas: CanvasRenderingContext2D;
-    dragDropCanvas: CanvasRenderingContext2D;
+    tmpTileCanvas: CanvasRenderingContext2D;
     playAreaConvasSize: Vec2 = { x: Constants.DEFAULT_WIDTH_PLAY_AREA, y: Constants.DEFAULT_WIDTH_PLAY_AREA };
     isMouseDown: boolean = false;
     clickedTile: Tile | undefined;
+    //buffer used to reduce the number of emit to the server
+    bufferMouseEvent:number = 0;
+    lastBoardIndexsHover: Vec2 = new Vec2();
     constructor(
-        private drawingService: DrawingService,
+        // private drawingService: DrawingService,
         private drawingBoardService: DrawingBoardService, 
         private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
-        private infoClientService: InfoClientService) 
+        // private infoClientService: InfoClientService,
+        private socketService: SocketService
+        ) 
     {}
 
     @HostListener('document:keydown.escape', ['$event'])
@@ -69,7 +75,7 @@ export class BoardStandComponent implements AfterViewInit {
     onMouseUp(event: MouseEvent) {
         this.isMouseDown = false;
         const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
-        this.drawingBoardService.clearCanvas(this.dragDropCanvas);
+        this.drawingBoardService.clearCanvas(this.tmpTileCanvas);
         if(this.areCoordsOnBoard(coordsClick)){
             //if we have a tile selected we process it
             if(this.clickedTile){
@@ -89,23 +95,20 @@ export class BoardStandComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.playAreaCanvas = (this.playAreaElement.nativeElement.getContext('2d') as CanvasRenderingContext2D);
-        this.dragDropCanvas = (this.dragDropElement.nativeElement.getContext('2d') as CanvasRenderingContext2D);
-        this.drawingBoardService.canvasInit(
-            this.playAreaElement.nativeElement.getContext('2d') as CanvasRenderingContext2D,
-            this.dragDropElement.nativeElement.getContext('2d') as CanvasRenderingContext2D);
+        this.tmpTileCanvas = (this.tmpTileElement.nativeElement.getContext('2d') as CanvasRenderingContext2D);
+        this.drawingBoardService.canvasInit(this.playAreaCanvas, this.tmpTileCanvas);
         //add event lisntener for mouse movement
         //bind the component with the function to get acess to the attributes and functions of this component
-        document.getElementById('canvasDragDrop')?.addEventListener("mousemove", this.handleMouseMove.bind(this), true);
+        document.getElementById('tmpTileCanvas')?.addEventListener("mousemove", this.handleMouseMove.bind(this), true);
     }
 
-    handleMouseMove(event: MouseEvent){
-        if(!this.isMouseDown || !this.clickedTile){
+    private handleMouseMove(event: MouseEvent){
+        if(!this.isMouseDown || !this.clickedTile /*|| this.bufferMouseEvent < 10*/){
             return;
         }
-        const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
-        this.infoClientService.game;
-        this.drawingBoardService.clearCanvas(this.dragDropCanvas);
-        this.drawingService.drawFromDrag(this.clickedTile, coordsClick);
+        const mouseCoords: Vec2 = { x: event.offsetX, y: event.offsetY };
+        this.socketService.socket.emit("tileDraggedOnCanvas", this.clickedTile, mouseCoords);
+        this.drawingBoardService.drawTileDraggedOnCanvas(this.clickedTile, mouseCoords);
     }
 
     private areCoordsOnBoard(coords: Vec2): boolean {

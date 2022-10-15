@@ -4,7 +4,6 @@ import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
-// import { Tile } from '@app/classes/tile';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
@@ -42,9 +41,9 @@ export class PlaceGraphicService {
                 const placeMsg: string = this.createPlaceMessage();
                 console.log("placeMsg: " + placeMsg);
                 this.socketService.socket.emit('newMessageClient', placeMsg);
-                this.drawingBoardService.lettersDrawn = '';
+                this.resetVariablePlacement();
+                //TODO remove this line if everything works
                 // this.deleteEveryLetterPlacedOnBoard(game, player);
-                this.drawingBoardService.isArrowPlaced = false;
                 return;
             }
             case 'Backspace': {
@@ -56,12 +55,12 @@ export class PlaceGraphicService {
                 return;
             }
             case 'Escape': {
-                if (!this.drawingBoardService.lettersDrawn) {
-                    return;
-                }
-                this.deleteEveryLetterPlacedOnBoard(game, player);
-                this.drawingBoardService.isArrowPlaced = false;
-                break;
+                //TODO remove this line if everything works
+                // this.deleteEveryLetterPlacedOnBoard(game, player);
+                //deletes the arrow
+                this.socketService.socket.emit("escapeKeyPressed");
+                this.resetVariablePlacement();
+                return;
             }
         }
         if (
@@ -113,8 +112,10 @@ export class PlaceGraphicService {
         return this.infoClientService.player.stand[finalIndex];
     }
 
-    getBoardIndexFromPxPos(pxPosCoords: Vec2) : Vec2 {
-        return {x:1, y:1};
+    private resetVariablePlacement(){
+        this.drawingBoardService.lettersDrawn = '';
+        this.drawingBoardService.coordsLettersDrawn = [];
+        this.drawingBoardService.isArrowPlaced = false;
     }
 
     private createPlaceMessage(): string {
@@ -124,25 +125,63 @@ export class PlaceGraphicService {
         let posStartWordY: number = this.startLettersPlacedPosY;
         posStartWordY += Constants.ASCII_CODE_SHIFT;
         let placerCmd = '!placer ' + String.fromCodePoint(posStartWordY) + posStartWordX.toString();
-        if (this.drawingBoardService.isArrowVertical) {
-            placerCmd += 'v ' + this.drawingBoardService.lettersDrawn;
-        } else {
-            placerCmd += 'h ' + this.drawingBoardService.lettersDrawn;
+        
+        if(this.drawingBoardService.isArrowPlaced){
+            console.log("arrow message");
+            if (this.drawingBoardService.isArrowVertical) {
+                placerCmd += 'v ' + this.drawingBoardService.lettersDrawn;
+            } else {
+                placerCmd += 'h ' + this.drawingBoardService.lettersDrawn;
+            }
+        }else{ 
+            console.log("NO arrow message");
+            if (this.isWordVertical(this.drawingBoardService.coordsLettersDrawn)) {
+                placerCmd += 'v ' + this.drawingBoardService.lettersDrawn;
+            } else {
+                placerCmd += 'h ' + this.drawingBoardService.lettersDrawn;
+            }
         }
+
         return placerCmd;
     }
 
-    private deleteEveryLetterPlacedOnBoard(game: GameServer, player: Player) {
-        if (!this.drawingBoardService.lettersDrawn) {
-            return;
+    private isWordVertical(letterCoords: Vec2[]): boolean {
+        if(letterCoords.length === 1){
+            if(this.infoClientService.game.board[letterCoords[0].y][letterCoords[0].x - 1].letter.value !== ''||
+               this.infoClientService.game.board[letterCoords[0].y][letterCoords[0].x + 1].letter.value !== ''){
+                return false;
+            }else if(this.infoClientService.game.board[letterCoords[0].y - 1][letterCoords[0].x].letter.value !== ''||
+                     this.infoClientService.game.board[letterCoords[0].y + 1][letterCoords[0].x].letter.value !== ''){
+                return true;
+            }else{
+                //eslint-disable-next-line no-console
+                console.log("Error1 in PlaceGraphic::isWordVertical");
+            }
+        }else if(letterCoords.length > 1){
+            if(letterCoords[0].x === letterCoords[1].x){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            //eslint-disable-next-line no-console
+            console.log("Error2 in PlaceGraphic::isWordVertical");
         }
-        const letterDrawnLength: number = this.drawingBoardService.lettersDrawn.length;
-        for (let i = 0; i < letterDrawnLength; i++) {
-            this.deleteLetterPlacedOnBoard(game, player);
-        }
-        this.drawingBoardService.isArrowVertical = true;
-        this.drawingBoardService.lettersDrawn = '';
+        return false;
     }
+
+    //DELETE THIS LATER IF EVERYTHING WORKS
+    // private deleteEveryLetterPlacedOnBoard(game: GameServer, player: Player) {
+    //     if (!this.drawingBoardService.lettersDrawn) {
+    //         return;
+    //     }
+    //     const letterDrawnLength: number = this.drawingBoardService.lettersDrawn.length;
+    //     for (let i = 0; i < letterDrawnLength; i++) {
+    //         this.deleteLetterPlacedOnBoard(game, player);
+    //     }
+    //     this.drawingBoardService.isArrowVertical = true;
+    //     this.drawingBoardService.lettersDrawn = '';
+    // }
 
     private deleteLetterPlacedOnBoard(game: GameServer, player: Player) {
         if (this.drawingBoardService.lettersDrawn === '') {
@@ -231,6 +270,8 @@ export class PlaceGraphicService {
         }
 
         this.drawingBoardService.lettersDrawn += keyEntered;
+        this.drawingBoardService.coordsLettersDrawn.push(
+            {x: this.drawingBoardService.arrowPosX, y: this.drawingBoardService.arrowPosY});
         if (this.drawingBoardService.isArrowVertical) {
             this.drawingBoardService.arrowPosY += 1;
             while (game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX].old) {
@@ -296,6 +337,8 @@ export class PlaceGraphicService {
         if (addToLetterDrawn && tmpLettersFoundBefore) {
             for (let i = 0; i < tmpLettersFoundBefore.length; i++) {
                 this.drawingBoardService.lettersDrawn += tmpLettersFoundBefore[tmpLettersFoundBefore.length - 1 - i];
+                this.drawingBoardService.coordsLettersDrawn.push(
+                    {x: this.drawingBoardService.arrowPosX, y: this.drawingBoardService.arrowPosY});
             }
         }
     }

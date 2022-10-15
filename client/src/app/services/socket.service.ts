@@ -36,9 +36,26 @@ export class SocketService {
         this.otherSocketOn();
         this.gameUpdateHandler();
         this.timerHandler();
+        this.canvasActionsHandler();
+    }
+
+    private canvasActionsHandler() {
+        this.socket.on("clearTmpTileCanvas", () => {
+            this.drawingBoardService.clearCanvas(this.drawingBoardService.tmpTileCanvas);
+        });
+
+        this.socket.on("drawBorderTileForTmpHover_client", (boardIndexs) =>{
+            this.drawingBoardService.clearCanvas(this.drawingBoardService.tmpTileCanvas);
+            this.drawingBoardService.drawBorderTileForTmpHover(boardIndexs);
+        });
+
+        this.socket.on("tileDraggedOnCanvas", (clickedTile, mouseCoords) =>{
+            this.drawingBoardService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
+        });
     }
 
     private gameUpdateHandler() {
+        
         this.socket.on('playerAndStandUpdate', (player) => {
             this.infoClientService.player = player;
             setTimeout(() => {

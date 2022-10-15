@@ -10,11 +10,11 @@ import { Vec2 } from '@app/classes/vec2';
 })
 export class DrawingService {
     playAreaCanvas: CanvasRenderingContext2D;
-    dragDropCanvas: CanvasRenderingContext2D;
+    tmpTileCanvas: CanvasRenderingContext2D;
 
-    canvasInit(playAreaCanvas: CanvasRenderingContext2D, dragDropCanvas: CanvasRenderingContext2D) {
+    canvasInit(playAreaCanvas: CanvasRenderingContext2D, tmpTileCanvas: CanvasRenderingContext2D) {
         this.playAreaCanvas = playAreaCanvas;
-        this.dragDropCanvas = dragDropCanvas;
+        this.tmpTileCanvas = tmpTileCanvas;
     }
 
     reDrawStand(stand: Tile[], letterBank: Map<string, LetterData>) {
@@ -72,35 +72,38 @@ export class DrawingService {
 
     //function that draws a tile with a given position to the drap and drop canvas
     drawFromDrag(tileToDraw: Tile, posToDraw: Vec2){
+        if(!tileToDraw){
+            return;
+        }
         //we center the take for appearances it is better like that
         const posToDrawCentered = {x: posToDraw.x - tileToDraw.position.width / 2, y: posToDraw.y - tileToDraw.position.height / 2};
         const letterToDrawUpper = tileToDraw.letter.value.toUpperCase();
-        this.dragDropCanvas.beginPath();
-        this.dragDropCanvas.fillStyle = tileToDraw.backgroundColor;
-        this.dragDropCanvas.strokeStyle = tileToDraw.backgroundColor;
+        this.tmpTileCanvas.beginPath();
+        this.tmpTileCanvas.fillStyle = tileToDraw.backgroundColor;
+        this.tmpTileCanvas.strokeStyle = tileToDraw.backgroundColor;
         // draws background of tile
-        this.dragDropCanvas.fillRect(posToDrawCentered.x, posToDrawCentered.y+ 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2);
+        this.tmpTileCanvas.fillRect(posToDrawCentered.x, posToDrawCentered.y+ 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2);
         // the number are so the letter tiles are smaller than the tile of the board
-        this.dragDropCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
-        this.dragDropCanvas.strokeStyle = '#ffaaff';
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
+        this.tmpTileCanvas.strokeStyle = '#ffaaff';
         // draws border of tile
-        this.roundRect(posToDrawCentered.x + 1, posToDrawCentered.y + 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2, this.dragDropCanvas);
+        this.roundRect(posToDrawCentered.x + 1, posToDrawCentered.y + 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2, this.tmpTileCanvas);
         // the number are so the letter tiles are smaller than the tile of the board
-        this.dragDropCanvas.fillStyle = tileToDraw.borderColor;
+        this.tmpTileCanvas.fillStyle = tileToDraw.borderColor;
         const spaceForLetter: Vec2 = { x: 4, y: 25 };
         const spaceForNumber: Vec2 = { x: 23, y: 25 };
-        const actualFont = this.dragDropCanvas.font;
-        this.dragDropCanvas.font = '18px bold system-ui';
-        this.dragDropCanvas.fillText(letterToDrawUpper, posToDrawCentered.x + spaceForLetter.x, posToDrawCentered.y + spaceForLetter.y);
+        const actualFont = this.tmpTileCanvas.font;
+        this.tmpTileCanvas.font = '18px bold system-ui';
+        this.tmpTileCanvas.fillText(letterToDrawUpper, posToDrawCentered.x + spaceForLetter.x, posToDrawCentered.y + spaceForLetter.y);
 
-        this.dragDropCanvas.font = '12px bold system-ui';
+        this.tmpTileCanvas.font = '12px bold system-ui';
         if (tileToDraw.letter.weight) {
-            this.dragDropCanvas.fillText(tileToDraw.letter.weight.toString(), posToDrawCentered.x + spaceForNumber.x, posToDrawCentered.y + spaceForNumber.y);
+            this.tmpTileCanvas.fillText(tileToDraw.letter.weight.toString(), posToDrawCentered.x + spaceForNumber.x, posToDrawCentered.y + spaceForNumber.y);
         } else {
-            this.dragDropCanvas.fillText('', posToDrawCentered.x + spaceForNumber.x, posToDrawCentered.y + spaceForNumber.y);
+            this.tmpTileCanvas.fillText('', posToDrawCentered.x + spaceForNumber.x, posToDrawCentered.y + spaceForNumber.y);
         }
-        this.dragDropCanvas.font = actualFont;
-        this.dragDropCanvas.stroke();
+        this.tmpTileCanvas.font = actualFont;
+        this.tmpTileCanvas.stroke();
     }
 
     removeTile(tile: Tile) {

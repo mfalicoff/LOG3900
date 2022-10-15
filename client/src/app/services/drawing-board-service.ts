@@ -12,7 +12,7 @@ import { InfoClientService } from './info-client.service';
 })
 export class DrawingBoardService {
     playAreaCanvas: CanvasRenderingContext2D;
-    dragDropCanvas: CanvasRenderingContext2D;
+    tmpTileCanvas: CanvasRenderingContext2D;
     isArrowVertical: boolean;
     isArrowPlaced: boolean;
     arrowPosX: number;
@@ -20,6 +20,7 @@ export class DrawingBoardService {
     // lettersDrawn is in fact the letter placed on the board
     // TODO change the name when we have time
     lettersDrawn: string;
+    coordsLettersDrawn: Vec2[];
     private mapTileColours: Map<string, string>;
 
     constructor(private drawingService: DrawingService, private infoClientService: InfoClientService) {
@@ -28,6 +29,7 @@ export class DrawingBoardService {
         this.arrowPosX = Constants.DEFAULT_VALUE_NUMBER;
         this.arrowPosY = Constants.DEFAULT_VALUE_NUMBER;
         this.lettersDrawn = '';
+        this.coordsLettersDrawn = [];
         this.mapTileColours = new Map([
             ['xx', '#BEB9A6'],
             ['wordx3', '#f75d59'],
@@ -39,10 +41,10 @@ export class DrawingBoardService {
 
     canvasInit(
         playAreaCanvas: CanvasRenderingContext2D,
-        dragDropCanvas: CanvasRenderingContext2D,) {
+        tmpTileCanvas: CanvasRenderingContext2D,) {
         this.playAreaCanvas = playAreaCanvas;
-        this.dragDropCanvas = dragDropCanvas;
-        this.drawingService.canvasInit(playAreaCanvas, dragDropCanvas);
+        this.tmpTileCanvas = tmpTileCanvas;
+        this.drawingService.canvasInit(playAreaCanvas, tmpTileCanvas);
 
         //TODO remove these lines later
         // this.reDrawBoard(
@@ -167,6 +169,32 @@ export class DrawingBoardService {
         }
         this.playAreaCanvas.font = savedFont;
         this.playAreaCanvas.stroke();
+    }
+
+    drawTileDraggedOnCanvas(clickedTile: Tile, mouseCoords: Vec2){
+        //clear the canvas to not have a trail of the tile
+        this.clearCanvas(this.tmpTileCanvas);
+        const boardIndexs: Vec2 = this.getIndexOnBoardLogicFromClick(mouseCoords);
+        if(boardIndexs.x !== Constants.DEFAULT_VALUE_NUMBER && boardIndexs.y !== Constants.DEFAULT_VALUE_NUMBER){
+            this.drawBorderTileForTmpHover(boardIndexs);
+        }
+        //draw the tile on the tmp canvas
+        this.drawingService.drawFromDrag(clickedTile, mouseCoords);
+    }
+
+    drawBorderTileForTmpHover(boardIndexs: Vec2){
+        if(!this.infoClientService.game.board[boardIndexs.y][boardIndexs.x]){
+            return;
+        }
+        const tileConcerned = this.infoClientService.game.board[boardIndexs.y][boardIndexs.x];
+        this.tmpTileCanvas.beginPath();
+        this.tmpTileCanvas.strokeStyle = '#9e2323';
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        this.tmpTileCanvas.rect(
+            tileConcerned.position.x1, tileConcerned.position.y1,
+            tileConcerned.position.height, tileConcerned.position.width,
+        );
+        this.tmpTileCanvas.stroke();
     }
 
     clearCanvas(canvas: CanvasRenderingContext2D){
@@ -372,9 +400,17 @@ export class DrawingBoardService {
         const coordsCleaned: Vec2 = new Vec2();
         coordsCleaned.x = coords.x - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
         coordsCleaned.y = coords.y - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
+        //veryfiying that we are on the board not elsewhere
+        if(coordsCleaned.x < 0 || coordsCleaned.y < 0) {
+            return {x: Constants.DEFAULT_VALUE_NUMBER, y: Constants.DEFAULT_VALUE_NUMBER};
+        }
         const coordsIndexOnBoard = new Vec2();
         coordsIndexOnBoard.x = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.x)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
         coordsIndexOnBoard.y = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.y)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
+        if(coordsIndexOnBoard.x > Constants.NUMBER_SQUARE_H_AND_W || coordsIndexOnBoard.y > Constants.NUMBER_SQUARE_H_AND_W
+        || coordsIndexOnBoard.x <= 0 || coordsIndexOnBoard.y <= 0) {
+            return {x: Constants.DEFAULT_VALUE_NUMBER, y: Constants.DEFAULT_VALUE_NUMBER}; 
+        }
         return coordsIndexOnBoard;
     }
 

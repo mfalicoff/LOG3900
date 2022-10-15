@@ -50,6 +50,8 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
+            //eslint-disable-next-line @typescript-eslint/no-console
+            console.log('user connected');
             this.clientAndRoomHandler(socket);
             // handling event from client
             this.clientEventHandler(socket);
@@ -240,9 +242,52 @@ export class SocketManager {
             if (!game) {
                 return;
             }
+            console.log("addTempLetterBoard2");
             this.mouseEventService.addTempLetterBoard(game, keyEntered, xIndex, yIndex);
 
             // We send to all clients a gameState
+            this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+        });
+
+        socket.on("drawBorderTileForTmpHover", (boardIndexs) => {
+            console.log("drawBorderTileForTmpHover");
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.sio.to(game.roomName).emit('drawBorderTileForTmpHover_client', boardIndexs);
+        });
+
+        socket.on("tileDraggedOnCanvas", (clickedTile, mouseCoords) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            // this.sio.to(game.roomName).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
+            socket.broadcast.emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
+        });
+
+        socket.on("escapeKeyPressed", () => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            //we tell all the client to clear the clearTmpTileCanvas
+            this.sio.to(game.roomName).emit('clearTmpTileCanvas', game);
+            this.boardService.rmTempTiles(game);
+            //we update the board state
             this.sio.to(game.roomName).emit('gameBoardUpdate', game);
         });
     }
@@ -601,6 +646,8 @@ export class SocketManager {
 
     private disconnectAbandonHandler(socket: io.Socket) {
         socket.on('disconnect', () => {
+            //eslint-disable-next-line no-console
+            console.log('user disconnected');
             this.leaveGame(socket, " s'est déconnecté.");
             this.users.delete(socket.id);
         });
