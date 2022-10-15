@@ -61,10 +61,13 @@ export class ValidationService {
         if (!this.wordFitsBoard(word, position)) {
             return GlobalConstants.WORD_DONT_FIT_BOARD;
         }
+
+        //TODO remove these lines if evrything works
+        //we make this verification locally 
         // Verify that the letters used are on the board or on the canvas
-        if (!this.lettersAreOnBoardOrStand(word, game, player)) {
-            return GlobalConstants.LETTERS_NOT_PRESENT;
-        }
+        // if (!this.lettersAreOnBoardOrStand(word, game, player)) {
+        //     return GlobalConstants.LETTERS_NOT_PRESENT;
+        // }
 
         if (!game.noTileOnBoard && !this.lettersHaveContactWithOthers(word, position, game)) {
             return GlobalConstants.LETTERS_MUST_TOUCH_OTHERS;
@@ -145,6 +148,11 @@ export class ValidationService {
             // we verify that only the board has our letter
             if (game.mapLetterOnBoard.has(letterOfWord) && !player.mapLetterOnStand.has(letterOfWord)) {
                 if (game.board[indexLine][indexColumn].letter.value !== letterOfWord) {
+                    console.log("letter on board doesn't match");
+                    console.log("Comparing: " + game.board[indexLine][indexColumn].letter.value);
+                    console.log("With: " + letterOfWord);
+                    console.log("position is: " + position)
+                    console.log("word is: " + word)
                     return false;
                 }
             }
@@ -231,48 +239,49 @@ export class ValidationService {
         return false;
     }
 
-    private lettersAreOnBoardOrStand(word: string, game: GameServer, player: Player): boolean {
-        for (const letter of word) {
-            if (letter === '*') {
-                return false;
-            }
-            let letterToCheck: string = letter;
+    //TODO remove these lines if everything works
+    // private lettersAreOnBoardOrStand(word: string, game: GameServer, player: Player): boolean {
+    //     for (const letter of word) {
+    //         if (letter === '*') {
+    //             return false;
+    //         }
+    //         let letterToCheck: string = letter;
 
-            // condition that verify that its not a blank letter
-            if (letter === letter.toUpperCase()) {
-                letterToCheck = '*';
-            }
+    //         // condition that verify that its not a blank letter
+    //         if (letter === letter.toUpperCase()) {
+    //             letterToCheck = '*';
+    //         }
 
-            const doesMapStandHaveLetter = player.mapLetterOnStand.has(letterToCheck);
-            const doesMapBoardHaveLetter = game.mapLetterOnBoard.has(letterToCheck);
-            const nbRepetitionLetter = this.charCount(word, letterToCheck);
+    //         const doesMapStandHaveLetter = player.mapLetterOnStand.has(letterToCheck);
+    //         const doesMapBoardHaveLetter = game.mapLetterOnBoard.has(letterToCheck);
+    //         const nbRepetitionLetter = this.charCount(word, letterToCheck);
 
-            switch (true) {
-                case doesMapStandHaveLetter && doesMapBoardHaveLetter: {
-                    if (player.mapLetterOnStand.get(letterToCheck).value + game.mapLetterOnBoard.get(letterToCheck).value < nbRepetitionLetter) {
-                        return false;
-                    }
-                    break;
-                }
-                case doesMapStandHaveLetter && !doesMapBoardHaveLetter: {
-                    if (player.mapLetterOnStand.get(letterToCheck).value < nbRepetitionLetter) {
-                        return false;
-                    }
-                    break;
-                }
-                case !doesMapStandHaveLetter && doesMapBoardHaveLetter: {
-                    if (game.mapLetterOnBoard.get(letterToCheck).value < nbRepetitionLetter) {
-                        return false;
-                    }
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+    //         switch (true) {
+    //             case doesMapStandHaveLetter && doesMapBoardHaveLetter: {
+    //                 if (player.mapLetterOnStand.get(letterToCheck).value + game.mapLetterOnBoard.get(letterToCheck).value < nbRepetitionLetter) {
+    //                     return false;
+    //                 }
+    //                 break;
+    //             }
+    //             case doesMapStandHaveLetter && !doesMapBoardHaveLetter: {
+    //                 if (player.mapLetterOnStand.get(letterToCheck).value < nbRepetitionLetter) {
+    //                     return false;
+    //                 }
+    //                 break;
+    //             }
+    //             case !doesMapStandHaveLetter && doesMapBoardHaveLetter: {
+    //                 if (game.mapLetterOnBoard.get(letterToCheck).value < nbRepetitionLetter) {
+    //                     return false;
+    //                 }
+    //                 break;
+    //             }
+    //             default: {
+    //                 return false;
+    //             }
+    //         }
+    //     }
+    //     return true;
+    // }
 
     // check if the letter in param is in the alphabet
     private belongsInAlphabet(letter: string): boolean {
@@ -284,15 +293,16 @@ export class ValidationService {
         return false;
     }
 
-    private charCount(str: string, letter: string) {
-        let letterCount = 0;
-        for (let position = 0; position < str.length; position++) {
-            if (str.charAt(position) === letter) {
-                letterCount += 1;
-            }
-        }
-        return letterCount;
-    }
+    //TODO remove these lines if everything works
+    // private charCount(str: string, letter: string) {
+    //     let letterCount = 0;
+    //     for (let position = 0; position < str.length; position++) {
+    //         if (str.charAt(position) === letter) {
+    //             letterCount += 1;
+    //         }
+    //     }
+    //     return letterCount;
+    // }
 
     // if the line is a 0 < number < 9
     private isSingleDigitColumnValid(line: string): boolean {

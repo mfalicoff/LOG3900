@@ -161,21 +161,6 @@ export class DrawingService {
         );
     }
 
-    // Function to draw a rounded rectangle with a default radius of 8
-    private roundRect(x1: number, y1: number, width: number, height: number, canvas: CanvasRenderingContext2D) {
-        let radius = 8;
-        if (width < 2 * radius) radius = width / 2;
-        if (height < 2 * radius) radius = height / 2;
-        canvas.beginPath();
-        canvas.moveTo(x1 + radius, y1);
-        canvas.arcTo(x1 + width, y1, x1 + width, y1 + height, radius);
-        canvas.arcTo(x1 + width, y1 + height, x1, y1 + height, radius);
-        canvas.arcTo(x1, y1 + height, x1, y1, radius);
-        canvas.arcTo(x1, y1, x1 + width, y1, radius);
-        canvas.closePath();
-        return this;
-    }
-
     // the x and y are coords of the point in the top left corner of the stand
     drawHorizStand(x: number, y: number, player?: Player) {
         this.playAreaCanvas.font = '19px bold system-ui';
@@ -251,6 +236,31 @@ export class DrawingService {
             }
             this.playAreaCanvas.stroke();
         }
+    }
+
+    getIndexOnStandLogicFromClick(positionX: number){
+        const constPosXYForStands =
+            Constants.PADDING_BOARD_FOR_STANDS +
+            Constants.DEFAULT_WIDTH_BOARD / 2 -
+            Constants.DEFAULT_WIDTH_STAND / 2 +
+            Constants.SIZE_OUTER_BORDER_STAND;
+        const posXCleaned = positionX - constPosXYForStands;
+        return(Math.floor(Constants.DEFAULT_NB_LETTER_STAND / (Constants.DEFAULT_WIDTH_STAND / posXCleaned)));
+    }
+
+    // Function to draw a rounded rectangle with a default radius of 8
+    private roundRect(x1: number, y1: number, width: number, height: number, canvas: CanvasRenderingContext2D) {
+        let radius = 8;
+        if (width < 2 * radius) radius = width / 2;
+        if (height < 2 * radius) radius = height / 2;
+        canvas.beginPath();
+        canvas.moveTo(x1 + radius, y1);
+        canvas.arcTo(x1 + width, y1, x1 + width, y1 + height, radius);
+        canvas.arcTo(x1 + width, y1 + height, x1, y1 + height, radius);
+        canvas.arcTo(x1, y1 + height, x1, y1, radius);
+        canvas.arcTo(x1, y1, x1 + width, y1, radius);
+        canvas.closePath();
+        return this;
     }
 
     // the x and y are coords of the point in the top left corner of the stand

@@ -29,31 +29,95 @@ export class MouseKeyboardEventHandlerService {
     }
 
     onMouseDownGetStandTile(event: MouseEvent) : Tile{
+        this.placeGraphicService.tileClickedFromStand = true;
         return this.placeGraphicService.getClikedStandTile(event.offsetX);
+    }
+
+    onMouseDownGetBoardTile(event: MouseEvent) : Tile | undefined{
+        this.placeGraphicService.tileClickedFromStand = false;
+        return this.placeGraphicService.getClikedBoardTile({x: event.offsetX, y: event.offsetY});
     }
 
     //function that get the index of a pixel position mouse up
     //and send ask the server to place the tile as a temporary one
-    onBoardTileDrop(coordsClick: Vec2, tileDropped: Tile) {
-        const boardIndexs : Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
+    onStandToBoardDrop(coordsClick: Vec2, tileDropped: Tile) {
+        //indexs of the tile where the "tileDropped" has been dropped
+        const posDropBoardIdxs : Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
+        //if the tile on which we drop the new one is an old one (from a precedent turn)
+        //we do nothing
+        if(this.infoClientService.game?.board[posDropBoardIdxs.y][posDropBoardIdxs.x].old){
+            return;
+        }
+        
         if (!this.drawingBoardService.lettersDrawn) {
-            this.placeGraphicService.startLettersPlacedPosX = boardIndexs.x;
-            this.placeGraphicService.startLettersPlacedPosY = boardIndexs.y;
+            this.placeGraphicService.placeMethodIsDragDrop = true;
+            this.placeGraphicService.startLettersPlacedPosX = posDropBoardIdxs.x;
+            this.placeGraphicService.startLettersPlacedPosY = posDropBoardIdxs.y;
             console.log("INIT startLettersPlacedPosX: " + this.placeGraphicService.startLettersPlacedPosX);
             console.log("INIT startLettersPlacedPosY: " + this.placeGraphicService.startLettersPlacedPosY);
         }
         this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
-        this.drawingBoardService.coordsLettersDrawn.push(boardIndexs);
+        this.drawingBoardService.coordsLettersDrawn.push(posDropBoardIdxs);
         console.log("coordsLettersDrawn: " + this.drawingBoardService.coordsLettersDrawn);
-        //remove the tile from the stand visually
-        this.drawingService.removeTile(tileDropped);
+        //remove the tile from the stand logically and visually
+        this.socketService.socket.emit("removeTileFromStand", tileDropped);
         //ask for update board logic for a temporary tile
-        this.socketService.socket.emit(
-            'addTempLetterBoard', 
+        this.socketService.socket.emit('addTempLetterBoard', 
             tileDropped.letter.value, 
-            boardIndexs.x, 
-            boardIndexs.y);
+            posDropBoardIdxs.x, 
+            posDropBoardIdxs.y);
         console.log("this.drawingBoardService.lettersDrawn", this.drawingBoardService.lettersDrawn)
+    }
+
+    onBoardToBoardDrop(coordsClick: Vec2, tileDropped: Tile){
+        console.log("onBoardToBoardDrop");
+        //indexs of the tile where the "tileDropped" has been dropped
+        const posDropBoardIdxs : Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
+        
+        //if the tile on which we drop the new one is an old one (from a precedent turn)
+        //we do nothing
+        if(this.infoClientService.game?.board[posDropBoardIdxs.y][posDropBoardIdxs.x].old){
+            return;
+        }
+
+        //indexs of the "tileDropped" variable on the board
+        const posClickedTileIdxs : Vec2 = 
+        this.drawingBoardService.getIndexOnBoardLogicFromClick({
+            x: tileDropped.position.x1, 
+            y: tileDropped.position.y1,
+        });
+
+        //if the tile on which we drop the new one is the same tile we do nothing
+        if(posClickedTileIdxs.x === posDropBoardIdxs.x && posClickedTileIdxs.y === posDropBoardIdxs.y){
+            return;
+        }
+        //ask for update board logic for a move of temporary tile
+        this.socketService.socket.emit('onBoardToBoardDrop', 
+            posClickedTileIdxs,
+            posDropBoardIdxs,
+        );
+    }
+
+    onBoardToStandDrop(coordsClick: Vec2, tileDropped: Tile, originalClickTileIndexs: Vec2) {
+        console.log("onBoardToStandDrop");
+        //if the letter taken from the board isn't one taken from the stand
+        //we do nothing
+        if(!this.drawingBoardService.lettersDrawn.includes(tileDropped.letter.value)){
+            return;
+        }
+
+        //gets the index of the letterDrawn array to remove
+        const idxToRm = this.checkIdxToRm(originalClickTileIndexs);
+        console.log("letterDrawn", this.drawingBoardService.lettersDrawn);
+        console.log("idxToRm", idxToRm);
+        //remove the letter from the lettersDrawn array
+        this.drawingBoardService.lettersDrawn = 
+            this.drawingBoardService.lettersDrawn.slice(0, idxToRm) 
+          + this.drawingBoardService.lettersDrawn.slice(idxToRm + 1, this.drawingBoardService.lettersDrawn.length)
+        console.log("letterDrawn2", this.drawingBoardService.lettersDrawn);
+        const standIdx: number = this.drawingService.getIndexOnStandLogicFromClick(coordsClick.x);
+        this.socketService.socket.emit("clearTmpTileCanvas");
+        this.socketService.socket.emit("onBoardToStandDrop", tileDropped, standIdx);
     }
 
     onLeftClickStand(event: MouseEvent) {
@@ -100,7 +164,12 @@ export class MouseKeyboardEventHandlerService {
             if (this.drawingBoardService.lettersDrawn) {
                 return;
             }
-            this.drawingBoardService.findTileToPlaceArrow(coordsClick, this.infoClientService.game.board, this.infoClientService.game.bonusBoard);
+            this.drawingBoardService.findTileToPlaceArrow(
+                this.socketService.socket,
+                coordsClick, 
+                this.infoClientService.game.board, 
+                this.infoClientService.game.bonusBoard
+            );
         }
     }
 
@@ -172,5 +241,15 @@ export class MouseKeyboardEventHandlerService {
     onCommunicationBoxLeftClick() {
         this.isCommBoxJustBeenClicked = true;
         this.isCommunicationBoxFocus = true;
+    }
+
+    //function to check which letter to remove from the lettersDrawn array
+    //in this function, one of the two diff or both will be 0 bc one axis doesn't change
+    //the other axis that changes is the one that interest us bc it's the one that
+    //give the index of the letter in the lettersDrawn array to remove
+    private checkIdxToRm(originalClickTileIndexs: Vec2){
+        const xDiff = originalClickTileIndexs.x - this.placeGraphicService.startLettersPlacedPosX;
+        const yDiff = originalClickTileIndexs.y - this.placeGraphicService.startLettersPlacedPosY;
+        return xDiff > yDiff ? xDiff : yDiff;
     }
 }

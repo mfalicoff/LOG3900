@@ -31,13 +31,15 @@ export class PlayAreaService {
     }
 
     changePlayer(game: GameServer) {
-        // removes all temporary tiles
-        this.boardService.rmTempTiles(game);
+        // removes all temporary tiles and get the tmp that were in the board
+        const tmpLetter = this.boardService.rmTempTiles(game);
         // Update les tiles du board en old
         this.updateOldTiles(game);
+        
         const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-
         if (playerThatJustPlayed) {
+            // we add the tmp letter to the stand of the player that just played
+            this.standService.putLettersOnStand(game, tmpLetter, playerThatJustPlayed);
             // update the variable that contains the number of letter in the reserve
             this.updateStandAndReserveView(game, playerThatJustPlayed);
             // add a turn to the player that just played

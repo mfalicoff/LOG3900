@@ -6,6 +6,7 @@ import { DrawingBoardService } from '@app/services/drawing-board-service';
 // import { DrawingService } from '@app/services/drawing.service';
 // import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
+import { PlaceGraphicService } from '@app/services/place-graphic.service';
 import { SocketService } from '@app/services/socket.service';
 
 @Component({
@@ -21,6 +22,8 @@ export class BoardStandComponent implements AfterViewInit {
     playAreaConvasSize: Vec2 = { x: Constants.DEFAULT_WIDTH_PLAY_AREA, y: Constants.DEFAULT_WIDTH_PLAY_AREA };
     isMouseDown: boolean = false;
     clickedTile: Tile | undefined;
+    //used to keep track of the original position of the tile when taken from board
+    clickedTileIndex: Vec2 = new Vec2();
     //buffer used to reduce the number of emit to the server
     bufferMouseEvent:number = 0;
     lastBoardIndexsHover: Vec2 = new Vec2();
@@ -28,6 +31,7 @@ export class BoardStandComponent implements AfterViewInit {
         // private drawingService: DrawingService,
         private drawingBoardService: DrawingBoardService, 
         private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
+        private placeGraphicService: PlaceGraphicService,
         // private infoClientService: InfoClientService,
         private socketService: SocketService
         ) 
@@ -68,6 +72,13 @@ export class BoardStandComponent implements AfterViewInit {
         const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
         if(this.areCoordsOnStand(coordsClick)){
             this.clickedTile = this.mouseKeyboardEventHandler.onMouseDownGetStandTile(event);
+        }else if(this.areCoordsOnBoard(coordsClick)){
+            this.clickedTile = this.mouseKeyboardEventHandler.onMouseDownGetBoardTile(event);
+            this.clickedTileIndex = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
+        }
+        //TODO remove this later
+        if(this.clickedTile === undefined){
+            console.log("clicked Tile is undefined");
         }
     }
 
@@ -75,22 +86,31 @@ export class BoardStandComponent implements AfterViewInit {
     onMouseUp(event: MouseEvent) {
         this.isMouseDown = false;
         const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
-        this.drawingBoardService.clearCanvas(this.tmpTileCanvas);
+        this.socketService.socket.emit("clearTmpTileCanvas");
         if(this.areCoordsOnBoard(coordsClick)){
             //if we have a tile selected we process it
-            if(this.clickedTile){
-                this.mouseKeyboardEventHandler.onBoardTileDrop(coordsClick, this.clickedTile);
+            if(this.clickedTile && this.clickedTile?.letter.value !== ""){
+                if(this.placeGraphicService.tileClickedFromStand){
+                    this.mouseKeyboardEventHandler.onStandToBoardDrop(coordsClick, this.clickedTile);
+                }else{
+                    this.mouseKeyboardEventHandler.onBoardToBoardDrop(coordsClick, this.clickedTile);
+                }
             }else{ // else we just consider it as a click on the board
                 this.mouseKeyboardEventHandler.onBoardClick(event);
             }
         }else if (this.areCoordsOnStand(coordsClick)) {
-            if(event.button === Constants.LEFT_CLICK){
-                this.mouseKeyboardEventHandler.onLeftClickStand(event);
-            }else if(event.button === Constants.RIGHT_CLICK){
-                this.mouseKeyboardEventHandler.onRightClickStand(event);
+            if(this.clickedTile && this.clickedTile?.letter.value !== "" && !this.placeGraphicService.tileClickedFromStand){
+                this.mouseKeyboardEventHandler.onBoardToStandDrop(coordsClick, this.clickedTile, this.clickedTileIndex);
+            }else{
+                if(event.button === Constants.LEFT_CLICK){
+                    this.mouseKeyboardEventHandler.onLeftClickStand(event);
+                }else if(event.button === Constants.RIGHT_CLICK){
+                    this.mouseKeyboardEventHandler.onRightClickStand(event);
+                }
             }
         }
         this.clickedTile = undefined;
+        this.clickedTileIndex = new Vec2();
     }
 
     ngAfterViewInit(): void {
@@ -103,12 +123,11 @@ export class BoardStandComponent implements AfterViewInit {
     }
 
     private handleMouseMove(event: MouseEvent){
-        if(!this.isMouseDown || !this.clickedTile /*|| this.bufferMouseEvent < 10*/){
+        if(!this.isMouseDown || !this.clickedTile || this.clickedTile?.letter.value === ""){
             return;
         }
         const mouseCoords: Vec2 = { x: event.offsetX, y: event.offsetY };
         this.socketService.socket.emit("tileDraggedOnCanvas", this.clickedTile, mouseCoords);
-        this.drawingBoardService.drawTileDraggedOnCanvas(this.clickedTile, mouseCoords);
     }
 
     private areCoordsOnBoard(coords: Vec2): boolean {

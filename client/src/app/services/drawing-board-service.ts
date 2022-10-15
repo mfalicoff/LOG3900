@@ -4,6 +4,7 @@ import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
+import { Socket } from 'socket.io-client';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
 
@@ -174,6 +175,8 @@ export class DrawingBoardService {
     drawTileDraggedOnCanvas(clickedTile: Tile, mouseCoords: Vec2){
         //clear the canvas to not have a trail of the tile
         this.clearCanvas(this.tmpTileCanvas);
+        //draws the border of the tile being hovered to get a better understanding of where
+        //the tile will be placed
         const boardIndexs: Vec2 = this.getIndexOnBoardLogicFromClick(mouseCoords);
         if(boardIndexs.x !== Constants.DEFAULT_VALUE_NUMBER && boardIndexs.y !== Constants.DEFAULT_VALUE_NUMBER){
             this.drawBorderTileForTmpHover(boardIndexs);
@@ -201,7 +204,7 @@ export class DrawingBoardService {
         canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
     }
 
-    reDrawBoard(bonusBoard: string[][], board: Tile[][], letterBank: Map<string, LetterData>) {
+    reDrawBoard(socket: Socket, bonusBoard: string[][], board: Tile[][], letterBank: Map<string, LetterData>) {
         this.drawBoardInit(bonusBoard);
         for (let x = 0; x < Constants.NUMBER_SQUARE_H_AND_W + 2; x++) {
             for (let y = 0; y < Constants.NUMBER_SQUARE_H_AND_W + 2; y++) {
@@ -214,9 +217,18 @@ export class DrawingBoardService {
         // if this is our turn and we just put a letter on the board we redraw the arrow too
         if (this.infoClientService.isTurnOurs && this.isArrowPlaced && this.lettersDrawn) {
             if (this.isArrowVertical) {
-                this.drawVerticalArrowDirection(this.arrowPosX, this.arrowPosY);
+                // this.drawVerticalArrowDirection(this.arrowPosX, this.arrowPosY);
+                socket.emit("drawVerticalArrow", {
+                    x: this.arrowPosX,
+                    y: this.arrowPosY,
+                });
             } else {
-                this.drawHorizontalArrowDirection(this.arrowPosX, this.arrowPosY);
+                //TODO delete this if everything works
+                // this.drawHorizontalArrowDirection(this.arrowPosX, this.arrowPosY);
+                socket.emit("drawHorizontalArrow", {
+                    x: this.arrowPosX,
+                    y: this.arrowPosY,
+                });
             }
         }
     }
@@ -364,7 +376,7 @@ export class DrawingBoardService {
         this.playAreaCanvas.stroke();
     }
 
-    findTileToPlaceArrow(positionPx: Vec2, board: Tile[][], bonusBoard: string[][]) {
+    findTileToPlaceArrow(socket: Socket, positionPx: Vec2, board: Tile[][], bonusBoard: string[][]) {
         if (this.lettersDrawn) {
             return;
         }
@@ -388,9 +400,19 @@ export class DrawingBoardService {
         }
         this.isArrowPlaced = true;
         if (this.isArrowVertical) {
-            this.drawHorizontalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
+            //TODO delete this if everything works
+            // this.drawHorizontalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
+            socket.emit("drawHorizontalArrow", {
+                x: this.arrowPosX,
+                y: this.arrowPosY,
+            });
         } else {
-            this.drawVerticalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
+            //TODO delete this if everything works
+            // this.drawVerticalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
+            socket.emit("drawVerticalArrow", {
+                x: this.arrowPosX,
+                y: this.arrowPosY,
+            });
         }
         this.isArrowVertical = !this.isArrowVertical;
     }

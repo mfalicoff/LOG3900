@@ -2,6 +2,7 @@ import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Letter } from '@app/classes/letter';
 import { Tile } from '@app/classes/tile';
+import { Vec2 } from '@app/classes/vec2';
 import { Vec4 } from '@app/classes/vec4';
 import { Service } from 'typedi';
 
@@ -73,13 +74,21 @@ export class BoardService {
         }
     }
 
-    rmTempTiles(game: GameServer) {
+    putLetterInBoardArray(tileToPut: Tile, position: Vec2, game: GameServer) {
+        game.board[position.y][position.x].letter.value = tileToPut.letter.value;
+        game.board[position.y][position.x].letter.weight = tileToPut.letter.weight;
+    }
+
+    rmTempTiles(game: GameServer): string {
+        let letterNotUsed = '';
         for (let i = 0; i < game.board.length; i++) {
             for (let j = 0; j < game.board[i].length; j++) {
                 // if the border is "#ffaaff" is means it's a tmp tile
                 if (game.board[i][j].borderColor !== '#ffaaff') {
                     continue;
                 }
+                letterNotUsed += game.board[i][j].letter.value;
+
                 const emptyTile = new Tile();
                 const newPosition = new Vec4();
                 const newLetter = new Letter();
@@ -98,5 +107,6 @@ export class BoardService {
                 game.board[i][j] = emptyTile;
             }
         }
+        return letterNotUsed;
     }
 }

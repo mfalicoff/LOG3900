@@ -16,6 +16,10 @@ const DEFAULT_VALUE_INDEX = -1;
 export class PlaceGraphicService {
     startLettersPlacedPosX: number;
     startLettersPlacedPosY: number;
+    placeMethodIsDragDrop: boolean;
+    //variable used to tell if a clicked tile comes from the stand or
+    //the board
+    tileClickedFromStand: boolean;
 
     constructor(
         private drawingBoardService: DrawingBoardService,
@@ -25,6 +29,8 @@ export class PlaceGraphicService {
     ) {
         this.startLettersPlacedPosX = 0;
         this.startLettersPlacedPosY = 0;
+        this.placeMethodIsDragDrop = false;
+        this.tileClickedFromStand = false;
     }
 
     manageKeyboardEvent(game: GameServer, player: Player, keyEntered: string) {
@@ -47,7 +53,7 @@ export class PlaceGraphicService {
                 return;
             }
             case 'Backspace': {
-                if (!this.drawingBoardService.lettersDrawn) {
+                if (!this.drawingBoardService.lettersDrawn || this.placeMethodIsDragDrop) {
                     return;
                 }
                 this.deleteLetterPlacedOnBoard(game, player);
@@ -55,10 +61,11 @@ export class PlaceGraphicService {
                 return;
             }
             case 'Escape': {
+                console.log("Escape");
                 //TODO remove this line if everything works
                 // this.deleteEveryLetterPlacedOnBoard(game, player);
-                //deletes the arrow
-                this.socketService.socket.emit("escapeKeyPressed");
+                //deletes the arrow and removes all the tmpTiles (pink ones)
+                this.socketService.socket.emit("escapeKeyPressed", this.drawingBoardService.lettersDrawn);
                 this.resetVariablePlacement();
                 return;
             }
@@ -88,7 +95,8 @@ export class PlaceGraphicService {
         // getting deleting from the stand when placing a temporary word
         // do we care ? It's a bug bug maybe too small to care about
         // to discuss
-        this.drawingService.removeTile(player.stand[letterPos]);
+        // this.drawingService.removeTile(player.stand[letterPos]);
+        this.socketService.socket.emit("removeTileFromStand", player.stand[letterPos]);
 
         const xIndex = this.drawingBoardService.arrowPosX;
         const yIndex = this.drawingBoardService.arrowPosY;
@@ -102,14 +110,23 @@ export class PlaceGraphicService {
     }
 
     getClikedStandTile(positionX: number) : Tile{
-        const constPosXYForStands =
-            Constants.PADDING_BOARD_FOR_STANDS +
-            Constants.DEFAULT_WIDTH_BOARD / 2 -
-            Constants.DEFAULT_WIDTH_STAND / 2 +
-            Constants.SIZE_OUTER_BORDER_STAND;
-        const posXCleaned = positionX - constPosXYForStands;
-        const finalIndex = Math.floor(Constants.DEFAULT_NB_LETTER_STAND / (Constants.DEFAULT_WIDTH_STAND / posXCleaned));
+        const finalIndex = this.drawingService.getIndexOnStandLogicFromClick(positionX);
         return this.infoClientService.player.stand[finalIndex];
+    }
+
+    getClikedBoardTile(mouseCoords: Vec2): Tile | undefined{
+        const idxCoords = this.drawingBoardService.getIndexOnBoardLogicFromClick(mouseCoords);
+        if(idxCoords.x === -1 || idxCoords.y === -1){
+            return undefined;
+        }
+        const clickedTile = this.infoClientService.game.board[idxCoords.y][idxCoords.x];
+        //if the tile is old it means that this is not a temporary tile and 
+        //we don't want to be able to touch it
+        if(clickedTile.old){
+            return undefined;
+        }else{
+            return clickedTile;
+        }
     }
 
     private resetVariablePlacement(){
@@ -119,13 +136,10 @@ export class PlaceGraphicService {
     }
 
     private createPlaceMessage(): string {
-        console.log("this.startLettersPlacedPosX", this.startLettersPlacedPosX);
-        console.log("this.startLettersPlacedPosY", this.startLettersPlacedPosY);
         const posStartWordX: number = this.startLettersPlacedPosX;
         let posStartWordY: number = this.startLettersPlacedPosY;
         posStartWordY += Constants.ASCII_CODE_SHIFT;
         let placerCmd = '!placer ' + String.fromCodePoint(posStartWordY) + posStartWordX.toString();
-        
         if(this.drawingBoardService.isArrowPlaced){
             console.log("arrow message");
             if (this.drawingBoardService.isArrowVertical) {
@@ -251,7 +265,12 @@ export class PlaceGraphicService {
                 this.drawingBoardService.arrowPosY = Constants.NUMBER_SQUARE_H_AND_W + 1;
                 return;
             }
-            this.drawingBoardService.drawVerticalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY - 1);
+            //TODO delete this if everything works
+            // this.drawingBoardService.drawVerticalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY - 1);
+            this.socketService.socket.emit("drawVerticalArrow", {
+                x: this.drawingBoardService.arrowPosX,
+                y: this.drawingBoardService.arrowPosY,
+            });
         } else {
             if (this.drawingBoardService.arrowPosX - 1 === this.startLettersPlacedPosX || this.areAllLettersBeforeOld(game)) {
                 this.drawingBoardService.isArrowVertical = true;
@@ -260,7 +279,12 @@ export class PlaceGraphicService {
                 this.drawingBoardService.arrowPosY = Constants.NUMBER_SQUARE_H_AND_W + 1;
                 return;
             }
-            this.drawingBoardService.drawHorizontalArrowDirection(this.drawingBoardService.arrowPosX - 1, this.drawingBoardService.arrowPosY);
+            //TODO delete this if everything works
+            // this.drawingBoardService.drawHorizontalArrowDirection(this.drawingBoardService.arrowPosX - 1, this.drawingBoardService.arrowPosY);
+            this.socketService.socket.emit("drawHorizontalArrow", {
+                x: this.drawingBoardService.arrowPosX,
+                y: this.drawingBoardService.arrowPosY,
+            });
         }
     }
 
@@ -295,9 +319,19 @@ export class PlaceGraphicService {
             return;
         }
         if (this.drawingBoardService.isArrowVertical) {
-            this.drawingBoardService.drawVerticalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY);
+            //TODO Delete this if everything works
+            // this.drawingBoardService.drawVerticalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY);
+            this.socketService.socket.emit("drawVerticalArrow", {
+                x: this.drawingBoardService.arrowPosX,
+                y: this.drawingBoardService.arrowPosY,
+            });
         } else {
-            this.drawingBoardService.drawHorizontalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY);
+            //TODO Delete this if everything works
+            // this.drawingBoardService.drawHorizontalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY);
+            this.socketService.socket.emit("drawHorizontalArrow", {
+                x: this.drawingBoardService.arrowPosX,
+                y: this.drawingBoardService.arrowPosY,
+            });
         }
     }
 

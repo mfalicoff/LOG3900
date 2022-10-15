@@ -20,6 +20,8 @@ import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PutLogicService } from './put-logic.service';
 import { ChatMessage } from '@app/classes/chat-message.interface';
+import { Tile } from '@app/classes/tile';
+import { StandService } from './stand.service';
 
 @Service()
 export class SocketManager {
@@ -42,6 +44,7 @@ export class SocketManager {
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
+        private standService: StandService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -50,8 +53,6 @@ export class SocketManager {
 
     handleSockets(): void {
         this.sio.on('connection', (socket) => {
-            //eslint-disable-next-line @typescript-eslint/no-console
-            console.log('user connected');
             this.clientAndRoomHandler(socket);
             // handling event from client
             this.clientEventHandler(socket);
@@ -244,13 +245,12 @@ export class SocketManager {
             }
             console.log("addTempLetterBoard2");
             this.mouseEventService.addTempLetterBoard(game, keyEntered, xIndex, yIndex);
-
             // We send to all clients a gameState
             this.sio.to(game.roomName).emit('gameBoardUpdate', game);
         });
 
-        socket.on("drawBorderTileForTmpHover", (boardIndexs) => {
-            console.log("drawBorderTileForTmpHover");
+        socket.on("removeTileFromStand", (tile: Tile) => {
+            console.log("removeTileFromStand");
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -259,7 +259,55 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            this.sio.to(game.roomName).emit('drawBorderTileForTmpHover_client', boardIndexs);
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.mouseEventService.rmTileFromStand(player, tile);
+            this.gameUpdateClients(game);
+        });
+
+        socket.on("onBoardToStandDrop", (tileDropped, standIdx) => {
+            console.log("onBoardToStandDrop");
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.mouseEventService.onBoardToStandDrop(tileDropped, standIdx, player, game);
+            this.gameUpdateClients(game);
+        });
+
+        socket.on("onBoardToBoardDrop", (posClickedTileIdxs, posDropBoardIdxs) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.mouseEventService.onBoardToBoardDrop(game, posClickedTileIdxs, posDropBoardIdxs);
+            this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+        });
+
+        socket.on("drawBorderTileForTmpHover", (boardIndexs) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.sio.to(game.roomName).emit('drawBorderTileForTmpHover', boardIndexs);
         });
 
         socket.on("tileDraggedOnCanvas", (clickedTile, mouseCoords) => {
@@ -271,11 +319,10 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            // this.sio.to(game.roomName).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
-            socket.broadcast.emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
+            this.sio.to(game.roomName).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
         });
 
-        socket.on("escapeKeyPressed", () => {
+        socket.on("clearTmpTileCanvas", ()=>{
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -284,11 +331,53 @@ export class SocketManager {
             if (!game) {
                 return;
             }
+            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
+        });
+
+        socket.on("escapeKeyPressed", (tmpLettersOnBoard) => {
+            console.log("escapeKeyPressed");
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.boardService.rmTempTiles(game);
+            this.standService.putLettersOnStand(game, tmpLettersOnBoard, player);
             //we tell all the client to clear the clearTmpTileCanvas
             this.sio.to(game.roomName).emit('clearTmpTileCanvas', game);
-            this.boardService.rmTempTiles(game);
             //we update the board state
-            this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+            this.gameUpdateClients(game);
+        });
+
+        socket.on("drawVerticalArrow", (arrowCoords)=>{
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.sio.to(game.roomName).emit('drawVerticalArrow', arrowCoords);
+        });
+
+        socket.on("drawHorizontalArrow", (arrowCoords)=>{
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.sio.to(game.roomName).emit('drawHorizontalArrow', arrowCoords);
         });
     }
 
@@ -646,8 +735,6 @@ export class SocketManager {
 
     private disconnectAbandonHandler(socket: io.Socket) {
         socket.on('disconnect', () => {
-            //eslint-disable-next-line no-console
-            console.log('user disconnected');
             this.leaveGame(socket, " s'est déconnecté.");
             this.users.delete(socket.id);
         });

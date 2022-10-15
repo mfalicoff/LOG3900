@@ -6,10 +6,16 @@ import { PutLogicService } from '@app/services/put-logic.service';
 import { Service } from 'typedi';
 import { ChatService } from './chat.service';
 import { PlayAreaService } from './play-area.service';
+import { StandService } from './stand.service';
 
 @Service()
 export class CommunicationBoxService {
-    constructor(private chatService: ChatService, private putLogicService: PutLogicService, private playAreaService: PlayAreaService) {}
+    constructor(
+        private chatService: ChatService, 
+        private putLogicService: PutLogicService, 
+        private playAreaService: PlayAreaService,
+        private standService: StandService,
+    ) {}
 
     // function that shows the content of the input, place it in the array of message then delte the input field
     onEnterPlayer(game: GameServer, player: Player, input: string): boolean {
@@ -81,6 +87,10 @@ export class CommunicationBoxService {
                         }
                         // remove the word from the board bc it isn't valid
                         this.putLogicService.boardLogicRemove(game, dataSeparated[1], dataSeparated[2]);
+                        // puts the letters back to the player's stand
+                        this.standService.putLettersOnStand(game, dataSeparated[2], player);
+                        //send game state to clients
+                        this.putLogicService.sendGameToAllClientInRoom(game);
                         // switch the turn of the player
                         this.playAreaService.changePlayer(game);
                     }, GlobalConstants.TIME_DELAY_RM_BAD_WORD);
