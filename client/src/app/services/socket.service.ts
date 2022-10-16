@@ -11,7 +11,6 @@ import { environment } from 'src/environments/environment';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
-import { PlaceGraphicService } from './place-graphic.service';
 import { TimerService } from './timer.service';
 
 @Injectable({
@@ -27,7 +26,6 @@ export class SocketService {
         private drawingBoardService: DrawingBoardService,
         private timerService: TimerService,
         private drawingService: DrawingService,
-        private placeGraphicsService: PlaceGraphicService,
     ) {
         this.socket = io(this.urlString);
         this.socketListen();
@@ -42,30 +40,29 @@ export class SocketService {
     }
 
     private canvasActionsHandler() {
-        this.socket.on("clearTmpTileCanvas", () => {
+        this.socket.on('clearTmpTileCanvas', () => {
             this.drawingBoardService.clearCanvas(this.drawingBoardService.tmpTileCanvas);
         });
 
-        this.socket.on("drawBorderTileForTmpHover", (boardIndexs) =>{
+        this.socket.on('drawBorderTileForTmpHover', (boardIndexs) => {
             this.drawingBoardService.clearCanvas(this.drawingBoardService.tmpTileCanvas);
             this.drawingBoardService.drawBorderTileForTmpHover(boardIndexs);
         });
 
-        this.socket.on("tileDraggedOnCanvas", (clickedTile, mouseCoords) =>{
+        this.socket.on('tileDraggedOnCanvas', (clickedTile, mouseCoords) => {
             this.drawingBoardService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
         });
 
-        this.socket.on("drawVerticalArrow", (arrowCoords) =>{
+        this.socket.on('drawVerticalArrow', (arrowCoords) => {
             this.drawingBoardService.drawVerticalArrowDirection(arrowCoords.x, arrowCoords.y);
         });
 
-        this.socket.on("drawHorizontalArrow", (arrowCoords) =>{
+        this.socket.on('drawHorizontalArrow', (arrowCoords) => {
             this.drawingBoardService.drawHorizontalArrowDirection(arrowCoords.x, arrowCoords.y);
         });
     }
 
     private gameUpdateHandler() {
-        
         this.socket.on('playerAndStandUpdate', (player) => {
             this.infoClientService.player = player;
             setTimeout(() => {
@@ -112,12 +109,7 @@ export class SocketService {
         });
 
         this.socket.on('findTileToPlaceArrow', (realPosInBoardPx) => {
-            this.drawingBoardService.findTileToPlaceArrow(
-                this.socket,
-                realPosInBoardPx,
-                this.infoClientService.game.board,
-                this.infoClientService.game.bonusBoard,
-            );
+            this.drawingBoardService.findTileToPlaceArrow(this.socket, realPosInBoardPx, this.infoClientService.game.board);
         });
 
         this.socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) => {
@@ -140,7 +132,7 @@ export class SocketService {
         this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
-            this.drawingBoardService.lettersDrawn = "";
+            this.drawingBoardService.lettersDrawn = '';
             if (currentNamePlayerPlaying === this.infoClientService.playerName) {
                 this.infoClientService.displayTurn = "C'est votre tour !";
                 this.infoClientService.isTurnOurs = true;
@@ -154,12 +146,12 @@ export class SocketService {
         });
 
         this.socket.on('setTimeoutTimerStart', () => {
-            this.drawingBoardService.lettersDrawn = "";
+            this.drawingBoardService.lettersDrawn = '';
             this.setTimeoutForTimer();
         });
 
         this.socket.on('stopTimer', () => {
-            this.drawingBoardService.lettersDrawn = "";
+            this.drawingBoardService.lettersDrawn = '';
             this.timerService.clearTimer();
         });
     }
@@ -221,7 +213,7 @@ export class SocketService {
                 this.socket.emit('turnFinished');
             }
             if (this.infoClientService.game.gameFinished) {
-                this.drawingBoardService.lettersDrawn = "";
+                this.drawingBoardService.lettersDrawn = '';
                 clearInterval(timerInterval);
             }
         }, oneSecond);

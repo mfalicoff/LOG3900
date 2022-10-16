@@ -62,13 +62,9 @@ export class PutLogicService {
             this.scoreCountService.updateScore(score, player);
             game.noTileOnBoard = false;
 
-            //TODO remove this if everything works
-            // Update the stand
-            // this.updateStandAndBoardAfterPlacement(game, player, word, position, isWordValid);
-
-            //give new letters to player
+            // give new letters to player
             this.standService.fillEmptySlotStand(player, game);
-            //check if the word was a bingo
+            // check if the word was a bingo
             this.isWordABingo(game, player, word, position);
         }
         return isWordValid;
@@ -166,8 +162,7 @@ export class PutLogicService {
         }
     }
 
-
-    isWordABingo(game: GameServer, player: Player, word: string, position: string){
+    isWordABingo(game: GameServer, player: Player, word: string, position: string) {
         let areAllLetterOnStand = true;
         for (let i = 0; i < word.length; i++) {
             let letterToCheck: string = word[i];
@@ -176,78 +171,11 @@ export class PutLogicService {
                 letterToCheck = '*';
             }
             if (this.verifyIfTileOnBoardAlready(game, letterToCheck, i, position)) {
-                console.log("leaving for letter: " + letterToCheck);
                 areAllLetterOnStand = false;
             }
         }
         player.isMoveBingo = areAllLetterOnStand;
     }
-
-    //TODO remove these lines later if everything works
-    // private updateStandAndBoardAfterPlacement(game: GameServer, player: Player, word: string, position: string, isWordValid: boolean) {
-    //     console.log("\nSTART");
-    //     console.log("updateStandAndBoardAfterPlacement");
-    //     console.log("isWordValid: " + isWordValid);
-    //     console.log("position: " + position);
-    //     console.log("END\n");
-    //     const arrayIndexWord: number[] = [];
-    //     const arrayLetter: string[] = [];
-    //     let areAllLetterOnStand = true;
-
-    //     for (let i = 0; i < word.length; i++) {
-    //         let letterToCheck: string = word[i];
-    //         // Verify if this is a blank letter or not
-    //         if (letterToCheck === letterToCheck.toUpperCase()) {
-    //             letterToCheck = '*';
-    //         }
-
-    //         // TODO remove these lines later if everything works
-    //         if (!player.mapLetterOnStand.has(letterToCheck)) {
-    //             areAllLetterOnStand = false;
-    //             continue;
-    //         }
-    //         if (this.verifyIfTileOnBoardAlready(game, letterToCheck, i, position)) {
-    //             console.log("leaving for letter: " + letterToCheck);
-    //             areAllLetterOnStand = false;
-    //             continue;
-    //         }
-
-    //         for (let j = 0; j < GlobalConstants.NUMBER_SLOT_STAND; j++) {
-    //             if (letterToCheck === player.stand[j].letter.value) {
-    //                 this.standService.deleteLetterStandLogic(letterToCheck, j, player);
-
-    //                 if (isWordValid) {
-    //                     this.standService.putNewLetterOnStand(player.stand[j], game.letters, game.letterBank, player);
-    //                 } else {
-    //                     arrayIndexWord.push(j);
-    //                     arrayLetter.push(letterToCheck);
-    //                 }
-    //                 break;
-    //             }
-    //         }
-    //     }
-    //     player.isMoveBingo = areAllLetterOnStand;
-
-    //     // player update for stand
-    //     this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
-
-    //     if (!isWordValid) {
-    //         this.cancelUpdateOperation(game, player, arrayIndexWord, arrayLetter);
-    //     }
-    // }
-
-    //TODO remove these lines later if everything works
-    // private cancelUpdateOperation(game: GameServer, player: Player, arrayIndexWord: number[], arrayLetter: string[]) {
-    //     setTimeout(() => {
-    //         let indexWord = 0;
-    //         for (const positionIndex of arrayIndexWord) {
-    //             this.standService.writeLetterStandLogic(positionIndex, arrayLetter[indexWord], game.letterBank, player);
-    //             indexWord++;
-    //         }
-    //         // Game update
-    //         this.sendGameToAllClientInRoom(game);
-    //     }, GlobalConstants.TIME_DELAY_RM_BAD_WORD);
-    // }
 
     private verifyIfTileOnBoardAlready(game: GameServer, letterToCheck: string, indexLetter: number, position: string): boolean {
         const letterWay: string = position.slice(GlobalConstants.POSITION_LAST_LETTER);

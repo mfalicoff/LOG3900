@@ -35,7 +35,7 @@ export class PlayAreaService {
         const tmpLetter = this.boardService.rmTempTiles(game);
         // Update les tiles du board en old
         this.updateOldTiles(game);
-        
+
         const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         if (playerThatJustPlayed) {
             // we add the tmp letter to the stand of the player that just played

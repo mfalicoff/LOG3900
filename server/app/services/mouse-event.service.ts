@@ -147,15 +147,15 @@ export class MouseEventService {
         game.board[yIndex][xIndex].borderColor = '#ffaaff';
     }
 
-    rmTempLetterBoard(game: GameServer, idxsTileToRm: Vec2){
+    rmTempLetterBoard(game: GameServer, idxsTileToRm: Vec2) {
         game.board[idxsTileToRm.y][idxsTileToRm.x].letter.value = '';
         game.board[idxsTileToRm.y][idxsTileToRm.x].letter.weight = 0;
         game.board[idxsTileToRm.y][idxsTileToRm.x].borderColor = '#212121';
     }
 
-    rmTileFromStand(player: Player, tileToRm: Tile){
-        for(let i = 0; i < player.stand.length; i++){
-            if(player.stand[i].position.x1 !== tileToRm.position.x1){
+    rmTileFromStand(player: Player, tileToRm: Tile) {
+        for (let i = 0; i < player.stand.length; i++) {
+            if (player.stand[i].position.x1 !== tileToRm.position.x1) {
                 continue;
             }
             this.standService.deleteLetterStandLogic(tileToRm.letter.value, i, player);
@@ -163,30 +163,30 @@ export class MouseEventService {
         }
     }
 
-    addTileToStand(game: GameServer, player: Player, letterToAdd: string){
+    addTileToStand(game: GameServer, player: Player, letterToAdd: string) {
         this.standService.putLettersOnStand(game, letterToAdd, player);
     }
 
     onBoardToStandDrop(tileDropped: Tile, standIdx: number, player: Player, game: GameServer) {
-        //if the tile on which we drop is empty we can drop the tile directly on it
-        if(player.stand[standIdx].letter.value === ""){
+        // if the tile on which we drop is empty we can drop the tile directly on it
+        if (player.stand[standIdx].letter.value === '') {
             this.standService.writeLetterStandLogic(standIdx, tileDropped.letter.value, game.letterBank, player);
-        }else{//else we put the letter on any empty tile
+        } else {
+            // else we put the letter on any empty tile
             this.standService.putLettersOnStand(game, tileDropped.letter.value, player);
         }
     }
 
-    onBoardToBoardDrop(game: GameServer, posClickedTileIdxs: Vec2, posDropBoardIdxs: Vec2){
-        //set values of new tile
+    onBoardToBoardDrop(game: GameServer, posClickedTileIdxs: Vec2, posDropBoardIdxs: Vec2) {
+        // set values of new tile
         const tileClicked = game.board[posClickedTileIdxs.y][posClickedTileIdxs.x];
         this.boardService.putLetterInBoardArray(tileClicked, posDropBoardIdxs, game);
         game.board[posDropBoardIdxs.y][posDropBoardIdxs.x].borderColor = '#ffaaff';
-        //reset values of old tile
+        // reset values of old tile
         game.board[posClickedTileIdxs.y][posClickedTileIdxs.x].borderColor = '#212121';
-        game.board[posClickedTileIdxs.y][posClickedTileIdxs.x].letter.value = "";
+        game.board[posClickedTileIdxs.y][posClickedTileIdxs.x].letter.value = '';
         game.board[posClickedTileIdxs.y][posClickedTileIdxs.x].letter.weight = 0;
     }
-
 
     private drawChangeSelection(player: Player, newTileIndex: number, oldTileIndex: number) {
         if (newTileIndex !== Constants.DEFAULT_VALUE_NUMBER) {
@@ -251,19 +251,6 @@ export class MouseEventService {
     private resetTileStandAtPos(player: Player, position: number) {
         player.stand[position].backgroundColor = '#F7F7E3';
     }
-
-    // TODO remove that if all works
-    // private clickIsInBoard(player: Player, position: Vec2) {
-    //     const realPosInBoardPx: Vec2 = {
-    //         x: position.x - Constants.SIZE_OUTER_BORDER_BOARD,
-    //         y: position.y - Constants.SIZE_OUTER_BORDER_BOARD,
-    //     };
-    //     const isClickPosXInBoard: boolean = realPosInBoardPx.x > 0 && realPosInBoardPx.x < Constants.WIDTH_BOARD_NOBORDER;
-    //     const isClickPosYInBoard: boolean = realPosInBoardPx.y > 0 && realPosInBoardPx.y < Constants.WIDTH_BOARD_NOBORDER;
-    //     if (isClickPosXInBoard && isClickPosYInBoard) {
-    //         this.sio.sockets.sockets.get(player.idPlayer)?.emit('findTileToPlaceArrow', realPosInBoardPx);
-    //     }
-    // }
 
     private sendStandToClient(player: Player) {
         this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);

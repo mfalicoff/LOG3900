@@ -74,19 +74,20 @@ export class StandService {
         this.writeLetterInStandMap(letterToWrite, player);
     }
 
-    //delete ONE letter from the stand logic
+    // delete ONE letter from the stand logic
     deleteLetterStandLogic(letterToRemove: string, indexToWrite: number, player: Player) {
         // function to use as much as possible
         this.deleteLetterArrayLogic(indexToWrite, player);
         this.deleteLetterInStandMap(letterToRemove, player);
     }
-    
-    //function that puts an string of letters on the stand
-    //we do not care of the place of the letters on the stand
+
+    // function that puts an string of letters on the stand
+    // we do not care of the place of the letters on the stand
     putLettersOnStand(game: GameServer, letters: string, player: Player) {
-        //loop through the letters to place
-        for(let i = 0; i < letters.length; i++) {
-            //loop through the stand array to find an empty slot
+        // loop through the letters to place
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < letters.length; i++) {
+            // loop through the stand array to find an empty slot
             for (let j = 0; j < Constants.NUMBER_SLOT_STAND; j++) {
                 if (player.stand[j].letter.value === '') {
                     this.writeLetterStandLogic(j, letters[i], game.letterBank, player);
@@ -94,7 +95,6 @@ export class StandService {
                 }
             }
         }
-
     }
 
     fillEmptySlotStand(player: Player, game: GameServer) {

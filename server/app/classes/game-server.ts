@@ -124,12 +124,18 @@ export class GameServer {
     // (reminder:) the master_timer is the client that make the turn stop
     // when there is no time (it's not the server bc multiple setTimeout would be a nightmare)
     setMasterTimer() {
+        // try to find a player to give him the master timer
         for (const player of this.mapPlayers.values()) {
             if (player.idPlayer === 'virtualPlayer') {
                 continue;
             }
             this.masterTimer = player.idPlayer;
-            break;
+            return;
+        }
+        // if no player found, try to find a spectator to give him the master timer
+        for (const spectator of this.mapSpectators.values()) {
+            this.masterTimer = spectator.socketId;
+            return;
         }
     }
     // takes the first players and makes it creator of game

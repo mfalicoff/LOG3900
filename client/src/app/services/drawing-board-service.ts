@@ -40,24 +40,10 @@ export class DrawingBoardService {
         ]);
     }
 
-    canvasInit(
-        playAreaCanvas: CanvasRenderingContext2D,
-        tmpTileCanvas: CanvasRenderingContext2D,) {
+    canvasInit(playAreaCanvas: CanvasRenderingContext2D, tmpTileCanvas: CanvasRenderingContext2D) {
         this.playAreaCanvas = playAreaCanvas;
         this.tmpTileCanvas = tmpTileCanvas;
         this.drawingService.canvasInit(playAreaCanvas, tmpTileCanvas);
-
-        //TODO remove these lines later
-        // this.reDrawBoard(
-        //     this.infoClientService.game.bonusBoard, 
-        //     this.infoClientService.game.board, 
-        //     this.infoClientService.letterBank);
-        // const constPosXYForStands = Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
-        // this.drawingService.drawHorizStand(
-        //     constPosXYForStands,
-        //     Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BOARD_FOR_STANDS + Constants.PADDING_BET_BOARD_AND_STAND,
-        //     this.infoClientService.player,
-        // );
     }
 
     drawBoardInit(bonusBoard: string[][]) {
@@ -172,35 +158,32 @@ export class DrawingBoardService {
         this.playAreaCanvas.stroke();
     }
 
-    drawTileDraggedOnCanvas(clickedTile: Tile, mouseCoords: Vec2){
-        //clear the canvas to not have a trail of the tile
+    drawTileDraggedOnCanvas(clickedTile: Tile, mouseCoords: Vec2) {
+        // clear the canvas to not have a trail of the tile
         this.clearCanvas(this.tmpTileCanvas);
-        //draws the border of the tile being hovered to get a better understanding of where
-        //the tile will be placed
+        // draws the border of the tile being hovered to get a better understanding of where
+        // the tile will be placed
         const boardIndexs: Vec2 = this.getIndexOnBoardLogicFromClick(mouseCoords);
-        if(boardIndexs.x !== Constants.DEFAULT_VALUE_NUMBER && boardIndexs.y !== Constants.DEFAULT_VALUE_NUMBER){
+        if (boardIndexs.x !== Constants.DEFAULT_VALUE_NUMBER && boardIndexs.y !== Constants.DEFAULT_VALUE_NUMBER) {
             this.drawBorderTileForTmpHover(boardIndexs);
         }
-        //draw the tile on the tmp canvas
+        // draw the tile on the tmp canvas
         this.drawingService.drawFromDrag(clickedTile, mouseCoords);
     }
 
-    drawBorderTileForTmpHover(boardIndexs: Vec2){
-        if(!this.infoClientService.game.board[boardIndexs.y][boardIndexs.x]){
+    drawBorderTileForTmpHover(boardIndexs: Vec2) {
+        if (!this.infoClientService.game.board[boardIndexs.y][boardIndexs.x]) {
             return;
         }
         const tileConcerned = this.infoClientService.game.board[boardIndexs.y][boardIndexs.x];
         this.tmpTileCanvas.beginPath();
         this.tmpTileCanvas.strokeStyle = '#9e2323';
         this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
-        this.tmpTileCanvas.rect(
-            tileConcerned.position.x1, tileConcerned.position.y1,
-            tileConcerned.position.height, tileConcerned.position.width,
-        );
+        this.tmpTileCanvas.rect(tileConcerned.position.x1, tileConcerned.position.y1, tileConcerned.position.height, tileConcerned.position.width);
         this.tmpTileCanvas.stroke();
     }
 
-    clearCanvas(canvas: CanvasRenderingContext2D){
+    clearCanvas(canvas: CanvasRenderingContext2D) {
         canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
     }
 
@@ -214,19 +197,15 @@ export class DrawingBoardService {
             }
         }
 
-        console.log("draws arrows");
         // if this is our turn and we just put a letter on the board we redraw the arrow too
         if (this.infoClientService.isTurnOurs && this.isArrowPlaced && this.lettersDrawn) {
             if (this.isArrowVertical) {
-                // this.drawVerticalArrowDirection(this.arrowPosX, this.arrowPosY);
-                socket.emit("drawVerticalArrow", {
+                socket.emit('drawVerticalArrow', {
                     x: this.arrowPosX,
                     y: this.arrowPosY,
                 });
             } else {
-                //TODO delete this if everything works
-                // this.drawHorizontalArrowDirection(this.arrowPosX, this.arrowPosY);
-                socket.emit("drawHorizontalArrow", {
+                socket.emit('drawHorizontalArrow', {
                     x: this.arrowPosX,
                     y: this.arrowPosY,
                 });
@@ -377,7 +356,7 @@ export class DrawingBoardService {
         this.playAreaCanvas.stroke();
     }
 
-    findTileToPlaceArrow(socket: Socket, positionPx: Vec2, board: Tile[][], bonusBoard: string[][]) {
+    findTileToPlaceArrow(socket: Socket, positionPx: Vec2, board: Tile[][]) {
         if (this.lettersDrawn) {
             return;
         }
@@ -394,21 +373,15 @@ export class DrawingBoardService {
         }
         this.isArrowPlaced = true;
         if (this.isArrowVertical) {
-            //TODO delete this if everything works
-            // this.drawHorizontalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
-            socket.emit("drawHorizontalArrow", {
+            socket.emit('drawHorizontalArrow', {
                 x: coordsIndexOnBoard.x,
                 y: coordsIndexOnBoard.y,
             });
-            console.log("Horizontal placing arrow" + this.arrowPosX + " " + this.arrowPosY);
         } else {
-            //TODO delete this if everything works
-            // this.drawVerticalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
-            socket.emit("drawVerticalArrow", {
+            socket.emit('drawVerticalArrow', {
                 x: coordsIndexOnBoard.x,
                 y: coordsIndexOnBoard.y,
             });
-            console.log("Horizontal placing arrow" + this.arrowPosX + " " + this.arrowPosY);
         }
         this.isArrowVertical = !this.isArrowVertical;
     }
@@ -418,16 +391,20 @@ export class DrawingBoardService {
         const coordsCleaned: Vec2 = new Vec2();
         coordsCleaned.x = coords.x - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
         coordsCleaned.y = coords.y - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
-        //veryfiying that we are on the board not elsewhere
-        if(coordsCleaned.x < 0 || coordsCleaned.y < 0) {
-            return {x: Constants.DEFAULT_VALUE_NUMBER, y: Constants.DEFAULT_VALUE_NUMBER};
+        // veryfiying that we are on the board not elsewhere
+        if (coordsCleaned.x < 0 || coordsCleaned.y < 0) {
+            return { x: Constants.DEFAULT_VALUE_NUMBER, y: Constants.DEFAULT_VALUE_NUMBER };
         }
         const coordsIndexOnBoard = new Vec2();
         coordsIndexOnBoard.x = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.x)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
         coordsIndexOnBoard.y = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.y)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
-        if(coordsIndexOnBoard.x > Constants.NUMBER_SQUARE_H_AND_W || coordsIndexOnBoard.y > Constants.NUMBER_SQUARE_H_AND_W
-        || coordsIndexOnBoard.x <= 0 || coordsIndexOnBoard.y <= 0) {
-            return {x: Constants.DEFAULT_VALUE_NUMBER, y: Constants.DEFAULT_VALUE_NUMBER}; 
+        if (
+            coordsIndexOnBoard.x > Constants.NUMBER_SQUARE_H_AND_W ||
+            coordsIndexOnBoard.y > Constants.NUMBER_SQUARE_H_AND_W ||
+            coordsIndexOnBoard.x <= 0 ||
+            coordsIndexOnBoard.y <= 0
+        ) {
+            return { x: Constants.DEFAULT_VALUE_NUMBER, y: Constants.DEFAULT_VALUE_NUMBER };
         }
         return coordsIndexOnBoard;
     }

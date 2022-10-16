@@ -4,6 +4,7 @@ import { Player } from '@app/classes/player';
 import { Spectator } from '@app/classes/spectator';
 import { PutLogicService } from '@app/services/put-logic.service';
 import { Service } from 'typedi';
+import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
 import { PlayAreaService } from './play-area.service';
 import { StandService } from './stand.service';
@@ -11,10 +12,11 @@ import { StandService } from './stand.service';
 @Service()
 export class CommunicationBoxService {
     constructor(
-        private chatService: ChatService, 
-        private putLogicService: PutLogicService, 
+        private chatService: ChatService,
+        private putLogicService: PutLogicService,
         private playAreaService: PlayAreaService,
         private standService: StandService,
+        private boardService: BoardService,
     ) {}
 
     // function that shows the content of the input, place it in the array of message then delte the input field
@@ -35,6 +37,10 @@ export class CommunicationBoxService {
         switch (dataSeparated[0]) {
             case '!placer': {
                 if (!this.chatService.sendMessage(input, game, player)) {
+                    // if there is a problem with the message we the letters to the stand
+                    // and delete them from the board
+                    const letterNotWellUsed = this.boardService.rmTempTiles(game);
+                    this.standService.putLettersOnStand(game, letterNotWellUsed, player);
                     return false;
                 }
                 if (this.putLogicService.computeWordToDraw(game, player, dataSeparated[1], dataSeparated[2])) {
@@ -89,7 +95,7 @@ export class CommunicationBoxService {
                         this.putLogicService.boardLogicRemove(game, dataSeparated[1], dataSeparated[2]);
                         // puts the letters back to the player's stand
                         this.standService.putLettersOnStand(game, dataSeparated[2], player);
-                        //send game state to clients
+                        // send game state to clients
                         this.putLogicService.sendGameToAllClientInRoom(game);
                         // switch the turn of the player
                         this.playAreaService.changePlayer(game);

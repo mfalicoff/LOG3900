@@ -243,14 +243,12 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            console.log("addTempLetterBoard2");
             this.mouseEventService.addTempLetterBoard(game, keyEntered, xIndex, yIndex);
             // We send to all clients a gameState
             this.sio.to(game.roomName).emit('gameBoardUpdate', game);
         });
 
-        socket.on("rmTempLetterBoard", (idxsTileToRm) => {
-            console.log("rmTempLetterBoard at: " + idxsTileToRm.x + " " + idxsTileToRm.y);
+        socket.on('rmTempLetterBoard', (idxsTileToRm) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -264,8 +262,7 @@ export class SocketManager {
             this.gameUpdateClients(game);
         });
 
-        socket.on("rmTileFromStand", (tile: Tile) => {
-            console.log("rmTileFromStand");
+        socket.on('rmTileFromStand', (tile: Tile) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -282,8 +279,7 @@ export class SocketManager {
             this.gameUpdateClients(game);
         });
 
-        socket.on("addTileToStand", (letterToAdd)=>{
-            console.log("addTileToStand");
+        socket.on('addTileToStand', (letterToAdd) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -300,8 +296,7 @@ export class SocketManager {
             this.gameUpdateClients(game);
         });
 
-        socket.on("onBoardToStandDrop", (tileDropped, standIdx) => {
-            console.log("onBoardToStandDrop");
+        socket.on('onBoardToStandDrop', (tileDropped, standIdx) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -318,7 +313,7 @@ export class SocketManager {
             this.gameUpdateClients(game);
         });
 
-        socket.on("onBoardToBoardDrop", (posClickedTileIdxs, posDropBoardIdxs) => {
+        socket.on('onBoardToBoardDrop', (posClickedTileIdxs, posDropBoardIdxs) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -331,7 +326,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('gameBoardUpdate', game);
         });
 
-        socket.on("drawBorderTileForTmpHover", (boardIndexs) => {
+        socket.on('drawBorderTileForTmpHover', (boardIndexs) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -343,7 +338,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('drawBorderTileForTmpHover', boardIndexs);
         });
 
-        socket.on("tileDraggedOnCanvas", (clickedTile, mouseCoords) => {
+        socket.on('tileDraggedOnCanvas', (clickedTile, mouseCoords) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -355,7 +350,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
         });
 
-        socket.on("clearTmpTileCanvas", ()=>{
+        socket.on('clearTmpTileCanvas', () => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -367,8 +362,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('clearTmpTileCanvas');
         });
 
-        socket.on("escapeKeyPressed", (tmpLettersOnBoard) => {
-            console.log("escapeKeyPressed");
+        socket.on('escapeKeyPressed', (tmpLettersOnBoard) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -383,14 +377,13 @@ export class SocketManager {
             }
             this.boardService.rmTempTiles(game);
             this.standService.putLettersOnStand(game, tmpLettersOnBoard, player);
-            //we tell all the client to clear the clearTmpTileCanvas
+            // we tell all the client to clear the clearTmpTileCanvas
             this.sio.to(game.roomName).emit('clearTmpTileCanvas', game);
-            //we update the board state
+            // we update the board state
             this.gameUpdateClients(game);
         });
 
-        socket.on("drawVerticalArrow", (arrowCoords)=>{
-            console.log("VerticalarrowCoords" + arrowCoords.x + " " + arrowCoords.y);
+        socket.on('drawVerticalArrow', (arrowCoords) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -399,14 +392,13 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            //there can never be multiples arrows on the board so we clear 
-            //the canvas first
+            // there can never be multiples arrows on the board so we clear
+            // the canvas first
             this.sio.to(game.roomName).emit('clearTmpTileCanvas');
             this.sio.to(game.roomName).emit('drawVerticalArrow', arrowCoords);
         });
 
-        socket.on("drawHorizontalArrow", (arrowCoords)=>{
-            console.log("HorizontalarrowCoords" + arrowCoords.x + " " + arrowCoords.y);
+        socket.on('drawHorizontalArrow', (arrowCoords) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -415,8 +407,8 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            //there can never be multiples arrows on the board so we clear 
-            //the canvas first
+            // there can never be multiples arrows on the board so we clear
+            // the canvas first
             this.sio.to(game.roomName).emit('clearTmpTileCanvas');
             this.sio.to(game.roomName).emit('drawHorizontalArrow', arrowCoords);
         });
@@ -808,7 +800,9 @@ export class SocketManager {
                 (player) => player.idPlayer !== 'virtualPlayer' && player.idPlayer !== playerThatLeaves?.idPlayer,
             ).length;
 
-            if (nbRealPlayer >= 1) {
+            const nbSpectators = Array.from(game.mapSpectators.values()).length;
+
+            if (nbRealPlayer >= 1 || nbSpectators >= 1) {
                 // we send to the opponent a update of the game
                 const waitBeforeAbandonment = 3000;
                 setTimeout(() => {

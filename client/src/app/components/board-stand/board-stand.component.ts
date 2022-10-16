@@ -22,36 +22,32 @@ export class BoardStandComponent implements AfterViewInit {
     playAreaConvasSize: Vec2 = { x: Constants.DEFAULT_WIDTH_PLAY_AREA, y: Constants.DEFAULT_WIDTH_PLAY_AREA };
     isMouseDown: boolean = false;
     clickedTile: Tile | undefined;
-    //used to keep track of the original position of the tile when taken from board
+    // used to keep track of the original position of the tile when taken from board
     clickedTileIndex: Vec2 = new Vec2();
-    //buffer used to reduce the number of emit to the server
-    bufferMouseEvent:number = 0;
+    // buffer used to reduce the number of emit to the server
+    bufferMouseEvent: number = 0;
     lastBoardIndexsHover: Vec2 = new Vec2();
     constructor(
         // private drawingService: DrawingService,
-        private drawingBoardService: DrawingBoardService, 
+        private drawingBoardService: DrawingBoardService,
         private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
         private placeGraphicService: PlaceGraphicService,
         // private infoClientService: InfoClientService,
-        private socketService: SocketService
-        ) 
-    {}
+        private socketService: SocketService,
+    ) {}
 
     @HostListener('document:keydown.escape', ['$event'])
     onEscapeKeydownHandler(event: KeyboardEvent) {
-        console.log("escape");
         this.mouseKeyboardEventHandler.handleKeyboardEvent(event);
     }
 
     @HostListener('document:keydown.backspace', ['$event'])
     onBackspaceKeydownHandler(event: KeyboardEvent) {
-        console.log("backspace");
         this.mouseKeyboardEventHandler.handleKeyboardEvent(event);
     }
 
     @HostListener('document:keypress', ['$event'])
     handleKeyboardEvent(event: KeyboardEvent) {
-        console.log("enter");
         this.mouseKeyboardEventHandler.handleKeyboardEvent(event);
     }
 
@@ -66,45 +62,50 @@ export class BoardStandComponent implements AfterViewInit {
         this.mouseKeyboardEventHandler.handleScrollEvent(event);
     }
 
-    @HostListener('document:mousedown', ['$event']) 
+    @HostListener('document:mousedown', ['$event'])
     onMouseDown(event: MouseEvent) {
         this.isMouseDown = true;
         const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
-        if(this.areCoordsOnStand(coordsClick)){
+        if (this.areCoordsOnStand(coordsClick)) {
             this.clickedTile = this.mouseKeyboardEventHandler.onMouseDownGetStandTile(event);
-        }else if(this.areCoordsOnBoard(coordsClick)){
+        } else if (this.areCoordsOnBoard(coordsClick)) {
             this.clickedTile = this.mouseKeyboardEventHandler.onMouseDownGetBoardTile(event);
             this.clickedTileIndex = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
         }
-        //TODO remove this later
-        if(this.clickedTile === undefined){
-            console.log("clicked Tile is undefined");
-        }
     }
 
-    @HostListener('document:mouseup', ['$event']) 
+    @HostListener('document:mouseup', ['$event'])
     onMouseUp(event: MouseEvent) {
         this.isMouseDown = false;
         const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
-        this.socketService.socket.emit("clearTmpTileCanvas");
-        if(this.areCoordsOnBoard(coordsClick)){
-            //if we have a tile selected we process it
-            if(this.clickedTile && this.clickedTile?.letter.value !== ""){
-                if(this.placeGraphicService.tileClickedFromStand){
+        // we don't want to clear if the method is with arrows because the arrows will disppear
+        if (this.placeGraphicService.drapDropEnabled()) {
+            this.socketService.socket.emit('clearTmpTileCanvas');
+        }
+        if (this.areCoordsOnBoard(coordsClick)) {
+            // if we have a tile selected we process it
+            if (this.clickedTile && this.clickedTile?.letter.value !== '' && this.placeGraphicService.drapDropEnabled()) {
+                if (this.placeGraphicService.tileClickedFromStand) {
                     this.mouseKeyboardEventHandler.onStandToBoardDrop(coordsClick, this.clickedTile);
-                }else{
+                } else {
                     this.mouseKeyboardEventHandler.onBoardToBoardDrop(coordsClick, this.clickedTile);
                 }
-            }else{ // else we just consider it as a click on the board
+            } else {
+                // else we just consider it as a click on the board
                 this.mouseKeyboardEventHandler.onBoardClick(event);
             }
-        }else if (this.areCoordsOnStand(coordsClick)) {
-            if(this.clickedTile && this.clickedTile?.letter.value !== "" && !this.placeGraphicService.tileClickedFromStand){
+        } else if (this.areCoordsOnStand(coordsClick)) {
+            if (
+                this.clickedTile &&
+                this.clickedTile?.letter.value !== '' &&
+                !this.placeGraphicService.tileClickedFromStand &&
+                this.placeGraphicService.drapDropEnabled()
+            ) {
                 this.mouseKeyboardEventHandler.onBoardToStandDrop(coordsClick, this.clickedTile, this.clickedTileIndex);
-            }else{
-                if(event.button === Constants.LEFT_CLICK){
+            } else {
+                if (event.button === Constants.LEFT_CLICK) {
                     this.mouseKeyboardEventHandler.onLeftClickStand(event);
-                }else if(event.button === Constants.RIGHT_CLICK){
+                } else if (event.button === Constants.RIGHT_CLICK) {
                     this.mouseKeyboardEventHandler.onRightClickStand(event);
                 }
             }
@@ -114,20 +115,26 @@ export class BoardStandComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        this.playAreaCanvas = (this.playAreaElement.nativeElement.getContext('2d') as CanvasRenderingContext2D);
-        this.tmpTileCanvas = (this.tmpTileElement.nativeElement.getContext('2d') as CanvasRenderingContext2D);
+        this.playAreaCanvas = this.playAreaElement.nativeElement.getContext('2d') as CanvasRenderingContext2D;
+        this.tmpTileCanvas = this.tmpTileElement.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingBoardService.canvasInit(this.playAreaCanvas, this.tmpTileCanvas);
-        //add event lisntener for mouse movement
-        //bind the component with the function to get acess to the attributes and functions of this component
-        document.getElementById('tmpTileCanvas')?.addEventListener("mousemove", this.handleMouseMove.bind(this), true);
+        // add event lisntener for mouse movement
+        // bind the component with the function to get acess to the attributes and functions of this component
+        document.getElementById('tmpTileCanvas')?.addEventListener('mousemove', this.handleMouseMove.bind(this), true);
     }
 
-    private handleMouseMove(event: MouseEvent){
-        if(!this.isMouseDown || !this.clickedTile || this.clickedTile?.letter.value === ""){
+    private handleMouseMove(event: MouseEvent) {
+        if (!this.isMouseDown || !this.clickedTile || this.clickedTile?.letter.value === '') {
             return;
         }
+        // if we have some letter placed on the board and this is by keyboard not drag and drop
+        // we leave bc the two methods of placement are not compatible (they are but the exigences doesn't want it)
+        if (!this.placeGraphicService.drapDropEnabled()) {
+            return;
+        }
+
         const mouseCoords: Vec2 = { x: event.offsetX, y: event.offsetY };
-        this.socketService.socket.emit("tileDraggedOnCanvas", this.clickedTile, mouseCoords);
+        this.socketService.socket.emit('tileDraggedOnCanvas', this.clickedTile, mouseCoords);
     }
 
     private areCoordsOnBoard(coords: Vec2): boolean {

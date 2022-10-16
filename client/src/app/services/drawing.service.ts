@@ -1,9 +1,11 @@
+/* eslint-disable max-lines*/
 import { Injectable } from '@angular/core';
 import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Player } from '@app/classes/player';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
+import { InfoClientService } from './info-client.service';
 
 @Injectable({
     providedIn: 'root',
@@ -11,6 +13,8 @@ import { Vec2 } from '@app/classes/vec2';
 export class DrawingService {
     playAreaCanvas: CanvasRenderingContext2D;
     tmpTileCanvas: CanvasRenderingContext2D;
+
+    constructor(private infoClientService: InfoClientService) {}
 
     canvasInit(playAreaCanvas: CanvasRenderingContext2D, tmpTileCanvas: CanvasRenderingContext2D) {
         this.playAreaCanvas = playAreaCanvas;
@@ -34,7 +38,7 @@ export class DrawingService {
         }
     }
 
-    //used to draw a letter from 
+    // used to draw a letter from
     drawOneLetter(letterToDraw: string, tile: Tile, canvas: CanvasRenderingContext2D, letterBank: Map<string, LetterData>) {
         const letterToDrawUpper = letterToDraw.toUpperCase();
         canvas.beginPath();
@@ -70,26 +74,32 @@ export class DrawingService {
         canvas.stroke();
     }
 
-    //function that draws a tile with a given position to the drap and drop canvas
-    drawFromDrag(tileToDraw: Tile, posToDraw: Vec2){
-        if(!tileToDraw){
+    // function that draws a tile with a given position to the drap and drop canvas
+    drawFromDrag(tileToDraw: Tile, posToDraw: Vec2) {
+        if (!tileToDraw) {
             return;
         }
-        //we center the take for appearances it is better like that
-        const posToDrawCentered = {x: posToDraw.x - tileToDraw.position.width / 2, y: posToDraw.y - tileToDraw.position.height / 2};
+        // we center the take for appearances it is better like that
+        const posToDrawCentered = { x: posToDraw.x - tileToDraw.position.width / 2, y: posToDraw.y - tileToDraw.position.height / 2 };
         const letterToDrawUpper = tileToDraw.letter.value.toUpperCase();
         this.tmpTileCanvas.beginPath();
         this.tmpTileCanvas.fillStyle = tileToDraw.backgroundColor;
         this.tmpTileCanvas.strokeStyle = tileToDraw.backgroundColor;
         // draws background of tile
-        this.tmpTileCanvas.fillRect(posToDrawCentered.x, posToDrawCentered.y+ 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2);
+        this.tmpTileCanvas.fillRect(posToDrawCentered.x, posToDrawCentered.y + 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2);
         // the number are so the letter tiles are smaller than the tile of the board
         this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
         this.tmpTileCanvas.strokeStyle = '#ffaaff';
         // draws border of tile
-        this.roundRect(posToDrawCentered.x + 1, posToDrawCentered.y + 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2, this.tmpTileCanvas);
+        this.roundRect(
+            posToDrawCentered.x + 1,
+            posToDrawCentered.y + 1,
+            tileToDraw.position.width - 2,
+            tileToDraw.position.height - 2,
+            this.tmpTileCanvas,
+        );
         // the number are so the letter tiles are smaller than the tile of the board
-        this.tmpTileCanvas.fillStyle = tileToDraw.borderColor;
+        this.tmpTileCanvas.fillStyle = '#212121';
         const spaceForLetter: Vec2 = { x: 4, y: 25 };
         const spaceForNumber: Vec2 = { x: 23, y: 25 };
         const actualFont = this.tmpTileCanvas.font;
@@ -98,7 +108,11 @@ export class DrawingService {
 
         this.tmpTileCanvas.font = '12px bold system-ui';
         if (tileToDraw.letter.weight) {
-            this.tmpTileCanvas.fillText(tileToDraw.letter.weight.toString(), posToDrawCentered.x + spaceForNumber.x, posToDrawCentered.y + spaceForNumber.y);
+            this.tmpTileCanvas.fillText(
+                tileToDraw.letter.weight.toString(),
+                posToDrawCentered.x + spaceForNumber.x,
+                posToDrawCentered.y + spaceForNumber.y,
+            );
         } else {
             this.tmpTileCanvas.fillText('', posToDrawCentered.x + spaceForNumber.x, posToDrawCentered.y + spaceForNumber.y);
         }
@@ -123,6 +137,7 @@ export class DrawingService {
         return false;
     }
 
+    // draws only the stand visual there is no logic
     initStand(isPlayerSpec: boolean) {
         const constPosXYForStands = Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
         if (isPlayerSpec) {
@@ -143,22 +158,38 @@ export class DrawingService {
         );
     }
 
-    // function that draws all the stands in the game
+    // function that draws all the stands in the game with the logic
+    // also it always put the stand of the player playing at the bottom
+    // it is much easier to do it this so that the drag and drop coords are not messed up
     drawSpectatorStands(players: Player[]) {
         const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
         const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
-        this.drawVertiStand(0, constPosXYForStands, players[0]);
-        this.drawVertiStand(
-            paddingForStands + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND,
-            constPosXYForStands,
-            players[1],
-        );
-        this.drawHorizStand(constPosXYForStands, 0, players[2]);
+
+        let idxPlayerPlaying = this.infoClientService.game.idxPlayerPlaying;
+        // bottom stand
         this.drawHorizStand(
             constPosXYForStands,
             Constants.DEFAULT_WIDTH_BOARD + paddingForStands + Constants.PADDING_BET_BOARD_AND_STAND,
-            players[3],
+            players[idxPlayerPlaying],
         );
+        // we go to the next player
+        idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
+        // left stand
+        this.drawVertiStand(0, constPosXYForStands, players[idxPlayerPlaying]);
+
+        // we go to the next player
+        idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
+        // right stand
+        this.drawVertiStand(
+            paddingForStands + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND,
+            constPosXYForStands,
+            players[idxPlayerPlaying],
+        );
+
+        // we go to the next player
+        idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
+        // top stand
+        this.drawHorizStand(constPosXYForStands, 0, players[idxPlayerPlaying]);
     }
 
     // the x and y are coords of the point in the top left corner of the stand
@@ -228,24 +259,20 @@ export class DrawingService {
             this.playAreaCanvas.font = '12px bold system-ui';
             const letterWeight = player.stand[j].letter.weight;
             if (letterWeight) {
-                this.playAreaCanvas.fillText(
-                    letterWeight.toString(),
-                    i + spaceForNumber.x,
-                    y + Constants.SIZE_OUTER_BORDER_STAND + spaceForNumber.y,
-                );
+                this.playAreaCanvas.fillText(letterWeight.toString(), i + spaceForNumber.x, y + Constants.SIZE_OUTER_BORDER_STAND + spaceForNumber.y);
             }
             this.playAreaCanvas.stroke();
         }
     }
 
-    getIndexOnStandLogicFromClick(positionX: number){
+    getIndexOnStandLogicFromClick(positionX: number) {
         const constPosXYForStands =
             Constants.PADDING_BOARD_FOR_STANDS +
             Constants.DEFAULT_WIDTH_BOARD / 2 -
             Constants.DEFAULT_WIDTH_STAND / 2 +
             Constants.SIZE_OUTER_BORDER_STAND;
         const posXCleaned = positionX - constPosXYForStands;
-        return(Math.floor(Constants.DEFAULT_NB_LETTER_STAND / (Constants.DEFAULT_WIDTH_STAND / posXCleaned)));
+        return Math.floor(Constants.DEFAULT_NB_LETTER_STAND / (Constants.DEFAULT_WIDTH_STAND / posXCleaned));
     }
 
     // Function to draw a rounded rectangle with a default radius of 8
@@ -329,11 +356,7 @@ export class DrawingService {
             this.playAreaCanvas.font = '12px bold system-ui';
             const letterWeight = player.stand[j].letter.weight;
             if (letterWeight) {
-                this.playAreaCanvas.fillText(
-                    letterWeight.toString(),
-                    x + Constants.SIZE_OUTER_BORDER_STAND + spaceForNumber.x,
-                    i + spaceForNumber.y,
-                );
+                this.playAreaCanvas.fillText(letterWeight.toString(), x + Constants.SIZE_OUTER_BORDER_STAND + spaceForNumber.x, i + spaceForNumber.y);
             }
             this.playAreaCanvas.stroke();
         }
