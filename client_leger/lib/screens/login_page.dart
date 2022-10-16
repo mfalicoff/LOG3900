@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:client_leger/screens/home_page.dart';
 import 'package:client_leger/services/controller.dart';
 import 'package:client_leger/screens/signup_page.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
 
-import '../models/user.dart';
 
 
 class LoginPage extends StatelessWidget {
@@ -180,9 +180,9 @@ class _LoginFormState extends State<LoginForm> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try{
-        User user = await controller.login(email: email, password: password);
+        globals.userLoggedIn = await controller.login(email: email, password: password);
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => MyHomePage(user: user)));
+            MaterialPageRoute(builder: (context) => MyHomePage()));
       } on Exception{
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text("Impossible de se connecter"),

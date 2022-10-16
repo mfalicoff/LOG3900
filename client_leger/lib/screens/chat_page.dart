@@ -4,6 +4,7 @@ import 'package:client_leger/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
 
 import '../env/environment.dart';
 import '../models/chat.dart';
@@ -59,7 +60,6 @@ class _MyChatPageState extends State<ChatPage> {
               msg: data['msg'],
               sender: data['sender'],
               timestamp: data['timestamp']));
-
         });
         scrollMessages();
       }
@@ -68,8 +68,6 @@ class _MyChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = ModalRoute.of(context)!.settings.arguments as User;
-
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(),
@@ -94,10 +92,10 @@ class _MyChatPageState extends State<ChatPage> {
                   controller: _scrollController,
                   itemBuilder: (context, index) {
                     return Column(
-                      crossAxisAlignment:
-                          chatHistory[index].sender == user.username
-                              ? CrossAxisAlignment.end
-                              : CrossAxisAlignment.start,
+                      crossAxisAlignment: chatHistory[index].sender ==
+                              globals.userLoggedIn.username
+                          ? CrossAxisAlignment.end
+                          : CrossAxisAlignment.start,
                       children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
@@ -109,14 +107,14 @@ class _MyChatPageState extends State<ChatPage> {
                           ),
                         ),
                         Row(
-                          mainAxisAlignment:
-                              chatHistory[index].sender == user.username
-                                  ? MainAxisAlignment.end
-                                  : MainAxisAlignment.start,
+                          mainAxisAlignment: chatHistory[index].sender ==
+                                  globals.userLoggedIn.username
+                              ? MainAxisAlignment.end
+                              : MainAxisAlignment.start,
                           children: [
                             Visibility(
-                              visible:
-                                  chatHistory[index].sender == user.username,
+                              visible: chatHistory[index].sender ==
+                                  globals.userLoggedIn.username,
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 10, 0),
                                 child: Text(
@@ -140,7 +138,8 @@ class _MyChatPageState extends State<ChatPage> {
                                     width: 2.0,
                                   ),
                                   borderRadius: const BorderRadius.all(
-                                      Radius.circular(18)),
+                                    Radius.circular(18),
+                                  ),
                                 ),
                                 padding: const EdgeInsets.only(
                                     left: 25, right: 25, top: 8, bottom: 8),
@@ -154,8 +153,8 @@ class _MyChatPageState extends State<ChatPage> {
                               ),
                             ),
                             Visibility(
-                              visible:
-                                  chatHistory[index].sender != user.username,
+                              visible: chatHistory[index].sender !=
+                                  globals.userLoggedIn.username,
                               child: Padding(
                                 padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                                 child: Text(
@@ -190,7 +189,7 @@ class _MyChatPageState extends State<ChatPage> {
                         controller: msgController,
                         textInputAction: TextInputAction.send,
                         onSubmitted: (value) {
-                          sendMessage(user);
+                          sendMessage(globals.userLoggedIn);
                           _focusNode.requestFocus();
                         },
                         decoration: InputDecoration(
@@ -209,7 +208,7 @@ class _MyChatPageState extends State<ChatPage> {
                       width: 15,
                     ),
                     FloatingActionButton(
-                      onPressed: () => {sendMessage(user)},
+                      onPressed: () => {sendMessage(globals.userLoggedIn)},
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       elevation: 0,
                       child: Icon(
@@ -242,7 +241,6 @@ class _MyChatPageState extends State<ChatPage> {
       });
       scrollMessages();
       socket.emit("chat msg", chat);
-
     }
     message = "";
     msgController.clear();
@@ -252,10 +250,9 @@ class _MyChatPageState extends State<ChatPage> {
     return message.isEmpty || message.trim() == '';
   }
 
-  void scrollMessages(){
+  void scrollMessages() {
     Timer(const Duration(milliseconds: 50), () {
-      _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 200),
           curve: Curves.fastOutSlowIn);
     });

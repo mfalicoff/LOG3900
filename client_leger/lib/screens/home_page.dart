@@ -1,14 +1,12 @@
-import 'package:client_leger/screens/game_page.dart';
 import 'package:client_leger/services/controller.dart';
 
 import 'package:flutter/material.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
 
-import '../models/user.dart';
+import 'game_list_page.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({required this.user,super.key});
-
-  final User user;
+  const MyHomePage({Key? key}) : super(key: key);
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -24,17 +22,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   final Controller controller = Controller();
 
   @override
   Widget build(BuildContext context) {
-
     return Stack(
       children: <Widget>[
         Container(
           decoration: const BoxDecoration(
-            image: DecorationImage(image: AssetImage("assets/background.jpg"), fit: BoxFit.cover,),
+            image: DecorationImage(
+              image: AssetImage("assets/background.jpg"),
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         Positioned(
@@ -43,62 +42,59 @@ class _MyHomePageState extends State<MyHomePage> {
             child: ElevatedButton(
                 style: ButtonStyle(
                     padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 18.0, horizontal: 0.0),
+                      const EdgeInsets.symmetric(
+                          vertical: 18.0, horizontal: 0.0),
                     ),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100.0)
-                        )
-                    )
-                ),
+                            borderRadius: BorderRadius.circular(100.0)))),
                 onPressed: _toChatPage,
-                child: const Icon(Icons.chat))
-        ),
+                child: const Icon(Icons.chat))),
         Positioned(
-            top: 10.0,
-            left: 30.0,
-            child: ElevatedButton(
-                style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0)
-                        )
-                    )
+          top: 10.0,
+          left: 30.0,
+          child: ElevatedButton(
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(
+                const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
+              ),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
-                onPressed: _logout,
-                child: const Icon(Icons.logout))
+              ),
+            ),
+            onPressed: _logout,
+            child: const Icon(Icons.logout),
+          ),
         ),
         Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(onPressed: _toGameListPage, child: const Text("Mode Classique"))
-              ],
-            )
-        )
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _toGameListPage,
+                child: const Text("Mode Classique"),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
 
   void _toChatPage() {
-    Navigator.of(context).pushNamed('/chat', arguments: widget.user
-    );
+    Navigator.of(context).pushNamed('/chat');
   }
 
   void _toGameListPage() {
-    Navigator.of(context).push(
-        MaterialPageRoute(
-            builder: (context) => const GamePage()
-        )
-    );
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const GameListPage()));
   }
 
   void _logout() {
-    controller.logout(widget.user);
+    controller.logout(globals.userLoggedIn);
     Navigator.of(context).pop();
   }
 }
