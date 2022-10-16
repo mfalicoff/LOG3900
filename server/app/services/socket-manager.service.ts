@@ -249,8 +249,23 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('gameBoardUpdate', game);
         });
 
-        socket.on("removeTileFromStand", (tile: Tile) => {
-            console.log("removeTileFromStand");
+        socket.on("rmTempLetterBoard", (idxsTileToRm) => {
+            console.log("rmTempLetterBoard at: " + idxsTileToRm.x + " " + idxsTileToRm.y);
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.mouseEventService.rmTempLetterBoard(game, idxsTileToRm);
+            // We send to all clients a gameState
+            this.gameUpdateClients(game);
+        });
+
+        socket.on("rmTileFromStand", (tile: Tile) => {
+            console.log("rmTileFromStand");
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -264,6 +279,24 @@ export class SocketManager {
                 return;
             }
             this.mouseEventService.rmTileFromStand(player, tile);
+            this.gameUpdateClients(game);
+        });
+
+        socket.on("addTileToStand", (letterToAdd)=>{
+            console.log("addTileToStand");
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.mouseEventService.addTileToStand(game, player, letterToAdd);
             this.gameUpdateClients(game);
         });
 
@@ -357,6 +390,7 @@ export class SocketManager {
         });
 
         socket.on("drawVerticalArrow", (arrowCoords)=>{
+            console.log("VerticalarrowCoords" + arrowCoords.x + " " + arrowCoords.y);
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -365,10 +399,14 @@ export class SocketManager {
             if (!game) {
                 return;
             }
+            //there can never be multiples arrows on the board so we clear 
+            //the canvas first
+            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
             this.sio.to(game.roomName).emit('drawVerticalArrow', arrowCoords);
         });
 
         socket.on("drawHorizontalArrow", (arrowCoords)=>{
+            console.log("HorizontalarrowCoords" + arrowCoords.x + " " + arrowCoords.y);
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -377,6 +415,9 @@ export class SocketManager {
             if (!game) {
                 return;
             }
+            //there can never be multiples arrows on the board so we clear 
+            //the canvas first
+            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
             this.sio.to(game.roomName).emit('drawHorizontalArrow', arrowCoords);
         });
     }

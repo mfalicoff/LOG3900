@@ -46,6 +46,9 @@ export class PlaceGraphicService {
                 }
                 const placeMsg: string = this.createPlaceMessage();
                 console.log("placeMsg: " + placeMsg);
+                //clear the tmporary canvas to get rid of all unecessary drawings
+                //for example the arrow
+                this.socketService.socket.emit("clearTmpTileCanvas");
                 this.socketService.socket.emit('newMessageClient', placeMsg);
                 this.resetVariablePlacement();
                 //TODO remove this line if everything works
@@ -54,8 +57,12 @@ export class PlaceGraphicService {
             }
             case 'Backspace': {
                 if (!this.drawingBoardService.lettersDrawn || this.placeMethodIsDragDrop) {
+                    console.log("backspace not comming");
+                    console.log("lettersDrawn: " + this.drawingBoardService.lettersDrawn);
+                    console.log("placeMethodIsDragDrop: " + this.placeMethodIsDragDrop);
                     return;
                 }
+                console.log("backspace incomming");
                 this.deleteLetterPlacedOnBoard(game, player);
                 this.drawingBoardService.isArrowPlaced = this.drawingBoardService.lettersDrawn.length !== 0;
                 return;
@@ -96,7 +103,7 @@ export class PlaceGraphicService {
         // do we care ? It's a bug bug maybe too small to care about
         // to discuss
         // this.drawingService.removeTile(player.stand[letterPos]);
-        this.socketService.socket.emit("removeTileFromStand", player.stand[letterPos]);
+        this.socketService.socket.emit("rmTileFromStand", player.stand[letterPos]);
 
         const xIndex = this.drawingBoardService.arrowPosX;
         const yIndex = this.drawingBoardService.arrowPosY;
@@ -204,58 +211,85 @@ export class PlaceGraphicService {
         this.checkIfThereAreLettersBefore(game, false);
         if (this.drawingBoardService.isArrowVertical) {
             if (this.drawingBoardService.arrowPosY <= Constants.NUMBER_SQUARE_H_AND_W) {
-                this.drawingBoardService.drawTileAtPos(
-                    this.drawingBoardService.arrowPosX - 1,
-                    game.bonusBoard,
-                    this.drawingBoardService.arrowPosY - 1,
-                    1,
-                ); // erase arrow
+                //TODO remove this when everything works
+                // delete the arrow
+                // this.drawingBoardService.drawTileAtPos(
+                //     this.drawingBoardService.arrowPosX - 1,
+                //     game.bonusBoard,
+                //     this.drawingBoardService.arrowPosY - 1,
+                //     1,
+                // );
+                // delete the arrow
+                this.socketService.socket.emit("clearTmpTileCanvas");
             }
             while (game.board[this.drawingBoardService.arrowPosY - 1][this.drawingBoardService.arrowPosX].old) {
                 this.drawingBoardService.arrowPosY -= 1;
             }
 
-            this.drawingBoardService.removeTile(game.board[this.drawingBoardService.arrowPosY - 1][this.drawingBoardService.arrowPosX]);
+            //TODO uncomment if nothing works
+            // this.drawingBoardService.removeTile(game.board[this.drawingBoardService.arrowPosY - 1][this.drawingBoardService.arrowPosX]);
 
-            this.drawingBoardService.drawTileAtPos(
-                this.drawingBoardService.arrowPosX - 1,
-                game.bonusBoard,
-                this.drawingBoardService.arrowPosY - 2,
-                1,
-            ); // erase tile
+            //TODO remove this when everything works
+            // this.drawingBoardService.drawTileAtPos(
+            //     this.drawingBoardService.arrowPosX - 1,
+            //     game.bonusBoard,
+            //     this.drawingBoardService.arrowPosY - 2,
+            //     1,
+            // ); // erase tile
+
+            this.socketService.socket.emit("rmTempLetterBoard", {
+                x: this.drawingBoardService.arrowPosX,
+                y: this.drawingBoardService.arrowPosY - 1,
+            });
         } else {
             if (this.drawingBoardService.arrowPosX <= Constants.NUMBER_SQUARE_H_AND_W) {
-                this.drawingBoardService.drawTileAtPos(
-                    this.drawingBoardService.arrowPosX - 1,
-                    game.bonusBoard,
-                    this.drawingBoardService.arrowPosY - 1,
-                    1,
-                );
+                //TODO remove this when everything works
+                // delete the arrow
+                // this.drawingBoardService.drawTileAtPos(
+                //     this.drawingBoardService.arrowPosX - 1,
+                //     game.bonusBoard,
+                //     this.drawingBoardService.arrowPosY - 1,
+                //     1,
+                // );
+                // delete the arrow
+                this.socketService.socket.emit("clearTmpTileCanvas");
             }
             while (game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX - 1].old) {
                 this.drawingBoardService.arrowPosX -= 1;
             }
-            this.drawingBoardService.removeTile(game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX - 1]);
-            this.drawingBoardService.drawTileAtPos(
-                this.drawingBoardService.arrowPosX - 2,
-                game.bonusBoard,
-                this.drawingBoardService.arrowPosY - 1,
-                1,
-            );
+            //TODO uncomment if nothing works
+            // this.drawingBoardService.removeTile(game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX - 1]);
+            
+            //TODO uncomment if nothing works
+            // this.drawingBoardService.drawTileAtPos(
+            //     this.drawingBoardService.arrowPosX - 2,
+            //     game.bonusBoard,
+            //     this.drawingBoardService.arrowPosY - 1,
+            //     1,
+            // );
+            this.socketService.socket.emit("rmTempLetterBoard", {
+                x: this.drawingBoardService.arrowPosX - 1,
+                y: this.drawingBoardService.arrowPosY,
+            });
         }
         let letterTofind: string = this.drawingBoardService.lettersDrawn[this.drawingBoardService.lettersDrawn.length - 1];
         if (letterTofind.toUpperCase() === letterTofind) {
             letterTofind = '*';
         }
-        const letterPos = this.findIndexLetterInStandForPlacement(letterTofind, true, player);
-        if (letterPos !== Constants.DEFAULT_VALUE_NUMBER) {
-            this.drawingService.drawOneLetter(
-                letterTofind,
-                player.stand[letterPos],
-                this.drawingService.playAreaCanvas,
-                this.infoClientService.letterBank,
-            );
-        }
+        //TODO remove this if everything works
+        // const letterPos = this.findIndexLetterInStandForPlacement(letterTofind, true, player);
+        // if (letterPos !== Constants.DEFAULT_VALUE_NUMBER) {
+            // this.drawingService.drawOneLetter(
+            //     letterTofind,
+            //     player.stand[letterPos],
+            //     this.drawingService.playAreaCanvas,
+            //     this.infoClientService.letterBank,
+            // );
+        // }
+
+        //add the letter to the stand logically and visually
+        this.socketService.socket.emit("addTileToStand", letterTofind);
+
         this.drawingBoardService.lettersDrawn = this.drawingBoardService.lettersDrawn.substr(0, this.drawingBoardService.lettersDrawn.length - 1);
         if (this.drawingBoardService.isArrowVertical) {
             if (this.drawingBoardService.arrowPosY - 1 === this.startLettersPlacedPosY || this.areAllLettersBeforeOld(game)) {
@@ -269,7 +303,7 @@ export class PlaceGraphicService {
             // this.drawingBoardService.drawVerticalArrowDirection(this.drawingBoardService.arrowPosX, this.drawingBoardService.arrowPosY - 1);
             this.socketService.socket.emit("drawVerticalArrow", {
                 x: this.drawingBoardService.arrowPosX,
-                y: this.drawingBoardService.arrowPosY,
+                y: this.drawingBoardService.arrowPosY - 1,
             });
         } else {
             if (this.drawingBoardService.arrowPosX - 1 === this.startLettersPlacedPosX || this.areAllLettersBeforeOld(game)) {
@@ -282,7 +316,7 @@ export class PlaceGraphicService {
             //TODO delete this if everything works
             // this.drawingBoardService.drawHorizontalArrowDirection(this.drawingBoardService.arrowPosX - 1, this.drawingBoardService.arrowPosY);
             this.socketService.socket.emit("drawHorizontalArrow", {
-                x: this.drawingBoardService.arrowPosX,
+                x: this.drawingBoardService.arrowPosX - 1,
                 y: this.drawingBoardService.arrowPosY,
             });
         }

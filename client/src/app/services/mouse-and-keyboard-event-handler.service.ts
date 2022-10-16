@@ -60,7 +60,7 @@ export class MouseKeyboardEventHandlerService {
         this.drawingBoardService.coordsLettersDrawn.push(posDropBoardIdxs);
         console.log("coordsLettersDrawn: " + this.drawingBoardService.coordsLettersDrawn);
         //remove the tile from the stand logically and visually
-        this.socketService.socket.emit("removeTileFromStand", tileDropped);
+        this.socketService.socket.emit("rmTileFromStand", tileDropped);
         //ask for update board logic for a temporary tile
         this.socketService.socket.emit('addTempLetterBoard', 
             tileDropped.letter.value, 
@@ -159,6 +159,10 @@ export class MouseKeyboardEventHandlerService {
         }
         event.preventDefault();
         const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
+
+        if(this.drawingBoardService.lettersDrawn === ""){
+            this.placeGraphicService.placeMethodIsDragDrop = false;
+        }
 
         if (this.infoClientService.isTurnOurs) {
             if (this.drawingBoardService.lettersDrawn) {

@@ -147,6 +147,12 @@ export class MouseEventService {
         game.board[yIndex][xIndex].borderColor = '#ffaaff';
     }
 
+    rmTempLetterBoard(game: GameServer, idxsTileToRm: Vec2){
+        game.board[idxsTileToRm.y][idxsTileToRm.x].letter.value = '';
+        game.board[idxsTileToRm.y][idxsTileToRm.x].letter.weight = 0;
+        game.board[idxsTileToRm.y][idxsTileToRm.x].borderColor = '#212121';
+    }
+
     rmTileFromStand(player: Player, tileToRm: Tile){
         for(let i = 0; i < player.stand.length; i++){
             if(player.stand[i].position.x1 !== tileToRm.position.x1){
@@ -155,6 +161,10 @@ export class MouseEventService {
             this.standService.deleteLetterStandLogic(tileToRm.letter.value, i, player);
             break;
         }
+    }
+
+    addTileToStand(game: GameServer, player: Player, letterToAdd: string){
+        this.standService.putLettersOnStand(game, letterToAdd, player);
     }
 
     onBoardToStandDrop(tileDropped: Tile, standIdx: number, player: Player, game: GameServer) {

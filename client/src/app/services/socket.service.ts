@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
+import { PlaceGraphicService } from './place-graphic.service';
 import { TimerService } from './timer.service';
 
 @Injectable({
@@ -26,6 +27,7 @@ export class SocketService {
         private drawingBoardService: DrawingBoardService,
         private timerService: TimerService,
         private drawingService: DrawingService,
+        private placeGraphicsService: PlaceGraphicService,
     ) {
         this.socket = io(this.urlString);
         this.socketListen();

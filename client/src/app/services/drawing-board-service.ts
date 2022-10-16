@@ -214,6 +214,7 @@ export class DrawingBoardService {
             }
         }
 
+        console.log("draws arrows");
         // if this is our turn and we just put a letter on the board we redraw the arrow too
         if (this.infoClientService.isTurnOurs && this.isArrowPlaced && this.lettersDrawn) {
             if (this.isArrowVertical) {
@@ -244,47 +245,47 @@ export class DrawingBoardService {
     }
 
     drawHorizontalArrowDirection(verticalPosTile: number, horizontalPosTile: number) {
-        this.playAreaCanvas.strokeStyle = '#54534A';
-        this.playAreaCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
-        this.playAreaCanvas.beginPath();
+        this.tmpTileCanvas.strokeStyle = '#54534A';
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
+        this.tmpTileCanvas.beginPath();
         const oneFifthOfTile = 5;
         const oneFifthOfTileInDecimal = 1.25;
         const startPosXPx = this.startingPosPxOfTile(verticalPosTile - 1);
         const startPosYPx = this.startingPosPxOfTile(horizontalPosTile - 1);
-        this.playAreaCanvas.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playAreaCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playAreaCanvas.stroke();
-        this.playAreaCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
-        this.playAreaCanvas.stroke();
-        this.playAreaCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playAreaCanvas.stroke();
-        this.playAreaCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
-        this.playAreaCanvas.stroke();
+        this.tmpTileCanvas.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
+        this.tmpTileCanvas.stroke();
         this.arrowPosX = verticalPosTile;
         this.arrowPosY = horizontalPosTile;
-        this.playAreaCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
     }
 
     drawVerticalArrowDirection(verticalPosTile: number, horizontalPosTile: number) {
-        this.playAreaCanvas.strokeStyle = '#54534A';
-        this.playAreaCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
-        this.playAreaCanvas.beginPath();
+        this.tmpTileCanvas.strokeStyle = '#54534A';
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
+        this.tmpTileCanvas.beginPath();
         const oneFifthOfTile = 5;
         const oneFifthOfTileInDecimal = 1.25;
         const startPosXPx = this.startingPosPxOfTile(verticalPosTile - 1);
         const startPosYPx = this.startingPosPxOfTile(horizontalPosTile - 1);
-        this.playAreaCanvas.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
-        this.playAreaCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
-        this.playAreaCanvas.stroke();
-        this.playAreaCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playAreaCanvas.stroke();
-        this.playAreaCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
-        this.playAreaCanvas.stroke();
-        this.playAreaCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playAreaCanvas.stroke();
+        this.tmpTileCanvas.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.stroke();
         this.arrowPosX = verticalPosTile;
         this.arrowPosY = horizontalPosTile;
-        this.playAreaCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
     }
 
     drawTileAtPos(xPos: number, bonusBoard: string[][], yPos: number, width?: number) {
@@ -387,13 +388,6 @@ export class DrawingBoardService {
             return; // if it does then we dont draw an arrow
         }
 
-        // check if there was an arrow before and check if there is no tile on top of it
-        if ((this.arrowPosX <= Constants.NUMBER_SQUARE_H_AND_W, this.arrowPosY <= Constants.NUMBER_SQUARE_H_AND_W)) {
-            if (this.arrowPosX >= 0 && !board[this.arrowPosY][this.arrowPosX].old) {
-                // redraw empty tile if there was an arrow before
-                this.drawTileAtPos(this.arrowPosX - 1, bonusBoard, this.arrowPosY - 1, 1);
-            }
-        }
         if (this.arrowPosX !== coordsIndexOnBoard.x || this.arrowPosY !== coordsIndexOnBoard.y) {
             // if the tile clicked is another tile then reset the arrow direction
             this.isArrowVertical = true;
@@ -403,16 +397,18 @@ export class DrawingBoardService {
             //TODO delete this if everything works
             // this.drawHorizontalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
             socket.emit("drawHorizontalArrow", {
-                x: this.arrowPosX,
-                y: this.arrowPosY,
+                x: coordsIndexOnBoard.x,
+                y: coordsIndexOnBoard.y,
             });
+            console.log("Horizontal placing arrow" + this.arrowPosX + " " + this.arrowPosY);
         } else {
             //TODO delete this if everything works
             // this.drawVerticalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
             socket.emit("drawVerticalArrow", {
-                x: this.arrowPosX,
-                y: this.arrowPosY,
+                x: coordsIndexOnBoard.x,
+                y: coordsIndexOnBoard.y,
             });
+            console.log("Horizontal placing arrow" + this.arrowPosX + " " + this.arrowPosY);
         }
         this.isArrowVertical = !this.isArrowVertical;
     }

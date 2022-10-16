@@ -81,7 +81,7 @@ export class StandService {
         this.deleteLetterInStandMap(letterToRemove, player);
     }
     
-    //function that puts an array of letters on the stand
+    //function that puts an string of letters on the stand
     //we do not care of the place of the letters on the stand
     putLettersOnStand(game: GameServer, letters: string, player: Player) {
         //loop through the letters to place
