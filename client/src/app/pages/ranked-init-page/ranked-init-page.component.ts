@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { InfoClientService } from '@app/services/info-client.service';
 
 @Component({
     selector: 'app-ranked-init-page',
@@ -6,10 +7,15 @@ import { Component } from '@angular/core';
     styleUrls: ['./ranked-init-page.component.scss'],
 })
 export class RankedInitPageComponent {
+    constructor(public infoClientService: InfoClientService){
+
+    }
     eloDisparity: number = 60;
 
     onEloDisparityChange(value: any) {
         this.eloDisparity = value.value;
-        console.log(this.eloDisparity);
+    }
+    onConfirm() {
+        this.infoClientService.eloDisparity = this.eloDisparity;
     }
 }

@@ -16,8 +16,8 @@ html {
 #container {
     position: absolute;
     width: 30%;
-    height: 30%;
-    bottom: 35%;
+    height: 40%;
+    bottom: 30%;
     left: 35%;
     background-color: white;
     z-index: 2;
@@ -26,6 +26,25 @@ html {
     font-size: large;
     border-radius: 25px;
     justify-content: center;
+}
+
+.font-size-30 {
+    font-size: 30px;
+}
+
+#refuse-button {
+    font-size: 30px;
+    left:-20px;
+    background-color: wheat;
+}
+#accept-button {
+    font-size: 30px;
+    left:20px;
+    background-color: wheat;
+}
+.close-button {
+    left:20px;
+    background-color: wheat;
 }
 
 .container-1 {
@@ -57,9 +76,6 @@ html {
     margin-top: 20px;
 }
 
-#tableRoom td {
-    border-bottom: 2px solid wheat;
-}
 
 /* The Modal (background) */
 .modal {
@@ -97,3 +113,5 @@ mat-spinner {
 .mat-spinner-color::ng-deep circle{
     stroke: wheat !important;
     }
+
+

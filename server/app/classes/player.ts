@@ -5,6 +5,8 @@ import { Tile } from './tile';
 export class Player {
     idPlayer: string;
     name: string;
+    elo: number;
+    eloDisparity: number;
     stand: Tile[];
 
     isCreatorOfGame: boolean;

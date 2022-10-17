@@ -9,7 +9,8 @@
                         <br />
                         <p>{{ this.eloDisparity }}</p>
                         <mat-slider min="20" max="100" step="1" value="60" (change)="onEloDisparityChange($event)"></mat-slider>
-                        <button mat-flat-button class="button" routerLink="/ranked-matchmaking">Confirm</button>
+                        <br />
+                        <button mat-flat-button class="startButton" (click)="onConfirm()" routerLink="/ranked-matchmaking">Confirm</button>
                     </div>
                 </div>
             </div>

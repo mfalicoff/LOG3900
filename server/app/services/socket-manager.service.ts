@@ -17,6 +17,7 @@ import { ChatService } from './chat.service';
 import { CommunicationBoxService } from './communication-box.service';
 import { DatabaseService } from './database.service';
 import { DictionaryService } from './dictionary.service';
+import { MatchmakingService } from './matchmaking.service';
 import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PutLogicService } from './put-logic.service';
@@ -42,6 +43,7 @@ export class SocketManager {
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
+        private matchmakingService: MatchmakingService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -268,6 +270,7 @@ export class SocketManager {
         this.putLogicService.initSioPutLogic(this.sio);
         this.mouseEventService.initSioMouseEvent(this.sio);
         this.playAreaService.initSioPlayArea(this.sio);
+        this.matchmakingService.initSioMatchmaking(this.sio);
 
         const timeForClientToInitialize = 1000;
         // launches the game automatically if the mode is solo
@@ -359,6 +362,9 @@ export class SocketManager {
             // emit to change page on client after verification
             socket.emit('roomChangeAccepted', '/game');
         });
+        socket.on('startMatchmaking',({player}) => {
+            this.matchmakingService.findARoomForPlayer(player);
+        })
 
         socket.on('joinRoom', ({ roomName, playerId }) => {
             const userData = this.users.get(playerId);
@@ -494,6 +500,7 @@ export class SocketManager {
                 this.putLogicService.initSioPutLogic(this.sio);
                 this.playAreaService.initSioPlayArea(this.sio);
                 this.mouseEventService.initSioMouseEvent(this.sio);
+                this.matchmakingService.initSioMatchmaking(this.sio);
 
                 // we start the game
                 this.playAreaService.playGame(game);

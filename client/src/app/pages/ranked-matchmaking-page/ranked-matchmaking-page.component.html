@@ -9,7 +9,14 @@
                         <br />
                         <mat-spinner class='mat-spinner-color'></mat-spinner>
                         <br />
-                        {{timerService.displayTimer}}
+                        <div class= "font-size-30" >{{timerService.displayTimer}}</div>
+                        <div class="modal" *ngIf="this.rankedService.matchFound">
+                            <div class="modal-content" >
+                                <h1>Partie trouvée</h1>
+                                <button id="refuse-button" (click)="acceptMatch()">Accepter</button>
+                                <button id="accept-button" (click)="refuseMatch()">Refuser</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

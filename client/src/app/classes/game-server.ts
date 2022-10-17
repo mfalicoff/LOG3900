@@ -3,8 +3,8 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers*/
 import * as GlobalConstants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
-import { Spectator } from './spectator';
 import { Player } from './player';
+import { Spectator } from './spectator';
 import { Tile } from './tile';
 import { Trie } from './trie';
 

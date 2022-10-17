@@ -4,17 +4,18 @@ import { CommunicationBoxService } from '@app/services/communication-box.service
 import { MouseEventService } from '@app/services/mouse-event.service';
 import { SocketManager } from '@app/services/socket-manager.service';
 import * as http from 'http';
+import { connect } from 'mongoose';
 import { AddressInfo } from 'net';
 import { Service } from 'typedi';
+import * as GlobalConstants from './classes/global-constants';
+import { DATABASE_DEV } from './classes/global-constants';
 import { BoardService } from './services/board.service';
 import { ChatService } from './services/chat.service';
 import { DatabaseService } from './services/database.service';
 import { DictionaryService } from './services/dictionary.service';
+import { MatchmakingService } from './services/matchmaking.service';
 import { PlayAreaService } from './services/play-area.service';
 import { PutLogicService } from './services/put-logic.service';
-import { connect } from 'mongoose';
-import * as GlobalConstants from './classes/global-constants';
-import { DATABASE_DEV } from './classes/global-constants';
 
 const baseDix = 10;
 
@@ -47,6 +48,7 @@ export class Server {
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
+        private matchmakingService: MatchmakingService,
     ) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -74,6 +76,7 @@ export class Server {
             this.putLogicService,
             this.databaseService,
             this.dictionaryService,
+            this.matchmakingService,
         );
         this.socketManager.handleSockets();
 

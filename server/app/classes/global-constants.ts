@@ -129,6 +129,7 @@ export const UNCOMPLETED_OBJECTIVE = 'uncompleted';
 /// //GAME MODE CONSTANTS
 export const MODE_SOLO = 'Solo';
 export const MODE_MULTI = 'Multi';
+export const MODE_RANKED = 'Ranked';
 
 // END GAME SERVICE CONSTANTS
 export const PLAYER_WIN = 'playerWin';

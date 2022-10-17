@@ -269,6 +269,7 @@ export class PlayAreaService {
 
         // we send an update of the player object for each respective client
         for (const player of game.mapPlayers.values()) {
+            console.log(player);
             this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
         }
     }

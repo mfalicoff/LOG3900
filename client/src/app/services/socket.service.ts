@@ -11,6 +11,7 @@ import { environment } from 'src/environments/environment';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
+import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
 
 @Injectable({
@@ -25,6 +26,7 @@ export class SocketService {
         private infoClientService: InfoClientService,
         private drawingBoardService: DrawingBoardService,
         private timerService: TimerService,
+        private rankedService: RankedService,
         private drawingService: DrawingService,
     ) {
         this.socket = io(this.urlString);
@@ -154,6 +156,11 @@ export class SocketService {
     }
 
     private otherSocketOn() {
+        this.socket.on('matchFound', (player) => {
+        this.infoClientService.player = player;
+        console.log('asd');
+        this.rankedService.matchFound = true;
+        })
         this.socket.on('messageServer', (message) => {
             alert(message);
         });

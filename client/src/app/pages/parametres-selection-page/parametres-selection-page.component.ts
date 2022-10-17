@@ -103,19 +103,6 @@ export class ParametresSelectionPageComponent implements OnInit {
         }
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
     }
-    createRoomRanked() {
-        this.infoClientService.initializeService();
-        this.socketService.socket.emit('createRoomAndGame', {
-            roomName: this.infoClientService.playerName,
-            playerName: this.infoClientService.playerName,
-            timeTurn: 60,
-            isBonusRandom: false,
-            gameMode: this.infoClientService.gameMode,
-            vpLevel: '',
-            isGamePrivate: false,
-            passwd: '',
-        });
-    }
     private timeSelection(interval: string) {
         switch (interval) {
             case '30 sec':

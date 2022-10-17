@@ -16,6 +16,7 @@ export class InfoClientService {
 
     gameMode: string;
     isLog2990Enabled: boolean;
+    eloDisparity: number;
 
     // Game parameters
     minutesByTurn: number;
