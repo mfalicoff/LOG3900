@@ -28,9 +28,13 @@ class _GameBoardState extends State<GameBoard> {
             height: constraints.maxWidth < constraints.maxHeight
                 ? constraints.maxWidth
                 : constraints.maxHeight,
-            child: CustomPaint(
-              painter: BoardPainter(board),
-            ),
+            child:Padding(
+              padding: const EdgeInsets.all(10),
+              child: CustomPaint(
+                painter: BoardPainter(board),
+              ),
+            )
+
           ),
         ),
         ElevatedButton(

@@ -31,3 +31,5 @@ const Map<int, String> indexToLetter = {
   14 : "N",
   15 : "O",
 };
+
+//CONSTANTS FOR
