@@ -20,6 +20,8 @@ import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PutLogicService } from './put-logic.service';
 import { ChatMessage } from '@app/classes/chat-message.interface';
+import { Tile } from '@app/classes/tile';
+import { StandService } from './stand.service';
 
 @Service()
 export class SocketManager {
@@ -42,6 +44,7 @@ export class SocketManager {
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
+        private standService: StandService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -179,7 +182,6 @@ export class SocketManager {
         });
 
         socket.on('rightClickExchange', (coordinateXClick) => {
-            // TODO UNCOMMENT THIS LATER
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -242,9 +244,173 @@ export class SocketManager {
                 return;
             }
             this.mouseEventService.addTempLetterBoard(game, keyEntered, xIndex, yIndex);
-
             // We send to all clients a gameState
             this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+        });
+
+        socket.on('rmTempLetterBoard', (idxsTileToRm) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.mouseEventService.rmTempLetterBoard(game, idxsTileToRm);
+            // We send to all clients a gameState
+            this.gameUpdateClients(game);
+        });
+
+        socket.on('rmTileFromStand', (tile: Tile) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.mouseEventService.rmTileFromStand(player, tile);
+            this.gameUpdateClients(game);
+        });
+
+        socket.on('addTileToStand', (letterToAdd) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.mouseEventService.addTileToStand(game, player, letterToAdd);
+            this.gameUpdateClients(game);
+        });
+
+        socket.on('onBoardToStandDrop', (tileDropped, standIdx) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.mouseEventService.onBoardToStandDrop(tileDropped, standIdx, player, game);
+            this.gameUpdateClients(game);
+        });
+
+        socket.on('onBoardToBoardDrop', (posClickedTileIdxs, posDropBoardIdxs) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.mouseEventService.onBoardToBoardDrop(game, posClickedTileIdxs, posDropBoardIdxs);
+            this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+        });
+
+        socket.on('drawBorderTileForTmpHover', (boardIndexs) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.sio.to(game.roomName).emit('drawBorderTileForTmpHover', boardIndexs);
+        });
+
+        socket.on('tileDraggedOnCanvas', (clickedTile, mouseCoords) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.sio.to(game.roomName).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
+        });
+
+        socket.on('clearTmpTileCanvas', () => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
+        });
+
+        socket.on('escapeKeyPressed', (tmpLettersOnBoard) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.boardService.rmTempTiles(game);
+            this.standService.putLettersOnStand(game, tmpLettersOnBoard, player);
+            // we tell all the client to clear the clearTmpTileCanvas
+            this.sio.to(game.roomName).emit('clearTmpTileCanvas', game);
+            // we update the board state
+            this.gameUpdateClients(game);
+        });
+
+        socket.on('drawVerticalArrow', (arrowCoords) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            // there can never be multiples arrows on the board so we clear
+            // the canvas first
+            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
+            this.sio.to(game.roomName).emit('drawVerticalArrow', arrowCoords);
+        });
+
+        socket.on('drawHorizontalArrow', (arrowCoords) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            // there can never be multiples arrows on the board so we clear
+            // the canvas first
+            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
+            this.sio.to(game.roomName).emit('drawHorizontalArrow', arrowCoords);
         });
     }
 
@@ -634,7 +800,9 @@ export class SocketManager {
                 (player) => player.idPlayer !== 'virtualPlayer' && player.idPlayer !== playerThatLeaves?.idPlayer,
             ).length;
 
-            if (nbRealPlayer >= 1) {
+            const nbSpectators = Array.from(game.mapSpectators.values()).length;
+
+            if (nbRealPlayer >= 1 || nbSpectators >= 1) {
                 // we send to the opponent a update of the game
                 const waitBeforeAbandonment = 3000;
                 setTimeout(() => {

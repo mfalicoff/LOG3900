@@ -1,8 +1,22 @@
-<canvas 
+<div if="container">
+    <!-- canvas for actual board and mooves -->
+    <canvas 
     #canvasPlayArea
-    id="canvas" 
+    id="canvasPlayArea"
+    class="canvas"
     [attr.width]="playAreaConvasSize.x" 
     [attr.height]="playAreaConvasSize.y" 
-    (click)="onCanvasLeftClick($event)"
-    (contextmenu)="onCanvasRightClick($event)" 
-></canvas>
+    (contextmenu)="$event.preventDefault()"
+    ></canvas>
+    <!-- canvas for drag and drop and drawing of every arrows 
+    border on hover placement -->
+    <canvas 
+    #tmpTileCanvas
+    id="tmpTileCanvas"
+    class="canvas"
+    [attr.width]="playAreaConvasSize.x" 
+    [attr.height]="playAreaConvasSize.y" 
+    (contextmenu)="$event.preventDefault()"
+    ></canvas>
+</div>
+

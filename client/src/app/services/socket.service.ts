@@ -36,6 +36,30 @@ export class SocketService {
         this.otherSocketOn();
         this.gameUpdateHandler();
         this.timerHandler();
+        this.canvasActionsHandler();
+    }
+
+    private canvasActionsHandler() {
+        this.socket.on('clearTmpTileCanvas', () => {
+            this.drawingBoardService.clearCanvas(this.drawingBoardService.tmpTileCanvas);
+        });
+
+        this.socket.on('drawBorderTileForTmpHover', (boardIndexs) => {
+            this.drawingBoardService.clearCanvas(this.drawingBoardService.tmpTileCanvas);
+            this.drawingBoardService.drawBorderTileForTmpHover(boardIndexs);
+        });
+
+        this.socket.on('tileDraggedOnCanvas', (clickedTile, mouseCoords) => {
+            this.drawingBoardService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
+        });
+
+        this.socket.on('drawVerticalArrow', (arrowCoords) => {
+            this.drawingBoardService.drawVerticalArrowDirection(arrowCoords.x, arrowCoords.y);
+        });
+
+        this.socket.on('drawHorizontalArrow', (arrowCoords) => {
+            this.drawingBoardService.drawHorizontalArrowDirection(arrowCoords.x, arrowCoords.y);
+        });
     }
 
     private gameUpdateHandler() {
@@ -49,7 +73,7 @@ export class SocketService {
         this.socket.on('gameBoardUpdate', (game) => {
             this.infoClientService.game = game;
             setTimeout(() => {
-                this.drawingBoardService.reDrawBoard(game.bonusBoard, game.board, this.infoClientService.letterBank);
+                this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
             }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
 
@@ -85,11 +109,7 @@ export class SocketService {
         });
 
         this.socket.on('findTileToPlaceArrow', (realPosInBoardPx) => {
-            this.drawingBoardService.findTileToPlaceArrow(
-                realPosInBoardPx,
-                this.infoClientService.game.board,
-                this.infoClientService.game.bonusBoard,
-            );
+            this.drawingBoardService.findTileToPlaceArrow(this.socket, realPosInBoardPx, this.infoClientService.game.board);
         });
 
         this.socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) => {
@@ -112,6 +132,7 @@ export class SocketService {
         this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
+            this.drawingBoardService.lettersDrawn = '';
             if (currentNamePlayerPlaying === this.infoClientService.playerName) {
                 this.infoClientService.displayTurn = "C'est votre tour !";
                 this.infoClientService.isTurnOurs = true;
@@ -125,10 +146,12 @@ export class SocketService {
         });
 
         this.socket.on('setTimeoutTimerStart', () => {
+            this.drawingBoardService.lettersDrawn = '';
             this.setTimeoutForTimer();
         });
 
         this.socket.on('stopTimer', () => {
+            this.drawingBoardService.lettersDrawn = '';
             this.timerService.clearTimer();
         });
     }
@@ -190,6 +213,7 @@ export class SocketService {
                 this.socket.emit('turnFinished');
             }
             if (this.infoClientService.game.gameFinished) {
+                this.drawingBoardService.lettersDrawn = '';
                 clearInterval(timerInterval);
             }
         }, oneSecond);

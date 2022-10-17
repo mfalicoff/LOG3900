@@ -4,6 +4,7 @@ import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
+import { Socket } from 'socket.io-client';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
 
@@ -11,7 +12,8 @@ import { InfoClientService } from './info-client.service';
     providedIn: 'root',
 })
 export class DrawingBoardService {
-    playArea: CanvasRenderingContext2D;
+    playAreaCanvas: CanvasRenderingContext2D;
+    tmpTileCanvas: CanvasRenderingContext2D;
     isArrowVertical: boolean;
     isArrowPlaced: boolean;
     arrowPosX: number;
@@ -19,6 +21,7 @@ export class DrawingBoardService {
     // lettersDrawn is in fact the letter placed on the board
     // TODO change the name when we have time
     lettersDrawn: string;
+    coordsLettersDrawn: Vec2[];
     private mapTileColours: Map<string, string>;
 
     constructor(private drawingService: DrawingService, private infoClientService: InfoClientService) {
@@ -27,6 +30,7 @@ export class DrawingBoardService {
         this.arrowPosX = Constants.DEFAULT_VALUE_NUMBER;
         this.arrowPosY = Constants.DEFAULT_VALUE_NUMBER;
         this.lettersDrawn = '';
+        this.coordsLettersDrawn = [];
         this.mapTileColours = new Map([
             ['xx', '#BEB9A6'],
             ['wordx3', '#f75d59'],
@@ -36,9 +40,10 @@ export class DrawingBoardService {
         ]);
     }
 
-    canvasInit(canvas: CanvasRenderingContext2D) {
-        this.playArea = canvas;
-        this.drawingService.canvasInit(canvas);
+    canvasInit(playAreaCanvas: CanvasRenderingContext2D, tmpTileCanvas: CanvasRenderingContext2D) {
+        this.playAreaCanvas = playAreaCanvas;
+        this.tmpTileCanvas = tmpTileCanvas;
+        this.drawingService.canvasInit(playAreaCanvas, tmpTileCanvas);
     }
 
     drawBoardInit(bonusBoard: string[][]) {
@@ -47,11 +52,11 @@ export class DrawingBoardService {
         // for the drawing of the board
         bonusBoard.splice(0, 1);
         bonusBoard = this.removeEl(bonusBoard, 0);
-        if (this.playArea.font === '10px sans-serif') {
-            this.playArea.font = '19px bold system-ui';
+        if (this.playAreaCanvas.font === '10px sans-serif') {
+            this.playAreaCanvas.font = '19px bold system-ui';
         }
-        const savedFont = this.playArea.font;
-        this.playArea.font = '19px bold system-ui';
+        const savedFont = this.playAreaCanvas.font;
+        this.playAreaCanvas.font = '19px bold system-ui';
 
         const mapTileColours: Map<string, string> = new Map([
             ['xx', '#BEB9A6'],
@@ -61,28 +66,28 @@ export class DrawingBoardService {
             ['letterx2', '#a0cfec'],
         ]);
 
-        this.playArea.beginPath();
-        this.playArea.strokeStyle = '#AAA38E';
+        this.playAreaCanvas.beginPath();
+        this.playAreaCanvas.strokeStyle = '#AAA38E';
 
         // Puts an outer border for style
-        this.playArea.lineWidth = Constants.SIZE_OUTER_BORDER_BOARD;
-        this.playArea.strokeRect(
+        this.playAreaCanvas.lineWidth = Constants.SIZE_OUTER_BORDER_BOARD;
+        this.playAreaCanvas.strokeRect(
             Constants.SIZE_OUTER_BORDER_BOARD / 2 + Constants.PADDING_BOARD_FOR_STANDS,
             Constants.SIZE_OUTER_BORDER_BOARD / 2 + Constants.PADDING_BOARD_FOR_STANDS,
             Constants.DEFAULT_WIDTH_BOARD - Constants.SIZE_OUTER_BORDER_BOARD,
             Constants.DEFAULT_HEIGHT_BOARD - Constants.SIZE_OUTER_BORDER_BOARD,
         );
 
-        this.playArea.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        this.playAreaCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
         const fontSizeBonusWord = 'bold 11px system-ui';
         const shouldDrawStar = true;
-        this.playArea.font = fontSizeBonusWord;
+        this.playAreaCanvas.font = fontSizeBonusWord;
         // Handles the color of each square
         for (let x = 0; x < Constants.NUMBER_SQUARE_H_AND_W; x++) {
             for (let y = 0; y < Constants.NUMBER_SQUARE_H_AND_W; y++) {
                 const tileData = mapTileColours.get(bonusBoard[x][y]);
                 if (tileData) {
-                    this.playArea.fillStyle = tileData;
+                    this.playAreaCanvas.fillStyle = tileData;
                 }
                 this.drawTileAtPos(x, bonusBoard, y);
             }
@@ -94,8 +99,8 @@ export class DrawingBoardService {
         }
 
         // Set parameters to draw the lines of the grid
-        this.playArea.strokeStyle = '#AAA38E';
-        this.playArea.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        this.playAreaCanvas.strokeStyle = '#AAA38E';
+        this.playAreaCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
         // So we don't have magic values
         const jumpOfATile = 30;
         const asciiCodeStartLetters = 64;
@@ -111,31 +116,31 @@ export class DrawingBoardService {
             i += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS, j++
         ) {
             // Put all the horizontal lines of the board
-            this.playArea.moveTo(paddingForStands, i);
-            this.playArea.lineTo(Constants.DEFAULT_WIDTH_BOARD + paddingForStands, i);
+            this.playAreaCanvas.moveTo(paddingForStands, i);
+            this.playAreaCanvas.lineTo(Constants.DEFAULT_WIDTH_BOARD + paddingForStands, i);
 
             // Put all the vectical lines of the board
-            this.playArea.moveTo(i, paddingForStands);
-            this.playArea.lineTo(i, Constants.DEFAULT_WIDTH_BOARD + paddingForStands);
+            this.playAreaCanvas.moveTo(i, paddingForStands);
+            this.playAreaCanvas.lineTo(i, Constants.DEFAULT_WIDTH_BOARD + paddingForStands);
 
             // Put all the letters/numbers on the board
-            this.playArea.fillStyle = '#54534A';
-            this.playArea.font = fontSizeLettersOnSide.toString() + 'px bold system-ui';
+            this.playAreaCanvas.fillStyle = '#54534A';
+            this.playAreaCanvas.font = fontSizeLettersOnSide.toString() + 'px bold system-ui';
 
             if (j.toString().length === 1) {
-                this.playArea.fillText(
+                this.playAreaCanvas.fillText(
                     j.toString(),
                     i - Constants.WIDTH_EACH_SQUARE - Constants.WIDTH_LINE_BLOCKS / 2 + borderTopAndLeftBig,
                     jumpOfATile + paddingForStands,
                 );
             } else {
-                this.playArea.fillText(
+                this.playAreaCanvas.fillText(
                     j.toString(),
                     i - Constants.WIDTH_EACH_SQUARE - Constants.WIDTH_LINE_BLOCKS / 2 + borderTopAndLeftLittle,
                     jumpOfATile + paddingForStands,
                 );
             }
-            this.playArea.fillText(
+            this.playAreaCanvas.fillText(
                 String.fromCharCode(asciiCodeStartLetters + j),
                 borderTopAndLeftBig + paddingForStands,
                 i - Constants.WIDTH_EACH_SQUARE - Constants.WIDTH_LINE_BLOCKS / 2 + jumpOfATile,
@@ -145,20 +150,49 @@ export class DrawingBoardService {
             // for the 15th number
             if (j === Constants.NUMBER_SQUARE_H_AND_W - 1) {
                 j++;
-                this.playArea.fillText(j.toString(), i + borderTopAndLeftLittle, jumpOfATile + paddingForStands);
-                this.playArea.fillText(String.fromCharCode(asciiCodeStartLetters + j), borderTopAndLeftBig + paddingForStands, i + jumpOfATile);
+                this.playAreaCanvas.fillText(j.toString(), i + borderTopAndLeftLittle, jumpOfATile + paddingForStands);
+                this.playAreaCanvas.fillText(String.fromCharCode(asciiCodeStartLetters + j), borderTopAndLeftBig + paddingForStands, i + jumpOfATile);
             }
         }
-        this.playArea.font = savedFont;
-        this.playArea.stroke();
+        this.playAreaCanvas.font = savedFont;
+        this.playAreaCanvas.stroke();
     }
 
-    reDrawBoard(bonusBoard: string[][], board: Tile[][], letterBank: Map<string, LetterData>) {
+    drawTileDraggedOnCanvas(clickedTile: Tile, mouseCoords: Vec2) {
+        // clear the canvas to not have a trail of the tile
+        this.clearCanvas(this.tmpTileCanvas);
+        // draws the border of the tile being hovered to get a better understanding of where
+        // the tile will be placed
+        const boardIndexs: Vec2 = this.getIndexOnBoardLogicFromClick(mouseCoords);
+        if (boardIndexs.x !== Constants.DEFAULT_VALUE_NUMBER && boardIndexs.y !== Constants.DEFAULT_VALUE_NUMBER) {
+            this.drawBorderTileForTmpHover(boardIndexs);
+        }
+        // draw the tile on the tmp canvas
+        this.drawingService.drawFromDrag(clickedTile, mouseCoords);
+    }
+
+    drawBorderTileForTmpHover(boardIndexs: Vec2) {
+        if (!this.infoClientService.game.board[boardIndexs.y][boardIndexs.x]) {
+            return;
+        }
+        const tileConcerned = this.infoClientService.game.board[boardIndexs.y][boardIndexs.x];
+        this.tmpTileCanvas.beginPath();
+        this.tmpTileCanvas.strokeStyle = '#9e2323';
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        this.tmpTileCanvas.rect(tileConcerned.position.x1, tileConcerned.position.y1, tileConcerned.position.height, tileConcerned.position.width);
+        this.tmpTileCanvas.stroke();
+    }
+
+    clearCanvas(canvas: CanvasRenderingContext2D) {
+        canvas.clearRect(0, 0, canvas.canvas.width, canvas.canvas.height);
+    }
+
+    reDrawBoard(socket: Socket, bonusBoard: string[][], board: Tile[][], letterBank: Map<string, LetterData>) {
         this.drawBoardInit(bonusBoard);
         for (let x = 0; x < Constants.NUMBER_SQUARE_H_AND_W + 2; x++) {
             for (let y = 0; y < Constants.NUMBER_SQUARE_H_AND_W + 2; y++) {
                 if (board[x][y] !== undefined && board[x][y].letter.value !== '') {
-                    this.drawingService.drawOneLetter(board[x][y].letter.value, board[x][y], this.playArea, letterBank);
+                    this.drawingService.drawOneLetter(board[x][y].letter.value, board[x][y], this.playAreaCanvas, letterBank);
                 }
             }
         }
@@ -166,9 +200,15 @@ export class DrawingBoardService {
         // if this is our turn and we just put a letter on the board we redraw the arrow too
         if (this.infoClientService.isTurnOurs && this.isArrowPlaced && this.lettersDrawn) {
             if (this.isArrowVertical) {
-                this.drawVerticalArrowDirection(this.arrowPosX, this.arrowPosY);
+                socket.emit('drawVerticalArrow', {
+                    x: this.arrowPosX,
+                    y: this.arrowPosY,
+                });
             } else {
-                this.drawHorizontalArrowDirection(this.arrowPosX, this.arrowPosY);
+                socket.emit('drawHorizontalArrow', {
+                    x: this.arrowPosX,
+                    y: this.arrowPosY,
+                });
             }
         }
     }
@@ -177,54 +217,54 @@ export class DrawingBoardService {
         for (let x = 0; x < Constants.NUMBER_SQUARE_H_AND_W + 2; x++) {
             for (let y = 0; y < Constants.NUMBER_SQUARE_H_AND_W + 2; y++) {
                 if (board[x][y] !== undefined && board[x][y].letter.value !== '') {
-                    this.drawingService.drawOneLetter(board[x][y].letter.value, board[x][y], this.playArea, letterBank);
+                    this.drawingService.drawOneLetter(board[x][y].letter.value, board[x][y], this.playAreaCanvas, letterBank);
                 }
             }
         }
     }
 
     drawHorizontalArrowDirection(verticalPosTile: number, horizontalPosTile: number) {
-        this.playArea.strokeStyle = '#54534A';
-        this.playArea.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
-        this.playArea.beginPath();
+        this.tmpTileCanvas.strokeStyle = '#54534A';
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
+        this.tmpTileCanvas.beginPath();
         const oneFifthOfTile = 5;
         const oneFifthOfTileInDecimal = 1.25;
         const startPosXPx = this.startingPosPxOfTile(verticalPosTile - 1);
         const startPosYPx = this.startingPosPxOfTile(horizontalPosTile - 1);
-        this.playArea.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playArea.stroke();
-        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
-        this.playArea.stroke();
-        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playArea.stroke();
-        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
-        this.playArea.stroke();
+        this.tmpTileCanvas.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
+        this.tmpTileCanvas.stroke();
         this.arrowPosX = verticalPosTile;
         this.arrowPosY = horizontalPosTile;
-        this.playArea.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
     }
 
     drawVerticalArrowDirection(verticalPosTile: number, horizontalPosTile: number) {
-        this.playArea.strokeStyle = '#54534A';
-        this.playArea.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
-        this.playArea.beginPath();
+        this.tmpTileCanvas.strokeStyle = '#54534A';
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
+        this.tmpTileCanvas.beginPath();
         const oneFifthOfTile = 5;
         const oneFifthOfTileInDecimal = 1.25;
         const startPosXPx = this.startingPosPxOfTile(verticalPosTile - 1);
         const startPosYPx = this.startingPosPxOfTile(horizontalPosTile - 1);
-        this.playArea.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
-        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
-        this.playArea.stroke();
-        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playArea.stroke();
-        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
-        this.playArea.stroke();
-        this.playArea.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
-        this.playArea.stroke();
+        this.tmpTileCanvas.moveTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTileInDecimal);
+        this.tmpTileCanvas.stroke();
+        this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
+        this.tmpTileCanvas.stroke();
         this.arrowPosX = verticalPosTile;
         this.arrowPosY = horizontalPosTile;
-        this.playArea.lineWidth = Constants.WIDTH_LINE_BLOCKS;
+        this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
     }
 
     drawTileAtPos(xPos: number, bonusBoard: string[][], yPos: number, width?: number) {
@@ -232,12 +272,12 @@ export class DrawingBoardService {
         if (xPos > Constants.NUMBER_SQUARE_H_AND_W || yPos > Constants.NUMBER_SQUARE_H_AND_W) {
             return;
         }
-        const savedFont = this.playArea.font;
+        const savedFont = this.playAreaCanvas.font;
         const fontSizeBonusWord = 'bold 11px system-ui';
 
         const borderTopAndLeft = 10;
         const marginForRoundedNumberAndLook = 2;
-        this.playArea.font = fontSizeBonusWord;
+        this.playAreaCanvas.font = fontSizeBonusWord;
         const xPosPx =
             xPos * (Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS) +
             Constants.SIZE_OUTER_BORDER_BOARD -
@@ -257,14 +297,14 @@ export class DrawingBoardService {
             xPos === Math.floor(Constants.NUMBER_SQUARE_H_AND_W / 2) && yPos - 1 === Math.floor(Constants.NUMBER_SQUARE_H_AND_W / 2);
         if (isPosTheCenterTile && this.isArrowPlaced) {
             this.redrawStar(xPosPx, yPosPx, width);
-            this.playArea.font = savedFont;
+            this.playAreaCanvas.font = savedFont;
             return;
         }
         if (width || width === 0) {
             // width is there because we have to adjust the size of the square because they are bigger than what is visible
-            this.playArea.fillRect(xPosPx + width, yPosPx + width, Constants.WIDTH_EACH_SQUARE, Constants.WIDTH_EACH_SQUARE);
+            this.playAreaCanvas.fillRect(xPosPx + width, yPosPx + width, Constants.WIDTH_EACH_SQUARE, Constants.WIDTH_EACH_SQUARE);
         } else {
-            this.playArea.fillRect(
+            this.playAreaCanvas.fillRect(
                 xPosPx,
                 yPosPx,
                 Constants.WIDTH_EACH_SQUARE + marginForRoundedNumberAndLook,
@@ -272,51 +312,51 @@ export class DrawingBoardService {
             );
         }
         if (bonusBoard[xPos][yPos] !== 'xx') {
-            this.playArea.fillStyle = '#104D45';
+            this.playAreaCanvas.fillStyle = '#104D45';
             // We don't want to draw the letter on the center
             if (xPos === (Constants.NUMBER_SQUARE_H_AND_W - 1) / 2 && yPos === (Constants.NUMBER_SQUARE_H_AND_W - 1) / 2) {
-                this.playArea.font = savedFont;
+                this.playAreaCanvas.font = savedFont;
                 return;
             }
             if (bonusBoard[xPos][yPos].includes('letter')) {
-                this.playArea.fillText(
+                this.playAreaCanvas.fillText(
                     'LETTRE',
-                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playArea.measureText('LETTRE').width) / 2 + marginForRoundedNumberAndLook / 2,
+                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText('LETTRE').width) / 2 + marginForRoundedNumberAndLook / 2,
                     yPosPx + Constants.WIDTH_EACH_SQUARE / 2 + marginForRoundedNumberAndLook / 2,
                 );
             } else {
-                this.playArea.fillText(
+                this.playAreaCanvas.fillText(
                     'MOT',
-                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playArea.measureText('MOT').width) / 2 + marginForRoundedNumberAndLook / 2,
+                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText('MOT').width) / 2 + marginForRoundedNumberAndLook / 2,
                     yPosPx + Constants.WIDTH_EACH_SQUARE / 2 + marginForRoundedNumberAndLook / 2,
                 );
             }
             if (bonusBoard[xPos][yPos].includes('x2')) {
-                this.playArea.fillText(
+                this.playAreaCanvas.fillText(
                     'x2',
-                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playArea.measureText('x2').width) / 2 + marginForRoundedNumberAndLook / 2,
+                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText('x2').width) / 2 + marginForRoundedNumberAndLook / 2,
                     yPosPx + Constants.WIDTH_EACH_SQUARE / 2 + borderTopAndLeft,
                 );
             } else {
-                this.playArea.fillText(
+                this.playAreaCanvas.fillText(
                     'x3',
-                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playArea.measureText('x3').width) / 2 + marginForRoundedNumberAndLook / 2,
+                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText('x3').width) / 2 + marginForRoundedNumberAndLook / 2,
                     yPosPx + Constants.WIDTH_EACH_SQUARE / 2 + borderTopAndLeft,
                 );
             }
         }
-        this.playArea.font = savedFont;
+        this.playAreaCanvas.font = savedFont;
     }
 
     removeTile(tile: Tile) {
         // remove a tile from the board but only visually
-        this.playArea.beginPath();
-        this.playArea.fillStyle = '#BEB9A6';
-        this.playArea.fillRect(tile.position.x1, tile.position.y1, tile.position.width + 1, tile.position.height + 1);
-        this.playArea.stroke();
+        this.playAreaCanvas.beginPath();
+        this.playAreaCanvas.fillStyle = '#BEB9A6';
+        this.playAreaCanvas.fillRect(tile.position.x1, tile.position.y1, tile.position.width + 1, tile.position.height + 1);
+        this.playAreaCanvas.stroke();
     }
 
-    findTileToPlaceArrow(positionPx: Vec2, board: Tile[][], bonusBoard: string[][]) {
+    findTileToPlaceArrow(socket: Socket, positionPx: Vec2, board: Tile[][]) {
         if (this.lettersDrawn) {
             return;
         }
@@ -327,41 +367,52 @@ export class DrawingBoardService {
             return; // if it does then we dont draw an arrow
         }
 
-        // check if there was an arrow before and check if there is no tile on top of it
-        if ((this.arrowPosX <= Constants.NUMBER_SQUARE_H_AND_W, this.arrowPosY <= Constants.NUMBER_SQUARE_H_AND_W)) {
-            if (this.arrowPosX >= 0 && !board[this.arrowPosY][this.arrowPosX].old) {
-                // redraw empty tile if there was an arrow before
-                this.drawTileAtPos(this.arrowPosX - 1, bonusBoard, this.arrowPosY - 1, 1);
-            }
-        }
         if (this.arrowPosX !== coordsIndexOnBoard.x || this.arrowPosY !== coordsIndexOnBoard.y) {
             // if the tile clicked is another tile then reset the arrow direction
             this.isArrowVertical = true;
         }
         this.isArrowPlaced = true;
         if (this.isArrowVertical) {
-            this.drawHorizontalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
+            socket.emit('drawHorizontalArrow', {
+                x: coordsIndexOnBoard.x,
+                y: coordsIndexOnBoard.y,
+            });
         } else {
-            this.drawVerticalArrowDirection(coordsIndexOnBoard.x, coordsIndexOnBoard.y);
+            socket.emit('drawVerticalArrow', {
+                x: coordsIndexOnBoard.x,
+                y: coordsIndexOnBoard.y,
+            });
         }
         this.isArrowVertical = !this.isArrowVertical;
     }
 
-    private getIndexOnBoardLogicFromClick(coords: Vec2): Vec2 {
+    getIndexOnBoardLogicFromClick(coords: Vec2): Vec2 {
         // we get rid of the border and the padding for the stands
         const coordsCleaned: Vec2 = new Vec2();
         coordsCleaned.x = coords.x - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
         coordsCleaned.y = coords.y - Constants.PADDING_BOARD_FOR_STANDS - Constants.SIZE_OUTER_BORDER_BOARD;
+        // veryfiying that we are on the board not elsewhere
+        if (coordsCleaned.x < 0 || coordsCleaned.y < 0) {
+            return { x: Constants.DEFAULT_VALUE_NUMBER, y: Constants.DEFAULT_VALUE_NUMBER };
+        }
         const coordsIndexOnBoard = new Vec2();
         coordsIndexOnBoard.x = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.x)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
         coordsIndexOnBoard.y = Math.floor((1 / (Constants.WIDTH_BOARD_NOBORDER / coordsCleaned.y)) * Constants.NUMBER_SQUARE_H_AND_W) + 1;
+        if (
+            coordsIndexOnBoard.x > Constants.NUMBER_SQUARE_H_AND_W ||
+            coordsIndexOnBoard.y > Constants.NUMBER_SQUARE_H_AND_W ||
+            coordsIndexOnBoard.x <= 0 ||
+            coordsIndexOnBoard.y <= 0
+        ) {
+            return { x: Constants.DEFAULT_VALUE_NUMBER, y: Constants.DEFAULT_VALUE_NUMBER };
+        }
         return coordsIndexOnBoard;
     }
 
     private getFillTileColor(xPos: number, yPos: number, bonusBoard: string[][]) {
         const tileData = this.mapTileColours.get(bonusBoard[xPos][yPos]);
         if (tileData) {
-            this.playArea.fillStyle = tileData;
+            this.playAreaCanvas.fillStyle = tileData;
         }
     }
 
@@ -376,7 +427,7 @@ export class DrawingBoardService {
 
     private redrawStar(xPosPx: number, yPosPx: number, width?: number) {
         if (width) {
-            this.playArea.fillRect(xPosPx + width, yPosPx + width, Constants.WIDTH_EACH_SQUARE - width, Constants.WIDTH_EACH_SQUARE - width);
+            this.playAreaCanvas.fillRect(xPosPx + width, yPosPx + width, Constants.WIDTH_EACH_SQUARE - width, Constants.WIDTH_EACH_SQUARE - width);
         } else {
             return;
         }
@@ -390,9 +441,9 @@ export class DrawingBoardService {
         const radius = Constants.WIDTH_EACH_SQUARE / 2 - shiftValueForCenteredStar;
 
         // star draw
-        this.playArea.fillStyle = '#AAA38E';
-        this.playArea.beginPath();
-        this.playArea.moveTo(centerXY + radius, centerXY);
+        this.playAreaCanvas.fillStyle = '#AAA38E';
+        this.playAreaCanvas.beginPath();
+        this.playAreaCanvas.moveTo(centerXY + radius, centerXY);
 
         let theta = 0;
         let x = 0;
@@ -407,10 +458,10 @@ export class DrawingBoardService {
                 x = centerXY + (radius / 2) * Math.cos(theta);
                 y = centerXY + (radius / 2) * Math.sin(theta);
             }
-            this.playArea.lineTo(x, y);
+            this.playAreaCanvas.lineTo(x, y);
         }
-        this.playArea.closePath();
-        this.playArea.fill();
+        this.playAreaCanvas.closePath();
+        this.playAreaCanvas.fill();
     }
 
     private removeEl(array: string[][], remIdx: number) {
