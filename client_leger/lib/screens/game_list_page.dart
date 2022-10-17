@@ -68,9 +68,12 @@ class _GameListPageState extends State<GameListPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.arrow_back,
-                            color: Theme.of(context).colorScheme.primary,
+                          IconButton(
+                            onPressed: _goBackHomePage,
+                            icon: Icon(
+                              Icons.arrow_back,
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                           const SizedBox(
                             width: 200.0,
@@ -138,6 +141,10 @@ class _GameListPageState extends State<GameListPage> {
   }
 
   void _createGame() {}
+
+  void _goBackHomePage() {
+    Navigator.of(context).pop();
+  }
 }
 
 class gameList extends StatefulWidget {
@@ -169,6 +176,7 @@ class _gameListState extends State<gameList> {
               color: Theme.of(context).colorScheme.primary, width: 2.0),
           borderRadius: BorderRadius.circular(40),
         ),
+        showCheckboxColumn: false,
         columns: [
           DataColumn(
             label: Expanded(
@@ -235,7 +243,7 @@ class _gameListState extends State<gameList> {
         ],
         rows: List<DataRow>.generate(
             widget.rooms.length,
-            (int index) => DataRow(cells: [
+            (int index) => DataRow(onSelectChanged: _goToGame, cells: [
                   DataCell(Text(
                     widget.rooms[index].roomName,
                     style:
@@ -265,4 +273,6 @@ class _gameListState extends State<gameList> {
       ),
     );
   }
+
+  void _goToGame(bool? selected) {}
 }
