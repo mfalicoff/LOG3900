@@ -70,6 +70,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         Center(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: _toProfilePage,
+                child: CircleAvatar(
+                  radius: 48,
+                  backgroundImage: MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
+                ),
+              ),
+
+              Text(
+                globals.userLoggedIn.username,
+                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17, decoration: TextDecoration.none)
+              )
+            ],
+          ),
+        ),
+        Center(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -86,6 +105,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toChatPage() {
     Navigator.of(context).pushNamed('/chat');
+  }
+
+  void _toProfilePage() {
+    Navigator.of(context).pushNamed('/profile');
   }
 
   void _toGameListPage() {

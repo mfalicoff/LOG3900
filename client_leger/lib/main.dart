@@ -1,5 +1,6 @@
 import 'package:client_leger/screens/chat_page.dart';
 import 'package:client_leger/screens/login_page.dart';
+import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/utils/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
       theme: appTheme,
       routes: <String, WidgetBuilder> {
         '/chat' : (BuildContext context) => const ChatPage(),
+        '/profile' : (BuildContext context) => const ProfilePage(),
       },      home: const Scaffold(
         resizeToAvoidBottomInset: false,
         body: LoginPage(),
