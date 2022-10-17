@@ -1,11 +1,8 @@
 import 'dart:ui';
 
+import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:socket_io_client/socket_io_client.dart';
-
-import '../env/environment.dart';
 import '../models/room.dart';
 
 class GameListPage extends StatefulWidget {
@@ -16,23 +13,17 @@ class GameListPage extends StatefulWidget {
 }
 
 class _GameListPageState extends State<GameListPage> {
-  late IO.Socket socket;
   late List<Room> rooms = [];
+  final SocketService socketService = SocketService();
 
   @override
   void initState() {
-    socket = IO.io(
-        Environment().config?.serverURL,
-        OptionBuilder().setTransports(['websocket']) // for Flutter or Dart VM
-            .setExtraHeaders({'foo': 'bar'}) // optional
-            .build());
-    OptionBuilder().setTransports(['websocket']);
     initSockets();
     super.initState();
   }
 
   void initSockets() {
-    socket.on('addElementListRoom', (data) {
+    socketService.socket.on('addElementListRoom', (data) {
       if (mounted) {
         setState(() {
           rooms.add(Room.fromJson(data));
@@ -40,7 +31,7 @@ class _GameListPageState extends State<GameListPage> {
         });
       }
     });
-    socket.emit("listRoom");
+    socketService.socket.emit("listRoom");
   }
 
   @override
@@ -161,111 +152,117 @@ class gameList extends StatefulWidget {
 class _gameListState extends State<gameList> {
   @override
   Widget build(BuildContext context) {
-    return DataTable(
-      headingRowColor: MaterialStateColor.resolveWith(
-          (states) => Theme.of(context).colorScheme.primary),
-      border: TableBorder(
-        horizontalInside: BorderSide(
-            color: Theme.of(context).colorScheme.primary, width: 2.0),
-        bottom: BorderSide(
-            color: Theme.of(context).colorScheme.primary, width: 2.0),
-        top: BorderSide(
-            color: Theme.of(context).colorScheme.primary, width: 2.0),
-        left: BorderSide(
-            color: Theme.of(context).colorScheme.primary, width: 2.0),
-        borderRadius: BorderRadius.circular(40),
+    return SingleChildScrollView(
+      child: DataTable(
+        headingRowColor: MaterialStateColor.resolveWith(
+            (states) => Theme.of(context).colorScheme.primary),
+        border: TableBorder(
+          horizontalInside: BorderSide(
+              color: Theme.of(context).colorScheme.primary, width: 2.0),
+          bottom: BorderSide(
+              color: Theme.of(context).colorScheme.primary, width: 2.0),
+          top: BorderSide(
+              color: Theme.of(context).colorScheme.primary, width: 2.0),
+          left: BorderSide(
+              color: Theme.of(context).colorScheme.primary, width: 2.0),
+          right: BorderSide(
+              color: Theme.of(context).colorScheme.primary, width: 2.0),
+          borderRadius: BorderRadius.circular(40),
+        ),
+        columns: [
+          DataColumn(
+            label: Expanded(
+              child: Container(
+                padding: EdgeInsets.zero,
+                child: Text(
+                  "Nom de la salle",
+                  overflow: TextOverflow.visible,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  // textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Expanded(
+              child: Container(
+                child: Text(
+                  "Nom du créateur",
+                  overflow: TextOverflow.visible,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Expanded(
+              child: Container(
+                child: Text(
+                  "Nombre de joueurs réel",
+                  overflow: TextOverflow.visible,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Expanded(
+              child: Container(
+                child: Text(
+                  "Nombre de joueurs virtuels",
+                  overflow: TextOverflow.visible,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
+              ),
+            ),
+          ),
+          DataColumn(
+            label: Expanded(
+              child: Container(
+                child: Text(
+                  "Nombre d'observateurs",
+                  overflow: TextOverflow.visible,
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
+              ),
+            ),
+          ),
+        ],
+        rows: List<DataRow>.generate(
+            widget.rooms.length,
+            (int index) => DataRow(cells: [
+                  DataCell(Text(
+                    widget.rooms[index].roomName,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  )),
+                  DataCell(Text(
+                    widget.rooms[index].roomCreator,
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  )),
+                  DataCell(Text(
+                    widget.rooms[index].numberRealPlayer.toString(),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  )),
+                  DataCell(Text(
+                    widget.rooms[index].numberVirtualPlayer.toString(),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  )),
+                  DataCell(Text(
+                    widget.rooms[index].numberSpectators.toString(),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  )),
+                ])),
       ),
-      columns: [
-        DataColumn(
-          label: Expanded(
-            child: Container(
-              child: Text(
-                "Nom de la salle",
-                overflow: TextOverflow.visible,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
-              ),
-            ),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Container(
-              child: Text(
-                "Nom du créateur",
-                overflow: TextOverflow.visible,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
-              ),
-            ),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Container(
-              child: Text(
-                "Nombre de joueurs réel",
-                overflow: TextOverflow.visible,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
-              ),
-            ),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Container(
-              child: Text(
-                "Nombre de joueurs virtuels",
-                overflow: TextOverflow.visible,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
-              ),
-            ),
-          ),
-        ),
-        DataColumn(
-          label: Expanded(
-            child: Container(
-              child: Text(
-                "Nombre d'observateurs",
-                overflow: TextOverflow.visible,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.secondary),
-              ),
-            ),
-          ),
-        ),
-      ],
-      rows: List<DataRow>.generate(
-          widget.rooms.length,
-          (int index) => DataRow(cells: [
-                DataCell(Text(
-                  widget.rooms[index].roomName,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                )),
-                DataCell(Text(
-                  widget.rooms[index].roomCreator,
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                )),
-                DataCell(Text(
-                  widget.rooms[index].numberRealPlayer.toString(),
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                )),
-                DataCell(Text(
-                  widget.rooms[index].numberVirtualPlayer.toString(),
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                )),
-                DataCell(Text(
-                  widget.rooms[index].numberSpectators.toString(),
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                )),
-              ])),
     );
   }
 }
