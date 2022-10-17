@@ -4,12 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { BoardComponent } from '@app/components/board/board.component';
+import { BoardStandComponent } from '@app/components/board-stand/board-stand.component';
 import { CommunicationBoxComponent } from '@app/components/communication-box/communication-box.component';
 import { InfoPanelComponent } from '@app/components/info-panel/info-panel.component';
-import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-import { StandRPComponent } from '@app/components/stand-rp/stand-rp.component';
 import { TimerComponent } from '@app/components/timer/timer.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
@@ -26,6 +24,12 @@ import { ModalComponent } from './pages/modal/modal.component';
 import { ChatComponent } from './pages/chat/chat.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+import { UserHistoryComponent } from './components/user-history/user-history.component';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
+import { NgxGalleryModule } from '@kolkov/ngx-gallery';
+import { GalleryComponent } from './components/gallery/gallery.component';
 
 /**
  * Main module that is used in main.ts.
@@ -38,11 +42,9 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         AppComponent,
         GamePageComponent,
         MainPageComponent,
-        PlayAreaComponent,
         SidebarComponent,
         MaterialPageComponent,
-        BoardComponent,
-        StandRPComponent,
+        BoardStandComponent,
         ParametresSelectionPageComponent,
         MultiplayerInitPageComponent,
         CommunicationBoxComponent,
@@ -55,6 +57,10 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         ChatComponent,
         LoginPageComponent,
         GamemodeoptionsPageComponent,
+        ProfilePageComponent,
+        UserHistoryComponent,
+        ProfileEditComponent,
+        GalleryComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -65,6 +71,8 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
+        MatGridListModule,
+        NgxGalleryModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

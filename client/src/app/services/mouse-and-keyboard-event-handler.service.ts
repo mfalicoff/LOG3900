@@ -40,19 +40,32 @@ export class MouseKeyboardEventHandlerService {
         this.socketService.socket.emit('leftClickSelection', coordinateXClick);
     }
 
+    onRightClickStand(event: MouseEvent) {
+        this.isCommBoxJustBeenClicked = false;
+        if (!this.infoClientService.game?.gameStarted) {
+            return;
+        }
+        event.preventDefault();
+        const coordinateXClick: number = event.offsetX;
+        if (this.drawingBoardService.lettersDrawn) {
+            return;
+        }
+        this.socketService.socket.emit('rightClickExchange', coordinateXClick);
+    }
+
     onBoardClick(event: MouseEvent) {
         this.isCommBoxJustBeenClicked = false;
         if (!this.infoClientService.game?.gameStarted) {
             return;
         }
         event.preventDefault();
-        const coordinateClick: Vec2 = { x: event.offsetX, y: event.offsetY };
+        const coordsClick: Vec2 = { x: event.offsetX, y: event.offsetY };
 
         if (this.infoClientService.isTurnOurs) {
             if (this.drawingBoardService.lettersDrawn) {
                 return;
             }
-            this.socketService.socket.emit('boardClick', coordinateClick);
+            this.drawingBoardService.findTileToPlaceArrow(coordsClick, this.infoClientService.game.board, this.infoClientService.game.bonusBoard);
         }
     }
 
@@ -73,11 +86,12 @@ export class MouseKeyboardEventHandlerService {
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {
+        // TODO uncomment this when everything works
         if (this.isCommunicationBoxFocus || !this.infoClientService.game?.gameStarted) {
             return;
         }
         if (this.drawingBoardService.isArrowPlaced) {
-            this.placeGraphicService.manageKeyBoardEvent(this.infoClientService.game, this.infoClientService.player, event.key);
+            this.placeGraphicService.manageKeyboardEvent(this.infoClientService.game, this.infoClientService.player, event.key);
             return;
         }
         const eventString: string = event.key.toString();
@@ -100,19 +114,6 @@ export class MouseKeyboardEventHandlerService {
 
         const eventString: string = event.deltaY.toString();
         this.socketService.socket.emit('keyboardAndMouseManipulation', eventString);
-    }
-
-    onRightClickStand(event: MouseEvent) {
-        this.isCommBoxJustBeenClicked = false;
-        if (!this.infoClientService.game?.gameStarted) {
-            return;
-        }
-        event.preventDefault();
-        const coordinateXClick: number = event.offsetX;
-        if (this.drawingBoardService.lettersDrawn) {
-            return;
-        }
-        this.socketService.socket.emit('rightClickExchange', coordinateXClick);
     }
 
     onLeftClickGamePage() {

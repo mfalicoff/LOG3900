@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion*/
 import { AfterViewInit, Component } from '@angular/core';
 import { RoomData } from '@app/classes/room-data';
 import { InfoClientService } from '@app/services/info-client.service';
@@ -10,7 +11,10 @@ import { SocketService } from '@app/services/socket.service';
 })
 export class MultiplayerInitPageComponent implements AfterViewInit {
     displayStyleModal: string;
-
+    passwdModalStyle: string;
+    passwordText: string;
+    actualPassword: string;
+    roomNameClicked: string;
     constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
 
     ngAfterViewInit() {
@@ -20,11 +24,27 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     onClickGame(roomName: string) {
         // useful to reset the ui
         this.infoClientService.initializeService();
-        // joins the room
-        this.socketService.socket.emit('joinRoom', {
-            roomName,
-            playerId: this.socketService.socket.id,
-        });
+        const roomClicked = this.infoClientService.rooms.find((room) => room.name === roomName);
+        if (!roomClicked) {
+            return;
+        }
+
+        this.actualPassword = roomClicked.passwd;
+        this.roomNameClicked = roomName;
+        if (this.actualPassword !== '') {
+            this.passwdModalStyle = 'block';
+        } else {
+            this.joinRoom(roomName);
+        }
+    }
+
+    askForPasswd() {
+        this.passwdModalStyle = 'none';
+        if (this.passwordText !== this.actualPassword) {
+            alert('Mot de passe incorrect');
+        } else {
+            this.joinRoom(this.roomNameClicked);
+        }
     }
 
     // shows the list of players in the room
@@ -32,10 +52,10 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         this.displayStyleModal = 'block';
         const listPlayer = document.getElementById('listPlayer');
         const listVP = document.getElementById('listVP');
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const creatorOfGameUi = document.getElementById('creatorOfGame');
         listPlayer!.innerHTML = '';
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         listVP!.innerHTML = '';
+        creatorOfGameUi!.innerHTML = '';
 
         const idxExistingRoom = this.infoClientService.rooms.findIndex((room) => room.name === roomName);
         const nbPlayer = this.infoClientService.rooms[idxExistingRoom].players.length;
@@ -58,15 +78,19 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
             }
         });
 
+        const creatorOfGame = this.infoClientService.rooms[idxExistingRoom].players.find((player) => player.isCreatorOfGame);
+        creatorOfGameUi!.innerHTML = 'Le createur de la partie est : ' + creatorOfGame?.name;
+        creatorOfGameUi!.style.fontWeight = 'bold';
+
         if (nbRealPlayer > 0) {
             const titleList = document.createElement('li');
-            titleList.innerHTML = 'Liste des joueurs reels :';
+            titleList.innerHTML = 'Il y a ' + nbRealPlayer + ' joueur(s) reel(s) :';
             titleList.style.fontWeight = 'bold';
             listPlayer?.appendChild(titleList);
         }
         if (nbVirtualPlayer > 0) {
             const titleList = document.createElement('li');
-            titleList.innerHTML = 'Liste des joueurs virtuels :';
+            titleList.innerHTML = 'Il y a ' + nbVirtualPlayer + ' joueur(s) virtuel(s) :';
             titleList.style.fontWeight = 'bold';
             listVP?.appendChild(titleList);
         }
@@ -97,5 +121,13 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         } else {
             alert("Il n'y a pas de salle disponible.");
         }
+    }
+
+    private joinRoom(roomName: string) {
+        // joins the room
+        this.socketService.socket.emit('joinRoom', {
+            roomName,
+            playerId: this.socketService.socket.id,
+        });
     }
 }

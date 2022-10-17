@@ -5,7 +5,8 @@
 export const DEFAULT_WIDTH_BOARD = 750;
 export const DEFAULT_HEIGHT_BOARD = 750;
 export const SIZE_OUTER_BORDER_BOARD = 40;
-
+export const DEFAULT_WIDTH_PLAY_AREA = 900;
+export const PADDING_BET_BOARD_AND_STAND = 5;
 export const NUMBER_SQUARE_H_AND_W = 15;
 export const WIDTH_LINE_BLOCKS = 4;
 export const WIDTH_BOARD_NOBORDER = DEFAULT_WIDTH_BOARD - SIZE_OUTER_BORDER_BOARD * 2;
@@ -20,6 +21,7 @@ export const SALT_ROUNDS = 10;
 export const WEB_TOKEN_SECRET = 'secret';
 export const TOKEN_EXPIRATION = 60;
 
+export const PADDING_BOARD_FOR_STANDS = DEFAULT_HEIGHT_STAND + PADDING_BET_BOARD_AND_STAND;
 /// ////////////////////////////////////////////////////////////////////////
 // CHAT VALIDATION CONSTANTS
 /// ////////////////////////////////////////////////////////////////////////
@@ -110,7 +112,8 @@ export const PLAYER_TRIED_A_WORD = ' a placé un mot non valide, son tour passe 
 // /////////////// databaseService constants//////////////////////////////////
 /// /////////////////////////////////////////////////////////////////////////
 export const DATABASE_URL = 'mongodb+srv://Stephane:HarryP0tter7@project-database.m7fal.mongodb.net/?retryWrites=true&w=majority';
-export const DATABASE_NAME = 'Project-Database';
+export const DATABASE_PROD = 'Project-Database';
+export const DATABASE_DEV = 'test';
 export const DATABASE_COLLECTION_DICTIONARIES = 'Dictionaries';
 export const DATABASE_COLLECTION_BESTSCORECLASSIC = 'BestScoreClassic';
 export const DATABASE_COLLECTION_BESTSCORELOG2990 = 'BestScoreLOG2990';

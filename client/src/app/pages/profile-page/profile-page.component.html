@@ -1,0 +1,29 @@
+<div class="container justified">
+    <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
+    <div id="profileWrapper">
+        <div class="subcontainer justified">
+            <img [src]="userService.user.avatarUri" id="profile"/>
+            <h1>{{this.userService.user.name}}</h1>
+            <button mat-flat-button (click)="openEditProfileComponent()">Editer profil</button>
+            <div id="statsContainer">
+                <h2>Statistiques</h2>
+                <mat-grid-list cols="2" rowHeight="2:1" id="statsList">
+                    <mat-grid-tile class="statsElement">Parties jouees: {{this.userService.user.gamesPlayed}}</mat-grid-tile>
+                    <mat-grid-tile class="statsElement">Parties gagnes: {{this.userService.user.gamesWon}}</mat-grid-tile>
+                    <mat-grid-tile class="statsElement">Score moyen par partie: {{this.userService.user.averagePointsPerGame}}</mat-grid-tile>
+                    <mat-grid-tile class="statsElement">Temps moyen par partie: {{this.millisToMinutesAndSeconds()}}</mat-grid-tile>
+                </mat-grid-list>
+
+            </div>
+            <div id="historyContainer">
+                <h2>Historique des actions</h2>
+                <div>
+                    <button mat-flat-button (click)="openActionHistoryComponent()" class="history">Historique des connections</button>
+                </div>
+                <div>
+                    <button mat-flat-button (click)="openGameHistoryComponent()" class="history">Historique des parties</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
