@@ -14,6 +14,7 @@ export class GameServer {
     letters: string[];
 
     roomName: string;
+    gameStart: string;
 
     // BOARD SERVICE DATA
     board: Tile[][];
@@ -29,6 +30,7 @@ export class GameServer {
     // EQUIVALENT STAND PLAYER SERVICE DATA
     mapPlayers: Map<string, Player>;
     mapSpectators: Map<string, Spectator>;
+    winners: Player[];
 
     // VALIDATION SERVICE
     noTileOnBoard: boolean;
@@ -86,6 +88,7 @@ export class GameServer {
         this.masterTimer = '';
         this.displaySkipTurn = "En attente d'un autre joueur..";
         this.noTileOnBoard = true;
+        this.winners = [new Player('', false)];
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
