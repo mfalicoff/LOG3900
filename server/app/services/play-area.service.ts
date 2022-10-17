@@ -215,7 +215,7 @@ export class PlayAreaService {
         const neinyPercent = 0.9;
         const tenPercent = 0.1;
         const probaMove: number = this.giveProbaMove();
-        let resultCommand = '';
+        let resultCommand = '!passer';
 
         if (probaMove < tenPercent) {
             // 10% change to change letters

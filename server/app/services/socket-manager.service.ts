@@ -90,6 +90,7 @@ export class SocketManager {
         this.gameUpdateClients(game);
         if (game.gameFinished) {
             this.triggerStopTimer(user.roomName);
+            this.sio.sockets.emit('gameOver');
         }
     }
 
@@ -539,6 +540,7 @@ export class SocketManager {
             this.gameUpdateClients(createdGame);
 
             // emit to change page on client after verification
+            createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
 
@@ -787,6 +789,7 @@ export class SocketManager {
             return;
         }
         if (game.gameFinished) {
+            this.sio.sockets.emit('gameOver');
             this.gameFinishedAction(game);
             return;
         }

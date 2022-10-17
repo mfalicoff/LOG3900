@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GamemodeoptionsPageComponent } from './gamemodeoptions-page.component';
+import { GameModeOptionsPageComponent } from './game-mode-options-page.component';
 
-describe('GamemodeoptionsPageComponent', () => {
-    let component: GamemodeoptionsPageComponent;
-    let fixture: ComponentFixture<GamemodeoptionsPageComponent>;
+describe('GameModeOptionsPageComponent', () => {
+    let component: GameModeOptionsPageComponent;
+    let fixture: ComponentFixture<GameModeOptionsPageComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [GamemodeoptionsPageComponent],
+            declarations: [GameModeOptionsPageComponent],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(GamemodeoptionsPageComponent);
+        fixture = TestBed.createComponent(GameModeOptionsPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

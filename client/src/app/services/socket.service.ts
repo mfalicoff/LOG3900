@@ -204,6 +204,9 @@ export class SocketService {
             this.infoClientService.incommingPlayer = newPlayerName;
             this.infoClientService.incommingPlayerId = newPlayerId;
         });
+        this.socket.on('gameOver', () => {
+            this.infoClientService.game.gameFinished = true;
+        });
     }
 
     private setTimeoutForTimer() {

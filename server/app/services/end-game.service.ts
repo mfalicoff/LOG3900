@@ -13,22 +13,23 @@ export class EndGameService {
         if (players.length <= 0) {
             return [];
         }
-        let winnerPlayer = [new Player('fakePlayer', false)];
+        let bestScore = 0;
         for (const player of players) {
             // subtract the score of the letters still on the stand
-            player.score -= this.countDeductedScore(player);
+            // player.score -= this.countDeductedScore(player);
             // adds score final to database
             this.databaseService.addScoreClassicToDb(player);
             // storing the id of the player with the highest score
-            if (player.score > winnerPlayer[0].score) {
+            if (player.score > bestScore) {
                 // emptying the array
-                winnerPlayer = [];
-                winnerPlayer.push(player);
-            } else if (player.score === winnerPlayer[0].score) {
-                winnerPlayer.push(player);
+                game.winners = [];
+                game.winners.push(player);
+                bestScore = player.score;
+            } else if (player.score === bestScore) {
+                game.winners.push(player);
             }
         }
-        return winnerPlayer;
+        return game.winners;
     }
 
     listLetterStillOnStand(player: Player): string[] {
@@ -41,7 +42,7 @@ export class EndGameService {
         return listLetterStillOnStand;
     }
 
-    private countDeductedScore(player: Player): number {
+    /* private countDeductedScore(player: Player): number {
         let scoreDeducted = 0;
         for (const tile of player.stand) {
             if (tile.letter.weight) {
@@ -49,5 +50,5 @@ export class EndGameService {
             }
         }
         return scoreDeducted;
-    }
+    }*/
 }

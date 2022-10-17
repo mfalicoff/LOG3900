@@ -1,0 +1,79 @@
+<div id="mat-dialog-container">
+    <div><button mat-icon-button (click)="closeModalEndGame()" class="closeButton"> <mat-icon> close </mat-icon></button></div>
+
+    <div class="title-box">
+        <h1 mat-dialog-title class="title"> RÉSULTATS DE LA PARTIE </h1>
+    </div>
+    <div mat-dialog-content id="roomStats">
+        <ul>
+            <li> SALLE : {{nomSalle}}</li>
+            <li >CREATEUR DE LA SALLE: {{findCreatorOfGame()}}</li>
+            <div *ngIf="this.infoClientService.actualRoom.spectators.length !== 0">
+                <li>SPECTATEURS DE LA PARTIE :</li>
+                <div *ngFor="let spect of this.infoClientService.actualRoom.spectators" class="two-grid-row">
+                    <div class="two-grid-col" style="margin-right: -85%">
+                        <span> Nom: </span>
+                    </div>
+                    <div class="two-grid-col">
+                        <span> {{spect.name}} </span>
+                    </div>
+                </div>
+            </div>
+            <li> GAGNANT(S) DE LA PARTIE :</li>
+            <div *ngFor="let winner of this.infoClientService.game.winners" class="two-grid-row">
+                <div class="two-grid-col" style="margin-right: -60%">
+                    <span> Nom: {{winner.name}} </span>
+                </div>
+                <div class="two-grid-col">
+                    <span> score: {{winner.score}} </span>
+                </div>
+            </div>
+            <li> NOMBRE DE LETTRES RESTANTES DANS LA RÉSERVE: {{infoClientService.game.nbLetterReserve}}</li>
+            <li> NOMBRE DE TOURS AU TOTAL: {{this.findNumberOfTurns()}}</li>
+            <li> DURÉE DE LA PARTIE (en minutes) : {{this.displayPlayingTime()}}</li>
+            <li> DATE DU DÉBUT DE LA PARTIE : {{this.getGameStartDate()}}</li>
+        </ul>
+    </div>
+    <div class="title-box">
+        <h1 mat-dialog-title class="title"> STATISTIQUES DES JOUEURS </h1>
+    </div>
+    <div mat-dialog-content id="playersStats">
+        <div class="players-grid-row">
+            <div class="players-grid-col">
+                <ul>
+                    <h2 mat-dialog-title> JOUEUR: {{this.infoClientService.actualRoom.players[0].name}}</h2>
+                    <li> Score: {{this.infoClientService.actualRoom.players[0].score}} </li>
+                    <li> Lettres sur stand: {{this.lettersOnStand(this.infoClientService.actualRoom.players[0])}}</li>
+                    <li> Nombre de tours joué dans la partie: {{this.infoClientService.actualRoom.players[0].turn}}</li>
+                </ul>
+            </div>
+            <div class="players-grid-col">
+                <ul>
+                    <h2 mat-dialog-title> JOUEUR: {{this.infoClientService.actualRoom.players[1].name}}</h2>
+                    <li> Score: {{this.infoClientService.actualRoom.players[1].score}} </li>
+                    <li> Lettres sur stand: {{this.lettersOnStand(this.infoClientService.actualRoom.players[1])}}</li>
+                    <li> Nombre de tours joué dans la partie: {{this.infoClientService.actualRoom.players[1].turn}}</li>
+                </ul>
+            </div>
+            <div class="players-grid-col">
+                <ul>
+                    <h2 mat-dialog-title> JOUEUR: {{this.infoClientService.actualRoom.players[2].name}}</h2>
+                    <li> Score: {{this.infoClientService.actualRoom.players[2].score}} </li>
+                    <li> Lettres sur stand: {{this.lettersOnStand(this.infoClientService.actualRoom.players[2])}}</li>
+                    <li> Nombre de tours joué dans la partie: {{this.infoClientService.actualRoom.players[2].turn}}</li>
+                </ul>
+            </div>
+            <div class="players-grid-col">
+                <ul>
+                    <h2 mat-dialog-title> JOUEUR: {{this.infoClientService.actualRoom.players[3].name}}</h2>
+                    <li> Score: {{this.infoClientService.actualRoom.players[3].score}} </li>
+                    <li> Lettres sur stand: {{this.lettersOnStand(this.infoClientService.actualRoom.players[3])}}</li>
+                    <li> Nombre de tours joué dans la partie: {{this.infoClientService.actualRoom.players[3].turn}}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

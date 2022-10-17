@@ -26,7 +26,7 @@ export class SidebarComponent {
             return;
         }
         this.socketService.socket.emit('giveUpGame');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/game-mode-options']);
     }
 
     finishGameClick() {
@@ -37,7 +37,7 @@ export class SidebarComponent {
         if (!this.infoClientService.game.gameFinished) {
             return;
         }
-        this.router.navigate(['/home']);
+        this.router.navigate(['/game-mode-options']);
     }
 
     shouldLeaveGameBe() {
