@@ -8,7 +8,7 @@
                         Mode de jeu classique
             </button>
         </div>
-        <button mat-flat-button class="button" routerLink="/login"> Logout </button>
+        <button mat-flat-button class="button" (click)="logOut()" routerLink="/login"> Logout </button>
         <button mat-flat-button class="button" routerLink="/leaderboard">Meilleurs scores</button>
     </div>
 </div>
