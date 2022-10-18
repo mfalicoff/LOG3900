@@ -10,10 +10,12 @@ import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
 import { StandService } from './stand.service';
 import { VirtualPlayerService } from './virtual-player.service';
+import AvatarService from '@app/services/avatar.service';
 
 @Service()
 export class PlayAreaService {
     sio: io.Server;
+    avatarService = new AvatarService();
     constructor(
         private standService: StandService,
         private letterBankService: LetterBankService,
@@ -120,7 +122,7 @@ export class PlayAreaService {
     }
 
     // function that transforms the playerThatLeaves into a virtual player
-    replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
+    async replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
         // we send to everyone that the player has left and has been replaced by a bot
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
@@ -143,6 +145,7 @@ export class PlayAreaService {
         // we replace him with the virtual player
         playerThatLeaves.idPlayer = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
+        playerThatLeaves.avatarUri = await this.avatarService.getRandomAvatar();
         this.insertInMapIndex(game.idxPlayerPlaying, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
 
         // if the game is not started we don't need to change the turn
