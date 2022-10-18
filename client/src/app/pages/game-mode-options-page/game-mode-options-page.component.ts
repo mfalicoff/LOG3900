@@ -24,7 +24,7 @@ export class GameModeOptionsPageComponent {
         const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
         return (
             this.http
-                .post<unknown>(
+                .post<any>(
                     environment.serverUrl + 'logout',
                     {},
                     {

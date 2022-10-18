@@ -88,7 +88,6 @@ export class LoginPageComponent {
                                     this.handleErrorPOST(error);
                                 },
                             });
-                        this.router.navigate(['/game-mode-options']);
                     },
                     error: (error) => {
                         this.handleErrorPOST(error);
@@ -111,7 +110,6 @@ export class LoginPageComponent {
                         // this.socketService.socket.emit('new-user', response.data.name);
                         // this.infoClientService.playerName = response.data.name;
                         this.saveUserInfo(response);
-                        this.router.navigate(['/game-mode-options']);
                     },
                     error: (error) => {
                         this.handleErrorPOST(error);
@@ -125,7 +123,7 @@ export class LoginPageComponent {
         this.userService.updateUserInstance(response.data);
         this.socketService.socket.emit('new-user', response.data.name);
         this.infoClientService.playerName = response.data.name;
-        this.router.navigate(['/gamemode-options']);
+        this.router.navigate(['/game-mode-options']);
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {
