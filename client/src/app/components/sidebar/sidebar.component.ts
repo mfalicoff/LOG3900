@@ -26,19 +26,19 @@ export class SidebarComponent {
             return;
         }
         this.socketService.socket.emit('giveUpGame');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/game-mode-options']);
     }
 
-    finishGameClick() {
-        if (this.infoClientService.isSpectator) {
-            return;
-        }
+    // finishGameClick() {
+    //     if (this.infoClientService.isSpectator) {
+    //         return;
+    //     }
 
-        if (!this.infoClientService.game.gameFinished) {
-            return;
-        }
-        this.router.navigate(['/home']);
-    }
+    //     if (!this.infoClientService.game.gameFinished) {
+    //         return;
+    //     }
+    //     this.router.navigate(['/game-mode-options']);
+    // }
 
     shouldLeaveGameBe() {
         if (this.infoClientService.isSpectator || this.infoClientService.game.gameFinished || !this.infoClientService.game.gameStarted) {

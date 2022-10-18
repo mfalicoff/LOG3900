@@ -14,6 +14,7 @@ export class GameServer {
     letters: string[];
 
     roomName: string;
+    gameStart: string;
 
     // BOARD SERVICE DATA
     board: Tile[][];
@@ -29,6 +30,7 @@ export class GameServer {
     // EQUIVALENT STAND PLAYER SERVICE DATA
     mapPlayers: Map<string, Player>;
     mapSpectators: Map<string, Spectator>;
+    winners: Player[];
 
     // VALIDATION SERVICE
     noTileOnBoard: boolean;
@@ -86,6 +88,7 @@ export class GameServer {
         this.masterTimer = '';
         this.displaySkipTurn = "En attente d'un autre joueur..";
         this.noTileOnBoard = true;
+        this.winners = [new Player('', false)];
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
@@ -124,12 +127,18 @@ export class GameServer {
     // (reminder:) the master_timer is the client that make the turn stop
     // when there is no time (it's not the server bc multiple setTimeout would be a nightmare)
     setMasterTimer() {
+        // try to find a player to give him the master timer
         for (const player of this.mapPlayers.values()) {
             if (player.idPlayer === 'virtualPlayer') {
                 continue;
             }
             this.masterTimer = player.idPlayer;
-            break;
+            return;
+        }
+        // if no player found, try to find a spectator to give him the master timer
+        for (const spectator of this.mapSpectators.values()) {
+            this.masterTimer = spectator.socketId;
+            return;
         }
     }
     // takes the first players and makes it creator of game

@@ -10,10 +10,12 @@ import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
 import { StandService } from './stand.service';
 import { VirtualPlayerService } from './virtual-player.service';
+import AvatarService from '@app/services/avatar.service';
 
 @Service()
 export class PlayAreaService {
     sio: io.Server;
+    avatarService = new AvatarService();
     constructor(
         private standService: StandService,
         private letterBankService: LetterBankService,
@@ -31,13 +33,15 @@ export class PlayAreaService {
     }
 
     changePlayer(game: GameServer) {
-        // removes all temporary tiles
-        this.boardService.rmTempTiles(game);
+        // removes all temporary tiles and get the tmp that were in the board
+        const tmpLetter = this.boardService.rmTempTiles(game);
         // Update les tiles du board en old
         this.updateOldTiles(game);
-        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
 
+        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         if (playerThatJustPlayed) {
+            // we add the tmp letter to the stand of the player that just played
+            this.standService.putLettersOnStand(game, tmpLetter, playerThatJustPlayed);
             // update the variable that contains the number of letter in the reserve
             this.updateStandAndReserveView(game, playerThatJustPlayed);
             // add a turn to the player that just played
@@ -118,7 +122,7 @@ export class PlayAreaService {
     }
 
     // function that transforms the playerThatLeaves into a virtual player
-    replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
+    async replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
         // we send to everyone that the player has left and has been replaced by a bot
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
@@ -141,6 +145,7 @@ export class PlayAreaService {
         // we replace him with the virtual player
         playerThatLeaves.idPlayer = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
+        playerThatLeaves.avatarUri = await this.avatarService.getRandomAvatar();
         this.insertInMapIndex(game.idxPlayerPlaying, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
 
         // if the game is not started we don't need to change the turn
@@ -213,7 +218,7 @@ export class PlayAreaService {
         const neinyPercent = 0.9;
         const tenPercent = 0.1;
         const probaMove: number = this.giveProbaMove();
-        let resultCommand = '';
+        let resultCommand = '!passer';
 
         if (probaMove < tenPercent) {
             // 10% change to change letters

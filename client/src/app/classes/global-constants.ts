@@ -37,7 +37,7 @@ export const WAIT_FOR_CANVAS_INI = 10;
 /// ////////////////////////////////////////////////////////////////////////
 // TODO switch this to 4 when 4 game players will be enabled
 export const MIN_PERSON_PLAYING = 2;
-export const MAX_PERSON_PLAYING = 2;
+export const MAX_PERSON_PLAYING = 4;
 export const WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
 export const WAIT_FOR_OTHER_PLAYERS = "En attente d'autres joueurs...";
 
@@ -59,6 +59,9 @@ export const END_POSITION_INDEX_LINE = 1;
 /// ////////////////////////////////////////////////////////////////////////
 export const DEFAULT_VALUE_NUMBER = -1;
 export const TIME_PER_ROUND_DEFAULT = 1000;
+
+export const LEFT_CLICK = 0;
+export const RIGHT_CLICK = 2;
 
 /// //OBJECTIVE CONSTANTS///////
 export const FAILED_OBJECTIVE = 'failed';
