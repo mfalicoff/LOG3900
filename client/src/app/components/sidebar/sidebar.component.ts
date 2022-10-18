@@ -29,16 +29,16 @@ export class SidebarComponent {
         this.router.navigate(['/game-mode-options']);
     }
 
-    finishGameClick() {
-        if (this.infoClientService.isSpectator) {
-            return;
-        }
+    // finishGameClick() {
+    //     if (this.infoClientService.isSpectator) {
+    //         return;
+    //     }
 
-        if (!this.infoClientService.game.gameFinished) {
-            return;
-        }
-        this.router.navigate(['/game-mode-options']);
-    }
+    //     if (!this.infoClientService.game.gameFinished) {
+    //         return;
+    //     }
+    //     this.router.navigate(['/game-mode-options']);
+    // }
 
     shouldLeaveGameBe() {
         if (this.infoClientService.isSpectator || this.infoClientService.game.gameFinished || !this.infoClientService.game.gameStarted) {
