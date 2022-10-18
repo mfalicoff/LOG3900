@@ -46,9 +46,7 @@ export class ParametresSelectionPageComponent implements OnInit {
     }
 
     onClickDict(dictionary: MockDict) {
-        console.log(dictionary);
         this.mockDictionary = dictionary;
-        console.log(this.mockDictionary);
     }
 
     vpLevelSelection(level: string) {
