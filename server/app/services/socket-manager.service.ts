@@ -22,6 +22,8 @@ import { PutLogicService } from './put-logic.service';
 import { ChatMessage } from '@app/classes/chat-message.interface';
 import { Tile } from '@app/classes/tile';
 import { StandService } from './stand.service';
+import UserService from '@app/services/user.service';
+import avatarService from '@app/services/avatar.service';
 
 @Service()
 export class SocketManager {
@@ -33,6 +35,8 @@ export class SocketManager {
     scoreClassic: Score[];
     scoreLOG2990: Score[];
     chatHistory: ChatMessage[] = [];
+    private userService = new UserService();
+    private avatarService = new avatarService();
 
     constructor(
         server: http.Server,
@@ -415,7 +419,7 @@ export class SocketManager {
         });
     }
 
-    private createGameAndPlayer(
+    private async createGameAndPlayer(
         gameMode: string,
         timeTurn: number,
         isBonusRandom: boolean,
@@ -430,13 +434,14 @@ export class SocketManager {
         const newGame: GameServer = new GameServer(timeTurn, isBonusRandom, gameMode, vpLevel, roomName, isGamePrivate, passwd);
         const newPlayer = new Player(playerName, true);
         newPlayer.idPlayer = socket.id;
+        newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(playerName));
         this.boardService.initBoardArray(newGame);
 
         // fill the remaining players with bots
         for (let i = 0; i < GlobalConstants.MAX_PERSON_PLAYING - 1; i++) {
             const virtualPlayerId = 'virtualPlayer';
             const newOpponent = new Player(this.databaseService.namesVP[i].firstName + ' ' + this.databaseService.namesVP[i].lastName, false);
-
+            newOpponent.avatarUri = await this.avatarService.getRandomAvatar();
             newOpponent.idPlayer = virtualPlayerId;
             newGame.mapPlayers.set(newOpponent.name, newOpponent);
         }
@@ -481,9 +486,10 @@ export class SocketManager {
         }
     }
 
-    private joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
+    private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
+        newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.idPlayer = socket.id;
         game?.mapPlayers.set(socket.id, newPlayer);
 
@@ -509,7 +515,7 @@ export class SocketManager {
             this.users.set(socket.id, { name, roomName: '' });
         });
 
-        socket.on('createRoomAndGame', ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
+        socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
                 socket.emit('messageServer', 'Une salle avec ce nom existe déjà.');
@@ -520,7 +526,7 @@ export class SocketManager {
             if (user) {
                 user.roomName = roomName;
             }
-            this.createGameAndPlayer(gameMode, timeTurn, isBonusRandom, playerName, socket, roomName, vpLevel, isGamePrivate, passwd);
+            await this.createGameAndPlayer(gameMode, timeTurn, isBonusRandom, playerName, socket, roomName, vpLevel, isGamePrivate, passwd);
             const createdGame = this.rooms.get(roomName);
             if (!createdGame) {
                 return;
@@ -601,7 +607,7 @@ export class SocketManager {
             this.sendListOfRooms(socket);
         });
 
-        socket.on('spectWantsToBePlayer', () => {
+        socket.on('spectWantsToBePlayer', async () => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -637,6 +643,7 @@ export class SocketManager {
             // set the new player attribute and add it to the map
             oldVirtualPlayer.idPlayer = socket.id;
             oldVirtualPlayer.name = user.name;
+            oldVirtualPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(user.name));
             game.mapPlayers.set(oldVirtualPlayer.name, oldVirtualPlayer);
 
             socket.emit('isSpectator', false);
@@ -808,8 +815,8 @@ export class SocketManager {
             if (nbRealPlayer >= 1 || nbSpectators >= 1) {
                 // we send to the opponent a update of the game
                 const waitBeforeAbandonment = 3000;
-                setTimeout(() => {
-                    this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
+                setTimeout(async () => {
+                    await this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
                     if (socket.id === game.masterTimer) {
                         game.setMasterTimer();
                     }

@@ -31,6 +31,17 @@ class UserService {
         return findUser;
     }
 
+    async findUserByName(username: string): Promise<User> {
+        if (isEmpty(username)) {
+            throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no name sent');
+        }
+
+        const findUser: User = (await this.users.findOne({ name: username })) as User;
+        if (!findUser || username === 'DefaultPlayerName') throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+        findUser.avatarUri = await this.populateAvatarField(findUser);
+        return findUser;
+    }
+
     async createUser(userData: CreateUserValidator): Promise<User> {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
@@ -138,6 +149,10 @@ class UserService {
 
     async populateAvatarField(user: User): Promise<string> {
         return await this.avatarService.findAvatarByPath(user.avatarPath as string);
+    }
+
+    getAvatar(user: User): string {
+        return user.avatarUri as string;
     }
 }
 
