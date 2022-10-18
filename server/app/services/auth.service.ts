@@ -44,7 +44,7 @@ class AuthService {
     async logout(id: string): Promise<void> {
         const filteredIds = this.loggedInIds.filter((_id) => _id !== id);
         const findUser = await this.userService.findUserById(id);
-        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: [addActionHistory('logout')] } });
+        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('logout') } });
         this.loggedInIds = filteredIds;
     }
 

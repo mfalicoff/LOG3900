@@ -30,6 +30,8 @@ export class Player {
     allLetterSwapped: boolean;
     isMoveBingo: boolean;
 
+    avatarUri: string;
+
     constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
         this.isCreatorOfGame = isCreatorOfGame;

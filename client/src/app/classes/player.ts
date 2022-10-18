@@ -8,7 +8,7 @@ export class Player {
     idPlayer: string;
     name: string;
     stand: Tile[];
-    avatarForVirtPlayer: string;
+    avatarUri: string;
     isCreatorOfGame: boolean;
 
     // we are obliged to put the esLint disable because the object class we use isnt stable
