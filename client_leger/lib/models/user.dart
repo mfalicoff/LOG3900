@@ -7,13 +7,13 @@ class User {
   late String? avatarPath;
   late String? avatarUri;
   late int? averagePointsPerGame;
-  late int? averageTimePerGame;
+  late double? averageTimePerGame;
   late String? cookie;
   late String email;
   late List<dynamic>? gameHistory;
   late int? gamesPlayed;
   late int? gamesWon;
-  late String? _id;
+  late String? id;
   late String username;
   late Io.File avatarImage;
 
@@ -30,7 +30,7 @@ class User {
     gameHistory = parsed["data"]["gameHistory"] ?? "Failed";
     gamesPlayed = parsed["data"]["gamesPlayed"] ?? "Failed";
     gamesWon = parsed["data"]["gamesWon"] ?? "Failed";
-    _id = parsed["data"]["_id"] ?? "Failed";
+    id = parsed["data"]["_id"] ?? "Failed";
   }
 
   User clear() {
