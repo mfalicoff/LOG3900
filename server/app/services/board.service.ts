@@ -2,6 +2,7 @@ import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Letter } from '@app/classes/letter';
 import { Tile } from '@app/classes/tile';
+import { Vec2 } from '@app/classes/vec2';
 import { Vec4 } from '@app/classes/vec4';
 import { Service } from 'typedi';
 
@@ -71,5 +72,50 @@ export class BoardService {
         } else {
             game.mapLetterOnBoard.get(letterToPut).value++;
         }
+    }
+
+    putLetterInBoardArray(tileToPut: Tile, position: Vec2, game: GameServer) {
+        game.board[position.y][position.x].letter.value = tileToPut.letter.value;
+        game.board[position.y][position.x].letter.weight = tileToPut.letter.weight;
+    }
+
+    // get all the indexes of the tmp tiles
+    getIdxsTmpLetters(game: GameServer): Vec2[] {
+        const idxsTmpLetters = [];
+        for (let i = 0; i < game.board.length; i++) {
+            for (let j = 0; j < game.board[i].length; j++) {
+                // if the border is "#ffaaff" is means it's a tmp tile
+                if (game.board[i][j].borderColor !== '#ffaaff') {
+                    continue;
+                }
+                idxsTmpLetters.push({ x: i, y: j });
+            }
+        }
+        return idxsTmpLetters;
+    }
+
+    rmTempTiles(game: GameServer): string {
+        let letterNotUsed = '';
+        const idxsTmpLetters = this.getIdxsTmpLetters(game);
+        for (const idxsLetter of idxsTmpLetters) {
+            letterNotUsed += game.board[idxsLetter.x][idxsLetter.y].letter.value;
+            const emptyTile = new Tile();
+            const newPosition = new Vec4();
+            const newLetter = new Letter();
+            newPosition.x1 = game.board[idxsLetter.x][idxsLetter.y].position.x1;
+            newPosition.y1 = game.board[idxsLetter.x][idxsLetter.y].position.y1;
+            newPosition.height = game.board[idxsLetter.x][idxsLetter.y].position.height;
+            newPosition.width = game.board[idxsLetter.x][idxsLetter.y].position.width;
+
+            newLetter.weight = 0;
+            newLetter.value = '';
+
+            emptyTile.bonus = game.bonusBoard[idxsLetter.x][idxsLetter.y];
+            emptyTile.letter = newLetter;
+            emptyTile.position = newPosition;
+
+            game.board[idxsLetter.x][idxsLetter.y] = emptyTile;
+        }
+        return letterNotUsed;
     }
 }

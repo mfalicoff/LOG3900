@@ -56,24 +56,17 @@ export class PutLogicService {
         this.sendGameToAllClientInRoom(game);
 
         const isWordValid: boolean = this.checkWordsValidity(game, position);
-        // if (!isWordValid) {
-        //     this.boardLogicRemove(game, position, word);
-        // } else {
-        //     // Update the score
-        //     const score = this.scoreCountService.countScoreArray(this.boardExplorerService.getWordArray(position, game.board));
-        //     this.scoreCountService.updateScore(score, player);
-        //     game.noTileOnBoard = false;
-        // }
-
         if (isWordValid) {
             // Update the score
             const score = this.scoreCountService.countScoreArray(this.boardExplorerService.getWordArray(position, game.board));
             this.scoreCountService.updateScore(score, player);
             game.noTileOnBoard = false;
-        }
 
-        // Update the stand
-        this.updateStandAndBoardAfterPlacement(game, player, word, position, isWordValid);
+            // give new letters to player
+            this.standService.fillEmptySlotStand(player, game);
+            // check if the word was a bingo
+            this.isWordABingo(game, player, word, position);
+        }
         return isWordValid;
     }
 
@@ -100,7 +93,9 @@ export class PutLogicService {
                 this.boardService.writeLetterInGameMap(word[indexReadWord], game);
 
                 game.board[indexLine][i].letter.value = word[indexReadWord];
-                game.board[indexLine][i].letter.weight = this.letterBankService.checkLetterWeight(word[indexReadWord], game.letterBank);
+                game.board[indexLine][i].letter.weight = this.letterBankService.getLetterWeight(word[indexReadWord], game.letterBank);
+                // the border of the tile changes so show that it is not a temp tile
+                game.board[indexLine][i].borderColor = '#212121';
             }
         } else {
             for (let i = indexLine; i < indexLine + wordLength; i++) {
@@ -111,7 +106,9 @@ export class PutLogicService {
                 this.boardService.writeLetterInGameMap(word[indexReadWord], game);
 
                 game.board[i][indexColumn].letter.value = word[indexReadWord];
-                game.board[i][indexColumn].letter.weight = this.letterBankService.checkLetterWeight(word[indexReadWord], game.letterBank);
+                game.board[i][indexColumn].letter.weight = this.letterBankService.getLetterWeight(word[indexReadWord], game.letterBank);
+                // the border of the tile changes so show that it is not a temp tile
+                game.board[i][indexColumn].borderColor = '#212121';
             }
         }
     }
@@ -148,50 +145,7 @@ export class PutLogicService {
         }
     }
 
-    private updateStandAndBoardAfterPlacement(game: GameServer, player: Player, word: string, position: string, isWordValid: boolean) {
-        const arrayIndexWord: number[] = [];
-        const arrayLetter: string[] = [];
-        let areAllLetterOnStand = true;
-
-        for (let i = 0; i < word.length; i++) {
-            let letterToCheck: string = word[i];
-            // Verify if this is a blank letter or not
-            if (letterToCheck === letterToCheck.toUpperCase()) {
-                letterToCheck = '*';
-            }
-            if (!player.mapLetterOnStand.has(letterToCheck)) {
-                areAllLetterOnStand = false;
-                continue;
-            }
-            if (this.verifyIfTileOnBoardAlready(game, letterToCheck, i, position)) {
-                areAllLetterOnStand = false;
-                continue;
-            }
-
-            for (let j = 0; j < GlobalConstants.NUMBER_SLOT_STAND; j++) {
-                if (letterToCheck === player.stand[j].letter.value) {
-                    this.standService.deleteLetterStandLogic(letterToCheck, j, player);
-
-                    if (isWordValid) {
-                        this.standService.putNewLetterOnStand(player.stand[j], game.letters, game.letterBank, player);
-                    } else {
-                        arrayIndexWord.push(j);
-                        arrayLetter.push(letterToCheck);
-                    }
-                    break;
-                }
-            }
-        }
-        player.isMoveBingo = areAllLetterOnStand;
-
-        // player update for stand
-        this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
-        if (!isWordValid) {
-            this.cancelUpdateOperation(game, player, arrayIndexWord, arrayLetter);
-        }
-    }
-
-    private sendGameToAllClientInRoom(game: GameServer) {
+    sendGameToAllClientInRoom(game: GameServer) {
         // We send to all clients a gameState and a scoreBoardState\
         this.sio.to(game.roomName).emit('gameBoardUpdate', game);
 
@@ -208,16 +162,19 @@ export class PutLogicService {
         }
     }
 
-    private cancelUpdateOperation(game: GameServer, player: Player, arrayIndexWord: number[], arrayLetter: string[]) {
-        setTimeout(() => {
-            let indexWord = 0;
-            for (const positionIndex of arrayIndexWord) {
-                this.standService.writeLetterStandLogic(positionIndex, arrayLetter[indexWord], game.letterBank, player);
-                indexWord++;
+    isWordABingo(game: GameServer, player: Player, word: string, position: string) {
+        let areAllLetterOnStand = true;
+        for (let i = 0; i < word.length; i++) {
+            let letterToCheck: string = word[i];
+            // Verify if this is a blank letter or not
+            if (letterToCheck === letterToCheck.toUpperCase()) {
+                letterToCheck = '*';
             }
-            // Game update
-            this.sendGameToAllClientInRoom(game);
-        }, GlobalConstants.TIME_DELAY_RM_BAD_WORD);
+            if (this.verifyIfTileOnBoardAlready(game, letterToCheck, i, position)) {
+                areAllLetterOnStand = false;
+            }
+        }
+        player.isMoveBingo = areAllLetterOnStand;
     }
 
     private verifyIfTileOnBoardAlready(game: GameServer, letterToCheck: string, indexLetter: number, position: string): boolean {

@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
+import { TimerService } from '@app/services/timer.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class RankedService {
-    matchFound:boolean;
-    constructor() {
-        this.matchFound = false;
+    isShowModal:boolean;
+    constructor(public timerService: TimerService) {
+        this.isShowModal = false;
     }
 
     matchHasBeenFound() {
-        this.matchFound= true;
+        this.isShowModal= true;
+        this.timerService.startTimer(0.25);
     }
+    
 }

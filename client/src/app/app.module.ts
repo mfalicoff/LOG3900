@@ -1,6 +1,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
@@ -19,13 +20,19 @@ import { MultiplayerInitPageComponent } from '@app/pages/multiplayer-init-page/m
 import { ParametresSelectionPageComponent } from '@app/pages/parametres-selection-page/parametres-selection-page.component';
 import { RankedInitPageComponent } from '@app/pages/ranked-init-page/ranked-init-page.component';
 import { RankedMatchmakingPageComponent } from '@app/pages/ranked-matchmaking-page/ranked-matchmaking-page.component';
+import { NgxGalleryModule } from '@kolkov/ngx-gallery';
+import { GalleryComponent } from './components/gallery/gallery.component';
 import { ModalVpLevelsComponent } from './components/modal-vp-levels/modal-vp-levels.component';
+import { UserHistoryComponent } from './components/user-history/user-history.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { ChatComponent } from './pages/chat/chat.component';
 import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
 import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ModalComponent } from './pages/modal/modal.component';
+import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -54,6 +61,10 @@ import { ModalComponent } from './pages/modal/modal.component';
         ChatComponent,
         LoginPageComponent,
         GamemodeoptionsPageComponent,
+        ProfilePageComponent,
+        UserHistoryComponent,
+        ProfileEditComponent,
+        GalleryComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -64,6 +75,8 @@ import { ModalComponent } from './pages/modal/modal.component';
         HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
+        MatGridListModule,
+        NgxGalleryModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

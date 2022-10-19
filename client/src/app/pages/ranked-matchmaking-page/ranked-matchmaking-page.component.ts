@@ -11,7 +11,6 @@ import { TimerService } from '@app/services/timer.service';
 })
 export class RankedMatchmakingPageComponent {
     matchAccepted: boolean;
-    matchFound:boolean;
     constructor(public timerService: TimerService, private socketService: SocketService, public infoClientService: InfoClientService, public rankedService:RankedService) {
         this.timerService.clearTimer();
         this.startTimer();
@@ -21,8 +20,8 @@ export class RankedMatchmakingPageComponent {
         this.timerService.startMatchmakingTimer();
     }
     startMatchmaking() {
-        console.log(this.infoClientService.player);
         this.socketService.socket.emit('startMatchmaking', {player: this.infoClientService.player});
+        this.checkAcceptMatchTimer();
     }
     
     acceptMatch() {
@@ -32,5 +31,13 @@ export class RankedMatchmakingPageComponent {
     refuseMatch() {
         this.matchAccepted = false;
         this.timerService.clearTimer();
+        this.socketService.socket.emit('matchRefuse', {player: this.infoClientService.player});
+    }
+    checkAcceptMatchTimer() {
+        const timerInterval = setInterval(() => {
+            if (this.timerService.secondsValue <= 0) {
+                clearInterval(timerInterval);
+            }
+        }, 1000);
     }
 }

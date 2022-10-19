@@ -4,11 +4,12 @@ import * as GlobalConstants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Player } from '@app/classes/player';
 import { Service } from 'typedi';
+import { BoardService } from './board.service';
 import { LetterBankService } from './letter-bank.service';
 
 @Service()
 export class ValidationService {
-    constructor(private letterBankService: LetterBankService) {}
+    constructor(private letterBankService: LetterBankService, private boardService: BoardService) {}
 
     entryIsTooLong(input: string): boolean {
         // verify that the entry of the user isn't longer thant 512 characters
@@ -61,10 +62,6 @@ export class ValidationService {
         if (!this.wordFitsBoard(word, position)) {
             return GlobalConstants.WORD_DONT_FIT_BOARD;
         }
-        // Verify that the letters used are on the board or on the canvas
-        if (!this.lettersAreOnBoardOrStand(word, game, player)) {
-            return GlobalConstants.LETTERS_NOT_PRESENT;
-        }
 
         if (!game.noTileOnBoard && !this.lettersHaveContactWithOthers(word, position, game)) {
             return GlobalConstants.LETTERS_MUST_TOUCH_OTHERS;
@@ -73,6 +70,15 @@ export class ValidationService {
         // verify that letters used from canvas are on the right place
         if (!this.areLettersUsedFromCanvasWellPlaced(word, position, game, player)) {
             return GlobalConstants.LETTERS_FROM_BOARD_WRONG;
+        }
+
+        // verify that the tmporary letters are touching each other
+        // TODO this function does not work in this case:
+        // LE A on the same line or column but with a space beetween the letters.
+        // in this case the system consider that the position is good but it is not
+        // we could fix it but it also could be a feature in case the perso misplaced his letter
+        if (!this.tmpLettersTouchEachOther(game)) {
+            return GlobalConstants.TMP_LETTERS_MUST_TOUCH;
         }
 
         return '';
@@ -157,6 +163,19 @@ export class ValidationService {
         return true;
     }
 
+    private tmpLettersTouchEachOther(game: GameServer): boolean {
+        const idxsTmpLetters = this.boardService.getIdxsTmpLetters(game);
+        // we stop at length - 1 because in the loop we check the +1 letter
+        for (let i = 0; i < idxsTmpLetters.length - 1; i++) {
+            // if both letters coordinates have nothing in common we return false
+            if (idxsTmpLetters[i].x !== idxsTmpLetters[i + 1].x && idxsTmpLetters[i].y !== idxsTmpLetters[i + 1].y) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private wordFitsBoard(word: string, position: string): boolean {
         const letterWay: string = position.slice(GlobalConstants.POSITION_LAST_LETTER);
         const indexLine: number =
@@ -215,11 +234,19 @@ export class ValidationService {
         // we dont use the variable i so we cant replace this 'for' for a 'for of' otherwise the compilator will say the variable isnt used
         // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let i = 0; i < word.length; i++) {
-            const isLetterToTheSide: boolean =
-                game.board[indexLine + 1][indexColumn].letter.value !== '' || game.board[indexLine - 1][indexColumn].letter.value !== '';
-            const isLetterUpOrBelow: boolean =
-                game.board[indexLine][indexColumn + 1].letter.value !== '' || game.board[indexLine][indexColumn - 1].letter.value !== '';
-            if (isLetterUpOrBelow || isLetterToTheSide || game.board[indexLine][indexColumn].letter.value !== '') {
+            const upTile = game.board[indexLine - 1][indexColumn];
+            const downTile = game.board[indexLine + 1][indexColumn];
+            const leftTile = game.board[indexLine][indexColumn - 1];
+            const rightTile = game.board[indexLine][indexColumn + 1];
+            // store the letter but doesn't take the temporary one
+            const upLetter = upTile.borderColor !== '#ffaaff' ? upTile.letter.value : '';
+            const downLetter = downTile.borderColor !== '#ffaaff' ? downTile.letter.value : '';
+            const leftLetter = leftTile.borderColor !== '#ffaaff' ? leftTile.letter.value : '';
+            const rightLetter = rightTile.borderColor !== '#ffaaff' ? rightTile.letter.value : '';
+
+            const isLetterUpOrBelow: boolean = downLetter !== '' || upLetter !== '';
+            const isLetterToTheSide: boolean = rightLetter !== '' || leftLetter !== '';
+            if (isLetterUpOrBelow || isLetterToTheSide) {
                 return true;
             }
             if (letterWay === 'h') {
@@ -231,49 +258,6 @@ export class ValidationService {
         return false;
     }
 
-    private lettersAreOnBoardOrStand(word: string, game: GameServer, player: Player): boolean {
-        for (const letter of word) {
-            if (letter === '*') {
-                return false;
-            }
-            let letterToCheck: string = letter;
-
-            // condition that verify that its not a blank letter
-            if (letter === letter.toUpperCase()) {
-                letterToCheck = '*';
-            }
-
-            const doesMapStandHaveLetter = player.mapLetterOnStand.has(letterToCheck);
-            const doesMapBoardHaveLetter = game.mapLetterOnBoard.has(letterToCheck);
-            const nbRepetitionLetter = this.charCount(word, letterToCheck);
-
-            switch (true) {
-                case doesMapStandHaveLetter && doesMapBoardHaveLetter: {
-                    if (player.mapLetterOnStand.get(letterToCheck).value + game.mapLetterOnBoard.get(letterToCheck).value < nbRepetitionLetter) {
-                        return false;
-                    }
-                    break;
-                }
-                case doesMapStandHaveLetter && !doesMapBoardHaveLetter: {
-                    if (player.mapLetterOnStand.get(letterToCheck).value < nbRepetitionLetter) {
-                        return false;
-                    }
-                    break;
-                }
-                case !doesMapStandHaveLetter && doesMapBoardHaveLetter: {
-                    if (game.mapLetterOnBoard.get(letterToCheck).value < nbRepetitionLetter) {
-                        return false;
-                    }
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     // check if the letter in param is in the alphabet
     private belongsInAlphabet(letter: string): boolean {
         for (const character of ALPHABET) {
@@ -282,16 +266,6 @@ export class ValidationService {
             }
         }
         return false;
-    }
-
-    private charCount(str: string, letter: string) {
-        let letterCount = 0;
-        for (let position = 0; position < str.length; position++) {
-            if (str.charAt(position) === letter) {
-                letterCount += 1;
-            }
-        }
-        return letterCount;
     }
 
     // if the line is a 0 < number < 9

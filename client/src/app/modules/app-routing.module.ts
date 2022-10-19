@@ -10,6 +10,7 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { MultiplayerInitPageComponent } from '@app/pages/multiplayer-init-page/multiplayer-init-page.component';
 import { ParametresSelectionPageComponent } from '@app/pages/parametres-selection-page/parametres-selection-page.component';
+import { ProfilePageComponent } from '@app/pages/profile-page/profile-page.component';
 import { RankedInitPageComponent } from '@app/pages/ranked-init-page/ranked-init-page.component';
 import { RankedMatchmakingPageComponent } from '@app/pages/ranked-matchmaking-page/ranked-matchmaking-page.component';
 
@@ -27,6 +28,7 @@ const routes: Routes = [
     { path: 'chat', component: ChatComponent },
     { path: 'login', component: LoginPageComponent },
     { path: 'gamemode-options', component: GamemodeoptionsPageComponent },
+    { path: 'profile', component: ProfilePageComponent },
     { path: '**', redirectTo: '/home' },
 ];
 

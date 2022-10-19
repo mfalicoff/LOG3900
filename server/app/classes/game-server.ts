@@ -52,6 +52,8 @@ export class GameServer {
 
     vpLevel: string;
 
+    startTime: number;
+    endTime: number;
     constructor(
         minutesByTurn: number,
         randomBonusesOn: boolean,
@@ -116,6 +118,38 @@ export class GameServer {
         ]);
         this.initializeLettersArray();
         this.initializeBonusBoard();
+    }
+
+    // function that sets the master_timer for the game
+    // (reminder:) the master_timer is the client that make the turn stop
+    // when there is no time (it's not the server bc multiple setTimeout would be a nightmare)
+    setMasterTimer() {
+        // try to find a player to give him the master timer
+        for (const player of this.mapPlayers.values()) {
+            if (player.idPlayer === 'virtualPlayer') {
+                continue;
+            }
+            this.masterTimer = player.idPlayer;
+            return;
+        }
+        // if no player found, try to find a spectator to give him the master timer
+        for (const spectator of this.mapSpectators.values()) {
+            this.masterTimer = spectator.socketId;
+            return;
+        }
+    }
+    // takes the first players and makes it creator of game
+    setNewCreatorOfGame() {
+        const realPlayers = Array.from(this.mapPlayers.values()).filter((player) => !player.isCreatorOfGame && player.idPlayer !== 'virtualPlayer');
+
+        // takes the first players and makes it creator of game
+        if (realPlayers.length > 0) {
+            realPlayers[0].isCreatorOfGame = true;
+            return;
+        } else {
+            // eslint-disable-next-line no-console
+            console.log('Game is broken in GameServer::setNewCreatorOfGame', realPlayers);
+        }
     }
 
     private setMockTiles() {

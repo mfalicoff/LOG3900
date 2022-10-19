@@ -20,8 +20,7 @@ export class MatchmakingService {
         for(const value of this.rooms.values()){
             if(this.doesPlayerFitInARoom(value, player)) {
                 this.joinRoom(player, value);
-                console.log(value.mapPlayers.size);
-                if(value.mapPlayers.size === 1) {
+                if(value.mapPlayers.size === 4) {
                     this.launchRankedGame(value);
                 }
                 return;
@@ -52,10 +51,17 @@ export class MatchmakingService {
     }
 
     launchRankedGame(game: GameServer){
-        console.log(game.mapPlayers);
         for(const player of game.mapPlayers.values())
         {
             this.sio.sockets.sockets.get(player.idPlayer)?.emit('matchFound', player);
+        }
+    }
+    onRefuse(player:Player) {
+        this.rooms.delete(player.name);
+    }
+    onAccept(player:Player) {
+        if(this.rooms.has(player.name)) {
+            
         }
     }
 }

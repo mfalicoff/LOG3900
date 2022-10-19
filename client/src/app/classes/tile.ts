@@ -5,7 +5,8 @@ export class Tile {
     letter: Letter;
     bonus: string | undefined;
     old: boolean;
-    color: string;
+    backgroundColor: string;
+    borderColor: string;
     isOnBoard: boolean;
 
     constructor() {
@@ -13,7 +14,8 @@ export class Tile {
         this.letter = new Letter();
         this.bonus = '';
         this.old = false;
-        this.color = '#F7F7E3';
+        this.backgroundColor = '#F7F7E3';
+        this.borderColor = '#212121';
         this.isOnBoard = false;
     }
 }

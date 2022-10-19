@@ -48,7 +48,6 @@ export const DEFAULT_VALUE_NUMBER = -1;
 /// ////////////////////////////////////////////////////////////////////////
 // VARIABLE socketManager
 /// ////////////////////////////////////////////////////////////////////////
-// TODO switch this to 4 when 4 game players will be enabled
 export const MIN_PERSON_PLAYING = 2;
 export const MAX_PERSON_PLAYING = 4;
 export const TIME_PER_ROUND_DEFAULT = 1000;
@@ -102,6 +101,7 @@ export const LETTERS_NOT_PRESENT = ': les lettres du mot doivent être présente
 export const LETTERS_MUST_TOUCH_OTHERS = ' : les lettres que vous avez placées doivent toucher celles déjà sur le plateau!';
 export const FIRST_LETTER_NOT_IN_H8 = ' : votre premier mot doit commencer dans la case h8!';
 export const LETTERS_FROM_BOARD_WRONG = ' : lettres du plateau de jeu mal utilisées!';
+export const TMP_LETTERS_MUST_TOUCH = ' : vos lettres deposées doivent se toucher!';
 export const REPLACEMENT_BY_BOT = 'Un bot a maintenant remplacé votre adversaire.';
 export const REPLACEMENT_BY_PLAYER = ' a remplacé le joueur virtuel: ';
 export const NB_MIN_LETTER_BANK = 6;

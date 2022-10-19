@@ -1,17 +1,26 @@
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
+import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
+import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
+import { LetterBankService } from './letter-bank.service';
 import { PlayAreaService } from './play-area.service';
 import { StandService } from './stand.service';
 
 @Service()
 export class MouseEventService {
     sio: io.Server;
-    constructor(private standService: StandService, private chatService: ChatService, private playAreaService: PlayAreaService) {
+    constructor(
+        private standService: StandService,
+        private boardService: BoardService,
+        private chatService: ChatService,
+        private playAreaService: PlayAreaService,
+        private letterBankService: LetterBankService,
+    ) {
         this.sio = new io.Server();
     }
 
@@ -21,37 +30,42 @@ export class MouseEventService {
 
     rightClickExchange(player: Player, positionX: number): void {
         const tilePos: number = this.tileClickedPosition(positionX);
-        if (player.stand[tilePos].color === '#ff6600') {
+        if (tilePos >= Constants.NUMBER_SLOT_STAND || tilePos < 0) {
             return;
         }
-        if (tilePos < GlobalConstants.NUMBER_SLOT_STAND) {
-            if (player.stand[tilePos].color === '#F7F7E3') {
-                player.stand[tilePos].color = '#AEB1D9';
-            } else {
-                this.resetTileStandAtPos(player, tilePos);
-            }
+        if (player.stand[tilePos].backgroundColor === '#ff6600') {
+            return;
         }
+        if (player.stand[tilePos].backgroundColor === '#F7F7E3') {
+            player.stand[tilePos].backgroundColor = '#AEB1D9';
+        } else {
+            this.resetTileStandAtPos(player, tilePos);
+        }
+
         this.sendStandToClient(player);
     }
 
     leftClickSelection(player: Player, positionX: number): void {
         const invalidIndex = -1;
         const tilePos: number = this.tileClickedPosition(positionX);
-        if (player.stand[tilePos].color === '#AEB1D9') {
+        if (tilePos >= Constants.NUMBER_SLOT_STAND || tilePos < 0) {
+            return;
+        }
+        if (player.stand[tilePos].backgroundColor === '#AEB1D9') {
             return;
         }
         if (player.tileIndexManipulation !== invalidIndex) {
-            player.stand[player.tileIndexManipulation].color = '#F7F7E3';
+            player.stand[player.tileIndexManipulation].backgroundColor = '#F7F7E3';
         }
         player.tileIndexManipulation = tilePos;
-        player.stand[tilePos].color = '#ff6600';
+        player.stand[tilePos].backgroundColor = '#ff6600';
         this.sendStandToClient(player);
     }
 
     keyboardSelection(player: Player, eventString: string) {
         if (!player.mapLetterOnStand.has(eventString)) {
-            if (player.tileIndexManipulation !== GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                player.stand[player.tileIndexManipulation].color = '#F7F7E3';
+            if (player.tileIndexManipulation !== Constants.DEFAULT_VALUE_NUMBER) {
+                player.stand[player.tileIndexManipulation].backgroundColor = '#F7F7E3';
             }
         } else {
             const oldTileIndex = player.tileIndexManipulation;
@@ -67,10 +81,10 @@ export class MouseEventService {
     }
 
     keyboardAndMouseManipulation(game: GameServer, player: Player, eventString: string) {
-        if (player.tileIndexManipulation === GlobalConstants.DEFAULT_VALUE_NUMBER) {
+        if (player.tileIndexManipulation === Constants.DEFAULT_VALUE_NUMBER) {
             return;
         }
-        let indexTileChanged = GlobalConstants.DEFAULT_VALUE_NUMBER;
+        let indexTileChanged = Constants.DEFAULT_VALUE_NUMBER;
         let conditionCheck;
         const maxIndexStand = 6;
         // keyup is the type of KeyboardEvent
@@ -100,8 +114,8 @@ export class MouseEventService {
     exchangeButtonClicked(game: GameServer, player: Player): void {
         const exchangeCmd: string = this.createExchangeCmd(player);
         this.chatService.sendMessage(exchangeCmd, game, player);
-        for (let i = 0; i < GlobalConstants.NUMBER_SLOT_STAND; i++) {
-            if (player.stand[i].color === '#AEB1D9') {
+        for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
+            if (player.stand[i].backgroundColor === '#AEB1D9') {
                 this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
             }
         }
@@ -117,30 +131,80 @@ export class MouseEventService {
     }
 
     resetAllTilesStand(player: Player) {
-        for (let i = 0; i < GlobalConstants.NUMBER_SLOT_STAND; i++) {
+        for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
             this.resetTileStandAtPos(player, i);
         }
         this.sendStandToClient(player);
     }
 
-    boardClick(player: Player, position: Vec2): void {
+    boardClick(player: Player): void {
         this.resetAllTilesStand(player);
-        this.clickIsInBoard(player, position);
-        this.sendStandToClient(player);
+    }
+
+    addTempLetterBoard(game: GameServer, keyEntered: string, xIndex: number, yIndex: number) {
+        game.board[yIndex][xIndex].letter.value = keyEntered;
+        game.board[yIndex][xIndex].letter.weight = this.letterBankService.getLetterWeight(keyEntered, game.letterBank);
+        game.board[yIndex][xIndex].borderColor = '#ffaaff';
+    }
+
+    rmTempLetterBoard(game: GameServer, idxsTileToRm: Vec2) {
+        game.board[idxsTileToRm.y][idxsTileToRm.x].letter.value = '';
+        game.board[idxsTileToRm.y][idxsTileToRm.x].letter.weight = 0;
+        game.board[idxsTileToRm.y][idxsTileToRm.x].borderColor = '#212121';
+    }
+
+    rmTileFromStand(player: Player, tileToRm: Tile) {
+        for (let i = 0; i < player.stand.length; i++) {
+            if (player.stand[i].position.x1 !== tileToRm.position.x1) {
+                continue;
+            }
+            this.standService.deleteLetterStandLogic(tileToRm.letter.value, i, player);
+            break;
+        }
+    }
+
+    addTileToStand(game: GameServer, player: Player, letterToAdd: string) {
+        this.standService.putLettersOnStand(game, letterToAdd, player);
+    }
+
+    onBoardToStandDrop(tileDropped: Tile, standIdx: number, player: Player, game: GameServer) {
+        // if the tile on which we drop is empty we can drop the tile directly on it
+        if (player.stand[standIdx].letter.value === '') {
+            this.standService.writeLetterStandLogic(standIdx, tileDropped.letter.value, game.letterBank, player);
+        } else {
+            // else we put the letter on any empty tile
+            this.standService.putLettersOnStand(game, tileDropped.letter.value, player);
+        }
+    }
+
+    onBoardToBoardDrop(game: GameServer, posClickedTileIdxs: Vec2, posDropBoardIdxs: Vec2) {
+        // set values of new tile
+        const tileClicked = game.board[posClickedTileIdxs.y][posClickedTileIdxs.x];
+        this.boardService.putLetterInBoardArray(tileClicked, posDropBoardIdxs, game);
+        game.board[posDropBoardIdxs.y][posDropBoardIdxs.x].borderColor = '#ffaaff';
+        // reset values of old tile
+        game.board[posClickedTileIdxs.y][posClickedTileIdxs.x].borderColor = '#212121';
+        game.board[posClickedTileIdxs.y][posClickedTileIdxs.x].letter.value = '';
+        game.board[posClickedTileIdxs.y][posClickedTileIdxs.x].letter.weight = 0;
     }
 
     private drawChangeSelection(player: Player, newTileIndex: number, oldTileIndex: number) {
-        if (newTileIndex !== GlobalConstants.DEFAULT_VALUE_NUMBER) {
-            player.stand[newTileIndex].color = '#ff6600';
+        if (newTileIndex !== Constants.DEFAULT_VALUE_NUMBER) {
+            player.stand[newTileIndex].backgroundColor = '#ff6600';
         }
-        if (oldTileIndex !== GlobalConstants.DEFAULT_VALUE_NUMBER && newTileIndex !== oldTileIndex) {
-            player.stand[oldTileIndex].color = '#F7F7E3';
+        if (oldTileIndex !== Constants.DEFAULT_VALUE_NUMBER && newTileIndex !== oldTileIndex) {
+            player.stand[oldTileIndex].backgroundColor = '#F7F7E3';
         }
         this.sendStandToClient(player);
     }
-
     private tileClickedPosition(positionX: number): number {
-        return Math.floor(GlobalConstants.DEFAULT_NB_LETTER_STAND / (GlobalConstants.DEFAULT_WIDTH_STAND / positionX));
+        const constPosXYForStands =
+            Constants.PADDING_BOARD_FOR_STANDS +
+            Constants.DEFAULT_WIDTH_BOARD / 2 -
+            Constants.DEFAULT_WIDTH_STAND / 2 +
+            Constants.SIZE_OUTER_BORDER_STAND;
+        const posXCleaned = positionX - constPosXYForStands;
+        return Math.floor(Constants.DEFAULT_NB_LETTER_STAND / (Constants.DEFAULT_WIDTH_STAND / posXCleaned));
     }
 
     private doTheManipulation(game: GameServer, player: Player, indexTileChanged: number) {
@@ -151,8 +215,8 @@ export class MouseEventService {
     }
 
     private handleViewManipulation(indexTileChanged: number, player: Player) {
-        player.stand[indexTileChanged].color = '#ff6600';
-        player.stand[player.tileIndexManipulation].color = '#F7F7E3';
+        player.stand[indexTileChanged].backgroundColor = '#ff6600';
+        player.stand[player.tileIndexManipulation].backgroundColor = '#F7F7E3';
     }
 
     private handleLogicManipulation(game: GameServer, player: Player, indexTileChanged: number) {
@@ -169,7 +233,7 @@ export class MouseEventService {
     private createExchangeCmd(player: Player): string {
         let exchangeCmd = '!échanger ';
         for (const tile of player.stand) {
-            if (tile.color === '#AEB1D9') {
+            if (tile.backgroundColor === '#AEB1D9') {
                 exchangeCmd = exchangeCmd + tile.letter.value;
             }
         }
@@ -178,26 +242,14 @@ export class MouseEventService {
 
     private resetExchangeTiles(player: Player) {
         for (let i = 0; i < player.stand.length; i++) {
-            if (player.stand[i].color === '#AEB1D9') {
+            if (player.stand[i].backgroundColor === '#AEB1D9') {
                 this.resetTileStandAtPos(player, i);
             }
         }
     }
 
     private resetTileStandAtPos(player: Player, position: number) {
-        player.stand[position].color = '#F7F7E3';
-    }
-
-    private clickIsInBoard(player: Player, position: Vec2) {
-        const realPosInBoardPx: Vec2 = {
-            x: position.x - GlobalConstants.SIZE_OUTER_BORDER_BOARD,
-            y: position.y - GlobalConstants.SIZE_OUTER_BORDER_BOARD,
-        };
-        const isClickPosXInBoard: boolean = realPosInBoardPx.x > 0 && realPosInBoardPx.x < GlobalConstants.WIDTH_BOARD_NOBORDER;
-        const isClickPosYInBoard: boolean = realPosInBoardPx.y > 0 && realPosInBoardPx.y < GlobalConstants.WIDTH_BOARD_NOBORDER;
-        if (isClickPosXInBoard && isClickPosYInBoard) {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('findTileToPlaceArrow', realPosInBoardPx);
-        }
+        player.stand[position].backgroundColor = '#F7F7E3';
     }
 
     private sendStandToClient(player: Player) {

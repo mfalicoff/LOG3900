@@ -1,3 +1,4 @@
+import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Letter } from '@app/classes/letter';
 import { LetterData } from '@app/classes/letter-data';
@@ -73,16 +74,41 @@ export class StandService {
         this.writeLetterInStandMap(letterToWrite, player);
     }
 
+    // delete ONE letter from the stand logic
     deleteLetterStandLogic(letterToRemove: string, indexToWrite: number, player: Player) {
         // function to use as much as possible
         this.deleteLetterArrayLogic(indexToWrite, player);
         this.deleteLetterInStandMap(letterToRemove, player);
     }
 
+    // function that puts an string of letters on the stand
+    // we do not care of the place of the letters on the stand
+    putLettersOnStand(game: GameServer, letters: string, player: Player) {
+        // loop through the letters to place
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < letters.length; i++) {
+            // loop through the stand array to find an empty slot
+            for (let j = 0; j < Constants.NUMBER_SLOT_STAND; j++) {
+                if (player.stand[j].letter.value === '') {
+                    this.writeLetterStandLogic(j, letters[i], game.letterBank, player);
+                    break;
+                }
+            }
+        }
+    }
+
+    fillEmptySlotStand(player: Player, game: GameServer) {
+        for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
+            if (player.stand[i].letter.value === '') {
+                this.putNewLetterOnStand(player.stand[i], game.letters, game.letterBank, player);
+            }
+        }
+    }
+
     putNewLetterOnStand(tile: Tile, letters: string[], letterBank: Map<string, LetterData>, player: Player) {
         const newLetterToPlace = this.letterBankService.giveRandomLetter(1, letters, letterBank);
         tile.letter.value = newLetterToPlace;
-        tile.letter.weight = this.letterBankService.checkLetterWeight(newLetterToPlace, letterBank);
+        tile.letter.weight = this.letterBankService.getLetterWeight(newLetterToPlace, letterBank);
 
         this.writeLetterInStandMap(tile.letter.value, player);
     }
@@ -104,7 +130,7 @@ export class StandService {
 
     writeLetterArrayLogic(indexToWrite: number, letterToWrite: string, letterBank: Map<string, LetterData>, player: Player) {
         player.stand[indexToWrite].letter.value = letterToWrite;
-        player.stand[indexToWrite].letter.weight = this.letterBankService.checkLetterWeight(letterToWrite, letterBank);
+        player.stand[indexToWrite].letter.weight = this.letterBankService.getLetterWeight(letterToWrite, letterBank);
     }
 
     findIndexLetterInStand(letterToSearch: string, startIndex: number, player: Player): number {
@@ -147,7 +173,7 @@ export class StandService {
 
             // Fills the occupiedSquare
             if (i < nbOccupiedSquare) {
-                newLetter.weight = this.letterBankService.checkLetterWeight(letterInit[i], letterBank);
+                newLetter.weight = this.letterBankService.getLetterWeight(letterInit[i], letterBank);
                 newLetter.value = letterInit[i];
 
                 newTile.letter = newLetter;

@@ -16,6 +16,7 @@ import { DictionaryService } from './services/dictionary.service';
 import { MatchmakingService } from './services/matchmaking.service';
 import { PlayAreaService } from './services/play-area.service';
 import { PutLogicService } from './services/put-logic.service';
+import { StandService } from './services/stand.service';
 
 const baseDix = 10;
 
@@ -49,6 +50,7 @@ export class Server {
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
         private matchmakingService: MatchmakingService,
+        private standService: StandService,
     ) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -77,6 +79,7 @@ export class Server {
             this.databaseService,
             this.dictionaryService,
             this.matchmakingService,
+            this.standService,
         );
         this.socketManager.handleSockets();
 

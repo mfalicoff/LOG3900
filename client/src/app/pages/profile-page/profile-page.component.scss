@@ -1,0 +1,71 @@
+.container {
+    min-height: 100vh;
+    height: auto;
+    background-image: url('https://www.printablee.com/postpic/2011/03/blank-scrabble-board-template-printable_326282.jpg');
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.justified {
+    display: flex;
+    flex-direction: column;
+    // justify-content: space-between;
+    align-items: center;
+}
+
+#profile {
+    border-radius: 50%;
+    background: transparent;
+    height: 125px;
+}
+
+#profileWrapper {
+    background-color: wheat;
+    width: 70%;
+    height: 90%;
+    position: absolute;
+    border-top-left-radius: 20px;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#statsContainer {
+    text-align: center;
+    width: 50%;
+}
+
+#statsList {
+    padding-bottom: calc(45% + 0px);
+}
+
+.statsElement {
+    overflow: visible;
+    font-size: 20px;
+    justify-content: left;
+}
+
+.mat-grid-tile-content {
+    justify-content: left;
+}
+
+.subcontainer {
+    background-position: center;
+    background-attachment: fixed;
+}
+
+#historyContainer {
+    text-align: center;
+}
+
+.history{
+    display: inline-block;
+    margin-top: 20px;
+    text-align: center;
+    font-size: 17px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: #0c483f;
+    color: wheat;
+}
