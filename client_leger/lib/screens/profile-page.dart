@@ -1,9 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:client_leger/services/controller.dart';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../env/environment.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -59,6 +65,9 @@ class _ProfileStatePage extends State<ProfilePage> {
                               fontSize: 17,
                               decoration: TextDecoration.none)),
                       DialogExample(
+                        notifyParent: refresh,
+                      ),
+                      DialogExample1(
                         notifyParent: refresh,
                       ),
                       Container(
@@ -246,7 +255,7 @@ class _DialogStateExample extends State<DialogExample> {
           ],
         ),
       ),
-      child: const Text('Show Dialog'),
+      child: const Text('Edit name'),
     );
   }
 
@@ -263,5 +272,205 @@ class _DialogStateExample extends State<DialogExample> {
         backgroundColor: Colors.red.shade300,
       ));
     }
+  }
+}
+
+class DialogExample1 extends StatefulWidget {
+  final Function() notifyParent;
+
+  const DialogExample1({super.key, required this.notifyParent});
+
+  @override
+  State<DialogExample1> createState() => _DialogStateExample1();
+}
+
+class _DialogStateExample1 extends State<DialogExample1> {
+  late String? newName = "";
+  Controller controller = Controller();
+  final String? serverAddress = Environment().config?.serverURL;
+  late List<dynamic> avatars;
+  File? imageFile;
+
+  @override
+  initState() {
+    super.initState();
+    http
+        .get(
+          Uri.parse("$serverAddress/avatar"),
+        )
+        .then((res) => parseAvatars(res));
+  }
+
+  parseAvatars(http.Response res) {
+    var parsed = jsonDecode(res.body);
+    avatars = parsed["data"] ?? "Failed";
+  }
+
+  _getFromCamera() async {
+    PickedFile? pickedFile = await ImagePicker().getImage(
+      source: ImageSource.camera,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    if (pickedFile != null) {
+        imageFile = File(pickedFile.path);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => showDialog<String>(
+          context: context,
+          builder: (BuildContext context) {
+            File? imageFile;
+            return StatefulBuilder(builder: (context, setState) {
+              return AlertDialog(
+                title: const Text('AlertDialog Title'),
+                content: const Text('AlertDialog description'),
+                actions: <Widget>[
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    GestureDetector(
+                      onTap: () {
+                        print('dhbsajdhgsakj');
+                        changeAvatar('1');
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: MemoryImage(base64Decode(
+                            avatars[0]['uri']?.substring(22) as String)),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        print('dhbsajdhgsakj');
+                        changeAvatar('1');
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: MemoryImage(base64Decode(
+                            avatars[2]['uri']?.substring(22) as String)),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        print('dhbsajdhgsakj');
+                        changeAvatar('1');
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: MemoryImage(base64Decode(
+                            avatars[4]['uri']?.substring(22) as String)),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        print('dhbsajdhgsakj');
+                        changeAvatar('1');
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: MemoryImage(base64Decode(
+                            avatars[6]['uri']?.substring(22) as String)),
+                      ),
+                    ),
+                  ]),
+                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                    GestureDetector(
+                      onTap: () {
+                        print('dhbsajdhgsakj');
+                        changeAvatar('1');
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: MemoryImage(base64Decode(
+                            avatars[1]['uri']?.substring(22) as String)),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        print('dhbsajdhgsakj');
+                        changeAvatar('1');
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: MemoryImage(base64Decode(
+                            avatars[3]['uri']?.substring(22) as String)),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        print('dhbsajdhgsakj');
+                        changeAvatar('1');
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: MemoryImage(base64Decode(
+                            avatars[5]['uri']?.substring(22) as String)),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        print('dhbsajdhgsakj');
+                        changeAvatar('1');
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: MemoryImage(base64Decode(
+                            avatars[7]['uri']?.substring(22) as String)),
+                      ),
+                    ),
+                  ]),
+                  Container(
+                    child: imageFile == null
+                        ? Container()
+                        : Container(
+                            child: CircleAvatar(
+                              radius: 100,
+                              backgroundImage: FileImage(imageFile as File),
+                            ),
+                          ),
+                  ),
+                  MaterialButton(
+                      color: Colors.blue,
+                      child: const Text("Pick Image from Camera",
+                          style: TextStyle(
+                              color: Colors.white70,
+                              fontWeight: FontWeight.bold)),
+                      onPressed: () async {
+                        PickedFile? pickedFile = await ImagePicker().getImage(
+                          source: ImageSource.camera,
+                          maxWidth: 1800,
+                          maxHeight: 1800,
+                        );
+                        if (pickedFile != null) {
+                          setState(() => {imageFile = File(pickedFile.path)});
+                        }
+                      }),
+                ],
+              );
+            });
+          }),
+      child: const Text('Edit avatar'),
+    );
+  }
+
+  Future<void> _changeName() async {
+    try {
+      final oldCookie = globals.userLoggedIn.cookie;
+      globals.userLoggedIn = await controller.updateName(newName!);
+      globals.userLoggedIn.cookie = oldCookie;
+      widget.notifyParent();
+      Navigator.pop(context, 'Submit');
+    } on Exception {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text("Erreur"),
+        backgroundColor: Colors.red.shade300,
+      ));
+    }
+  }
+
+  changeAvatar(String s) {
+    print('Avatar Change');
   }
 }
