@@ -1,3 +1,4 @@
+import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/services/controller.dart';
 
 import 'package:flutter/material.dart';
@@ -108,7 +109,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toProfilePage() {
-    Navigator.of(context).pushNamed('/profile');
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage())).then((value) {
+      setState(() {
+      });
+    });
   }
 
   void _toGameListPage() {
