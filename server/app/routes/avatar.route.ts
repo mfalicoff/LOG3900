@@ -14,6 +14,7 @@ class AvatarRoute implements Routes {
     private initializeRoutes() {
         this.router.get(`${this.path}`, this.avatarController.getAllAvatars);
         this.router.get(`${this.path}/random`, this.avatarController.getRandomAvatar);
+        this.router.post(`${this.path}/send`, this.avatarController.saveAvatar);
     }
 }
 

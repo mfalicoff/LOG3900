@@ -447,6 +447,10 @@ class _DialogStateExample1 extends State<DialogExample1> {
                           setState(() => {imageFile = File(pickedFile.path)});
                         }
                       }),
+                  TextButton(
+                    onPressed: (() => _changeAvatarFromCamera(imageFile as File)),
+                    child: const Text('Submit'),
+                  ),
                 ],
               );
             });
@@ -455,11 +459,9 @@ class _DialogStateExample1 extends State<DialogExample1> {
     );
   }
 
-  Future<void> _changeName() async {
+  Future<void> _changeAvatarFromCamera(File image) async {
     try {
-      final oldCookie = globals.userLoggedIn.cookie;
-      globals.userLoggedIn = await controller.updateName(newName!);
-      globals.userLoggedIn.cookie = oldCookie;
+      globals.userLoggedIn = await controller.updateAvatarFromCamera(image);
       widget.notifyParent();
       Navigator.pop(context, 'Submit');
     } on Exception {

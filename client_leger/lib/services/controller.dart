@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:client_leger/env/environment.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -83,6 +85,27 @@ class Controller {
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       return user;
+    } else {
+      throw Exception('Failed to logout');
+    }
+  }
+
+  updateAvatarFromCamera(File image) async {
+    final bytes = await image.readAsBytes();
+    final response = await http.post(
+      Uri.parse("$serverAddress/avatar/send"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "avatarUri": base64Encode(bytes),
+        "id": globals.userLoggedIn.id as String
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // User user = User.fromJson(json.decode(response.body));
+      // return user;
     } else {
       throw Exception('Failed to logout');
     }
