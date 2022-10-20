@@ -6,8 +6,8 @@ import 'package:client_leger/services/controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:client_leger/utils/utils.dart';
 
 import '../env/environment.dart';
 
@@ -64,62 +64,39 @@ class _ProfileStatePage extends State<ProfilePage> {
                               fontWeight: FontWeight.bold,
                               fontSize: 17,
                               decoration: TextDecoration.none)),
-                      DialogExample(
+                      UsernameChangeDialog(
                         notifyParent: refresh,
                       ),
-                      DialogExample1(
+                      AvatarChangeDialog(
                         notifyParent: refresh,
                       ),
                       Container(
                         padding: const EdgeInsets.only(top: 50, bottom: 50),
                         child: Table(
-                          children: const [
+                          children: [
                             TableRow(
                               children: [
-                                Text('Parties jouees',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 11,
-                                        decoration: TextDecoration.none)),
-                                Text('Parties gagnes',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 11,
-                                        decoration: TextDecoration.none)),
-                                Text('Score moyen par partie',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 11,
-                                        decoration: TextDecoration.none)),
-                                Text('Temps moyen par partie',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 11,
-                                        decoration: TextDecoration.none)),
+                                returnRowTextElement('Parties jouees'),
+                                returnRowTextElement('Parties gagnes'),
+                                returnRowTextElement('Score moyen par partie'),
+                                returnRowTextElement('Temps moyen par partie'),
                               ],
                             ),
                             TableRow(
                               children: [
-                                Text('1',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 11,
-                                        decoration: TextDecoration.none)),
-                                Text('1',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 11,
-                                        decoration: TextDecoration.none)),
-                                Text('1',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 11,
-                                        decoration: TextDecoration.none)),
-                                Text('1',
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 11,
-                                        decoration: TextDecoration.none)),
+                                returnRowTextElement(globals
+                                    .userLoggedIn.gamesPlayed
+                                    .toString()),
+                                returnRowTextElement(
+                                    globals.userLoggedIn.gamesWon.toString()),
+                                returnRowTextElement(globals
+                                    .userLoggedIn.averagePointsPerGame
+                                    .toString()),
+                                returnRowTextElement(Duration(
+                                        milliseconds: globals
+                                            .userLoggedIn.averageTimePerGame!
+                                            .round())
+                                    .toString()),
                               ],
                             ),
                           ],
@@ -129,75 +106,10 @@ class _ProfileStatePage extends State<ProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Column(children: [
-                            SingleChildScrollView(
-                              child: Column(
-                                children: [
-                                  const Text('Historique des Connections',
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 11,
-                                          decoration: TextDecoration.none)),
-                                  Container(
-                                    decoration:
-                                        BoxDecoration(border: Border.all()),
-                                    margin: const EdgeInsets.all(5.0),
-                                    height: 100,
-                                    width: 200,
-                                    child: ListView.builder(
-                                        shrinkWrap: true,
-                                        itemCount: globals
-                                            .userLoggedIn.actionHistory?.length,
-                                        itemBuilder:
-                                            (BuildContext context, int index) {
-                                          return Text(
-                                              '\u2022 ${globals.userLoggedIn.actionHistory![index]}',
-                                              style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 11,
-                                                  decoration:
-                                                      TextDecoration.none));
-                                        }),
-                                  )
-                                ],
-                              ),
-                            ),
-                          ]),
-                          Column(
-                            children: [
-                              SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    const Text('Historique des Parties',
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontSize: 11,
-                                            decoration: TextDecoration.none)),
-                                    Container(
-                                      decoration:
-                                          BoxDecoration(border: Border.all()),
-                                      height: 100,
-                                      width: 200,
-                                      child: ListView.builder(
-                                          shrinkWrap: true,
-                                          itemCount: globals.userLoggedIn
-                                              .actionHistory?.length,
-                                          itemBuilder: (BuildContext context,
-                                              int index) {
-                                            return Text(
-                                                '\u2022 ${globals.userLoggedIn.actionHistory![index]}',
-                                                style: const TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 11,
-                                                    decoration:
-                                                        TextDecoration.none));
-                                          }),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ],
-                          )
+                          returnHistoryScrollView('Historique des Connections',
+                              globals.userLoggedIn.actionHistory!),
+                          returnHistoryScrollView('Historique des Parties',
+                              globals.userLoggedIn.gameHistory!),
                         ],
                       )
                     ],
@@ -208,18 +120,59 @@ class _ProfileStatePage extends State<ProfilePage> {
       ],
     );
   }
+
+  Text returnRowTextElement(String textData) {
+    return Text((textData),
+        style: const TextStyle(
+            color: Colors.black,
+            fontSize: 11,
+            decoration: TextDecoration.none));
+  }
+
+  Column returnHistoryScrollView(String title, List<dynamic> history) {
+    return Column(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            children: [
+              Text(title,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 11,
+                      decoration: TextDecoration.none)),
+              Container(
+                decoration: BoxDecoration(border: Border.all()),
+                height: 100,
+                width: 200,
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: history.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Text('\u2022 ${history[index]}',
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 11,
+                              decoration: TextDecoration.none));
+                    }),
+              )
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
-class DialogExample extends StatefulWidget {
+class UsernameChangeDialog extends StatefulWidget {
   final Function() notifyParent;
 
-  const DialogExample({super.key, required this.notifyParent});
+  const UsernameChangeDialog({super.key, required this.notifyParent});
 
   @override
-  State<DialogExample> createState() => _DialogStateExample();
+  State<UsernameChangeDialog> createState() => _UsernameChangeDialog();
 }
 
-class _DialogStateExample extends State<DialogExample> {
+class _UsernameChangeDialog extends State<UsernameChangeDialog> {
   late String? newName = "";
   Controller controller = Controller();
 
@@ -275,16 +228,16 @@ class _DialogStateExample extends State<DialogExample> {
   }
 }
 
-class DialogExample1 extends StatefulWidget {
+class AvatarChangeDialog extends StatefulWidget {
   final Function() notifyParent;
 
-  const DialogExample1({super.key, required this.notifyParent});
+  const AvatarChangeDialog({super.key, required this.notifyParent});
 
   @override
-  State<DialogExample1> createState() => _DialogStateExample1();
+  State<AvatarChangeDialog> createState() => _AvatarChangeDialog();
 }
 
-class _DialogStateExample1 extends State<DialogExample1> {
+class _AvatarChangeDialog extends State<AvatarChangeDialog> {
   late String? newName = "";
   Controller controller = Controller();
   final String? serverAddress = Environment().config?.serverURL;
@@ -311,138 +264,99 @@ class _DialogStateExample1 extends State<DialogExample1> {
       onPressed: () => showDialog<String>(
           context: context,
           builder: (BuildContext context) {
-            File? imageFile;
+            File? cameraImageFile;
+            int selectedIndex = -1;
             return StatefulBuilder(builder: (context, setState) {
               return AlertDialog(
                 title: const Text('AlertDialog Title'),
                 content: const Text('AlertDialog description'),
                 actions: <Widget>[
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    GestureDetector(
-                      onTap: () {
-                        changeAvatar(1);
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(base64Decode(
-                            avatars[0]['uri']?.substring(22) as String)),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print('dhbsajdhgsakj');
-                        changeAvatar(3);
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(base64Decode(
-                            avatars[2]['uri']?.substring(22) as String)),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print('dhbsajdhgsakj');
-                        changeAvatar(5);
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(base64Decode(
-                            avatars[4]['uri']?.substring(22) as String)),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print('dhbsajdhgsakj');
-                        changeAvatar(7);
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(base64Decode(
-                            avatars[6]['uri']?.substring(22) as String)),
-                      ),
-                    ),
-                  ]),
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                    GestureDetector(
-                      onTap: () {
-                        print('dhbsajdhgsakj');
-                        changeAvatar(2);
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(base64Decode(
-                            avatars[1]['uri']?.substring(22) as String)),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print('dhbsajdhgsakj');
-                        changeAvatar(4);
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(base64Decode(
-                            avatars[3]['uri']?.substring(22) as String)),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print('dhbsajdhgsakj');
-                        changeAvatar(6);
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(base64Decode(
-                            avatars[5]['uri']?.substring(22) as String)),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print('dhbsajdhgsakj');
-                        changeAvatar(8);
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(base64Decode(
-                            avatars[7]['uri']?.substring(22) as String)),
-                      ),
-                    ),
-                  ]),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      IconButton(
+                          onPressed: () async {
+                            PickedFile? pickedFile =
+                                await ImagePicker().getImage(
+                              source: ImageSource.camera,
+                              maxWidth: 1800,
+                              maxHeight: 1800,
+                            );
+                            if (pickedFile != null) {
+                              setState(() =>
+                                  {cameraImageFile = File(pickedFile.path)});
+                            }
+                          },
+                          icon: const Icon(Icons.camera_alt_rounded))
+                    ],
+                  ),
                   Container(
-                    child: imageFile == null
-                        ? Container()
-                        : CircleAvatar(
-                            radius: 100,
-                            backgroundImage: FileImage(imageFile as File),
-                          ),
-                  ),
-                  MaterialButton(
-                      color: Colors.blue,
-                      child: const Text("Pick Image from Camera",
-                          style: TextStyle(
-                              color: Colors.white70,
-                              fontWeight: FontWeight.bold)),
-                      onPressed: () async {
-                        PickedFile? pickedFile = await ImagePicker().getImage(
-                          source: ImageSource.camera,
-                          maxWidth: 1800,
-                          maxHeight: 1800,
-                        );
-                        if (pickedFile != null) {
-                          setState(() => {imageFile = File(pickedFile.path)});
-                        }
-                      }),
-                  TextButton(
-                    onPressed: (() =>
-                        _changeAvatarFromCamera(imageFile as File)),
-                    child: const Text('Submit Camera'),
-                  ),
+                      child: cameraImageFile == null
+                          ? Column(
+                              children: [
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      avatarPicker(0),
+                                      avatarPicker(2),
+                                      avatarPicker(4),
+                                      avatarPicker(6),
+                                    ]),
+                                Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      avatarPicker(1),
+                                      avatarPicker(3),
+                                      avatarPicker(5),
+                                      avatarPicker(7),
+                                    ]),
+                              ],
+                            )
+                          : Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 100,
+                                      backgroundImage:
+                                          FileImage(cameraImageFile as File),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    TextButton(
+                                      onPressed: (() => setState(
+                                          () => cameraImageFile = null)),
+                                      child: const Text('cancel camera'),
+                                    ),
+                                  ],
+                                ),
+                                TextButton(
+                                  onPressed: (() => _changeAvatarFromCamera(
+                                      cameraImageFile as File)),
+                                  child: const Text('Submit Camera'),
+                                ),
+                              ],
+                            )),
                 ],
               );
             });
           }),
       child: const Text('Edit avatar'),
     );
+  }
+
+  GestureDetector avatarPicker(int index) {
+    return (GestureDetector(
+        onTap: () {
+          changeAvatar(index + 1);
+        },
+        child: getAvatarFromString(48, avatars[index]['uri'])));
   }
 
   Future<void> _changeAvatarFromCamera(File image) async {
