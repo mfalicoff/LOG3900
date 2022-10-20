@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:client_leger/screens/create_game_page.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -140,7 +141,11 @@ class _GameListPageState extends State<GameListPage> {
     );
   }
 
-  void _createGame() {}
+  void _createGame() {
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const CreateGamePage())
+    );
+  }
 
   void _goBackHomePage() {
     Navigator.of(context).pop();
