@@ -5,7 +5,7 @@ abstract class BaseConfig {
 class DevConfigEmu implements BaseConfig {
 
   @override
-  String get serverURL => "http://10.200.15.5:3000";
+  String get serverURL => "http://10.0.2.2:3000";
 }
 
 class DevConfigTab implements BaseConfig {
