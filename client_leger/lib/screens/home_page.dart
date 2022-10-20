@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 
 import 'game_list_page.dart';
+import 'game_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -97,6 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: _toGameListPage,
                 child: const Text("Mode Classique"),
               ),
+              ElevatedButton(
+                onPressed: _toGamePageState,
+                child: const Text("Go to Game Board (tmpButton)"),
+              ),
             ],
           ),
         ),
@@ -118,6 +123,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void _toGameListPage() {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const GameListPage()));
+  }
+  void _toGamePageState() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const GamePage()));
   }
 
   void _logout() {
