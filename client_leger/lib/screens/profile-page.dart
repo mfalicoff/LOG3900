@@ -173,6 +173,7 @@ class UsernameChangeDialog extends StatefulWidget {
 }
 
 class _UsernameChangeDialog extends State<UsernameChangeDialog> {
+  final _formKey = GlobalKey<FormState>();
   late String? newName = "";
   Controller controller = Controller();
 
@@ -182,29 +183,40 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
       onPressed: () => showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text('AlertDialog Title'),
-          content: const Text('AlertDialog description'),
+          title: const Text('Modification nom'),
+          content: const Text('Veuillez rentrer le nouveau nom'),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: <Widget>[
-            TextField(
-              onChanged: (text) {
-                newName = text;
-              },
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: "Nouveau nom",
-                labelStyle:
-                    TextStyle(color: Theme.of(context).colorScheme.primary),
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  TextFormField(
+                    onSaved: (String? value) {
+                      newName = value;
+                    },
+                    validator: _usernameValidator,
+                    decoration: InputDecoration(
+                      border: const OutlineInputBorder(),
+                      labelText: "Nouveau Pseudonyme",
+                      labelStyle: TextStyle(
+                          color: Theme.of(context).colorScheme.primary),
+                    ),
+                    style:
+                        TextStyle(color: Theme.of(context).colorScheme.primary),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, 'Cancel'),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: _changeName,
+                    child: const Text('Soumettre'),
+                  ),
+                ],
               ),
-              style: TextStyle(color: Theme.of(context).colorScheme.primary),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, 'Cancel'),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: _changeName,
-              child: const Text('Submit'),
-            ),
+            )
           ],
         ),
       ),
@@ -212,18 +224,32 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
     );
   }
 
+  String? _usernameValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return "Rentrez un pseudonyme";
+    } else if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+      return "Rentrez un pseudonyme avec des charactères alphanumériques";
+    } else {
+      return null;
+    }
+  }
+
   Future<void> _changeName() async {
-    try {
-      final oldCookie = globals.userLoggedIn.cookie;
-      globals.userLoggedIn = await controller.updateName(newName!);
-      globals.userLoggedIn.cookie = oldCookie;
-      widget.notifyParent();
-      Navigator.pop(context, 'Submit');
-    } on Exception {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text("Erreur"),
-        backgroundColor: Colors.red.shade300,
-      ));
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState?.save();
+      try {
+        final oldCookie = globals.userLoggedIn.cookie;
+        globals.userLoggedIn = await controller.updateName(newName!);
+        globals.userLoggedIn.cookie = oldCookie;
+        widget.notifyParent();
+        if (!mounted) return;
+        Navigator.pop(context, 'Submit');
+      } on Exception {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text("Erreur"),
+          backgroundColor: Colors.red.shade300,
+        ));
+      }
     }
   }
 }
@@ -265,29 +291,35 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
           context: context,
           builder: (BuildContext context) {
             File? cameraImageFile;
-            int selectedIndex = -1;
             return StatefulBuilder(builder: (context, setState) {
               return AlertDialog(
-                title: const Text('AlertDialog Title'),
-                content: const Text('AlertDialog description'),
+                title: const Text('Modifier Avatar'),
+                content:
+                    const Text('Selectionner avatar voulu ou prenez une photo'),
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 actions: <Widget>[
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      IconButton(
-                          onPressed: () async {
-                            PickedFile? pickedFile =
-                                await ImagePicker().getImage(
-                              source: ImageSource.camera,
-                              maxWidth: 1800,
-                              maxHeight: 1800,
-                            );
-                            if (pickedFile != null) {
-                              setState(() =>
-                                  {cameraImageFile = File(pickedFile.path)});
-                            }
-                          },
-                          icon: const Icon(Icons.camera_alt_rounded))
+                      Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100),
+                            border: Border.all(width: 2, color: Colors.white)),
+                        child: IconButton(
+                            onPressed: () async {
+                              PickedFile? pickedFile =
+                                  await ImagePicker().getImage(
+                                source: ImageSource.camera,
+                                maxWidth: 1800,
+                                maxHeight: 1800,
+                              );
+                              if (pickedFile != null) {
+                                setState(() =>
+                                    {cameraImageFile = File(pickedFile.path)});
+                              }
+                            },
+                            icon: const Icon(Icons.camera_alt_rounded)),
+                      )
                     ],
                   ),
                   Container(
@@ -318,11 +350,14 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    CircleAvatar(
-                                      radius: 100,
-                                      backgroundImage:
-                                          FileImage(cameraImageFile as File),
-                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: CircleAvatar(
+                                        radius: 100,
+                                        backgroundImage:
+                                            FileImage(cameraImageFile as File),
+                                      ),
+                                    )
                                   ],
                                 ),
                                 Row(
@@ -332,14 +367,14 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
                                     TextButton(
                                       onPressed: (() => setState(
                                           () => cameraImageFile = null)),
-                                      child: const Text('cancel camera'),
+                                      child: const Text('Annuler'),
                                     ),
                                   ],
                                 ),
                                 TextButton(
                                   onPressed: (() => _changeAvatarFromCamera(
                                       cameraImageFile as File)),
-                                  child: const Text('Submit Camera'),
+                                  child: const Text('Soumettre'),
                                 ),
                               ],
                             )),
@@ -365,6 +400,7 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
       globals.userLoggedIn = await controller.updateAvatarFromCamera(image);
       globals.userLoggedIn.cookie = oldCookie;
       widget.notifyParent();
+      if (!mounted) return;
       Navigator.pop(context, 'Submit');
     } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -381,6 +417,7 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
           await controller.updateAvatar('avatar${index.toString()}');
       globals.userLoggedIn.cookie = oldCookie;
       widget.notifyParent();
+      if (!mounted) return;
       Navigator.pop(context, 'Submit');
     } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
