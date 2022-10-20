@@ -148,7 +148,7 @@ class UserService {
     }
 
     async populateAvatarField(user: User): Promise<string> {
-        return await this.avatarService.findAvatarByPath(user.avatarPath as string);
+        return await this.avatarService.findAvatarByPath(user.avatarPath as string, user.id as string);
     }
 
     getAvatar(user: User): string {

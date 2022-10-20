@@ -22,8 +22,12 @@ class AvatarService {
         return avatars;
     }
 
-    async findAvatarByPath(avatarPath: string): Promise<string> {
-        const filePath = `${this.assetDir}/${avatarPath}.png`;
+    async findAvatarByPath(avatarPath: string, id: string): Promise<string> {
+        let filePath = '';
+
+        if (avatarPath === 'customAvatar') filePath = `${this.assetDir}/${id}.jpg`;
+        else filePath = `${this.assetDir}/${avatarPath}.png`;
+
         const file = fs.readFileSync(filePath);
         return PREFIX_URL.concat(file.toString('base64'));
     }

@@ -31,9 +31,8 @@ class AvatarController {
             const body = req.body;
             const avatarUri = body.avatarUri;
             const id = body.id;
-
             await this.avatarService.saveAvatarForUser(avatarUri, id);
-            res.status(HTTPStatusCode.OK).json({ data: '', message: 'randomAvatar' });
+            res.status(HTTPStatusCode.OK).json({ data: '', message: 'AvatarSaved' });
         } catch (error) {
             next(error);
         }

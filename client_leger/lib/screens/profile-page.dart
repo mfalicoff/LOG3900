@@ -289,7 +289,6 @@ class _DialogStateExample1 extends State<DialogExample1> {
   Controller controller = Controller();
   final String? serverAddress = Environment().config?.serverURL;
   late List<dynamic> avatars;
-  File? imageFile;
 
   @override
   initState() {
@@ -304,17 +303,6 @@ class _DialogStateExample1 extends State<DialogExample1> {
   parseAvatars(http.Response res) {
     var parsed = jsonDecode(res.body);
     avatars = parsed["data"] ?? "Failed";
-  }
-
-  _getFromCamera() async {
-    PickedFile? pickedFile = await ImagePicker().getImage(
-      source: ImageSource.camera,
-      maxWidth: 1800,
-      maxHeight: 1800,
-    );
-    if (pickedFile != null) {
-        imageFile = File(pickedFile.path);
-    }
   }
 
   @override
@@ -332,8 +320,7 @@ class _DialogStateExample1 extends State<DialogExample1> {
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                     GestureDetector(
                       onTap: () {
-                        print('dhbsajdhgsakj');
-                        changeAvatar('1');
+                        changeAvatar(1);
                       },
                       child: CircleAvatar(
                         radius: 48,
@@ -344,7 +331,7 @@ class _DialogStateExample1 extends State<DialogExample1> {
                     GestureDetector(
                       onTap: () {
                         print('dhbsajdhgsakj');
-                        changeAvatar('1');
+                        changeAvatar(3);
                       },
                       child: CircleAvatar(
                         radius: 48,
@@ -355,7 +342,7 @@ class _DialogStateExample1 extends State<DialogExample1> {
                     GestureDetector(
                       onTap: () {
                         print('dhbsajdhgsakj');
-                        changeAvatar('1');
+                        changeAvatar(5);
                       },
                       child: CircleAvatar(
                         radius: 48,
@@ -366,7 +353,7 @@ class _DialogStateExample1 extends State<DialogExample1> {
                     GestureDetector(
                       onTap: () {
                         print('dhbsajdhgsakj');
-                        changeAvatar('1');
+                        changeAvatar(7);
                       },
                       child: CircleAvatar(
                         radius: 48,
@@ -379,7 +366,7 @@ class _DialogStateExample1 extends State<DialogExample1> {
                     GestureDetector(
                       onTap: () {
                         print('dhbsajdhgsakj');
-                        changeAvatar('1');
+                        changeAvatar(2);
                       },
                       child: CircleAvatar(
                         radius: 48,
@@ -390,7 +377,7 @@ class _DialogStateExample1 extends State<DialogExample1> {
                     GestureDetector(
                       onTap: () {
                         print('dhbsajdhgsakj');
-                        changeAvatar('1');
+                        changeAvatar(4);
                       },
                       child: CircleAvatar(
                         radius: 48,
@@ -401,7 +388,7 @@ class _DialogStateExample1 extends State<DialogExample1> {
                     GestureDetector(
                       onTap: () {
                         print('dhbsajdhgsakj');
-                        changeAvatar('1');
+                        changeAvatar(6);
                       },
                       child: CircleAvatar(
                         radius: 48,
@@ -412,7 +399,7 @@ class _DialogStateExample1 extends State<DialogExample1> {
                     GestureDetector(
                       onTap: () {
                         print('dhbsajdhgsakj');
-                        changeAvatar('1');
+                        changeAvatar(8);
                       },
                       child: CircleAvatar(
                         radius: 48,
@@ -424,11 +411,9 @@ class _DialogStateExample1 extends State<DialogExample1> {
                   Container(
                     child: imageFile == null
                         ? Container()
-                        : Container(
-                            child: CircleAvatar(
-                              radius: 100,
-                              backgroundImage: FileImage(imageFile as File),
-                            ),
+                        : CircleAvatar(
+                            radius: 100,
+                            backgroundImage: FileImage(imageFile as File),
                           ),
                   ),
                   MaterialButton(
@@ -448,8 +433,9 @@ class _DialogStateExample1 extends State<DialogExample1> {
                         }
                       }),
                   TextButton(
-                    onPressed: (() => _changeAvatarFromCamera(imageFile as File)),
-                    child: const Text('Submit'),
+                    onPressed: (() =>
+                        _changeAvatarFromCamera(imageFile as File)),
+                    child: const Text('Submit Camera'),
                   ),
                 ],
               );
@@ -461,7 +447,9 @@ class _DialogStateExample1 extends State<DialogExample1> {
 
   Future<void> _changeAvatarFromCamera(File image) async {
     try {
+      final oldCookie = globals.userLoggedIn.cookie;
       globals.userLoggedIn = await controller.updateAvatarFromCamera(image);
+      globals.userLoggedIn.cookie = oldCookie;
       widget.notifyParent();
       Navigator.pop(context, 'Submit');
     } on Exception {
@@ -472,7 +460,19 @@ class _DialogStateExample1 extends State<DialogExample1> {
     }
   }
 
-  changeAvatar(String s) {
-    print('Avatar Change');
+  Future<void> changeAvatar(int index) async {
+    try {
+      final oldCookie = globals.userLoggedIn.cookie;
+      globals.userLoggedIn =
+          await controller.updateAvatar('avatar${index.toString()}');
+      globals.userLoggedIn.cookie = oldCookie;
+      widget.notifyParent();
+      Navigator.pop(context, 'Submit');
+    } on Exception {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: const Text("Erreur"),
+        backgroundColor: Colors.red.shade300,
+      ));
+    }
   }
 }

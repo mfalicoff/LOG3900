@@ -104,8 +104,27 @@ class Controller {
     );
 
     if (response.statusCode == 200) {
-      // User user = User.fromJson(json.decode(response.body));
-      // return user;
+      return await updateAvatar('customAvatar');
+    } else {
+      throw Exception('Failed to logout');
+    }
+  }
+
+  updateAvatar(String avatarPath) async {
+    final user = globals.userLoggedIn;
+    final response = await http.put(
+      Uri.parse("$serverAddress/users/${user.id}"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+      },
+      body: jsonEncode(<String, String>{
+        "avatarPath": avatarPath
+      }),
+    );
+    if (response.statusCode == 200) {
+      User user = User.fromJson(json.decode(response.body));
+      return user;
     } else {
       throw Exception('Failed to logout');
     }
