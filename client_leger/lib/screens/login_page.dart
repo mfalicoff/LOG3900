@@ -6,6 +6,7 @@ import 'package:client_leger/screens/signup_page.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
 
+import 'game_page.dart';
 
 
 class LoginPage extends StatelessWidget {
@@ -140,6 +141,11 @@ class _LoginFormState extends State<LoginForm> {
                   .secondary),
             ),
           ),
+          //TODO REMOVE THIS BUTTON LATER
+          ElevatedButton(
+            onPressed: _toGamePageState,
+            child: const Text("Go to Game Board (tmpButton)"),
+          ),
           GestureDetector(
             onTap: _toSignUpPage,
             child: Text(
@@ -190,6 +196,11 @@ class _LoginFormState extends State<LoginForm> {
         ));
       }
     }
+  }
+
+  void _toGamePageState() {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const GamePage()));
   }
 
   void _toSignUpPage() {
