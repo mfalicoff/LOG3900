@@ -18,7 +18,17 @@ export class ParametresSelectionPageComponent implements OnInit {
     vpLevels: string[];
     mockDictionary: MockDict;
     isChecked: false;
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
+    displayPowerModal: string;
+    //we use a tmp array bc the one of the game get reseted in
+    //initializeService() function
+    activatedPowers: boolean[];
+    constructor(
+        private socketService: SocketService, 
+        public infoClientService: InfoClientService
+    ) {
+        this.activatedPowers = this.infoClientService.game.powerCards.map(powerCard => powerCard.isActivated);
+        console.log(this.infoClientService.gameMode);
+    }
 
     ngOnInit() {
         this.timeIntervals = [
@@ -51,10 +61,6 @@ export class ParametresSelectionPageComponent implements OnInit {
     vpLevelSelection(level: string) {
         this.infoClientService.vpLevel = level;
     }
-
-    randomizeBonuses() {
-        this.infoClientService.randomBonusesOn = !this.infoClientService.randomBonusesOn;
-    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onTypeGameChange(event: any) {
         switch (event.target.value) {
@@ -84,6 +90,7 @@ export class ParametresSelectionPageComponent implements OnInit {
             vpLevel: this.infoClientService.vpLevel,
             isGamePrivate: this.infoClientService.isGamePrivate,
             passwd: passwd.value,
+            activatedPowers: this.activatedPowers,
         });
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
         this.mockDictionary = {
@@ -91,6 +98,23 @@ export class ParametresSelectionPageComponent implements OnInit {
             description: 'Ce dictionnaire contient environ trente mille mots français',
         };
         this.infoClientService.dictionaries[0] = this.mockDictionary;
+    }
+    
+    showPowerModal(){
+        this.displayPowerModal = 'block';
+    }
+
+    hidePowerModal(){
+        this.displayPowerModal = 'none';
+    }
+
+    onPowerCardClick(powerCardName: string){
+        for(let i = 0; i < this.infoClientService.game.powerCards.length; i++){
+            if(this.infoClientService.game.powerCards[i].name === powerCardName){
+                this.activatedPowers[i] = !this.activatedPowers[i];
+                return;
+            }
+        }
     }
 
     private timeSelection(interval: string) {

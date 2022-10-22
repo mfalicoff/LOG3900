@@ -127,9 +127,7 @@ export class GameServer {
         ]);
         this.initLettersArray();
         this.initBonusBoard();
-        if(gameMode === Constants.POWER_CARDS_MODE){
-            this.initPowerCards();
-        }
+        this.initPowerCards();
     }
 
     // function that sets the master_timer for the game

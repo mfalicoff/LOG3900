@@ -10,6 +10,13 @@ export class PowerCardsService {
     constructor(
         private playAreaService: PlayAreaService,
     ){}
+
+    initPowerCards(game: GameServer, activationState: boolean[]){
+        for(let i = 0; i < game.powerCards.length; i++){
+            game.powerCards[i].isActivated = activationState[i];
+        }
+    }
+
     givePowerToPlayers(game: GameServer){
         for(let player of game.mapPlayers.values()){
             while(player.powerCards.length < 3){

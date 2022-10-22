@@ -449,6 +449,7 @@ export class SocketManager {
         vpLevel: string,
         isGamePrivate: boolean,
         passwd: string,
+        activatedPowers: boolean[],
     ) {
         // We create the game and add it to the rooms map
         const newGame: GameServer = new GameServer(timeTurn, isBonusRandom, gameMode, vpLevel, roomName, isGamePrivate, passwd);
@@ -471,6 +472,12 @@ export class SocketManager {
 
         // Joining the room
         socket.join(roomName);
+
+        //activate of desactivate the power cards depending on the settings
+        //set by the creator of the game
+        if(gameMode === Constants.POWER_CARDS_MODE){
+            this.powerCardsService.initPowerCards(newGame, activatedPowers);
+        }
 
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
         this.putLogicService.initSioPutLogic(this.sio);
@@ -530,7 +537,11 @@ export class SocketManager {
             this.users.set(socket.id, { name, roomName: '' });
         });
 
-        socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
+        socket.on('createRoomAndGame', async ({ 
+            roomName, playerName, timeTurn, 
+            isBonusRandom, gameMode, vpLevel, 
+            isGamePrivate, passwd, activatedPowers 
+        }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
                 socket.emit('messageServer', 'Une salle avec ce nom existe déjà.');
@@ -541,7 +552,11 @@ export class SocketManager {
             if (user) {
                 user.roomName = roomName;
             }
-            await this.createGameAndPlayer(gameMode, timeTurn, isBonusRandom, playerName, socket, roomName, vpLevel, isGamePrivate, passwd);
+            await this.createGameAndPlayer(
+                gameMode, timeTurn, isBonusRandom, 
+                playerName, socket, roomName, 
+                vpLevel, isGamePrivate, passwd,
+                activatedPowers);
             const createdGame = this.rooms.get(roomName);
             if (!createdGame) {
                 return;

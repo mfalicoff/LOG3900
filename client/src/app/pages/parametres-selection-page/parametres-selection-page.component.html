@@ -63,11 +63,11 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <span class="spanBonus">
+                    <span *ngIf="infoClientService.gameMode==='power-cards'" class="powerCardsActivation">
                         <p>
-                            <b>Bonus aléatoires : </b>
-                            <button id="bonusButtonMulti" (click)="randomizeBonuses()">
-                                <span> {{ infoClientService.randomBonusesOn ? 'Activé' : 'Désactivé' }} </span>
+                            <span>Activer ou désactiver des cartes de pouvoirs: </span>
+                            <button id="bonusButtonMulti" (click)="showPowerModal()">
+                                Liste Cartes
                             </button>
                         </p>
                     </span>
@@ -91,5 +91,33 @@
             </div>
         </div>
         <button id="startButtonMulti" class="startbutton" (click)="createRoom()" [disabled]="name.invalid || (isChecked && mdp.invalid)">Demarrer</button>
+    </div>
+
+    <!-- The Modal to show the powers available to the player -->
+    <div class="modal" [style.display]="displayPowerModal">
+        <div class="modal-content" >
+            <span id="closeModalX" (click)="hidePowerModal()">X</span>
+            <table id="tablePowers">
+                <thead>
+                  <tr>
+                    <th>Pouvoir Description</th>
+                    <th>Actif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let powerCard of infoClientService.game.powerCards">
+                    <td>{{powerCard.name}}</td>
+                    <td>
+                        <input 
+                            type="checkbox" 
+                            id="buttonShowModal"
+                            checked
+                            (click)="onPowerCardClick(powerCard.name)"
+                        >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
     </div>
 </body>
