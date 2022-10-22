@@ -19,7 +19,7 @@
             id="cancelGame"
             class="optionButton"
             (click)="leaveGame()"
-            routerLink="/multiplayer-init"
+            routerLink="/game-mode-options"
         >
             Quitter Partie
         </button>
@@ -46,5 +46,47 @@
         >
             Prendre la place d'un joueur virtuel
         </button>
+    </div>
+    <div class="buttonContainer">
+        <button 
+            mat-raised-button 
+            *ngIf="!infoClientService.isSpectator && infoClientService.game.gameStarted && infoClientService.isTurnOurs" 
+            id="playerBecomeSpec" 
+            class="optionButton" 
+            (click)="showPowerList()"
+        >
+            Liste pouvoirs
+        </button>
+    </div>
+
+    <!-- The Modal to show the powers available to the player -->
+    <div class="modal" [style.display]="displayPowerModal">
+        <div class="modal-content" >
+            <span id="closeModalX" (click)="hidePowerModal()">X</span>
+            <span *ngIf="infoClientService.player.powerCards.length === 0">
+                Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer {{3 - infoClientService.player.nbValidWordPlaced}} mot(s) valide(s) sur le plateau.
+            </span>
+            <table *ngIf="infoClientService.player.powerCards.length > 0" id="tablePowers">
+                <thead>
+                  <tr>
+                    <th>PowerDescription</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let powerCard of infoClientService.player.powerCards">
+                    <td>{{powerCard.name}}</td>
+                    <td>
+                        <input 
+                            type="button" 
+                            id="buttonShowModal" 
+                            value="Utiliser" 
+                            (click)="onPowerCardClick(powerCard.name)"
+                        >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
     </div>
 </div>

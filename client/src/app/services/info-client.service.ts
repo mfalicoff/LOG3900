@@ -15,7 +15,6 @@ export class InfoClientService {
     player: Player;
 
     gameMode: string;
-    isLog2990Enabled: boolean;
 
     // Game parameters
     minutesByTurn: number;
@@ -53,8 +52,7 @@ export class InfoClientService {
     incommingPlayerId: string;
 
     constructor() {
-        this.gameMode = GlobalConstants.MODE_MULTI;
-        this.isLog2990Enabled = true;
+        this.gameMode = GlobalConstants.CLASSIC_MODE;
         this.minutesByTurn = 1;
         this.randomBonusesOn = false;
         this.isGamePrivate = false;
@@ -67,7 +65,7 @@ export class InfoClientService {
 
     // public bc it is reused to reset for new games
     initializeService() {
-        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, 'defaultLevel', 'defaultRoom', false, '');
+        this.game = new GameServer(0, false, GlobalConstants.CLASSIC_MODE, 'defaultLevel', 'defaultRoom', false, '');
         this.player = new Player('DefaultPlayerObject', false);
         this.displayTurn = "En attente d'un autre joueur...";
         this.isTurnOurs = false;

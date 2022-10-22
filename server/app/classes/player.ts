@@ -1,5 +1,6 @@
 import * as GlobalConstants from '@app/classes/global-constants';
 import { Command } from './command';
+import { PowerCard } from './power-card';
 import { Tile } from './tile';
 
 export class Player {
@@ -30,6 +31,10 @@ export class Player {
     allLetterSwapped: boolean;
     isMoveBingo: boolean;
 
+    // POWERS
+    powerCards: PowerCard[];
+    nbValidWordPlaced: number;
+
     avatarUri: string;
 
     constructor(namePlayer: string, isCreatorOfGame: boolean) {
@@ -48,5 +53,7 @@ export class Player {
         this.tileIndexManipulation = GlobalConstants.DEFAULT_VALUE_NUMBER;
         this.allLetterSwapped = false;
         this.isMoveBingo = false;
+        this.powerCards = [];
+        this.nbValidWordPlaced = 0;
     }
 }

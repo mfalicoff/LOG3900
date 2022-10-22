@@ -1,6 +1,7 @@
 import * as Constants from '@app/classes/global-constants';
 import { Command } from './command';
 import { Letter } from './letter';
+import { PowerCard } from './power-card';
 import { Tile } from './tile';
 import { Vec4 } from './vec4';
 
@@ -32,6 +33,10 @@ export class Player {
     allLetterSwapped: boolean;
     isMoveBingo: boolean;
 
+    // POWERS
+    powerCards: PowerCard[];
+    nbValidWordPlaced: number;
+
     constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
         this.isCreatorOfGame = isCreatorOfGame;
@@ -48,6 +53,8 @@ export class Player {
         this.tileIndexManipulation = Constants.DEFAULT_VALUE_NUMBER;
         this.allLetterSwapped = false;
         this.isMoveBingo = false;
+        this.powerCards = [];
+        this.nbValidWordPlaced = 0;
 
         this.initStand();
     }

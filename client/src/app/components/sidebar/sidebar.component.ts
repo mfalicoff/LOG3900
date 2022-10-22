@@ -10,7 +10,14 @@ import { SocketService } from '@app/services/socket.service';
     styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private router: Router) {}
+    displayPowerModal: string;
+    constructor(
+        private socketService: SocketService, 
+        public infoClientService: InfoClientService, 
+        private router: Router
+    ) {
+        console.log(infoClientService.player.powerCards.length) 
+    }
 
     onClickGiveUpButton() {
         if (this.infoClientService.isSpectator) {
@@ -76,5 +83,18 @@ export class SidebarComponent {
 
     spectWantsToBePlayer() {
         this.socketService.socket.emit('spectWantsToBePlayer');
+    }
+
+    showPowerList(){
+        this.displayPowerModal = 'block';
+    }
+
+    hidePowerModal(){
+        this.displayPowerModal = 'none';
+    }
+
+    onPowerCardClick(powerCardName: string){
+        this.socketService.socket.emit('powerCardClick', powerCardName);
+        this.hidePowerModal();
     }
 }

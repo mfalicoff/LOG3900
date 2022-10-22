@@ -41,3 +41,66 @@ button {
     white-space: normal;
     word-wrap: break-word;
 }
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    color: #0C483F;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: wheat;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 30px;
+    border-radius: 8px;
+    width: 20%; /* Could be more or less, depending on screen size */
+}
+
+#tablePowers {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#tablePowers td, #tablePowers th {
+    padding: 8px;
+}
+
+#tablePowers tr:hover {
+    background-color: wheat;
+    color: #0C483F;
+}
+
+#tablePowers th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: wheat;
+    color: #0C483F;
+}
+
+#tablePowers td{
+    border-bottom: 2px solid wheat;
+}
+
+#closeModalX{
+    margin-top: -15px;
+    margin-right: -15px;
+    float: right;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+#closeModalX:hover{
+    cursor: pointer;
+}

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as GlobalConstants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
@@ -73,34 +72,19 @@ export class ParametresSelectionPageComponent implements OnInit {
     createRoom() {
         // useful to reset the ui
         this.infoClientService.initializeService();
-        let roomName = '';
         const passwd = document.getElementById('passwdInput') as HTMLInputElement;
-        if (this.infoClientService.gameMode === GlobalConstants.MODE_MULTI) {
-            const inputElement = document.getElementById('roomName') as HTMLInputElement;
-            roomName = inputElement.value;
-            this.socketService.socket.emit('createRoomAndGame', {
-                roomName,
-                playerName: this.infoClientService.playerName,
-                timeTurn: this.infoClientService.minutesByTurn,
-                isBonusRandom: this.infoClientService.randomBonusesOn,
-                gameMode: this.infoClientService.gameMode,
-                vpLevel: '',
-                isGamePrivate: this.infoClientService.isGamePrivate,
-                passwd: passwd.value,
-            });
-        } else {
-            roomName = 'roomOf' + this.socketService.socket.id.toString();
-            this.socketService.socket.emit('createRoomAndGame', {
-                roomName,
-                playerName: this.infoClientService.playerName,
-                timeTurn: this.infoClientService.minutesByTurn,
-                isBonusRandom: this.infoClientService.randomBonusesOn,
-                gameMode: this.infoClientService.gameMode,
-                vpLevel: this.infoClientService.vpLevel,
-                isGamePrivate: this.infoClientService.isGamePrivate,
-                passwd: passwd.value,
-            });
-        }
+        const inputElement = document.getElementById('roomName') as HTMLInputElement;
+        let roomName = inputElement.value;
+        this.socketService.socket.emit('createRoomAndGame', {
+            roomName,
+            playerName: this.infoClientService.playerName,
+            timeTurn: this.infoClientService.minutesByTurn,
+            isBonusRandom: this.infoClientService.randomBonusesOn,
+            gameMode: this.infoClientService.gameMode,
+            vpLevel: this.infoClientService.vpLevel,
+            isGamePrivate: this.infoClientService.isGamePrivate,
+            passwd: passwd.value,
+        });
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
         this.mockDictionary = {
             title: 'Dictionnaire français par défaut',
