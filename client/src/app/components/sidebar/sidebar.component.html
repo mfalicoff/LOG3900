@@ -50,7 +50,12 @@
     <div class="buttonContainer">
         <button 
             mat-raised-button 
-            *ngIf="!infoClientService.isSpectator && infoClientService.game.gameStarted && infoClientService.isTurnOurs" 
+            *ngIf="
+                !infoClientService.isSpectator 
+                && infoClientService.game.gameStarted 
+                && infoClientService.isTurnOurs
+                && infoClientService.game.gameMode === 'power-cards'
+            " 
             id="playerBecomeSpec" 
             class="optionButton" 
             (click)="showPowerList()"
@@ -69,7 +74,7 @@
             <table *ngIf="infoClientService.player.powerCards.length > 0" id="tablePowers">
                 <thead>
                   <tr>
-                    <th>PowerDescription</th>
+                    <th>Pouvoir Description</th>
                     <th></th>
                   </tr>
                 </thead>
