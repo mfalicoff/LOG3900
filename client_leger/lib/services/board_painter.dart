@@ -192,10 +192,6 @@ class BoardPainter extends CustomPainter {
         ),
         paint,
     );
-
-    print(stand.tiles.length);
-    print("widthlineblocks");
-    print(crossProduct(WIDTH_LINE_BLOCKS, canvasSize.height));
     for(int i = 0; i < stand.tiles.length; i++){
       paint.color = createMaterialColor(Color(colorTilesMap[stand.tiles[i]]!));
       canvas.drawRect(
@@ -226,9 +222,6 @@ class BoardPainter extends CustomPainter {
       paint,
     );
 
-    print(stand.tiles.length);
-    print("widthlineblocks");
-    print(crossProduct(WIDTH_LINE_BLOCKS, canvasSize.height));
     for(int i = 0; i < stand.tiles.length; i++){
       paint.color = createMaterialColor(Color(colorTilesMap[stand.tiles[i]]!));
       canvas.drawRect(

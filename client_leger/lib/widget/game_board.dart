@@ -13,7 +13,6 @@ class GameBoard extends StatefulWidget {
 }
 
 class _GameBoardState extends State<GameBoard> {
-
   Board board = Board(constBoard1);
   Stand stand = Stand(constStand1);
 
@@ -24,20 +23,18 @@ class _GameBoardState extends State<GameBoard> {
       children: [
         LayoutBuilder(
           builder: (_, constraints) => Container(
-            width: constraints.maxWidth < constraints.maxHeight
-                ? constraints.maxWidth
-                : constraints.maxHeight,
-            height: constraints.maxWidth < constraints.maxHeight
-                ? constraints.maxWidth
-                : constraints.maxHeight,
-            child:Padding(
-              padding: const EdgeInsets.all(10),
-              child: CustomPaint(
-                painter: BoardPainter(board, stand),
-              ),
-            )
-
-          ),
+              width: constraints.maxWidth < constraints.maxHeight
+                  ? constraints.maxWidth
+                  : constraints.maxHeight,
+              height: constraints.maxWidth < constraints.maxHeight
+                  ? constraints.maxWidth
+                  : constraints.maxHeight,
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: CustomPaint(
+                  painter: BoardPainter(board, stand),
+                ),
+              )),
         ),
         ElevatedButton(
           style: ButtonStyle(
@@ -54,10 +51,7 @@ class _GameBoardState extends State<GameBoard> {
           child: Text(
             "Change",
             style: TextStyle(
-                fontSize: 20, color: Theme
-                .of(context)
-                .colorScheme
-                .primary),
+                fontSize: 20, color: Theme.of(context).colorScheme.primary),
           ),
         ),
       ],
@@ -67,4 +61,6 @@ class _GameBoardState extends State<GameBoard> {
   void _changeBoard() {
     board.tiles = constBoard2;
   }
+
+
 }
