@@ -223,7 +223,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       socketService.socket.emit("createRoomAndGame",
-          CreateGameModel(roomName!, globals.userLoggedIn.username, 100)
+          CreateGameModel(roomName!, globals.userLoggedIn.username, turnTime!)
       );
     }
   }
@@ -232,7 +232,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
 class CreateGameModel{
   late String roomName;
   late String playerName;
-  late int timeTurn;
+  late double timeTurn;
   final bool isBonusRandom = false;
   final String gameMode = "Multi";
   final bool isLog2990Enabled = false;
