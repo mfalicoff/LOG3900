@@ -3,25 +3,27 @@ import * as GlobalConstants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
+import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
 import { DatabaseService } from './database.service';
 import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
-import { ObjectiveService } from './objective.service';
 import { StandService } from './stand.service';
 import { VirtualPlayerService } from './virtual-player.service';
+import AvatarService from '@app/services/avatar.service';
 
 @Service()
 export class PlayAreaService {
     sio: io.Server;
+    avatarService = new AvatarService();
     constructor(
         private standService: StandService,
         private letterBankService: LetterBankService,
         private virtualPService: VirtualPlayerService,
         private chatService: ChatService,
         private expertVPService: ExpertVP,
-        private objectiveService: ObjectiveService,
         private databaseService: DatabaseService,
+        private boardService: BoardService,
     ) {
         this.sio = new io.Server();
     }
@@ -31,11 +33,15 @@ export class PlayAreaService {
     }
 
     changePlayer(game: GameServer) {
+        // removes all temporary tiles and get the tmp that were in the board
+        const tmpLetter = this.boardService.rmTempTiles(game);
         // Update les tiles du board en old
         this.updateOldTiles(game);
-        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
 
+        const playerThatJustPlayed = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         if (playerThatJustPlayed) {
+            // we add the tmp letter to the stand of the player that just played
+            this.standService.putLettersOnStand(game, tmpLetter, playerThatJustPlayed);
             // update the variable that contains the number of letter in the reserve
             this.updateStandAndReserveView(game, playerThatJustPlayed);
             // add a turn to the player that just played
@@ -66,6 +72,7 @@ export class PlayAreaService {
         // Basic set of values
         game.nbLetterReserve = this.letterBankService.getNbLettersInLetterBank(game.letterBank);
         game.gameStarted = true;
+        game.startTime = new Date().getTime();
 
         // init the stand for each player
         for (const player of game.mapPlayers.values()) {
@@ -77,13 +84,7 @@ export class PlayAreaService {
         game.idxPlayerPlaying = Math.floor(Math.random() * game.mapPlayers.size);
 
         // we set the master timer, it has to be a human client not a virtual player
-        for (const player of game.mapPlayers.values()) {
-            if (player.idPlayer === 'virtualPlayer') {
-                continue;
-            }
-            game.masterTimer = player.idPlayer;
-            break;
-        }
+        game.setMasterTimer();
 
         // we send the game to all the players
         this.sendGameToAllClientInRoom(game);
@@ -121,7 +122,7 @@ export class PlayAreaService {
     }
 
     // function that transforms the playerThatLeaves into a virtual player
-    replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
+    async replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
         // we send to everyone that the player has left and has been replaced by a bot
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
@@ -129,27 +130,27 @@ export class PlayAreaService {
         // we keep the old id to determine later to change the old player's turn or not
         const oldIdPlayer = playerThatLeaves.idPlayer;
 
-        let isTurnTurnNeccesary = false;
+        let isChangeTurnNeccesary = false;
         // we check if we will have to change the turn of the player that just left
         if (game.gameStarted) {
             // we change the player turn if it was the player that left's turn
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
             if (playerPlaying.idPlayer === oldIdPlayer) {
-                isTurnTurnNeccesary = true;
+                isChangeTurnNeccesary = true;
             }
         }
-
         // we delete the old player
         game.mapPlayers.delete(playerThatLeaves.name);
 
         // we replace him with the virtual player
         playerThatLeaves.idPlayer = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
-        game.mapPlayers.set(playerThatLeaves.name, playerThatLeaves);
+        playerThatLeaves.avatarUri = await this.avatarService.getRandomAvatar();
+        this.insertInMapIndex(game.idxPlayerPlaying, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
 
         // if the game is not started we don't need to change the turn
         // furthermore if we entered here game.idxPlayerPlaying would be -1 so server would crash
-        if (isTurnTurnNeccesary) {
+        if (isChangeTurnNeccesary) {
             this.changePlayer(game);
         }
     }
@@ -161,6 +162,16 @@ export class PlayAreaService {
         for (const spectator of game.mapSpectators.values()) {
             spectator.chatHistory.push({ message, isCommand: false, sender: 'S' });
         }
+    }
+
+    // function used to keep the order of elements in the map
+    // we need to keep the ordre because otherwise the change of turn would be wrong
+    // since it is based on this order
+    private insertInMapIndex(index: number, key: string, value: Player, map: Map<string, Player>) {
+        const arr = Array.from(map);
+        arr.splice(index, 0, [key, value]);
+        map.clear();
+        arr.forEach(([k, v]) => map.set(k, v));
     }
 
     private randomActionExpertVP(game: GameServer, player: Player): string {
@@ -186,17 +197,11 @@ export class PlayAreaService {
 
     private virtualPlayerAction(game: GameServer, player: Player) {
         const fourSecondsWait = 4000;
-        let resultCommand = '';
-
         const intervalId = setInterval(() => {
             if (game.vpLevel === 'expert') {
-                resultCommand = this.randomActionExpertVP(game, player);
+                this.randomActionExpertVP(game, player);
             } else {
-                resultCommand = this.randomActionVP(game, player);
-            }
-
-            if (player && game.isLog2990Enabled) {
-                this.objectiveService.isPlayerObjectivesCompleted(game, player, resultCommand);
+                this.randomActionVP(game, player);
             }
 
             this.changePlayer(game);
@@ -213,7 +218,7 @@ export class PlayAreaService {
         const neinyPercent = 0.9;
         const tenPercent = 0.1;
         const probaMove: number = this.giveProbaMove();
-        let resultCommand = '';
+        let resultCommand = '!passer';
 
         if (probaMove < tenPercent) {
             // 10% change to change letters

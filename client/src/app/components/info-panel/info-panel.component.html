@@ -7,7 +7,7 @@
         <button
             *ngIf="!infoClientService.isSpectator"
             mat-raised-button
-            [disabled]="!infoClientService.isTurnOurs || infoClientService.game.gameFinished" 
+            [disabled]="!infoClientService.isTurnOurs || infoClientService.game.gameFinished"
             id="passBtn"
             class="btnStyle"
             (click)="skipTurnButton()"
@@ -35,16 +35,17 @@
             mat-raised-button
             id="playBtn"
             class="btnStyle"
-            (click)= "this.placeGraphicService.manageKeyBoardEvent(infoClientService.game, infoClientService.player, enter)"
+            (click)= "this.placeGraphicService.manageKeyboardEvent(infoClientService.game, infoClientService.player, enter)"
             [disabled]= "!infoClientService.isTurnOurs || !this.placeGraphicService.isLettersDrawnSizeAboveZero() || infoClientService.game.gameFinished"
         >Jouer
          </button>
     </div>
     <br>
-    
+
     <table id="tableRoom">
         <thead>
           <tr>
+            <th></th>
             <th>Nom Joueur</th>
             <th>Score</th>
           </tr>
@@ -52,6 +53,7 @@
         <tbody>
             <!-- TODO maybe change that ? It's a bit ugly but had no idea how to do otherwise -->
           <tr *ngFor="let player of infoClientService.actualRoom.players">
+            <td><img [src]="player.avatarUri" class="profile"></td>
             <td>{{player.name}}</td>
             <td>{{player.score}}</td>
           </tr>

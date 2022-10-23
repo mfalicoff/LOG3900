@@ -18,7 +18,7 @@ export class ParametresSelectionPageComponent implements OnInit {
     timeIntervals: TimeIntervals[];
     vpLevels: string[];
     mockDictionary: MockDict;
-
+    isChecked: false;
     constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
 
     ngOnInit() {
@@ -56,11 +56,25 @@ export class ParametresSelectionPageComponent implements OnInit {
     randomizeBonuses() {
         this.infoClientService.randomBonusesOn = !this.infoClientService.randomBonusesOn;
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onTypeGameChange(event: any) {
+        switch (event.target.value) {
+            case 'public':
+                this.infoClientService.isGamePrivate = false;
+                break;
+            case 'private':
+                this.infoClientService.isGamePrivate = true;
+                break;
+            default:
+                break;
+        }
+    }
 
     createRoom() {
         // useful to reset the ui
         this.infoClientService.initializeService();
         let roomName = '';
+        const passwd = document.getElementById('passwdInput') as HTMLInputElement;
         if (this.infoClientService.gameMode === GlobalConstants.MODE_MULTI) {
             const inputElement = document.getElementById('roomName') as HTMLInputElement;
             roomName = inputElement.value;
@@ -70,8 +84,9 @@ export class ParametresSelectionPageComponent implements OnInit {
                 timeTurn: this.infoClientService.minutesByTurn,
                 isBonusRandom: this.infoClientService.randomBonusesOn,
                 gameMode: this.infoClientService.gameMode,
-                isLog2990Enabled: this.infoClientService.isLog2990Enabled,
                 vpLevel: '',
+                isGamePrivate: this.infoClientService.isGamePrivate,
+                passwd: passwd.value,
             });
         } else {
             roomName = 'roomOf' + this.socketService.socket.id.toString();
@@ -81,11 +96,17 @@ export class ParametresSelectionPageComponent implements OnInit {
                 timeTurn: this.infoClientService.minutesByTurn,
                 isBonusRandom: this.infoClientService.randomBonusesOn,
                 gameMode: this.infoClientService.gameMode,
-                isLog2990Enabled: this.infoClientService.isLog2990Enabled,
                 vpLevel: this.infoClientService.vpLevel,
+                isGamePrivate: this.infoClientService.isGamePrivate,
+                passwd: passwd.value,
             });
         }
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
+        this.mockDictionary = {
+            title: 'Dictionnaire français par défaut',
+            description: 'Ce dictionnaire contient environ trente mille mots français',
+        };
+        this.infoClientService.dictionaries[0] = this.mockDictionary;
     }
 
     private timeSelection(interval: string) {

@@ -1,13 +1,14 @@
 // magic number error are linked to the attribution of points for the objectives
 // its useless to create new variables therefore we use the following line
 /* eslint-disable @typescript-eslint/no-magic-numbers*/
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Spectator } from './spectator';
-import { Objective } from './objective';
 import { Player } from './player';
 import { Tile } from './tile';
 import { Trie } from './trie';
+import { Vec4 } from './vec4';
+import { Letter } from './letter';
 
 export class GameServer {
     // LETTER BANK SERVICE DATA
@@ -15,6 +16,7 @@ export class GameServer {
     letters: string[];
 
     roomName: string;
+    gameStart: string;
 
     // BOARD SERVICE DATA
     board: Tile[][];
@@ -30,6 +32,7 @@ export class GameServer {
     // EQUIVALENT STAND PLAYER SERVICE DATA
     mapPlayers: Map<string, Player>;
     mapSpectators: Map<string, Spectator>;
+    winners: Player[];
 
     // VALIDATION SERVICE
     noTileOnBoard: boolean;
@@ -37,8 +40,9 @@ export class GameServer {
     // GAME PARAMETERS SERVICE DATA
     randomBonusesOn: boolean;
     gameMode: string;
-    isLog2990Enabled: boolean;
     minutesByTurn: number;
+    isGamePrivate: boolean;
+    passwd: string;
 
     // PLAY AREA SERVICE DATA
     nbLetterReserve: number;
@@ -46,37 +50,45 @@ export class GameServer {
     gameFinished: boolean;
     idxPlayerPlaying: number;
     masterTimer: string;
-    objectiveArray: Objective[];
-    objectivesOfGame: Objective[];
 
     // SKIP TURN SERVICE DATA
     displaySkipTurn: string;
 
     vpLevel: string;
 
-    constructor(minutesByTurn: number, randomBonusesOn: boolean, gameMode: string, isLog2990Enabled: boolean, vpLevel: string, roomName: string) {
+    constructor(
+        minutesByTurn: number,
+        randomBonusesOn: boolean,
+        gameMode: string,
+        vpLevel: string,
+        roomName: string,
+        isGamePrivate: boolean,
+        passwd: string,
+    ) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;
         this.randomBonusesOn = randomBonusesOn;
         this.gameMode = gameMode;
-        this.isLog2990Enabled = isLog2990Enabled;
         this.vpLevel = vpLevel;
-        this.trie = new Trie();
+        this.isGamePrivate = isGamePrivate;
+        this.passwd = passwd;
 
         // Initializing the rest of the variables
+        this.trie = new Trie();
         this.letters = [];
         this.board = [];
         this.roomName = roomName;
         this.mapLetterOnBoard = new Map();
         this.mapPlayers = new Map();
         this.mapSpectators = new Map();
-        this.nbLetterReserve = GlobalConstants.DEFAULT_NB_LETTER_BANK;
+        this.nbLetterReserve = Constants.DEFAULT_NB_LETTER_BANK;
         this.gameStarted = false;
         this.gameFinished = false;
-        this.idxPlayerPlaying = 0;
+        this.idxPlayerPlaying = -1;
         this.masterTimer = '';
         this.displaySkipTurn = "En attente d'un autre joueur..";
         this.noTileOnBoard = true;
+        this.winners = [new Player('', false)];
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
@@ -107,27 +119,52 @@ export class GameServer {
             ['Z', { quantity: 1, weight: 10 }],
             ['*', { quantity: 2, weight: 0 }],
         ]);
-
-        // initializing of the gameServer array
         this.initializeLettersArray();
         this.initializeBonusBoard();
-
-        this.objectiveArray = [];
-        this.objectivesOfGame = [];
-        if (isLog2990Enabled) {
-            this.initializeObjectiveArray();
-            this.objectivesOfGame.push(
-                this.returnRandomObjectiveNotUsed('public'),
-                this.returnRandomObjectiveNotUsed('public'),
-                this.returnRandomObjectiveNotUsed(''),
-                this.returnRandomObjectiveNotUsed(''),
-            );
-        }
+        this.initBoardArray(this);
     }
 
-    setObjectivePlayer(idPlayer: string) {
-        const objectivesNotTaken = this.objectivesOfGame.filter((objective) => objective.playerId === '');
-        objectivesNotTaken[0].playerId = idPlayer;
+    initBoardArray(game: GameServer) {
+        for (
+            let i = 0,
+                l =
+                    Constants.SIZE_OUTER_BORDER_BOARD -
+                    Constants.WIDTH_EACH_SQUARE -
+                    Constants.WIDTH_LINE_BLOCKS +
+                    Constants.PADDING_BOARD_FOR_STANDS;
+            i < Constants.NUMBER_SQUARE_H_AND_W + 2;
+            i++, l += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
+        ) {
+            game.board[i] = new Array<Tile>();
+            for (
+                let j = 0,
+                    k =
+                        Constants.SIZE_OUTER_BORDER_BOARD -
+                        Constants.WIDTH_EACH_SQUARE -
+                        Constants.WIDTH_LINE_BLOCKS +
+                        Constants.PADDING_BOARD_FOR_STANDS;
+                j < Constants.NUMBER_SQUARE_H_AND_W + 2;
+                j++, k += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
+            ) {
+                const newTile = new Tile();
+                const newPosition = new Vec4();
+                const newLetter = new Letter();
+
+                newPosition.x1 = k;
+                newPosition.y1 = l;
+                newPosition.width = Constants.WIDTH_EACH_SQUARE;
+                newPosition.height = Constants.WIDTH_EACH_SQUARE;
+
+                newLetter.weight = 0;
+                newLetter.value = '';
+
+                newTile.letter = newLetter;
+                newTile.position = newPosition;
+                newTile.bonus = game.bonusBoard[i][j];
+
+                game.board[i].push(newTile);
+            }
+        }
     }
 
     private setMockTiles() {
@@ -160,7 +197,6 @@ export class GameServer {
             const nbOfLetterx3 = 12;
             const nbOfLetterx2 = 24;
 
-            // const arrayBonuses = ['wordx3', 'wordx2', 'letterx3', 'letterx2'];
             const mapBonuses: Map<string, number> = new Map();
             mapBonuses.set('wordx3', nbOfWordx3);
             mapBonuses.set('wordx2', nbOfWordx2);
@@ -177,11 +213,11 @@ export class GameServer {
                     if (this.bonusBoard[i][j] !== 'xx') {
                         let clear = false;
                         while (!clear) {
-                            const randomNumber = this.generateRandomNumber();
-                            const key = this.bonuses[randomNumber];
+                            const random = this.generateRandomNumber();
+                            const key = this.bonuses[random];
                             if (key && key !== undefined) {
                                 this.bonusBoard[i][j] = key;
-                                this.bonuses.splice(randomNumber, 1);
+                                this.bonuses.splice(random, 1);
                                 clear = true;
                             }
                         }
@@ -218,44 +254,5 @@ export class GameServer {
     private generateRandomNumber() {
         const maxNumberGenerated = 61;
         return Math.floor(Math.random() * (maxNumberGenerated + 1)); // aléatoire entre 0 et 3
-    }
-
-    private initializeObjectiveArray(): void {
-        this.objectiveArray.push(
-            new Objective(10, 'Ne pas échanger ou passer pendant les trois premiers tours.', GlobalConstants.UNCOMPLETED_OBJECTIVE, 0),
-        );
-        this.objectiveArray.push(
-            new Objective(
-                15,
-                'Placer un mot avec au moins 3 fois la même lettre sans utiliser de lettre blanche.',
-                GlobalConstants.UNCOMPLETED_OBJECTIVE,
-                1,
-            ),
-        );
-        this.objectiveArray.push(
-            new Objective(20, "Placer consécutivement deux fois le même mot d'au moins 5 points.", GlobalConstants.UNCOMPLETED_OBJECTIVE, 2),
-        );
-        this.objectiveArray.push(
-            new Objective(15, 'Placer un mot avec plus de voyelles que de consonnes.', GlobalConstants.UNCOMPLETED_OBJECTIVE, 3),
-        );
-        this.objectiveArray.push(
-            new Objective(10, 'Ne pas utiliser la lettre e ou a dans les 2 premiers tours.', GlobalConstants.UNCOMPLETED_OBJECTIVE, 4),
-        );
-        this.objectiveArray.push(new Objective(25, 'Placer un mot qui crée au moins 3 mots.', GlobalConstants.UNCOMPLETED_OBJECTIVE, 5));
-        this.objectiveArray.push(new Objective(15, "Former un mot d'au moins 8 lettres.", GlobalConstants.UNCOMPLETED_OBJECTIVE, 6));
-        this.objectiveArray.push(
-            new Objective(20, 'Faire un bingo après avoir échangé toutes ses lettres.', GlobalConstants.UNCOMPLETED_OBJECTIVE, 7),
-        );
-    }
-
-    private returnRandomObjectiveNotUsed(idPlayer: string): Objective {
-        let objectiveToReturn: Objective = new Objective(0, '', 'notComplete', 0);
-        const objectivePos: number = Math.floor(Math.random() * this.objectiveArray.length);
-        objectiveToReturn = this.objectiveArray[objectivePos];
-        this.objectiveArray.splice(objectivePos, 1);
-        if (idPlayer === 'public') {
-            objectiveToReturn.playerId = idPlayer;
-        }
-        return objectiveToReturn;
     }
 }

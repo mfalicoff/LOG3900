@@ -1,4 +1,5 @@
-import * as GlobalConstants from '@app/classes/global-constants';
+import { GameServer } from '@app/classes/game-server';
+import * as Constants from '@app/classes/global-constants';
 import { Letter } from '@app/classes/letter';
 import { LetterData } from '@app/classes/letter-data';
 import { Player } from '@app/classes/player';
@@ -12,7 +13,7 @@ export class StandService {
     constructor(private letterBankService: LetterBankService) {}
 
     onInitStandPlayer(letters: string[], letterBank: Map<string, LetterData>, player: Player) {
-        const initialLetters: string | undefined = this.letterBankService.giveRandomLetter(GlobalConstants.NUMBER_SLOT_STAND, letters, letterBank);
+        const initialLetters: string | undefined = this.letterBankService.giveRandomLetter(Constants.NUMBER_SLOT_STAND, letters, letterBank);
         this.initStandArray(initialLetters, letterBank, player);
     }
 
@@ -21,7 +22,7 @@ export class StandService {
             if (!player.mapLetterOnStand.has(letter)) {
                 continue;
             }
-            for (let j = 0; j < GlobalConstants.NUMBER_SLOT_STAND; j++) {
+            for (let j = 0; j < Constants.NUMBER_SLOT_STAND; j++) {
                 if (letter === player.stand[j].letter.value) {
                     this.deleteLetterStandLogic(letter, j, player);
                     this.putNewLetterOnStand(player.stand[j], letters, letterBank, player);
@@ -41,7 +42,7 @@ export class StandService {
 
     randomExchangeVP(player: Player, letters: string[], letterBank: Map<string, LetterData>, vpLevel: string): string {
         let lettersExchanged = '';
-        const nbLettersToRemove = vpLevel === 'expert' ? GlobalConstants.NUMBER_SLOT_STAND : this.giveRandomNbLetterToDelete(player);
+        const nbLettersToRemove = vpLevel === 'expert' ? Constants.NUMBER_SLOT_STAND : this.giveRandomNbLetterToDelete(player);
 
         // Delete the chosen letters
         for (let i = 0; i < nbLettersToRemove; i++) {
@@ -56,7 +57,7 @@ export class StandService {
         }
 
         // Fills the stand with new Letters
-        for (let i = 0; i < GlobalConstants.NUMBER_SLOT_STAND; i++) {
+        for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
             if (player.stand[i].letter.value === '') {
                 const randomLetter = this.letterBankService.giveRandomLetter(1, letters, letterBank);
                 this.writeLetterStandLogic(i, randomLetter, letterBank, player);
@@ -73,16 +74,41 @@ export class StandService {
         this.writeLetterInStandMap(letterToWrite, player);
     }
 
+    // delete ONE letter from the stand logic
     deleteLetterStandLogic(letterToRemove: string, indexToWrite: number, player: Player) {
         // function to use as much as possible
         this.deleteLetterArrayLogic(indexToWrite, player);
         this.deleteLetterInStandMap(letterToRemove, player);
     }
 
+    // function that puts an string of letters on the stand
+    // we do not care of the place of the letters on the stand
+    putLettersOnStand(game: GameServer, letters: string, player: Player) {
+        // loop through the letters to place
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
+        for (let i = 0; i < letters.length; i++) {
+            // loop through the stand array to find an empty slot
+            for (let j = 0; j < Constants.NUMBER_SLOT_STAND; j++) {
+                if (player.stand[j].letter.value === '') {
+                    this.writeLetterStandLogic(j, letters[i], game.letterBank, player);
+                    break;
+                }
+            }
+        }
+    }
+
+    fillEmptySlotStand(player: Player, game: GameServer) {
+        for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
+            if (player.stand[i].letter.value === '') {
+                this.putNewLetterOnStand(player.stand[i], game.letters, game.letterBank, player);
+            }
+        }
+    }
+
     putNewLetterOnStand(tile: Tile, letters: string[], letterBank: Map<string, LetterData>, player: Player) {
         const newLetterToPlace = this.letterBankService.giveRandomLetter(1, letters, letterBank);
         tile.letter.value = newLetterToPlace;
-        tile.letter.weight = this.letterBankService.checkLetterWeight(newLetterToPlace, letterBank);
+        tile.letter.weight = this.letterBankService.getLetterWeight(newLetterToPlace, letterBank);
 
         this.writeLetterInStandMap(tile.letter.value, player);
     }
@@ -104,12 +130,12 @@ export class StandService {
 
     writeLetterArrayLogic(indexToWrite: number, letterToWrite: string, letterBank: Map<string, LetterData>, player: Player) {
         player.stand[indexToWrite].letter.value = letterToWrite;
-        player.stand[indexToWrite].letter.weight = this.letterBankService.checkLetterWeight(letterToWrite, letterBank);
+        player.stand[indexToWrite].letter.weight = this.letterBankService.getLetterWeight(letterToWrite, letterBank);
     }
 
     findIndexLetterInStand(letterToSearch: string, startIndex: number, player: Player): number {
         const indexLetterToSearch = -1;
-        for (let i = startIndex; i < GlobalConstants.NUMBER_SLOT_STAND; i++) {
+        for (let i = startIndex; i < Constants.NUMBER_SLOT_STAND; i++) {
             if (player.stand[i].letter.value === letterToSearch) {
                 return i;
             }
@@ -126,24 +152,28 @@ export class StandService {
         const nbOccupiedSquare: number = letterInit.length;
 
         for (
-            let i = 0, j = GlobalConstants.SIZE_OUTER_BORDER_STAND;
-            i < GlobalConstants.NUMBER_SLOT_STAND;
-            i++, j += GlobalConstants.WIDTH_EACH_SQUARE + GlobalConstants.WIDTH_LINE_BLOCKS
+            let i = 0, j = Constants.SIZE_OUTER_BORDER_STAND;
+            i < Constants.NUMBER_SLOT_STAND;
+            i++, j += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
         ) {
             const newPosition = new Vec4();
             const newTile = new Tile();
             const newLetter = new Letter();
 
             // Initialising the position
-            newPosition.x1 = j;
-            newPosition.y1 = GlobalConstants.SIZE_OUTER_BORDER_STAND;
-            newPosition.width = GlobalConstants.WIDTH_EACH_SQUARE;
-            newPosition.height = GlobalConstants.WIDTH_EACH_SQUARE;
+            newPosition.x1 = j + Constants.PADDING_BOARD_FOR_STANDS + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
+            newPosition.y1 =
+                Constants.PADDING_BET_BOARD_AND_STAND +
+                Constants.SIZE_OUTER_BORDER_STAND +
+                Constants.PADDING_BOARD_FOR_STANDS +
+                Constants.DEFAULT_WIDTH_BOARD;
+            newPosition.width = Constants.WIDTH_EACH_SQUARE;
+            newPosition.height = Constants.WIDTH_EACH_SQUARE;
             newTile.position = newPosition;
 
             // Fills the occupiedSquare
             if (i < nbOccupiedSquare) {
-                newLetter.weight = this.letterBankService.checkLetterWeight(letterInit[i], letterBank);
+                newLetter.weight = this.letterBankService.getLetterWeight(letterInit[i], letterBank);
                 newLetter.value = letterInit[i];
 
                 newTile.letter = newLetter;
@@ -166,7 +196,7 @@ export class StandService {
     }
 
     private giveRandomIndexStand(): number {
-        const returnValue: number = Math.floor(Math.random() * GlobalConstants.NUMBER_SLOT_STAND);
+        const returnValue: number = Math.floor(Math.random() * Constants.NUMBER_SLOT_STAND);
         return returnValue;
     }
 

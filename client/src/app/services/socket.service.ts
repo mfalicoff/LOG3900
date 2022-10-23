@@ -36,6 +36,30 @@ export class SocketService {
         this.otherSocketOn();
         this.gameUpdateHandler();
         this.timerHandler();
+        this.canvasActionsHandler();
+    }
+
+    private canvasActionsHandler() {
+        this.socket.on('clearTmpTileCanvas', () => {
+            this.drawingBoardService.clearCanvas(this.drawingBoardService.tmpTileCanvas);
+        });
+
+        this.socket.on('drawBorderTileForTmpHover', (boardIndexs) => {
+            this.drawingBoardService.clearCanvas(this.drawingBoardService.tmpTileCanvas);
+            this.drawingBoardService.drawBorderTileForTmpHover(boardIndexs);
+        });
+
+        this.socket.on('tileDraggedOnCanvas', (clickedTile, mouseCoords) => {
+            this.drawingBoardService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
+        });
+
+        this.socket.on('drawVerticalArrow', (arrowCoords) => {
+            this.drawingBoardService.drawVerticalArrowDirection(arrowCoords.x, arrowCoords.y);
+        });
+
+        this.socket.on('drawHorizontalArrow', (arrowCoords) => {
+            this.drawingBoardService.drawHorizontalArrowDirection(arrowCoords.x, arrowCoords.y);
+        });
     }
 
     private gameUpdateHandler() {
@@ -49,7 +73,7 @@ export class SocketService {
         this.socket.on('gameBoardUpdate', (game) => {
             this.infoClientService.game = game;
             setTimeout(() => {
-                this.drawingBoardService.reDrawBoard(game.bonusBoard, game.board, this.infoClientService.letterBank);
+                this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
             }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
 
@@ -60,6 +84,11 @@ export class SocketService {
             this.infoClientService.actualRoom = this.infoClientService.rooms[idxExistingRoom];
             // update the players and spectators of the room
             this.infoClientService.rooms[idxExistingRoom].players = players;
+            if (this.infoClientService.isSpectator) {
+                setTimeout(() => {
+                    this.drawingService.drawSpectatorStands(players);
+                }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+            }
             this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
 
             // update the player object locally
@@ -80,15 +109,11 @@ export class SocketService {
         });
 
         this.socket.on('findTileToPlaceArrow', (realPosInBoardPx) => {
-            this.drawingBoardService.findTileToPlaceArrow(
-                realPosInBoardPx,
-                this.infoClientService.game.board,
-                this.infoClientService.game.bonusBoard,
-            );
+            this.drawingBoardService.findTileToPlaceArrow(this.socket, realPosInBoardPx, this.infoClientService.game.board);
         });
 
-        this.socket.on('creatorShouldBeAbleToStartGame', () => {
-            this.infoClientService.creatorShouldBeAbleToStartGame = true;
+        this.socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) => {
+            this.infoClientService.creatorShouldBeAbleToStartGame = creatorCanStart;
         });
 
         // for now this socket is only used when the player doesn't put a valid word on the board
@@ -107,6 +132,7 @@ export class SocketService {
         this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
+            this.drawingBoardService.lettersDrawn = '';
             if (currentNamePlayerPlaying === this.infoClientService.playerName) {
                 this.infoClientService.displayTurn = "C'est votre tour !";
                 this.infoClientService.isTurnOurs = true;
@@ -120,19 +146,21 @@ export class SocketService {
         });
 
         this.socket.on('setTimeoutTimerStart', () => {
+            this.drawingBoardService.lettersDrawn = '';
             this.setTimeoutForTimer();
         });
 
         this.socket.on('stopTimer', () => {
+            this.drawingBoardService.lettersDrawn = '';
             this.timerService.clearTimer();
         });
     }
 
     private roomManipulationHandler() {
-        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, isLog2990Enabled, players, spectators }) => {
+        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, passwd, players, spectators }) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
             if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, isLog2990Enabled, players, spectators));
+                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, passwd, players, spectators));
             } else {
                 this.infoClientService.rooms[idxExistingRoom].players = players;
                 this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
@@ -171,15 +199,24 @@ export class SocketService {
         this.socket.on('isSpectator', (isSpectator) => {
             this.infoClientService.isSpectator = isSpectator;
         });
+
+        this.socket.on('askForEntrance', (newPlayerName, newPlayerId) => {
+            this.infoClientService.incommingPlayer = newPlayerName;
+            this.infoClientService.incommingPlayerId = newPlayerId;
+        });
+        this.socket.on('gameOver', () => {
+            this.infoClientService.game.gameFinished = true;
+        });
     }
 
     private setTimeoutForTimer() {
-        const oneSecond = 990;
+        const oneSecond = 1000;
         const timerInterval = setInterval(() => {
             if (this.timerService.secondsValue <= 0 && this.infoClientService.game.masterTimer === this.socket.id) {
                 this.socket.emit('turnFinished');
             }
             if (this.infoClientService.game.gameFinished) {
+                this.drawingBoardService.lettersDrawn = '';
                 clearInterval(timerInterval);
             }
         }, oneSecond);

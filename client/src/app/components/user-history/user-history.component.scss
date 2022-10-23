@@ -1,0 +1,46 @@
+#historyWrapper {
+    background-color: wheat;
+    width: 70%;
+    height: 65%;
+    position: absolute;
+    border-top-left-radius: 20px;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.actionHistory{
+    padding: 1%;
+    color: wheat;
+    font-size: large;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    text-align: left;
+}
+
+.sidebar {
+    position: static bottom;
+    height: 90%;
+    background-color: #0c483f;
+    border-top-left-radius: 20px;
+    overflow-x: auto;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    // Height of horizontal scroll bar
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #0c483f;
+}
+::-webkit-scrollbar-thumb {
+    background: wheat;
+    border-radius: 8px;
+}
+
+::-webkit-input-placeholder {
+    color: #196533;
+}

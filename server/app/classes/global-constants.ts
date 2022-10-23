@@ -5,7 +5,8 @@
 export const DEFAULT_WIDTH_BOARD = 750;
 export const DEFAULT_HEIGHT_BOARD = 750;
 export const SIZE_OUTER_BORDER_BOARD = 40;
-
+export const DEFAULT_WIDTH_PLAY_AREA = 900;
+export const PADDING_BET_BOARD_AND_STAND = 5;
 export const NUMBER_SQUARE_H_AND_W = 15;
 export const WIDTH_LINE_BLOCKS = 4;
 export const WIDTH_BOARD_NOBORDER = DEFAULT_WIDTH_BOARD - SIZE_OUTER_BORDER_BOARD * 2;
@@ -20,6 +21,7 @@ export const SALT_ROUNDS = 10;
 export const WEB_TOKEN_SECRET = 'secret';
 export const TOKEN_EXPIRATION = 60;
 
+export const PADDING_BOARD_FOR_STANDS = DEFAULT_HEIGHT_STAND + PADDING_BET_BOARD_AND_STAND;
 /// ////////////////////////////////////////////////////////////////////////
 // CHAT VALIDATION CONSTANTS
 /// ////////////////////////////////////////////////////////////////////////
@@ -46,7 +48,6 @@ export const DEFAULT_VALUE_NUMBER = -1;
 /// ////////////////////////////////////////////////////////////////////////
 // VARIABLE socketManager
 /// ////////////////////////////////////////////////////////////////////////
-// TODO switch this to 4 when 4 game players will be enabled
 export const MIN_PERSON_PLAYING = 2;
 export const MAX_PERSON_PLAYING = 4;
 export const TIME_PER_ROUND_DEFAULT = 1000;
@@ -100,6 +101,7 @@ export const LETTERS_NOT_PRESENT = ': les lettres du mot doivent être présente
 export const LETTERS_MUST_TOUCH_OTHERS = ' : les lettres que vous avez placées doivent toucher celles déjà sur le plateau!';
 export const FIRST_LETTER_NOT_IN_H8 = ' : votre premier mot doit commencer dans la case h8!';
 export const LETTERS_FROM_BOARD_WRONG = ' : lettres du plateau de jeu mal utilisées!';
+export const TMP_LETTERS_MUST_TOUCH = ' : vos lettres deposées doivent se toucher!';
 export const REPLACEMENT_BY_BOT = 'Un bot a maintenant remplacé votre adversaire.';
 export const REPLACEMENT_BY_PLAYER = ' a remplacé le joueur virtuel: ';
 export const NB_MIN_LETTER_BANK = 6;
@@ -110,7 +112,8 @@ export const PLAYER_TRIED_A_WORD = ' a placé un mot non valide, son tour passe 
 // /////////////// databaseService constants//////////////////////////////////
 /// /////////////////////////////////////////////////////////////////////////
 export const DATABASE_URL = 'mongodb+srv://Stephane:HarryP0tter7@project-database.m7fal.mongodb.net/?retryWrites=true&w=majority';
-export const DATABASE_NAME = 'Project-Database';
+export const DATABASE_PROD = 'Project-Database';
+export const DATABASE_DEV = 'test';
 export const DATABASE_COLLECTION_DICTIONARIES = 'Dictionaries';
 export const DATABASE_COLLECTION_BESTSCORECLASSIC = 'BestScoreClassic';
 export const DATABASE_COLLECTION_BESTSCORELOG2990 = 'BestScoreLOG2990';

@@ -4,17 +4,12 @@
         <button 
             mat-raised-button 
             matTooltip="Abandonner"
-            *ngIf="!infoClientService.game.gameFinished"
+            *ngIf="!infoClientService.game.gameFinished && infoClientService.game.gameStarted"
             (click)="onClickGiveUpButton()" 
             class="optionButton"
         >
         Abandonner
         </button>
-    </div>
-
-    <div id="sliderTiles">
-        <p>Taille de police tuiles : {{ fontSize.value }} (px).</p>
-        <mat-slider #fontSize (change)="updateSetting($event)" tickInterval="2" step="1" min="15" max="23" value="19"> </mat-slider>
     </div>
     
     <div class="buttonContainer">
@@ -41,7 +36,7 @@
             START GAME
         </button>
     </div>
-    <div *ngIf="infoClientService.isSpectator" class="buttonContainer">
+    <div class="buttonContainer">
         <button 
             mat-raised-button 
             *ngIf="shouldSpecBeAbleToBePlayer()" 

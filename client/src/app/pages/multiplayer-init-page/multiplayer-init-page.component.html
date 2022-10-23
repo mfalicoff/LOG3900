@@ -22,7 +22,7 @@
           </ng-template>
         </ng-template>
       </div>
-      <h6 class="MPButton" routerLink="/main-page">
+      <h6 class="MPButton" routerLink="/game-mode-options">
         <mat-icon>arrow_back</mat-icon>
       </h6>
 
@@ -54,12 +54,25 @@
     </div>
   </div>
   <!-- The Modal to show the list of players real and virtuel-->
-  <div id="modalListPlayers" [style.display]="displayStyleModal" class="modal">
+  <div id="modalListPlayers" class="modal" [style.display]="displayStyleModal">
     <!-- Modal content -->
     <div class="modal-content">
       <span class="close" (click)="this.closeListPlayerModal()">&times;</span>
+      <p id="creatorOfGame" class="listPlayersStyle"></p>
       <ul id="listPlayer" class="listPlayersStyle"></ul>
       <ul id="listVP" class="listPlayersStyle"></ul>
     </div>
   </div>
+
+  <!-- The Modal to ask for password when entering a game -->
+  <div class="modal" [style.display]="passwdModalStyle">
+      <div class="modal-content" >
+          <h1>Partie protégée par un mot de passe</h1>
+          <p>
+            Entrez le mot de passe: <input type="text" [(ngModel)]="passwordText" />
+          </p>
+          <button (click)="askForPasswd()">Ok</button>
+      </div>
+  </div>
+  <div class="modal-background"></div>
 </body>

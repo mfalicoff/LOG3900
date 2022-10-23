@@ -3,6 +3,10 @@
 // Changing the size of the board will automatically change the size of the chevalet
 export const DEFAULT_WIDTH_BOARD = 750;
 export const DEFAULT_HEIGHT_BOARD = 750;
+
+export const DEFAULT_WIDTH_PLAY_AREA = 900;
+
+export const PADDING_BET_BOARD_AND_STAND = 5;
 export const SIZE_OUTER_BORDER_BOARD = 40;
 
 export const NUMBER_SQUARE_H_AND_W = 15;
@@ -16,6 +20,7 @@ export const SIZE_OUTER_BORDER_STAND = 6;
 export const DEFAULT_WIDTH_STAND = WIDTH_EACH_SQUARE * NUMBER_SLOT_STAND + WIDTH_LINE_BLOCKS * (NUMBER_SLOT_STAND - 1) + SIZE_OUTER_BORDER_STAND * 2;
 export const DEFAULT_HEIGHT_STAND = WIDTH_EACH_SQUARE + SIZE_OUTER_BORDER_STAND * 2;
 
+export const PADDING_BOARD_FOR_STANDS = DEFAULT_HEIGHT_STAND + PADDING_BET_BOARD_AND_STAND;
 /// ////////////////////////////////////////////////////////////////////////
 // CHAT VALIDATION CONSTANTS
 /// ////////////////////////////////////////////////////////////////////////
@@ -32,7 +37,7 @@ export const WAIT_FOR_CANVAS_INI = 10;
 /// ////////////////////////////////////////////////////////////////////////
 // TODO switch this to 4 when 4 game players will be enabled
 export const MIN_PERSON_PLAYING = 2;
-export const MAX_PERSON_PLAYING = 2;
+export const MAX_PERSON_PLAYING = 4;
 export const WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
 export const WAIT_FOR_OTHER_PLAYERS = "En attente d'autres joueurs...";
 
@@ -54,6 +59,9 @@ export const END_POSITION_INDEX_LINE = 1;
 /// ////////////////////////////////////////////////////////////////////////
 export const DEFAULT_VALUE_NUMBER = -1;
 export const TIME_PER_ROUND_DEFAULT = 1000;
+
+export const LEFT_CLICK = 0;
+export const RIGHT_CLICK = 2;
 
 /// //OBJECTIVE CONSTANTS///////
 export const FAILED_OBJECTIVE = 'failed';

@@ -67,7 +67,7 @@ export class DatabaseService {
     async start(url: string = GlobalConstants.DATABASE_URL): Promise<MongoClient | null> {
         const mongoClient = await MongoClient.connect(url, this.options);
         this.client = mongoClient;
-        this.db = mongoClient.db(GlobalConstants.DATABASE_NAME);
+        this.db = mongoClient.db(GlobalConstants.DATABASE_DEV);
         this.dictionariesCollection = new Collections(this.database, GlobalConstants.DATABASE_COLLECTION_DICTIONARIES);
         this.bestScoreClassicCollection = new Collections(this.database, GlobalConstants.DATABASE_COLLECTION_BESTSCORECLASSIC);
         this.bestScoreLOG2990Collection = new Collections(this.database, GlobalConstants.DATABASE_COLLECTION_BESTSCORELOG2990);

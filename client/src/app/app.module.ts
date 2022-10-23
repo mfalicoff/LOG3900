@@ -4,12 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
-import { BoardComponent } from '@app/components/board/board.component';
+import { BoardStandComponent } from '@app/components/board-stand/board-stand.component';
 import { CommunicationBoxComponent } from '@app/components/communication-box/communication-box.component';
 import { InfoPanelComponent } from '@app/components/info-panel/info-panel.component';
-import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-import { StandRPComponent } from '@app/components/stand-rp/stand-rp.component';
 import { TimerComponent } from '@app/components/timer/timer.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
@@ -21,11 +19,19 @@ import { MultiplayerInitPageComponent } from '@app/pages/multiplayer-init-page/m
 import { ParametresSelectionPageComponent } from '@app/pages/parametres-selection-page/parametres-selection-page.component';
 import { ModalVpLevelsComponent } from './components/modal-vp-levels/modal-vp-levels.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { GameModeOptionsPageComponent } from './pages/game-mode-options-page/game-mode-options-page.component';
 import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
+import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ModalComponent } from './pages/modal/modal.component';
 import { ChatComponent } from './pages/chat/chat.component';
-import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+import { UserHistoryComponent } from './components/user-history/user-history.component';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
+// eslint-disable-next-line import/no-unresolved
+import { NgxGalleryModule } from '@kolkov/ngx-gallery';
+import { GalleryComponent } from './components/gallery/gallery.component';
+import { EndGameResultsPageComponent } from './pages/end-game-results-page/end-game-results-page.component';
 
 /**
  * Main module that is used in main.ts.
@@ -38,11 +44,9 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         AppComponent,
         GamePageComponent,
         MainPageComponent,
-        PlayAreaComponent,
         SidebarComponent,
         MaterialPageComponent,
-        BoardComponent,
-        StandRPComponent,
+        BoardStandComponent,
         ParametresSelectionPageComponent,
         MultiplayerInitPageComponent,
         CommunicationBoxComponent,
@@ -54,7 +58,12 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         ModalVpLevelsComponent,
         ChatComponent,
         LoginPageComponent,
-        GamemodeoptionsPageComponent,
+        GameModeOptionsPageComponent,
+        ProfilePageComponent,
+        UserHistoryComponent,
+        ProfileEditComponent,
+        GalleryComponent,
+        EndGameResultsPageComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -65,6 +74,8 @@ import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamem
         HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
+        MatGridListModule,
+        NgxGalleryModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

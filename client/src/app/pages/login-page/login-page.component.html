@@ -10,6 +10,10 @@
         novalidate
       >
         <div>
+          <div>
+              <h2>Avatar</h2>
+              <app-gallery></app-gallery>
+          </div>
           <label for="username">Username</label>
           <input
             type="text"
@@ -76,12 +80,12 @@
                 <button (click)="toggleShow()" class="signUpInBtn">Sign In</button>
             </p>
         </div>
-  
+
         <div class="alert alert-warning" *ngIf="f.submitted && isSignUpFailed">
           Signup failed!<br />{{ errorMessage }}
         </div>
       </form>
-  
+
       <div class="alert alert-success" *ngIf="isSuccessful">
         Your registration is successful!
       </div>
@@ -141,12 +145,12 @@
                 <button (click)="toggleShow()" class="signUpInBtn">Sign Up</button>
               </p>
           </div>
-    
+
           <div class="alert alert-warning" *ngIf="f.submitted && isSignUpFailed">
             Signup failed!<br />{{ errorMessage }}
           </div>
         </form>
-    
+
         <div class="alert alert-success" *ngIf="isSuccessful">
           Your registration is successful!
         </div>
