@@ -63,6 +63,7 @@ class UserService {
             gameHistory: [],
             avatarPath: userData.avatarPath,
             avatarUri: '',
+            favouriteGames: [],
         });
     }
 
