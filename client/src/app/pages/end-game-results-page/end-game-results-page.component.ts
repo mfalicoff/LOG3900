@@ -143,6 +143,7 @@ export class EndGameResultsPageComponent implements OnInit {
             this.infoClientService.actualRoom.spectators,
             this.infoClientService.game.winners,
         );
+
         return;
     }
 }

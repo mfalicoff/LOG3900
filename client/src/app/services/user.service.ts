@@ -69,6 +69,27 @@ export class UserService {
             });
     }
 
+    async addFavouriteGame(gameId: string) {
+        return this.http
+            .put<UserResponseInterface>(
+                environment.serverUrl + 'users/' + this.user.id,
+                {
+                    gameSavedId: gameId,
+                },
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    this.updateUserInstance(res.data);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
             alert('Erreur: ' + error.status + error.error.message);
