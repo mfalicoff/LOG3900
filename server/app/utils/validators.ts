@@ -17,6 +17,9 @@ export class CreateUserValidator {
 
     @IsString()
     avatarPath: string;
+
+    @IsString()
+    gameSavedId: string;
 }
 
 export class LoginUserValidator {

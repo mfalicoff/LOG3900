@@ -71,6 +71,7 @@ class UserService {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
         let updateUserById: User;
+        let updateUserByGameSaved: User;
         if (userData.name) {
             const findUser: User = (await this.users.findOne({ name: userData.name })) as User;
             if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
@@ -86,6 +87,16 @@ class UserService {
 
             updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
             return updateUserById;
+        } else if (userData.gameSavedId) {
+            updateUserByGameSaved = (await this.users.findByIdAndUpdate(
+                userId,
+                { $addToSet: { favouriteGames: userData.gameSavedId } },
+                { new: true },
+            )) as User;
+            if (!updateUserByGameSaved) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+
+            updateUserByGameSaved.avatarUri = await this.populateAvatarField(updateUserByGameSaved);
+            return updateUserByGameSaved;
         }
         throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
     }
