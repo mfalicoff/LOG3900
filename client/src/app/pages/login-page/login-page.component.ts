@@ -106,9 +106,6 @@ export class LoginPageComponent {
                 // eslint-disable-next-line deprecation/deprecation
                 .subscribe({
                     next: (response) => {
-                        // localStorage.setItem('cookie', response.token);
-                        // this.socketService.socket.emit('new-user', response.data.name);
-                        // this.infoClientService.playerName = response.data.name;
                         this.saveUserInfo(response);
                     },
                     error: (error) => {
@@ -119,7 +116,7 @@ export class LoginPageComponent {
     }
 
     private saveUserInfo(response: any) {
-        localStorage.setItem('cookie', response.token);
+        localStorage.setItem(`cookie-${response.data._id}`, response.token);
         this.userService.updateUserInstance(response.data);
         this.socketService.socket.emit('new-user', response.data.name);
         this.infoClientService.playerName = response.data.name;

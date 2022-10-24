@@ -18,22 +18,16 @@ export class UserService {
     }
 
     updateUserInstance(user: User) {
-        localStorage.removeItem('user-info');
-        localStorage.setItem('user-info', JSON.stringify(user));
+        localStorage.removeItem(`user-${user._id}`);
+        localStorage.setItem(`user-${user._id}`, JSON.stringify(user));
         this.user = user;
     }
 
-    setUserFromStorage() {
-        this.user = JSON.parse(localStorage.getItem('user-info') as string);
-    }
-
-    getUserFromStorage(): User {
-        return JSON.parse(localStorage.getItem('user-info') as string);
+    getCookieHeader(): HttpHeaders {
+        return new HttpHeaders().set('Authorization', localStorage.getItem(`cookie-${this.user._id}`)?.split('=')[1].split(';')[0] as string);
     }
 
     async updateUsername(newName: string) {
-        this.user = this.getUserFromStorage();
-        const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
         return this.http
             .put<UserResponseInterface>(
                 environment.serverUrl + 'users/' + this.user._id,
@@ -41,7 +35,7 @@ export class UserService {
                     name: newName,
                 },
                 {
-                    headers,
+                    headers: this.getCookieHeader(),
                 },
             )
             .subscribe({
@@ -55,8 +49,6 @@ export class UserService {
     }
 
     async updateAvatar(newAvatarIndex: number) {
-        this.user = this.getUserFromStorage();
-        const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
         return this.http
             .put<UserResponseInterface>(
                 environment.serverUrl + 'users/' + this.user._id,
@@ -64,7 +56,7 @@ export class UserService {
                     avatarPath: `avatar${newAvatarIndex + 1}`,
                 },
                 {
-                    headers,
+                    headers: this.getCookieHeader(),
                 },
             )
             .subscribe({

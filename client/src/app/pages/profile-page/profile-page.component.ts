@@ -12,9 +12,7 @@ import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profi
 export class ProfilePageComponent implements OnInit {
     constructor(private dialog: MatDialog, public userService: UserService) {}
 
-    ngOnInit(): void {
-        if (!this.userService.user) this.userService.setUserFromStorage();
-    }
+    ngOnInit(): void {}
 
     openActionHistoryComponent(): void {
         this.dialog.open(UserHistoryComponent, {
