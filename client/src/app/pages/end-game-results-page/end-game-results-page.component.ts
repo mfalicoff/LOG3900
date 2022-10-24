@@ -15,7 +15,7 @@ import { Observable } from 'rxjs';
     styleUrls: ['./end-game-results-page.component.scss'],
 })
 export class EndGameResultsPageComponent implements OnInit {
-    nomSalle: string;
+    roomName: string;
     numberOfTurns: number = 0;
     gameStartDate: string;
     playingTime: string;
@@ -30,7 +30,7 @@ export class EndGameResultsPageComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.nomSalle = this.infoClientService.actualRoom.name;
+        this.roomName = this.infoClientService.actualRoom.name;
         this.players = this.infoClientService.actualRoom.players.copyWithin(0, 0, 3);
         this.findWinners(this.players);
         this.findNumberOfTurns();
