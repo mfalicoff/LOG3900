@@ -1,0 +1,19 @@
+<div class="container justified">
+    <div><button mat-icon-button (click)="closeDialog()" class="closeButton"> <mat-icon> close </mat-icon></button></div>
+    <div id="profileWrapper">
+        <div class="subcontainer justified">
+            <img [src]="this.data.userInfo.avatarUri" id="profile"/>
+            <h1>{{this.data.userInfo.name}}</h1>
+            <div id="statsContainer">
+                <h2>Statistiques</h2>
+                <mat-grid-list cols="2" rowHeight="2:1" id="statsList">
+                    <mat-grid-tile class="statsElement">Parties jouees: {{this.data.userInfo.gamesPlayed}}</mat-grid-tile>
+                    <mat-grid-tile class="statsElement">Parties gagnes: {{this.data.userInfo.gamesWon}}</mat-grid-tile>
+                    <mat-grid-tile class="statsElement">Score moyen par partie: {{this.data.userInfo.averagePointsPerGame}}</mat-grid-tile>
+                    <mat-grid-tile class="statsElement">Temps moyen par partie: {{this.millisToMinutesAndSeconds()}}</mat-grid-tile>
+                </mat-grid-list>
+
+            </div>
+        </div>
+    </div>
+</div>
