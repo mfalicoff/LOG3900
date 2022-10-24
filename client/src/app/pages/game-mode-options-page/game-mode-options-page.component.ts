@@ -2,7 +2,7 @@
 import { Component } from '@angular/core';
 import { InfoClientService } from '@app/services/info-client.service';
 import * as GlobalConstants from '@app/classes/global-constants';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';

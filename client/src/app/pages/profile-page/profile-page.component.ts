@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UserHistoryComponent } from '@app/components/user-history/user-history.component';
 import { UserService } from '@app/services/user.service';
@@ -9,10 +9,8 @@ import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profi
     templateUrl: './profile-page.component.html',
     styleUrls: ['./profile-page.component.scss'],
 })
-export class ProfilePageComponent implements OnInit {
+export class ProfilePageComponent {
     constructor(private dialog: MatDialog, public userService: UserService) {}
-
-    ngOnInit(): void {}
 
     openActionHistoryComponent(): void {
         this.dialog.open(UserHistoryComponent, {
