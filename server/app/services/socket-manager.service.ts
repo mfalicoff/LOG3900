@@ -94,7 +94,6 @@ export class SocketManager {
         this.gameUpdateClients(game);
         if (game.gameFinished) {
             this.triggerStopTimer(user.roomName);
-            this.sio.sockets.emit('gameOver');
         }
     }
 
@@ -853,7 +852,6 @@ export class SocketManager {
         user.roomName = '';
         this.gameUpdateClients(game);
     }
-
     private gameFinishedAction(game: GameServer) {
         const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
         const nbSpectators = game?.mapSpectators.size;

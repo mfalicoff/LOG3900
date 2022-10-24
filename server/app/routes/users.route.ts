@@ -16,6 +16,7 @@ class UsersRoute implements Routes {
     private initializeRoutes() {
         this.router.get(`${this.path}`, this.usersController.getUsers);
         // TODO Should this be protected too?
+        this.router.get(`${this.path}/:name`, this.usersController.getUserByName);
         this.router.get(`${this.path}/:id`, this.usersController.getUserById);
         this.router.post(`${this.path}`, validationMiddleware(CreateUserValidator, 'body'), this.usersController.createUser);
         this.router.put(`${this.path}/:id`, authMiddleware, validationMiddleware(CreateUserValidator, 'body', true), this.usersController.updateUser);

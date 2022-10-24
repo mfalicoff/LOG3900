@@ -36,7 +36,7 @@ class UserService {
             throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no name sent');
         }
 
-        const findUser: User = (await this.users.findOne({ name: username })) as User;
+        const findUser: User = (await this.users.findOne({ name: username }, { projection: { _id: 0 } })) as User;
         if (!findUser || username === 'DefaultPlayerName') throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
         findUser.avatarUri = await this.populateAvatarField(findUser);
         return findUser;

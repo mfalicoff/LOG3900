@@ -1,0 +1,78 @@
+.closeButton {
+    color: #0c483f;
+    background-color: transparent;
+    justify-content: right;
+    display: flex;
+    margin-bottom: 0;
+}
+
+.container {
+    min-height: 100vh;
+    height: auto;
+    background-image: url('https://www.printablee.com/postpic/2011/03/blank-scrabble-board-template-printable_326282.jpg');
+    background-position: center;
+    background-attachment: fixed;
+}
+
+#profileWrapper::-webkit-scrollbar {
+    width: 8px;
+    // Height of horizontal scroll bar
+    height: 10px;
+}
+#profileWrapper::-webkit-scrollbar-track {
+    background: wheat;
+    border-color: #0C483F;
+}
+#profileWrapper::-webkit-scrollbar-thumb {
+    background: #0C483F;
+    border-radius: 8px;
+}
+
+.justified {
+    display: flex;
+    flex-direction: column;
+    // justify-content: space-between;
+    align-items: center;
+}
+
+#profile {
+    border-radius: 50%;
+    background: transparent;
+    height: 125px;
+}
+
+#profileWrapper {
+    background-color: wheat;
+    width: 70%;
+    height: 90%;
+    position: absolute;
+    border-top-left-radius: 20px;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+#statsContainer {
+    text-align: center;
+    width: 50%;
+}
+
+#statsList {
+    padding-bottom: calc(45% + 0px);
+}
+
+.statsElement {
+    overflow: visible;
+    font-size: 20px;
+    justify-content: left;
+}
+
+.mat-grid-tile-content {
+    justify-content: left;
+}
+
+.subcontainer {
+    background-position: center;
+    background-attachment: fixed;
+}
