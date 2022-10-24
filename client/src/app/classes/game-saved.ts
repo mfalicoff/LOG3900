@@ -4,24 +4,25 @@ import { Spectator } from '@app/classes/spectator';
 
 export class GameSaved {
     players: Player[];
-    spectators: Spectator[];
-    winners: Player[];
+    spectators?: Spectator[];
+    winners?: Player[];
     roomName: string;
     numberOfTurns: number;
     gameStartDate: string;
     playingTime: string;
     nbLetterReserve: number;
     mapLettersOnStand: Map<Player, string>;
+    _id?: string;
 
     constructor(
         players: Player[],
-        spectators: Spectator[],
-        winners: Player[],
         roomName: string,
         numberOfTurns: number,
         gameStartDate: string,
         playingTime: string,
         nbLetterReserve: number,
+        spectators?: Spectator[],
+        winners?: Player[],
     ) {
         this.players = players;
         this.spectators = spectators;

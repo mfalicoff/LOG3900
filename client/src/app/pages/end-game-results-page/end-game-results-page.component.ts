@@ -8,6 +8,7 @@ import { environment } from '@app/../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { UserResponseInterface } from '@app/classes/response.interface';
 import { Observable } from 'rxjs';
+import { GameSaved } from '@app/classes/game-saved';
 
 @Component({
     selector: 'app-end-game-results-page',
@@ -21,6 +22,7 @@ export class EndGameResultsPageComponent implements OnInit {
     playingTime: string;
     serverUrl = environment.serverUrl;
     players: Player[];
+    gameSaved: GameSaved;
     constructor(
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
         public infoClientService: InfoClientService,
@@ -128,5 +130,19 @@ export class EndGameResultsPageComponent implements OnInit {
 
     isLinkEnabled(player: Player): boolean {
         return player.idPlayer !== 'virtualPlayer';
+    }
+
+    saveGame() {
+        this.gameSaved = new GameSaved(
+            this.players,
+            this.roomName,
+            this.numberOfTurns,
+            this.gameStartDate,
+            this.playingTime,
+            this.infoClientService.game.nbLetterReserve,
+            this.infoClientService.actualRoom.spectators,
+            this.infoClientService.game.winners,
+        );
+        return;
     }
 }
