@@ -14,14 +14,10 @@ export class RankedMatchmakingPageComponent {
     constructor(public timerService: TimerService, private socketService: SocketService, public infoClientService: InfoClientService, public rankedService:RankedService) {
         this.timerService.clearTimer();
         this.startTimer();
-        this.startMatchmaking();
+        this.checkAcceptMatchTimer();
     }
     startTimer() {
         this.timerService.startMatchmakingTimer();
-    }
-    startMatchmaking() {
-        this.socketService.socket.emit('startMatchmaking', {player: this.infoClientService.player});
-        this.checkAcceptMatchTimer();
     }
     
     acceptMatch() {

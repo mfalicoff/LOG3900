@@ -179,8 +179,9 @@ export class SocketService {
     }
 
     private otherSocketOn() {
-        this.socket.on('matchFound', (player) => {
-        this.infoClientService.player = player;
+        this.socket.on('matchFound', () => {
+        console.log('sdfg');
+        //this.infoClientService.player = player;
         this.rankedService.matchHasBeenFound();
         })
         this.socket.on('messageServer', (message) => {

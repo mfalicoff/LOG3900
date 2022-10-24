@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { InfoClientService } from '@app/services/info-client.service';
+import { SocketService } from '@app/services/socket.service';
+import { UserService } from '@app/services/user.service';
 
 @Component({
     selector: 'app-ranked-init-page',
@@ -7,7 +9,8 @@ import { InfoClientService } from '@app/services/info-client.service';
     styleUrls: ['./ranked-init-page.component.scss'],
 })
 export class RankedInitPageComponent {
-    constructor(public infoClientService: InfoClientService){
+    constructor(public infoClientService: InfoClientService, public userService: UserService,
+        private socketService: SocketService){
 
     }
     eloDisparity: number = 60;
@@ -17,5 +20,10 @@ export class RankedInitPageComponent {
     }
     onConfirm() {
         this.infoClientService.eloDisparity = this.eloDisparity;
+        this.startMatchmaking();
+        
+    }
+    startMatchmaking() {
+        this.socketService.socket.emit('startMatchmaking', {eloDisparity: this.eloDisparity, user: this.userService.user});
     }
 }

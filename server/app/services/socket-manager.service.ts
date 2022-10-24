@@ -12,7 +12,7 @@ import { Tile } from '@app/classes/tile';
 import { User } from '@app/classes/users.interface';
 import * as http from 'http';
 import * as io from 'socket.io';
-import { Service } from 'typedi';
+import { Service } from "typedi";
 import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
 import { CommunicationBoxService } from './communication-box.service';
@@ -51,6 +51,7 @@ export class SocketManager {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
         this.rooms = new Map<string, GameServer>();
+        this.matchmakingService.initSioMatchmaking(this.sio);
     }
 
     handleSockets(): void {
@@ -508,7 +509,7 @@ export class SocketManager {
 
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', (name) => {
-            this.users.set(socket.id, { name, roomName: '' });
+            this.users.set(socket.id, { name, roomName: '' , elo: 2000});
         });
 
         socket.on('createRoomAndGame', ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
@@ -544,9 +545,9 @@ export class SocketManager {
             // emit to change page on client after verification
             socket.emit('roomChangeAccepted', '/game');
         });
-        socket.on('startMatchmaking',({player}) => {
-            this.matchmakingService.findARoomForPlayer(player);
-            socket.emit('matchFound', player);
+        socket.on('startMatchmaking',({eloDisparity, user}) => {
+            this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
+            //socket.emit('matchFound', player);
         })
 
         socket.on('matchRefuse',({player}) => {

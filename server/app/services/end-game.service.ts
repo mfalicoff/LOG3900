@@ -1,11 +1,15 @@
 import { GameServer } from '@app/classes/game-server';
 import { Player } from '@app/classes/player';
+import * as io from 'socket.io';
 import { Service } from 'typedi';
 import { DatabaseService } from './database.service';
 
 @Service()
 export class EndGameService {
-    constructor(private databaseService: DatabaseService) {}
+    sio: io.Server;
+    constructor(private databaseService: DatabaseService) {
+        this.sio = new io.Server();
+    }
 
     // returns the player who won the game
     chooseWinner(game: GameServer): Player[] {
@@ -60,6 +64,7 @@ export class EndGameService {
         for (let i = 2; i<players.length; i++) {
             players[i].elo += Math.round((1-(i))*10 + ((averageElo - players[i].elo)/20));
         }
+        // this.sio.to(game.roomName).emit('changeElo', );
     }
     orderPlayerByScore(game:GameServer) : Player[] {
         const players = Array.from(game.mapPlayers.values());

@@ -1,67 +1,71 @@
-import { GameServer } from '@app/classes/game-server';
 import { Player } from '@app/classes/player';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
+import { RankedUser } from '../classes/ranked-user';
+import { User } from '../classes/users.interface';
 
 @Service()
 export class MatchmakingService {
     sio: io.Server;
     constructor(){
         this.sio = new io.Server();
-        this.rooms = new Map<string, GameServer>();
+        this.rooms = new Map<string, RankedUser[]>();
     }
-    rooms: Map<string, GameServer>; // key:first player name value:Game
+    rooms: Map<string, RankedUser[]>; // key:first player name value:Game
 
     initSioMatchmaking(sio: io.Server) {
         this.sio = sio;
     }
 
-    findARoomForPlayer(player:Player) {
+    findARoomForPlayer(socket:io.Socket, eloDisparity:number, user:User) {
         for(const value of this.rooms.values()){
-            if(this.doesPlayerFitInARoom(value, player)) {
-                this.joinRoom(player, value);
-                if(value.mapPlayers.size === 4) {
-                    this.launchRankedGame(value);
+            if(this.doesPlayerFitInARoom(value, eloDisparity, user.elo)) {
+                this.joinRoom(socket, value, user, eloDisparity);
+                if(value.length === 4) {
+                    this.launchRankedGame(socket);
                 }
                 return;
             }
         }
-        this.createRoom(player);
+        this.createRoom(socket, user, eloDisparity);
     }
 
-    doesPlayerFitInARoom(value:GameServer, player:Player): boolean{
-        for(const playerMap of value.mapPlayers.values()) {
-            if(Math.floor(playerMap.elo - player.elo) > player.eloDisparity ||
-            Math.floor(playerMap.elo - player.elo) > playerMap.eloDisparity) {
+    doesPlayerFitInARoom(value:RankedUser[], eloDisparity: number, playerElo:number): boolean{
+        for(const rankedUser of value) {
+            let eloDiff:number = Math.abs(playerElo - rankedUser.elo)
+            if(eloDiff > rankedUser.eloDisparity || eloDiff > eloDisparity) {
                 return false;
             }
         }
         return true;
     }
 
-    joinRoom(player:Player, room: GameServer){
-        room.mapPlayers.set(player.name,player);
+    joinRoom(socket:io.Socket, room: RankedUser[], user: User, eloDisparity:number){
+        socket.join(room[0].name);
+        let rankedUser = new RankedUser(user,eloDisparity)
+        this.rooms.get(room[0].name)?.push(rankedUser);
+        console.log(this.rooms);
     }
 
-    createRoom(player:Player){
-        const gameServer = new GameServer(60, false, 'Ranked', '', player.name, false, '');
-        this.rooms.set(player.name,gameServer);
-        this.joinRoom(player, gameServer);
-        this.launchRankedGame(gameServer);
+    createRoom(socket:io.Socket, user:User, eloDisparity:number){
+        let rankedUser = new RankedUser(user,eloDisparity)
+        let users:RankedUser[] = [rankedUser];
+        this.rooms.set(user.name, users);
+        socket.join(user.name);
+        this.launchRankedGame(socket);
+        //console.log(this.rooms);
+        //console.log(socket);
     }
 
-    launchRankedGame(game: GameServer){
-        for(const player of game.mapPlayers.values())
-        {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('matchFound', player);
-        }
+    launchRankedGame(socket:io.Socket){
+        console.log(this.sio);
+        this.sio.sockets.sockets.get(socket.id)?.emit('matchFound');
     }
     onRefuse(player:Player) {
         this.rooms.delete(player.name);
     }
     onAccept(player:Player) {
-        if(this.rooms.has(player.name)) {
-            
+        if(this.rooms.has(player.name)) {   
         }
     }
 }
