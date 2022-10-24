@@ -2,7 +2,7 @@
 import { Component } from '@angular/core';
 import { InfoClientService } from '@app/services/info-client.service';
 import * as GlobalConstants from '@app/classes/global-constants';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';
@@ -21,21 +21,21 @@ export class GameModeOptionsPageComponent {
     }
 
     async logOut() {
-        const headers = new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
         return (
             this.http
                 .post<any>(
                     environment.serverUrl + 'logout',
                     {},
                     {
-                        headers,
+                        headers: this.userService.getCookieHeader(),
                     },
                 )
                 // eslint-disable-next-line deprecation/deprecation
                 .subscribe({
                     next: () => {
                         // @ts-ignore
-                        localStorage.clear();
+                        localStorage.removeItem(`cookie-${this.userService.user._id}`);
+                        localStorage.removeItem(`user-${this.userService.user._id}`);
                         this.infoClientService.playerName = '';
                         this.router.navigate(['/login']);
                     },
