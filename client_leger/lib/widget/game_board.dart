@@ -18,7 +18,6 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   Widget build(BuildContext context) {
-    // return CustomPaint(painter: BoardPainter(),);
     return Row(
       children: [
         LayoutBuilder(
@@ -36,7 +35,7 @@ class _GameBoardState extends State<GameBoard> {
                 ),
               )),
         ),
-        ElevatedButton(
+        /*ElevatedButton(
           style: ButtonStyle(
             padding: MaterialStateProperty.all(
               const EdgeInsets.symmetric(vertical: 18.0, horizontal: 40.0),
@@ -53,14 +52,14 @@ class _GameBoardState extends State<GameBoard> {
             style: TextStyle(
                 fontSize: 20, color: Theme.of(context).colorScheme.primary),
           ),
-        ),
+        ),*/
       ],
     );
   }
 
-  void _changeBoard() {
+/*  void _changeBoard() {
     board.tiles = constBoard2;
-  }
+  }*/
 
 
 }
