@@ -1,6 +1,7 @@
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 import '../env/environment.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
 
 
 class SocketService {
@@ -20,5 +21,6 @@ class SocketService {
             .setExtraHeaders({'foo': 'bar'}) // optional
             .build());
     OptionBuilder().setTransports(['websocket']);
+    socket.emit("new-user", globals.userLoggedIn.username);
   }
 }

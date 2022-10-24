@@ -28,7 +28,13 @@ class _GameListPageState extends State<GameListPage> {
       if (mounted) {
         setState(() {
           rooms.add(Room.fromJson(data));
-          print(data);
+        });
+      }
+    });
+    socketService.socket.on('removeElementListRoom', (data) {
+      if (mounted) {
+        setState(() {
+          rooms.removeWhere((element) => element.roomName == data);
         });
       }
     });

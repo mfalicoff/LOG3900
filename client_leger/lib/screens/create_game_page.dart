@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:client_leger/screens/game_page.dart';
+import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 
@@ -11,8 +13,20 @@ class CreateGamePage extends StatefulWidget {
 }
 
 class _CreateGamePageState extends State<CreateGamePage> {
-  late String? nameRoom = "";
+  late String? roomName = "";
+  late double? turnTime = 1;
   final _formKey = GlobalKey<FormState>();
+  final SocketService socketService = SocketService();
+
+  @override
+  void initState() {
+    socketService.socket.on("roomChangeAccepted", (data) {
+      if(mounted){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GamePage()));
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,19 +94,95 @@ class _CreateGamePageState extends State<CreateGamePage> {
                       ),
                       Form(
                         key: _formKey,
-                        child: TextFormField(
-                          onSaved: (String? value) {
-                            nameRoom = value;
-                          },
-                          validator: _roomNameValidator,
-                          decoration: InputDecoration(
-                            border: const OutlineInputBorder(),
-                            labelText: "Nom de la salle",
-                            labelStyle: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
-                          ),
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              onSaved: (String? value) {
+                                roomName = value;
+                              },
+                              validator: _roomNameValidator,
+                              decoration: InputDecoration(
+                                border: const OutlineInputBorder(),
+                                labelText: "Nom de la salle",
+                                labelStyle: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                            DropdownButtonFormField<double>(
+                              value: turnTime,
+                              items: const [
+                                DropdownMenuItem<double>(
+                                  value: 0.5,
+                                  child: Text("30sec"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 1,
+                                  child: Text("1min"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 1.5,
+                                  child: Text("1min 30sec"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 2,
+                                  child: Text("2min"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 2.5,
+                                  child: Text("2min 30sec"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 3,
+                                  child: Text("3min"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 3.5,
+                                  child: Text("3min 30sec"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 4,
+                                  child: Text("4min"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 4.5,
+                                  child: Text("4min 30sec"),
+                                ),
+                                DropdownMenuItem<double>(
+                                  value: 5,
+                                  child: Text("5min"),
+                                ),
+                              ],
+                              onChanged: (double? value) {
+                                turnTime = value;
+                              },
+                            ),
+                            ElevatedButton(
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      vertical: 18.0, horizontal: 40.0),
+                                ),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                              ),
+                              onPressed: _start,
+                              child: Text(
+                                "Démarrer",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .secondary),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(
@@ -128,4 +218,37 @@ class _CreateGamePageState extends State<CreateGamePage> {
   void _goBackGameListPage() {
     Navigator.of(context).pop();
   }
+
+  void _start() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState?.save();
+      socketService.socket.emit("createRoomAndGame",
+          CreateGameModel(roomName!, globals.userLoggedIn.username, turnTime!)
+      );
+    }
+  }
+}
+
+class CreateGameModel{
+  late String roomName;
+  late String playerName;
+  late double timeTurn;
+  final bool isBonusRandom = false;
+  final String gameMode = "Multi";
+  final bool isLog2990Enabled = false;
+  final String vpLevel = "";
+
+  Map<String, dynamic> toJson(){
+    return {
+      'roomName': roomName,
+      'playerName': playerName,
+      'timeTurn': timeTurn,
+      'isBonusRandom': isBonusRandom,
+      'gameMode': gameMode,
+      'isLog2990Enabled': isLog2990Enabled,
+      'vpLevel' : vpLevel,
+    };
+  }
+
+  CreateGameModel(this.roomName, this.playerName, this.timeTurn);
 }
