@@ -6,7 +6,6 @@ import { Service } from 'typedi';
 import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
 import { DatabaseService } from './database.service';
-import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
 import { StandService } from './stand.service';
 import { VirtualPlayerService } from './virtual-player.service';
@@ -21,7 +20,6 @@ export class PlayAreaService {
         private letterBankService: LetterBankService,
         private virtualPService: VirtualPlayerService,
         private chatService: ChatService,
-        private expertVPService: ExpertVP,
         private databaseService: DatabaseService,
         private boardService: BoardService,
     ) {
@@ -178,6 +176,10 @@ export class PlayAreaService {
         }
     }
 
+    addSecsToTimePlayer(game: GameServer, timeToAdd: number){
+        this.sio.to(game.roomName)?.emit('addSecsToTimer', timeToAdd);
+    }
+
     // function used to keep the order of elements in the map
     // we need to keep the ordre because otherwise the change of turn would be wrong
     // since it is based on this order
@@ -188,36 +190,10 @@ export class PlayAreaService {
         arr.forEach(([k, v]) => map.set(k, v));
     }
 
-    private randomActionExpertVP(game: GameServer, player: Player): string {
-        let resultCommand = '';
-
-        const choosedMoved = this.expertVPService.generateMoves(game, player);
-        if (!choosedMoved) {
-            if (game.letterBank.size > GlobalConstants.DEFAULT_NB_LETTER_STAND) {
-                const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank, game.vpLevel);
-                this.chatService.pushMsgToAllPlayers(game, player.name, '!échanger' + lettersExchanged, true, 'O');
-                this.chatService.pushMsgToAllPlayers(game, player.name, GlobalConstants.EXCHANGE_OPPONENT_CMD, false, 'O');
-                resultCommand = '!échanger ' + lettersExchanged;
-            } else {
-                this.chatService.passCommand('!passer', game, player);
-                resultCommand = '!passer';
-            }
-        } else {
-            resultCommand = '!placer ' + choosedMoved.command + ' ' + choosedMoved.word;
-        }
-
-        return resultCommand;
-    }
-
     private virtualPlayerAction(game: GameServer, player: Player) {
         const fourSecondsWait = 4000;
         const intervalId = setInterval(() => {
-            if (game.vpLevel === 'expert') {
-                this.randomActionExpertVP(game, player);
-            } else {
-                this.randomActionVP(game, player);
-            }
-
+            this.randomActionVP(game, player);
             this.changePlayer(game);
             clearInterval(intervalId);
         }, fourSecondsWait);
@@ -240,7 +216,7 @@ export class PlayAreaService {
                 this.chatService.passCommand('!passer', game, player);
                 resultCommand = '!passer';
             } else {
-                const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank, game.vpLevel);
+                const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank);
                 this.chatService.pushMsgToAllPlayers(game, player.name, '!échanger ' + lettersExchanged, true, 'O');
                 resultCommand = '!échanger ' + lettersExchanged;
             }

@@ -161,6 +161,7 @@ export class DrawingService {
     // function that draws all the stands in the game with the logic
     // also it always put the stand of the player playing at the bottom
     // it is much easier to do it this so that the drag and drop coords are not messed up
+    //in this function the order of the functions called are important don't change it !
     drawSpectatorStands(players: Player[]) {
         const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
         const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
@@ -179,17 +180,17 @@ export class DrawingService {
 
         // we go to the next player
         idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
+        // top stand
+        this.drawHorizStand(constPosXYForStands, 0, players[idxPlayerPlaying]);
+
+        // we go to the next player
+        idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
         // right stand
         this.drawVertiStand(
             paddingForStands + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND,
             constPosXYForStands,
             players[idxPlayerPlaying],
         );
-
-        // we go to the next player
-        idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
-        // top stand
-        this.drawHorizStand(constPosXYForStands, 0, players[idxPlayerPlaying]);
     }
 
     // the x and y are coords of the point in the top left corner of the stand

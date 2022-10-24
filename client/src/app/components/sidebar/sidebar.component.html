@@ -55,6 +55,7 @@
                 && infoClientService.game.gameStarted 
                 && infoClientService.isTurnOurs
                 && infoClientService.game.gameMode === 'power-cards'
+                && !infoClientService.powerUsedForTurn
             " 
             id="playerBecomeSpec" 
             class="optionButton" 
@@ -71,7 +72,7 @@
             <span *ngIf="infoClientService.player.powerCards.length === 0">
                 Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer {{3 - infoClientService.player.nbValidWordPlaced}} mot(s) valide(s) sur le plateau.
             </span>
-            <table *ngIf="infoClientService.player.powerCards.length > 0" id="tablePowers">
+            <table *ngIf="infoClientService.player.powerCards.length > 0" class="table">
                 <thead>
                   <tr>
                     <th>Pouvoir Description</th>
@@ -94,4 +95,54 @@
               </table>
         </div>
     </div>
+
+    <!-- the modal to choose the target player in case the player uses the card "EXCHANGE_STAND" -->
+    <div class="modal" [style.display]="displayExchStandModal">
+        <div class="modal-content" >
+            <span>Cliquer sur le joueur avec lequel vous voulez échanger votre stand !</span>
+            <div if="displayLogoPlayers">
+                <table class="table">
+                    <thead>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let player of infoClientService.actualRoom.players">
+                            <td *ngIf="player.name !== infoClientService.player.name" (click)="onExchangeStandChoice(player.name)">
+                                <img 
+                                    [src]="player.avatarUri" 
+                                    class="profile"
+                                    
+                                >
+                            </td>
+                            <td *ngIf="player.name !== infoClientService.player.name" (click)="onExchangeStandChoice(player.name)">
+                                {{player.name}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> 
+    
+    <!-- the modal to choose the target letter on the satnd in case the player uses the card "EXCHANGE_LETTER_JOKER" -->
+    <div class="modal" [style.display]="displayExchStandModal" style="display:block">
+        <div class="modal-content" >
+            <span style="font-size:16px">Cliquer sur la lettre que vous voulez échanger :</span>
+            <br><br>
+            <div id="divLetterStand" *ngFor="let tile of infoClientService.player.stand; let indexOfelement=index;">
+                <span 
+                    class="letter" 
+                    id="{{indexOfelement}}"
+                    (click)="onChooseLetterToExchange(indexOfelement)"
+                    >
+                    {{tile.letter.value}}
+                </span>
+            </div>
+            <br><br>
+            <span>Cliquer sur la lettre que vous prendre de la reserve :</span>
+            <br><br>
+            <div id="divLetterStand" *ngFor="let letter of this.infoClientService.letterReserve; let indexOfelement=index;">
+                <span class="letter" id="{{indexOfelement}}">{{letter}}</span>
+            </div>
+        </div>
+    </div> 
 </div>

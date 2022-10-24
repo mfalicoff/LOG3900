@@ -66,22 +66,22 @@ button {
     width: 20%; /* Could be more or less, depending on screen size */
 }
 
-#tablePowers {
+#table {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;;
     border-collapse: collapse;
     width: 100%;
 }
 
-#tablePowers td, #tablePowers th {
+#table td, #table th {
     padding: 8px;
 }
 
-#tablePowers tr:hover {
+#table tr:hover {
     background-color: wheat;
     color: #0C483F;
 }
 
-#tablePowers th {
+#table th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
@@ -89,7 +89,7 @@ button {
     color: #0C483F;
 }
 
-#tablePowers td{
+#table td{
     border-bottom: 2px solid wheat;
 }
 
@@ -103,4 +103,26 @@ button {
 
 #closeModalX:hover{
     cursor: pointer;
+}
+
+.profile {
+    border-radius: 50%;
+    background: transparent;
+    height: 50px;
+}
+
+#divLetterStand{
+    display: inline-block;
+}
+
+.letter{
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-right: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 4px;
+    border: 2px solid black;
 }

@@ -39,8 +39,7 @@ export class InfoClientService {
     actualRoom: RoomData;
 
     letterBank: Map<string, LetterData>;
-
-    vpLevel: string;
+    letterReserve: string[];
 
     // useful to know to hide stands or not
     isSpectator: boolean;
@@ -50,6 +49,9 @@ export class InfoClientService {
     // variables used when player wants to join a private game
     incommingPlayer: string;
     incommingPlayerId: string;
+
+    //variable used for the power-cards feature
+    powerUsedForTurn: boolean;
 
     constructor() {
         this.gameMode = GlobalConstants.CLASSIC_MODE;
@@ -65,16 +67,17 @@ export class InfoClientService {
 
     // public bc it is reused to reset for new games
     initializeService() {
-        this.game = new GameServer(0, false, GlobalConstants.CLASSIC_MODE, 'defaultLevel', 'defaultRoom', false, '');
+        this.game = new GameServer(0, false, GlobalConstants.CLASSIC_MODE, 'defaultRoom', false, '');
         this.player = new Player('DefaultPlayerObject', false);
         this.displayTurn = "En attente d'un autre joueur...";
         this.isTurnOurs = false;
         this.nameVP1dictionary0 = 0;
-        this.vpLevel = 'debutant';
         this.isSpectator = false;
         this.creatorShouldBeAbleToStartGame = false;
         this.actualRoom = new RoomData('default', '1', false, 'fake', [], []);
+        this.powerUsedForTurn = false;
 
+        this.letterReserve = ['a', 'b'];
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
             ['B', { quantity: 2, weight: 3 }],

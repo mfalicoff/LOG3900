@@ -15,7 +15,6 @@ interface TimeIntervals {
 })
 export class ParametresSelectionPageComponent implements OnInit {
     timeIntervals: TimeIntervals[];
-    vpLevels: string[];
     mockDictionary: MockDict;
     isChecked: false;
     displayPowerModal: string;
@@ -27,6 +26,8 @@ export class ParametresSelectionPageComponent implements OnInit {
         public infoClientService: InfoClientService
     ) {
         this.activatedPowers = this.infoClientService.game.powerCards.map(powerCard => powerCard.isActivated);
+        console.log("powercards are", this.infoClientService.game.powerCards)
+        console.log("activatedPoers111", this.activatedPowers)
         console.log(this.infoClientService.gameMode);
     }
 
@@ -43,7 +44,6 @@ export class ParametresSelectionPageComponent implements OnInit {
             { value: 4.5, viewValue: '4min 30sec' },
             { value: 5, viewValue: '5 min' },
         ];
-        this.vpLevels = ['debutant', 'expert'];
         this.mockDictionary = {
             title: 'Dictionnaire français par défaut',
             description: 'Ce dictionnaire contient environ trente mille mots français',
@@ -58,9 +58,6 @@ export class ParametresSelectionPageComponent implements OnInit {
         this.mockDictionary = dictionary;
     }
 
-    vpLevelSelection(level: string) {
-        this.infoClientService.vpLevel = level;
-    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onTypeGameChange(event: any) {
         switch (event.target.value) {
@@ -76,6 +73,7 @@ export class ParametresSelectionPageComponent implements OnInit {
     }
 
     createRoom() {
+        console.log("activatedPoers", this.activatedPowers)
         // useful to reset the ui
         this.infoClientService.initializeService();
         const passwd = document.getElementById('passwdInput') as HTMLInputElement;
@@ -87,7 +85,6 @@ export class ParametresSelectionPageComponent implements OnInit {
             timeTurn: this.infoClientService.minutesByTurn,
             isBonusRandom: this.infoClientService.randomBonusesOn,
             gameMode: this.infoClientService.gameMode,
-            vpLevel: this.infoClientService.vpLevel,
             isGamePrivate: this.infoClientService.isGamePrivate,
             passwd: passwd.value,
             activatedPowers: this.activatedPowers,

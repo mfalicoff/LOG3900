@@ -17,6 +17,7 @@ import * as GlobalConstants from './classes/global-constants';
 import { DATABASE_DEV } from './classes/global-constants';
 import { StandService } from './services/stand.service';
 import { PowerCardsService } from './services/power-cards.service';
+import { LetterBankService } from './services/letter-bank.service';
 
 const baseDix = 10;
 
@@ -51,6 +52,7 @@ export class Server {
         private dictionaryService: DictionaryService,
         private standService: StandService,
         private powerCardsService: PowerCardsService,
+        private letterBankService: LetterBankService,
     ) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -80,6 +82,7 @@ export class Server {
             this.dictionaryService,
             this.standService,
             this.powerCardsService,
+            this.letterBankService,
         );
         this.socketManager.handleSockets();
 

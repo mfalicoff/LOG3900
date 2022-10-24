@@ -132,6 +132,7 @@ export class SocketService {
         this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
+            this.infoClientService.powerUsedForTurn = false;
             this.drawingBoardService.lettersDrawn = '';
             if (currentNamePlayerPlaying === this.infoClientService.playerName) {
                 this.infoClientService.displayTurn = "C'est votre tour !";
@@ -153,6 +154,10 @@ export class SocketService {
         this.socket.on('stopTimer', () => {
             this.drawingBoardService.lettersDrawn = '';
             this.timerService.clearTimer();
+        });
+
+        this.socket.on('addSecsToTimer', (secsToAdd) => {
+            this.timerService.addSecsToTimer(secsToAdd);
         });
     }
 
@@ -206,6 +211,11 @@ export class SocketService {
         });
         this.socket.on('gameOver', () => {
             this.infoClientService.game.gameFinished = true;
+        });
+
+        this.socket.on('sendLetterReserve', (letterReserveArr) => {
+            console.log("letterReserveArr: ", letterReserveArr);
+            this.infoClientService.letterReserve = letterReserveArr;
         });
     }
 

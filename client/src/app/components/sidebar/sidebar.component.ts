@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
+import * as Constants from '@app/classes/global-constants'
 
 @Component({
     selector: 'app-sidebar',
@@ -11,12 +12,13 @@ import { SocketService } from '@app/services/socket.service';
 })
 export class SidebarComponent {
     displayPowerModal: string;
+    displayExchStandModal: string;
     constructor(
         private socketService: SocketService, 
         public infoClientService: InfoClientService, 
         private router: Router
     ) {
-        console.log(infoClientService.player.powerCards.length) 
+        console.log(infoClientService.player.powerCards)
     }
 
     onClickGiveUpButton() {
@@ -94,7 +96,52 @@ export class SidebarComponent {
     }
 
     onPowerCardClick(powerCardName: string){
-        this.socketService.socket.emit('powerCardClick', powerCardName);
+        this.socketService.socket.emit("requestLetterReserve");
+
+        switch(powerCardName){
+            case Constants.TRANFORM_EMPTY_TILE:{
+                break;
+            }
+            case Constants.EXCHANGE_LETTER_JOKER:{
+                break;
+            }
+            case Constants.EXCHANGE_STAND:{
+                this.displayExchStandModal = 'block';
+                break;
+            }
+            default:{
+                this.infoClientService.powerUsedForTurn = true;
+                this.socketService.socket.emit('powerCardClick', powerCardName, '');
+                break;
+            }
+        }
         this.hidePowerModal();
+    }
+
+    onExchangeStandChoice(playerName: string){
+        console.log("playerName is: " + playerName)
+        this.infoClientService.powerUsedForTurn = true;
+        this.socketService.socket.emit('powerCardClick', Constants.EXCHANGE_STAND, playerName);
+        this.displayExchStandModal = 'none';
+    }
+    onChooseLetterToExchange(id: number){
+        console.log("id is: " + id)
+        document.getElementById(id.toString())!.style.backgroundColor = "red";
+        for(let i = 0; i < this.infoClientService.player.stand.length; i++){
+            if(i === id){
+                continue;
+            }
+            document.getElementById(i.toString())!.style.backgroundColor = "wheat";
+        }
+    }
+    onChooseLetterToTakeFromReserve(id: number){
+        console.log("id is: " + id)
+        document.getElementById(id.toString())!.style.backgroundColor = "red";
+        for(let i = 0; i < this.infoClientService.letterReserve.length; i++){
+            if(i === id){
+                continue;
+            }
+            document.getElementById(i.toString())!.style.backgroundColor = "wheat";
+        }
     }
 }

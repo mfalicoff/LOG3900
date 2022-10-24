@@ -55,15 +55,12 @@ export class GameServer {
     jmpNextEnnemyTurn: boolean;
     reduceEnnemyNbTurn: number;
 
-    vpLevel: string;
-
     startTime: number;
     endTime: number;
     constructor(
         minutesByTurn: number,
         randomBonusesOn: boolean,
         gameMode: string,
-        vpLevel: string,
         roomName: string,
         isGamePrivate: boolean,
         passwd: string,
@@ -72,7 +69,6 @@ export class GameServer {
         this.minutesByTurn = minutesByTurn;
         this.randomBonusesOn = randomBonusesOn;
         this.gameMode = gameMode;
-        this.vpLevel = vpLevel;
         this.isGamePrivate = isGamePrivate;
         this.passwd = passwd;
 
@@ -127,9 +123,8 @@ export class GameServer {
         ]);
         this.initLettersArray();
         this.initBonusBoard();
-        if(gameMode === Constants.POWER_CARDS_MODE){
-            this.initPowerCards();
-        }
+        this.initPowerCards();
+        
     }
 
     // function that sets the master_timer for the game
@@ -262,5 +257,7 @@ export class GameServer {
         this.powerCards.push(new PowerCard(Constants.EXCHANGE_LETTER_JOKER, true));
         this.powerCards.push(new PowerCard(Constants.EXCHANGE_STAND, true));
         this.powerCards.push(new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true));
+        this.powerCards.push(new PowerCard(Constants.ADD_1_MIN, true));
+        this.powerCards.push(new PowerCard(Constants.REMOVE_1_POWER_CARD_FOR_EVERYONE, true));
     }
 }
