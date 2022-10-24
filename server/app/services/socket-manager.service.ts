@@ -797,7 +797,6 @@ export class SocketManager {
         }
         if (game.gameFinished) {
             this.sio.sockets.emit('gameOver');
-            this.gameFinishedAction(game);
             return;
         }
 
@@ -809,8 +808,7 @@ export class SocketManager {
             const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
                 (player) => player.idPlayer !== 'virtualPlayer' && player.idPlayer !== playerThatLeaves?.idPlayer,
             ).length;
-
-            const nbSpectators = Array.from(game.mapSpectators.values()).length;
+            const nbSpectators = game.mapSpectators.size;
 
             if (nbRealPlayer >= 1 || nbSpectators >= 1) {
                 // we send to the opponent a update of the game
@@ -830,13 +828,21 @@ export class SocketManager {
                     if (!game.gameStarted) {
                         this.shouldCreatorBeAbleToStartGame(game);
                     }
+
+                    // check if we should delete the room game or not
+                    this.gameFinishedAction(game);
                 }, waitBeforeAbandonment);
             } else {
+                // we remove the player leaving in the map
+                game.mapPlayers.delete(playerThatLeaves.name);
+                // we decide if we delete the room or not
                 this.gameFinishedAction(game);
             }
         } else if (specThatLeaves) {
             // if it is a spectator that leaves
             game.mapSpectators.delete(socket.id);
+            // we check if we should delete the game or not
+            this.gameFinishedAction(game);
         } else {
             // should never go there
             // eslint-disable-next-line no-console
