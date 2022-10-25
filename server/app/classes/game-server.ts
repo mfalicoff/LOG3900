@@ -251,13 +251,13 @@ export class GameServer {
     //need the powers locally in the game to be able to deactivate/activate them for each game
     //by defaut they all are activated
     private initPowerCards(){
-        this.powerCards.push(new PowerCard(Constants.JUMP_NEXT_ENNEMY_TURN, true));
-        this.powerCards.push(new PowerCard(Constants.TRANFORM_EMPTY_TILE, true));
-        this.powerCards.push(new PowerCard(Constants.REDUCE_ENNEMY_TIME, true));
+        // this.powerCards.push(new PowerCard(Constants.JUMP_NEXT_ENNEMY_TURN, true));
+        // this.powerCards.push(new PowerCard(Constants.TRANFORM_EMPTY_TILE, true));
+        // this.powerCards.push(new PowerCard(Constants.REDUCE_ENNEMY_TIME, true));
         this.powerCards.push(new PowerCard(Constants.EXCHANGE_LETTER_JOKER, true));
-        this.powerCards.push(new PowerCard(Constants.EXCHANGE_STAND, true));
-        this.powerCards.push(new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true));
-        this.powerCards.push(new PowerCard(Constants.ADD_1_MIN, true));
-        this.powerCards.push(new PowerCard(Constants.REMOVE_1_POWER_CARD_FOR_EVERYONE, true));
+        // this.powerCards.push(new PowerCard(Constants.EXCHANGE_STAND, true));
+        // this.powerCards.push(new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true));
+        // this.powerCards.push(new PowerCard(Constants.ADD_1_MIN, true));
+        // this.powerCards.push(new PowerCard(Constants.REMOVE_1_POWER_CARD_FOR_EVERYONE, true));
     }
 }

@@ -26,9 +26,6 @@ export class ParametresSelectionPageComponent implements OnInit {
         public infoClientService: InfoClientService
     ) {
         this.activatedPowers = this.infoClientService.game.powerCards.map(powerCard => powerCard.isActivated);
-        console.log("powercards are", this.infoClientService.game.powerCards)
-        console.log("activatedPoers111", this.activatedPowers)
-        console.log(this.infoClientService.gameMode);
     }
 
     ngOnInit() {

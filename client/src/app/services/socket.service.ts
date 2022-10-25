@@ -64,6 +64,12 @@ export class SocketService {
 
     private gameUpdateHandler() {
         this.socket.on('playerAndStandUpdate', (player) => {
+            //this is a disgusting block fix bug there isn't rly a better way to do it
+            //when the modal to choose the letter is open the player shouldn't update or it
+            //will refresh the visual in the sidebar component which is not what we want
+            if(this.infoClientService.displayExchLetterModal === 'block'){
+                return;
+            }
             this.infoClientService.player = player;
             setTimeout(() => {
                 this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);

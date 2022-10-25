@@ -13,6 +13,8 @@ import * as Constants from '@app/classes/global-constants'
 export class SidebarComponent {
     displayPowerModal: string;
     displayExchStandModal: string;
+    letterFromReserveChoosed: string;
+    idxTileFromStandChoosed: number;
     constructor(
         private socketService: SocketService, 
         public infoClientService: InfoClientService, 
@@ -97,19 +99,25 @@ export class SidebarComponent {
 
     onPowerCardClick(powerCardName: string){
         this.socketService.socket.emit("requestLetterReserve");
-
+        console.log("powerCardName", powerCardName);
+        if(powerCardName === Constants.EXCHANGE_LETTER_JOKER){
+            console.log("YESSSSSSSSSss")
+        }
         switch(powerCardName){
             case Constants.TRANFORM_EMPTY_TILE:{
                 break;
             }
             case Constants.EXCHANGE_LETTER_JOKER:{
+                this.infoClientService.displayExchLetterModal = 'block';
                 break;
             }
             case Constants.EXCHANGE_STAND:{
+                console.log("yooo1");
                 this.displayExchStandModal = 'block';
                 break;
             }
             default:{
+                console.log("fail");
                 this.infoClientService.powerUsedForTurn = true;
                 this.socketService.socket.emit('powerCardClick', powerCardName, '');
                 break;
@@ -119,29 +127,44 @@ export class SidebarComponent {
     }
 
     onExchangeStandChoice(playerName: string){
-        console.log("playerName is: " + playerName)
         this.infoClientService.powerUsedForTurn = true;
         this.socketService.socket.emit('powerCardClick', Constants.EXCHANGE_STAND, playerName);
         this.displayExchStandModal = 'none';
     }
     onChooseLetterToExchange(id: number){
-        console.log("id is: " + id)
-        document.getElementById(id.toString())!.style.backgroundColor = "red";
+        this.idxTileFromStandChoosed = id;
+        let letterElement = document.getElementById(id.toString())!;
+        letterElement.style.backgroundColor = "#0C483F";
+        letterElement.style.color = "wheat";
         for(let i = 0; i < this.infoClientService.player.stand.length; i++){
             if(i === id){
                 continue;
             }
-            document.getElementById(i.toString())!.style.backgroundColor = "wheat";
+            let otherLetterElement = document.getElementById(i.toString())!;
+            otherLetterElement.style.backgroundColor = "wheat";
+            otherLetterElement.style.color = "#0C483F";
         }
     }
-    onChooseLetterToTakeFromReserve(id: number){
-        console.log("id is: " + id)
-        document.getElementById(id.toString())!.style.backgroundColor = "red";
+    onChooseLetterToTakeFromReserve(id: number, choosedLetter: string){
+        this.letterFromReserveChoosed = choosedLetter;
+        const addOnForReserve = 7;
+        let letterElement = document.getElementById((id + addOnForReserve).toString())!;
+        letterElement.style.backgroundColor = "#0C483F";
+        letterElement.style.color = "wheat";
         for(let i = 0; i < this.infoClientService.letterReserve.length; i++){
             if(i === id){
                 continue;
             }
-            document.getElementById(i.toString())!.style.backgroundColor = "wheat";
+            let otherLetterElement = document.getElementById((i + addOnForReserve).toString())!;
+            otherLetterElement.style.backgroundColor = "wheat";
+            otherLetterElement.style.color = "#0C483F";
         }
+    }
+
+    activateLetterExchange(){
+        const additionalParams = this.letterFromReserveChoosed + this.idxTileFromStandChoosed.toString();
+        this.socketService.socket.emit('powerCardClick', Constants.EXCHANGE_LETTER_JOKER, additionalParams);
+        this.infoClientService.powerUsedForTurn = true;
+        this.infoClientService.displayExchLetterModal = 'none';
     }
 }

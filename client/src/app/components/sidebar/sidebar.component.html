@@ -124,7 +124,7 @@
     </div> 
     
     <!-- the modal to choose the target letter on the satnd in case the player uses the card "EXCHANGE_LETTER_JOKER" -->
-    <div class="modal" [style.display]="displayExchStandModal" style="display:block">
+    <div class="modal" [style.display]="infoClientService.displayExchLetterModal">
         <div class="modal-content" >
             <span style="font-size:16px">Cliquer sur la lettre que vous voulez échanger :</span>
             <br><br>
@@ -133,16 +133,25 @@
                     class="letter" 
                     id="{{indexOfelement}}"
                     (click)="onChooseLetterToExchange(indexOfelement)"
-                    >
+                >
                     {{tile.letter.value}}
                 </span>
             </div>
             <br><br>
-            <span>Cliquer sur la lettre que vous prendre de la reserve :</span>
+            <span style="font-size:16px">Cliquer sur la lettre que vous prendre de la reserve :</span>
             <br><br>
             <div id="divLetterStand" *ngFor="let letter of this.infoClientService.letterReserve; let indexOfelement=index;">
-                <span class="letter" id="{{indexOfelement}}">{{letter}}</span>
+                <!-- +7 necessary to not confond the letter to exchange from the one to take from the reserve-->
+                <span 
+                    class="letter" 
+                    id="{{indexOfelement + 7}}" 
+                    (click)="onChooseLetterToTakeFromReserve(indexOfelement, letter)"
+                >
+                    {{letter.toLowerCase()}}
+                </span>
             </div>
+            <br><br>
+            <button mat-raised-button (click)="activateLetterExchange()">Valider</button>
         </div>
     </div> 
 </div>

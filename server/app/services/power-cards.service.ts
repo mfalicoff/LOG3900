@@ -4,16 +4,16 @@ import { Player } from '@app/classes/player';
 import { PowerCard } from '@app/classes/power-card';
 import { Service } from 'typedi';
 import { PlayAreaService } from './play-area.service';
+import { StandService } from './stand.service';
 
 @Service()
 export class PowerCardsService {
     constructor(
         private playAreaService: PlayAreaService,
+        private standService: StandService,
     ){}
 
     initPowerCards(game: GameServer, activationState: boolean[]){
-        console.log("activationState");
-        console.log(activationState);
         for(let i = 0; i < game.powerCards.length; i++){
             game.powerCards[i].isActivated = activationState[i];
         }
@@ -29,7 +29,6 @@ export class PowerCardsService {
 
     //function that fills the player's power cards
     givePowerCard(game: GameServer, player: Player){
-        console.log("givingPowerTo: " + player.name);
         if(player.powerCards.length < 3){
             player.powerCards.push(this.getRandomPower(game));
         }
@@ -55,7 +54,7 @@ export class PowerCardsService {
                 break;
             }
             case Constants.EXCHANGE_LETTER_JOKER:{
-                this.exchangeLetterJoker(game, player);
+                this.exchangeLetterJoker(game, player, additionnalParams);
                 break;
             }
             case Constants.EXCHANGE_STAND:{
@@ -91,8 +90,28 @@ export class PowerCardsService {
         game.reduceEnnemyNbTurn = 3;
     }
 
-    private exchangeLetterJoker(game: GameServer, player: Player){
-        //TODO
+    private exchangeLetterJoker(game: GameServer, player: Player, infoOnAction: string){
+        console.log("infoOnAction", infoOnAction);
+        console.log("parseInt(infoOnAction[1])", parseInt(infoOnAction[1]));
+        const letterToTakeFromReserve = infoOnAction[0];
+        let tileToTakeFromStand = player.stand[parseInt(infoOnAction[1])];
+        let letterToSubstact = game.letterBank.get(infoOnAction[0].toUpperCase());
+        if(!letterToSubstact || !letterToSubstact){
+            console.log("error1 in exchangeLetterJoker");
+            return;
+        }
+        let letterToAdd = game.letterBank.get(tileToTakeFromStand.letter.value.toUpperCase());
+        if(!letterToAdd){
+            console.log("error2 in exchangeLetterJoker");
+            return;
+        }
+        letterToSubstact.quantity--;
+        letterToAdd.quantity++;
+        game.letterBank.set(letterToTakeFromReserve, letterToSubstact);
+        game.letterBank.set(tileToTakeFromStand.letter.value, letterToAdd);
+
+        this.standService.deleteLetterStandLogic(tileToTakeFromStand.letter.value, parseInt(infoOnAction[1]), player);
+        this.standService.writeLetterStandLogic(parseInt(infoOnAction[1]), letterToTakeFromReserve, game.letterBank, player);
     }
 
     private exchangeStand(game: GameServer, player: Player, playerTargetName: string){
@@ -100,9 +119,15 @@ export class PowerCardsService {
         if(playerTarget === undefined){
             return;
         }
+
+        //change the stand of hands
         const playerStand = player.stand;
         player.stand = playerTarget.stand;
         playerTarget.stand = playerStand;
+        //do the same for the map
+        const playerLetterMap = player.mapLetterOnStand;
+        player.mapLetterOnStand = playerTarget.mapLetterOnStand;
+        playerTarget.mapLetterOnStand = playerLetterMap;
 
         this.playAreaService.sendMsgToAllInRoom(
             game,
@@ -165,12 +190,9 @@ export class PowerCardsService {
     }
 
     private getRandomPower(game: GameServer): PowerCard {
-        console.log("all powercards are");
         console.log(game.powerCards)
         const availablePowerCards = game.powerCards.filter(powerCard => powerCard.isActivated);
-        console.log("availablePowerCards: ", availablePowerCards);
         const randomCard = availablePowerCards[Math.floor(Math.random() * availablePowerCards.length)];
-        console.log("randomCard: ", randomCard);
         return randomCard;
     }
 }

@@ -52,6 +52,7 @@ export class InfoClientService {
 
     //variable used for the power-cards feature
     powerUsedForTurn: boolean;
+    displayExchLetterModal: string;
 
     constructor() {
         this.gameMode = GlobalConstants.CLASSIC_MODE;
