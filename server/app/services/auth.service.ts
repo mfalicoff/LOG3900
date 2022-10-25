@@ -30,26 +30,26 @@ class AuthService {
         const isPasswordMatching: boolean = await compare(userData.password, findUser.password as string);
         if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.Conflict, "You're password not matching");
 
-        if (this.loggedInIds.indexOf(findUser.id as string) !== DEFAULT_VALUE_NUMBER)
+        if (this.loggedInIds.indexOf(findUser._id as string) !== DEFAULT_VALUE_NUMBER)
             throw new HttpException(HTTPStatusCode.Conflict, 'Already logged in, log out of device and try again');
 
-        this.loggedInIds.push(findUser.id as string);
+        this.loggedInIds.push(findUser._id as string);
         findUser.avatarUri = await this.userService.populateAvatarField(findUser);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);
-        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('login') } });
+        await this.users.updateOne({ _id: findUser._id }, { $push: { actionHistory: addActionHistory('login') } });
         return { cookie, findUser };
     }
 
     async logout(id: string): Promise<void> {
         const filteredIds = this.loggedInIds.filter((_id) => _id !== id);
         const findUser = await this.userService.findUserById(id);
-        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('logout') } });
+        await this.users.updateOne({ _id: findUser._id }, { $push: { actionHistory: addActionHistory('logout') } });
         this.loggedInIds = filteredIds;
     }
 
     createToken(user: User): TokenData {
-        const dataStoredInToken: DataStoredInToken = { _id: user.id as string };
+        const dataStoredInToken: DataStoredInToken = { _id: user._id as string };
         const secretKey: string = WEB_TOKEN_SECRET;
         const expiresIn: number = TOKEN_EXPIRATION * TOKEN_EXPIRATION;
 

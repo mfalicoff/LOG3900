@@ -34,8 +34,8 @@ export class GameModeOptionsPageComponent {
                 .subscribe({
                     next: () => {
                         // @ts-ignore
-                        localStorage.removeItem(`cookie-${this.userService.user.id}`);
-                        localStorage.removeItem(`user-${this.userService.user.id}`);
+                        localStorage.removeItem(`cookie-${this.userService.user._id}`);
+                        localStorage.removeItem(`user-${this.userService.user._id}`);
                         this.infoClientService.playerName = '';
                         this.router.navigate(['/login']);
                     },

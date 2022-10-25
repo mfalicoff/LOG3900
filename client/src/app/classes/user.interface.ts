@@ -6,7 +6,7 @@ export interface User {
     gameHistory?: string[];
     gamesPlayed?: number;
     gamesWon?: number;
-    id?: string;
+    _id?: string;
     loggedIn?: boolean;
     password?: string;
     avatarPath?: string;

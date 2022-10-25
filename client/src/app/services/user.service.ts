@@ -14,23 +14,23 @@ export class UserService {
     constructor(private http: HttpClient) {}
 
     getUser(user: User): Observable<UserResponseInterface> {
-        return this.http.get<UserResponseInterface>(`${environment.serverUrl}users/${user.id}`);
+        return this.http.get<UserResponseInterface>(`${environment.serverUrl}users/${user._id}`);
     }
 
     updateUserInstance(user: User) {
-        localStorage.removeItem(`user-${user.id}`);
-        localStorage.setItem(`user-${user.id}`, JSON.stringify(user));
+        localStorage.removeItem(`user-${user._id}`);
+        localStorage.setItem(`user-${user._id}`, JSON.stringify(user));
         this.user = user;
     }
 
     getCookieHeader(): HttpHeaders {
-        return new HttpHeaders().set('Authorization', localStorage.getItem(`cookie-${this.user.id}`)?.split('=')[1].split(';')[0] as string);
+        return new HttpHeaders().set('Authorization', localStorage.getItem(`cookie-${this.user._id}`)?.split('=')[1].split(';')[0] as string);
     }
 
     async updateUsername(newName: string) {
         return this.http
             .put<UserResponseInterface>(
-                environment.serverUrl + 'users/' + this.user.id,
+                environment.serverUrl + 'users/' + this.user._id,
                 {
                     name: newName,
                 },
@@ -51,7 +51,7 @@ export class UserService {
     async updateAvatar(newAvatarIndex: number) {
         return this.http
             .put<UserResponseInterface>(
-                environment.serverUrl + 'users/' + this.user.id,
+                environment.serverUrl + 'users/' + this.user._id,
                 {
                     avatarPath: `avatar${newAvatarIndex + 1}`,
                 },
