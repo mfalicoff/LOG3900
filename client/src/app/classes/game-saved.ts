@@ -3,9 +3,9 @@ import { Spectator } from '@app/classes/spectator';
 
 export class GameSaved {
     roomName: string;
-    players: Player[];
-    spectators?: Spectator[];
-    winners?: Player[];
+    players: string[];
+    spectators: string[];
+    winners: string[];
     numberOfTurns: number;
     gameStartDate: string;
     playingTime: string;
@@ -24,16 +24,34 @@ export class GameSaved {
         winners?: Player[],
     ) {
         this.roomName = roomName;
-        this.players = players;
-        this.spectators = spectators;
-        this.winners = winners;
         this.numberOfTurns = numberOfTurns;
         this.playingTime = playingTime;
         this.nbLetterReserve = nbLetterReserve;
         this.gameStartDate = gameStartDate;
         this.mapLettersOnStand = new Map<string, string>();
 
-        this.populateMap(this.players);
+        this.populateMap(players);
+        this.populateArrays(players, spectators, winners);
+    }
+
+    populateArrays(players: Player[], spectators: Spectator[] | undefined, winners: Player[] | undefined) {
+        for (let index = 0; index < players.length; index++) {
+            this.players[index] = players[index].name;
+        }
+        if (spectators) {
+            for (let index = 0; index < spectators.length; index++) {
+                this.spectators[index] = spectators[index].name;
+            }
+        } else {
+            this.spectators = [];
+        }
+        if (winners) {
+            for (let index = 0; index < winners.length; index++) {
+                this.winners[index] = winners[index].name;
+            }
+        } else {
+            this.winners = [];
+        }
     }
 
     populateMap(players: Player[]) {

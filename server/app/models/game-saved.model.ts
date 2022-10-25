@@ -1,20 +1,18 @@
 import { Document, model, Schema } from 'mongoose';
 import { GameSaved } from '@app/classes/game-saved';
-import { Player } from '@app/classes/player';
-import { Spectator } from '@app/classes/spectator';
 
 const gameSavedSchema: Schema = new Schema({
     players: {
-        type: [Player],
+        type: [String],
         required: true,
         unique: true,
     },
     spectators: {
-        type: [Spectator],
+        type: [String],
         required: false,
     },
     winners: {
-        type: [Player],
+        type: [String],
         required: false,
     },
     roomName: {
@@ -37,12 +35,8 @@ const gameSavedSchema: Schema = new Schema({
         type: Number,
         required: true,
     },
-    mapLettersOnStand: {
-        type: new Map<Player, string>(),
-        required: true,
-    },
 });
 
-const gameSavedModel = model<GameSaved & Document>('gamesSaved', gameSavedSchema);
+const gameSavedModel = model<GameSaved & Document>('Saved-Games', gameSavedSchema);
 
 export default gameSavedModel;
