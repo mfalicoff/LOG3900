@@ -43,7 +43,7 @@ const userSchema: Schema = new Schema({
     },
     favouriteGames: {
         type: [String],
-        required: false,
+        required: true,
     },
     actionHistory: {
         type: [String],

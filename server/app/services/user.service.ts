@@ -60,10 +60,10 @@ class UserService {
             gamesPlayed: 0,
             gamesWon: 0,
             actionHistory: [addActionHistory('creation')],
-            gameHistory: [''],
+            gameHistory: [],
             avatarPath: userData.avatarPath,
             avatarUri: '',
-            favouriteGames: [''],
+            favouriteGames: [],
         });
     }
 
@@ -71,7 +71,7 @@ class UserService {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
         let updateUserById: User;
-        let updateUserByGameSaved: User;
+        // let updateUserByGameSaved: User;
         if (userData.name) {
             const findUser: User = (await this.users.findOne({ name: userData.name })) as User;
             if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
@@ -87,7 +87,7 @@ class UserService {
 
             updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
             return updateUserById;
-        } else if (userData.savedGameId) {
+        } /* else if (userData.savedGameId) {
             updateUserByGameSaved = (await this.users.findByIdAndUpdate(
                 userId,
                 { $addToSet: { favouriteGames: userData.savedGameId } },
@@ -97,7 +97,7 @@ class UserService {
 
             updateUserByGameSaved.avatarUri = await this.populateAvatarField(updateUserByGameSaved);
             return updateUserByGameSaved;
-        }
+        }*/
         throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
     }
 

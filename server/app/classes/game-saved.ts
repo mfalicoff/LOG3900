@@ -1,12 +1,11 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers*/
 import { Player } from '@app/classes/player';
 import { Spectator } from '@app/classes/spectator';
 
 export class GameSaved {
+    roomName: string;
     players: Player[];
     spectators?: Spectator[];
     winners?: Player[];
-    roomName: string;
     numberOfTurns: number;
     gameStartDate: string;
     playingTime: string;
@@ -24,10 +23,10 @@ export class GameSaved {
         spectators?: Spectator[],
         winners?: Player[],
     ) {
+        this.roomName = roomName;
         this.players = players;
         this.spectators = spectators;
         this.winners = winners;
-        this.roomName = roomName;
         this.numberOfTurns = numberOfTurns;
         this.playingTime = playingTime;
         this.nbLetterReserve = nbLetterReserve;
