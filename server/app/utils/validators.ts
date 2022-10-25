@@ -19,7 +19,7 @@ export class CreateUserValidator {
     avatarPath: string;
 
     @IsString()
-    gameSavedId: string;
+    savedGameId: string;
 }
 
 export class LoginUserValidator {

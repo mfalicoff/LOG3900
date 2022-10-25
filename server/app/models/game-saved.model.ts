@@ -43,6 +43,6 @@ const gameSavedSchema: Schema = new Schema({
     },
 });
 
-const gameSavedModel = model<GameSaved & Document>('GameSaved', gameSavedSchema);
+const gameSavedModel = model<GameSaved & Document>('favouriteGames', gameSavedSchema);
 
 export default gameSavedModel;

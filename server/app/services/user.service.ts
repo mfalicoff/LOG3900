@@ -60,10 +60,10 @@ class UserService {
             gamesPlayed: 0,
             gamesWon: 0,
             actionHistory: [addActionHistory('creation')],
-            gameHistory: [],
+            gameHistory: [''],
             avatarPath: userData.avatarPath,
             avatarUri: '',
-            favouriteGames: [],
+            favouriteGames: [''],
         });
     }
 
@@ -87,10 +87,10 @@ class UserService {
 
             updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
             return updateUserById;
-        } else if (userData.gameSavedId) {
+        } else if (userData.savedGameId) {
             updateUserByGameSaved = (await this.users.findByIdAndUpdate(
                 userId,
-                { $addToSet: { favouriteGames: userData.gameSavedId } },
+                { $addToSet: { favouriteGames: userData.savedGameId } },
                 { new: true },
             )) as User;
             if (!updateUserByGameSaved) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
