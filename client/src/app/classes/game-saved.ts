@@ -10,7 +10,7 @@ export class GameSaved {
     gameStartDate: string;
     playingTime: string;
     nbLetterReserve: number;
-    mapLettersOnStand: Map<Player, string>;
+    mapLettersOnStand: Map<string, string>;
     _id?: string;
 
     constructor(
@@ -31,13 +31,14 @@ export class GameSaved {
         this.playingTime = playingTime;
         this.nbLetterReserve = nbLetterReserve;
         this.gameStartDate = gameStartDate;
+        this.mapLettersOnStand = new Map<string, string>();
 
         this.populateMap(this.players);
     }
 
     populateMap(players: Player[]) {
         for (const player of players) {
-            this.mapLettersOnStand.set(player, this.lettersOnStand(player));
+            this.mapLettersOnStand.set(player.name, this.lettersOnStand(player));
         }
     }
 
