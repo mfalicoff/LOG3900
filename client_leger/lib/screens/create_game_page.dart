@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:client_leger/screens/game_page.dart';
+import 'package:client_leger/services/game_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -17,6 +18,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
   late double? turnTime = 1;
   final _formKey = GlobalKey<FormState>();
   final SocketService socketService = SocketService();
+  final GameService gameService = GameService();
 
   @override
   void initState() {

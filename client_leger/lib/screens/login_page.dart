@@ -188,7 +188,7 @@ class _LoginFormState extends State<LoginForm> {
       try{
         globals.userLoggedIn = await controller.login(email: email, password: password);
         Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => MyHomePage()));
+            MaterialPageRoute(builder: (context) => const MyHomePage()));
       } on Exception{
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text("Impossible de se connecter"),

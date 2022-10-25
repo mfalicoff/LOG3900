@@ -1,5 +1,6 @@
 
 import 'package:client_leger/env/environment.dart';
+import 'package:client_leger/services/socket_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -7,6 +8,7 @@ import 'package:client_leger/models/user.dart';
 
 class Controller {
   final String? serverAddress = Environment().config?.serverURL;
+  final SocketService socketService = SocketService();
 
   Future<User> login({email = String, password = String}) async {
     final response = await http.post(
@@ -22,6 +24,7 @@ class Controller {
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
+      socketService.socket.emit("new-user", user.username);
       return user;
     } else {
       throw Exception('Failed to login');

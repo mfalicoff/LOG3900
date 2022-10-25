@@ -2,6 +2,8 @@ import 'package:client_leger/models/player.dart';
 
 class Game {
   List<Player> players = [];
+  int timer = 0;
+  bool waitingPlayers = true;
 
   Game.fromJSON(data){
     for(int i = 0; i < 4; i++){
