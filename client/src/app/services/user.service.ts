@@ -69,7 +69,7 @@ export class UserService {
             });
     }
 
-    async addFavouriteGame(gameId: string) {
+    /* async updateFavouriteGames(gameId: string) {
         return this.http
             .put<UserResponseInterface>(
                 environment.serverUrl + 'users/' + this.user.id,
@@ -88,7 +88,7 @@ export class UserService {
                     this.handleErrorPOST(error);
                 },
             });
-    }
+    }*/
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {

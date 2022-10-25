@@ -64,6 +64,18 @@ class UsersController {
         }
     };
 
+    /* updateFavouriteGames = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId: string = req.params.id;
+            const userData: CreateGameSavedValidator = req.body;
+            const updateUserData: User = await this.userService.updateFavouriteGames(userId, userData);
+
+            res.status(HTTPStatusCode.OK).json({ data: updateUserData, message: 'updated' });
+        } catch (error) {
+            next(error);
+        }
+    };*/
+
     deleteUser = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId: string = req.params.id;

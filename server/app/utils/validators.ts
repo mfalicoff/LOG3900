@@ -17,9 +17,6 @@ export class CreateUserValidator {
 
     @IsString()
     avatarPath: string;
-
-    /* @IsString()
-    savedGameId: string;*/
 }
 
 export class LoginUserValidator {
@@ -35,7 +32,10 @@ export class EmailValidator {
     email: string;
 }
 
-export class GameSavedValidator {}
+/* export class CreateGameSavedValidator {
+    @IsString()
+    savedGameId: string;
+}*/
 
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export const validationMiddleware = (

@@ -71,7 +71,6 @@ class UserService {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
         let updateUserById: User;
-        // let updateUserByGameSaved: User;
         if (userData.name) {
             const findUser: User = (await this.users.findOne({ name: userData.name })) as User;
             if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
@@ -87,19 +86,27 @@ class UserService {
 
             updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
             return updateUserById;
-        } /* else if (userData.savedGameId) {
-            updateUserByGameSaved = (await this.users.findByIdAndUpdate(
+        }
+        throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
+    }
+
+    /* async updateFavouriteGames(userId: string, userData: CreateGameSavedValidator): Promise<User> {
+        if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
+        let updateUserById: User;
+
+        if (userData.savedGameId) {
+            updateUserById = (await this.users.findByIdAndUpdate(
                 userId,
                 { $addToSet: { favouriteGames: userData.savedGameId } },
                 { new: true },
             )) as User;
-            if (!updateUserByGameSaved) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+            if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
 
-            updateUserByGameSaved.avatarUri = await this.populateAvatarField(updateUserByGameSaved);
-            return updateUserByGameSaved;
-        }*/
+            updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
+            return updateUserById;
+        }
         throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
-    }
+    }*/
 
     async deleteUser(userId: string): Promise<User> {
         const deleteUserById: User = (await this.users.findByIdAndDelete(userId)) as User;
