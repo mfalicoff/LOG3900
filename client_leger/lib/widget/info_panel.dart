@@ -19,6 +19,7 @@ class _InfoPanelState extends State<InfoPanel> {
   }
 
   void refresh() {
+    if(!mounted) return;
     setState(() {});
   }
 
