@@ -66,6 +66,7 @@ export class SocketManager {
             this.disconnectAbandonHandler(socket);
             // handling dictionnaries, VP names and highscores
             this.adminHandler(socket);
+            this.searchHandler(socket);
         });
     }
 
@@ -965,6 +966,22 @@ export class SocketManager {
             await this.databaseService.expertVPNamesCollection.editNameVP(vpName, formerVPName);
             await this.databaseService.updateDBNames();
             socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
+        });
+    }
+
+    private searchHandler(socket: io.Socket) {
+        const MAX_USERS = 5;
+        socket.on('getPlayerNames', async (data) => {
+            const usersFound = await this.userService.users
+                .find({
+                    name: {
+                        $regex: data,
+                        $options: 'i',
+                    },
+                })
+                .select('name')
+                .limit(MAX_USERS);
+            socket.emit('getPlayerNames', usersFound);
         });
     }
 }

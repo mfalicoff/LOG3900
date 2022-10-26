@@ -46,6 +46,14 @@ class _GamePageState extends State<GamePage> {
                     ),
                   ),
                 ),
+                Container(
+                    child: gameService.creatorShouldBeAbleToStartGame == true
+                        ? Text('Start Game')
+                        : Container()),
+                Container(
+                    child: gameService.isSpectator == true
+                        ? Text('Prendre la place de un joueur virtuel')
+                        : Container())
               ],
             ),
           ),
@@ -60,9 +68,7 @@ class _GamePageState extends State<GamePage> {
               padding: const EdgeInsets.fromLTRB(0, 100, 50, 100),
               color: Theme.of(context).colorScheme.primary,
               child: Column(
-                children: const [
-                  InfoPanel()
-                ],
+                children: const [InfoPanel()],
               ),
             ),
           ),
