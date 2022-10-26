@@ -1,6 +1,8 @@
 import 'dart:ui';
 
 import 'package:client_leger/screens/create_game_page.dart';
+import 'package:client_leger/screens/game_page.dart';
+import 'package:client_leger/services/game_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -16,6 +18,7 @@ class GameListPage extends StatefulWidget {
 class _GameListPageState extends State<GameListPage> {
   late List<Room> rooms = [];
   final SocketService socketService = SocketService();
+  final GameService gameService = GameService();
 
   @override
   void initState() {
@@ -36,6 +39,11 @@ class _GameListPageState extends State<GameListPage> {
         setState(() {
           rooms.removeWhere((element) => element.roomName == data);
         });
+      }
+    });
+    socketService.socket.on("roomChangeAccepted", (data) {
+      if(mounted){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GamePage()));
       }
     });
     socketService.socket.emit("listRoom");
@@ -168,6 +176,9 @@ class gameList extends StatefulWidget {
 }
 
 class _gameListState extends State<gameList> {
+
+  SocketService socketService = SocketService();
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -254,7 +265,16 @@ class _gameListState extends State<gameList> {
         ],
         rows: List<DataRow>.generate(
             widget.rooms.length,
-            (int index) => DataRow(onSelectChanged: _goToGame, cells: [
+            (int index) => DataRow(
+                onSelectChanged: (bool? selected) {
+                  if (selected!) {
+                    socketService.socket.emit("joinRoom", {
+                      'roomName': widget.rooms[index].roomName,
+                      'playerId': socketService.socket.id,
+                    });
+                  }
+                },
+                cells: [
                   DataCell(Text(
                     widget.rooms[index].roomName,
                     style:
@@ -284,6 +304,4 @@ class _gameListState extends State<gameList> {
       ),
     );
   }
-
-  void _goToGame(bool? selected) {}
 }

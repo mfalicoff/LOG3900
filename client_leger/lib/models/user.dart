@@ -33,6 +33,8 @@ class User {
     id = parsed["data"]["_id"] ?? "Failed";
   }
 
+
+
   User clear() {
     return User("", "");
   }
