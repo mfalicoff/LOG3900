@@ -3,7 +3,7 @@ import { GameSavedController } from '@app/controllers/game-saved.controller';
 import { Routes } from '@app/classes/routes.interface';
 
 class GameSavedRoute implements Routes {
-    path: '/games';
+    path = '/games';
     router = Router();
     gameSavedController = new GameSavedController();
 
