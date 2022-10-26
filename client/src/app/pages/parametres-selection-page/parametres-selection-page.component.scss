@@ -2,14 +2,6 @@ label {
     text-align: left;
 }
 
-.display {
-    text-align: center;
-}
-
-.alert-danger {
-    color: red;
-    font-weight: bold;
-}
 form {
     text-align: center;
 }
@@ -52,30 +44,13 @@ input {
     padding: 10px;
 }
 
-
-#levelVirtualPlayer{
-    margin-top: -50px;
-}
-
 .box-1 {
     order: 1;
     flex: 1;
     text-align: center;
     margin-top: 20px;
 }
-.box-2 {
-    order: 2;
-    flex: 1;
-    width: 2%;
-    text-align: center;
-    margin-top: 20px;
-}
-.box-3 {
-    flex: 1;
-    order: 3;
-    text-align: center;
-    margin-top: 20px;
-}
+
 .container-2-box {
     margin-top: 3%;
     height: 70%;
@@ -124,43 +99,11 @@ html {
     opacity: 50%;
 }
 
-.bonusOption {
-    position: fixed;
-    left: 39%;
-    top: 45%;
-
-}
-
-#bonusButtonSolo {
-    border-radius: 8px;
-    background-color: wheat;
-    height: 30px;
-    width: 100px;
-    margin-left: 30px;
-    position: absolute;
-}
-
 #bonusButtonMulti{
     border-radius: 8px;
     background-color: wheat;
     height: 30px;
     width: 100px;
-}
-
-.powerCardsActivation {
-    text-align: center;
-    position: relative;
-    margin-bottom: 3%;
-}
-
-.multiplayerOptionsSolo {
-    background-color: wheat;
-    height: 66px;
-    border-radius: 10px;
-    position: relative;
-    bottom: 80px;
-    margin: 0%;
-    margin-bottom: 20px;
 }
 
 .multiplayerOptionsMulti{
@@ -189,11 +132,6 @@ html {
     font-size: 10px;
 }
 
-#dictOptions {
-    width: 30%;
-    bottom: 100px;
-}
-
 #dictOptionsMulti{
     margin-top: -2%;
     margin-bottom: 5%;
@@ -203,22 +141,6 @@ html {
 mat-option {
     background-color: wheat !important;
     margin: 0px;
-}
-.timeSelection {
-    background-color: wheat;
-    margin: 0px;
-}
-
-.dictionarySelection {
-    background-color: wheat;
-    margin: 0px;
-}
-
-#dictionnaryDescriptionSolo {
-    margin-top: -7%;
-    color: wheat;
-    position: relative;
-    border-radius: 5px;
 }
 
 #dictionnaryDescriptionMulti{
