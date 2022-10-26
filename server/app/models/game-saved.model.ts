@@ -5,7 +5,6 @@ const gameSavedSchema: Schema = new Schema({
     players: {
         type: [String],
         required: true,
-        unique: true,
     },
     spectators: {
         type: [String],

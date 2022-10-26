@@ -31,10 +31,10 @@ export class GameSavedController {
 
     saveGame = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            // const gameData: GameSaved = req.body;
-            const saveGameData: GameSaved = await this.gameSavedService.saveFavouriteGame(/* gameData*/);
+            const gameData: GameSaved = req.body;
+            const saveGameData: GameSaved = await this.gameSavedService.saveFavouriteGame(gameData);
 
-            res.status(HTTPStatusCode.Created).json({ data: saveGameData, message: 'created' });
+            res.status(HTTPStatusCode.Created).json({ gameId: saveGameData._id, message: 'created' });
         } catch (error) {
             next(error);
         }
