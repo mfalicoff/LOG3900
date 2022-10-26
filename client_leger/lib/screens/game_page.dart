@@ -48,11 +48,11 @@ class _GamePageState extends State<GamePage> {
                   ),
                 ),
                 Container(
-                    child: gameService.creatorShouldBeAbleToStartGame == true
+                    child: infoClientService.creatorShouldBeAbleToStartGame == true
                         ? Text('Start Game')
                         : Container()),
                 Container(
-                    child: gameService.isSpectator == true
+                    child: infoClientService.isSpectator == true
                         ? Text('Prendre la place de un joueur virtuel')
                         : Container())
               ],

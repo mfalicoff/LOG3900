@@ -1,6 +1,8 @@
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/utils.dart';
+
 class InfoPanel extends StatefulWidget {
   const InfoPanel({Key? key}) : super(key: key);
 
@@ -18,9 +20,11 @@ class _InfoPanelState extends State<InfoPanel> {
   }
 
   void refresh() {
-    setState(() {
+    if(mounted){
+      setState(() {
 
-    });
+      });
+    }
   }
 
   @override
