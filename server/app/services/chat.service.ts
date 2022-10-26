@@ -82,7 +82,7 @@ export class ChatService {
         player.chatHistory.push({ message: GlobalConstants.PLACE_CMD, isCommand: false, sender: 'S' });
 
         if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
-            this.showEndGameStats(game, player, true);
+            this.showEndGameStats(game, player);
             // this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             game.gameFinished = true;
         }
@@ -104,7 +104,7 @@ export class ChatService {
             }
         }
         if (didEveryonePass3Times) {
-            this.showEndGameStats(game, player, true);
+            this.showEndGameStats(game, player);
             // this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             game.gameFinished = true;
         }
@@ -203,7 +203,7 @@ export class ChatService {
         }
     }
 
-    private async showEndGameStats(game: GameServer, player: Player, gameAbandoned: boolean) {
+    private async showEndGameStats(game: GameServer, player: Player) {
         game.endTime = new Date().getTime();
         this.pushMsgToAllPlayers(game, player.name, GlobalConstants.END_OF_GAME, false, 'S');
         for (const playerElem of game.mapPlayers.values()) {
@@ -217,10 +217,7 @@ export class ChatService {
             const gameLength = game.endTime - game.startTime;
             await this.userService.updateStatsAtEndOfGame(gameLength, playerElem);
         }
-
-        if (!gameAbandoned) {
-            this.sendWinnerMessage(game, player);
-        }
+        await this.sendWinnerMessage(game, player);
     }
 
     private async sendWinnerMessage(game: GameServer, player: Player) {
