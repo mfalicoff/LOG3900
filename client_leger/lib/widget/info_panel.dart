@@ -1,4 +1,5 @@
 import 'package:client_leger/services/game_service.dart';
+import 'package:client_leger/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class InfoPanel extends StatefulWidget {
@@ -10,6 +11,16 @@ class InfoPanel extends StatefulWidget {
 
 class _InfoPanelState extends State<InfoPanel> {
   final GameService gameService = GameService();
+
+  @override
+  void initState() {
+    super.initState();
+    gameService.addListener(refresh);
+  }
+
+  void refresh() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +45,8 @@ class _InfoPanelState extends State<InfoPanel> {
                   child: FittedBox(
                     child: Text(
                       "Passer",
-                      style:
-                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ),
                 ),
@@ -49,8 +60,8 @@ class _InfoPanelState extends State<InfoPanel> {
                   child: FittedBox(
                     child: Text(
                       "Échanger",
-                      style:
-                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ),
                 ),
@@ -59,16 +70,16 @@ class _InfoPanelState extends State<InfoPanel> {
                 width: 5,
               ),
               Expanded(
-                  child: ElevatedButton(
-                    onPressed: _cancel,
-                    child: FittedBox(
-                      child: Text(
-                        "Annuler",
-                        style:
-                        TextStyle(color: Theme.of(context).colorScheme.secondary),
-                      ),
+                child: ElevatedButton(
+                  onPressed: _cancel,
+                  child: FittedBox(
+                    child: Text(
+                      "Annuler",
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ),
+                ),
               ),
               const SizedBox(
                 width: 5,
@@ -79,8 +90,8 @@ class _InfoPanelState extends State<InfoPanel> {
                   child: FittedBox(
                     child: Text(
                       "Jouer",
-                      style:
-                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                   ),
                 ),
@@ -92,6 +103,9 @@ class _InfoPanelState extends State<InfoPanel> {
           ),
           DataTable(
             columns: [
+              DataColumn(
+                label: Container(),
+              ),
               DataColumn(
                 label: Expanded(
                   child: Container(
@@ -125,6 +139,8 @@ class _InfoPanelState extends State<InfoPanel> {
               gameService.game.players.length,
               (int index) => DataRow(
                 cells: [
+                  DataCell(getAvatarFromString(
+                      22, gameService.game.players[index].avatarUri!)),
                   DataCell(
                     Text(
                       gameService.game.players[index].name,

@@ -29,9 +29,9 @@ String readableTime(int timestamp) {
   return DateFormat('kk:mm:ss').format(dateTime);
 }
 
-CircleAvatar getAvatarFromString(int radius, String uri) {
+CircleAvatar getAvatarFromString(double radius, String uri) {
   return (CircleAvatar(
-    radius: 48,
+    radius: radius,
     backgroundImage: MemoryImage(base64Decode(uri.substring(22))),
   ));
 }
