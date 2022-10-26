@@ -1,6 +1,6 @@
-import { Player } from '@app/classes/player';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
+import { RankedGame } from '../classes/ranked-game';
 import { RankedUser } from '../classes/ranked-user';
 import { User } from '../classes/users.interface';
 
@@ -21,8 +21,8 @@ export class MatchmakingService {
         for(const value of this.rooms.values()){
             if(this.doesPlayerFitInARoom(value, eloDisparity, user.elo)) {
                 this.joinRoom(socket, value, user, eloDisparity);
-                if(value.length === 4) {
-                    this.launchRankedGame(socket);
+                if(value.length === 2) {
+                    this.rankedMatchFound(socket, value);
                 }
                 return;
             }
@@ -40,10 +40,10 @@ export class MatchmakingService {
         return true;
     }
 
-    joinRoom(socket:io.Socket, room: RankedUser[], user: User, eloDisparity:number){
-        socket.join(room[0].name);
+    joinRoom(socket:io.Socket, users: RankedUser[], user: User, eloDisparity:number){
+        socket.join(users[0].name);
         let rankedUser = new RankedUser(user,eloDisparity)
-        this.rooms.get(room[0].name)?.push(rankedUser);
+        this.rooms.get(users[0].name)?.push(rankedUser);
         console.log(this.rooms);
     }
 
@@ -52,20 +52,65 @@ export class MatchmakingService {
         let users:RankedUser[] = [rankedUser];
         this.rooms.set(user.name, users);
         socket.join(user.name);
-        this.launchRankedGame(socket);
-        //console.log(this.rooms);
-        //console.log(socket);
+        // this.rankedMatchFound(users);
     }
 
-    launchRankedGame(socket:io.Socket){
-        console.log(this.sio);
-        this.sio.sockets.sockets.get(socket.id)?.emit('matchFound');
+    rankedMatchFound(socket:io.Socket, users: RankedUser[]){
+        this.sio.to(users[0].name).emit('matchFound');
+        let rankedGame: RankedGame = new RankedGame( users[0].name, 0.26, users);
+        this.checkForUsersAccept(rankedGame);
     }
-    onRefuse(player:Player) {
-        this.rooms.delete(player.name);
-    }
-    onAccept(player:Player) {
-        if(this.rooms.has(player.name)) {   
+    onRefuse(socket:io.Socket, user:User) {
+        for(const users of this.rooms.values()) {
+            for(const rankedUser of users) {
+                if(rankedUser.name === user.name) {
+                    rankedUser.hasAccepted = false;
+                    this.sio.sockets.sockets.get(socket.id)?.emit('closeModalOnRefuse');
+                    socket.leave(users[0].name);
+                }
+            }
         }
+    }
+    onAccept(user:User) {
+        for(const users of this.rooms.values()) {
+            for(const rankedUser of users) {
+                if(rankedUser.name === user.name) {
+                    rankedUser.hasAccepted = true;
+                }
+            }
+        }
+    }
+    checkForUsersAccept(rankedGame:RankedGame) {
+        const timerInterval = setInterval(() => {
+            if (rankedGame.secondsValue <= 0) {
+                clearInterval(timerInterval);
+                const rankedUsers:RankedUser[] = this.rooms.get(rankedGame.name) as RankedUser[];
+                console.log(rankedUsers);
+                for(const user of rankedUsers) {
+                    if(user.hasAccepted === false)
+                    {
+                        this.matchRefused(rankedGame);
+                        this.rooms.delete(rankedGame.name);
+                        return;
+                    }
+                }
+                this.createRankedGame(rankedGame);
+                this.rooms.delete(rankedGame.name);
+            }
+        }, 1000);
+    }
+
+    createRankedGame(rankedGame:RankedGame) {
+        this.sio.to(rankedGame.name).emit('');
+    }
+
+    matchRefused(rankedGame:RankedGame) { 
+        for(let i =0; i< rankedGame.rankedUsers.length;i++) {
+            if(rankedGame.rankedUsers[i].hasAccepted === false) {
+                rankedGame.rankedUsers.splice(i,1);
+                console.log(this.sio.sockets.sockets);
+            }
+        }
+        this.sio.to(rankedGame.name).emit('closeModal');
     }
 }

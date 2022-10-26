@@ -32,12 +32,12 @@ html {
     font-size: 30px;
 }
 
-#refuse-button {
+.refuse-button {
     font-size: 30px;
     left:-20px;
     background-color: wheat;
 }
-#accept-button {
+.accept-button {
     font-size: 30px;
     left:20px;
     background-color: wheat;
@@ -76,6 +76,13 @@ html {
     margin-top: 20px;
 }
 
+.green {
+    background-color: green;
+}
+
+.red {
+    background-color: red;
+}
 
 /* The Modal (background) */
 .modal {

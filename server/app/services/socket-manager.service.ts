@@ -550,9 +550,11 @@ export class SocketManager {
             //socket.emit('matchFound', player);
         })
 
-        socket.on('matchRefuse',({player}) => {
-            console.log('allo');
-            this.matchmakingService.onRefuse(player);
+        socket.on('refuseMatch',({user}) => {
+            this.matchmakingService.onRefuse(socket, user);
+        })
+        socket.on('acceptMatch',({user}) => {
+            this.matchmakingService.onAccept(user);
         })
 
         socket.on('joinRoom', ({ roomName, playerId }) => {

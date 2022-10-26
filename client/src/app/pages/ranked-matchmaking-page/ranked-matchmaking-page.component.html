@@ -15,8 +15,13 @@
                                 <h1>Partie trouvée</h1>
                                 <div class= "font-size-30">{{timerService.displayTimer}}</div>
                                 <br>
-                                <button id="refuse-button" (click)="acceptMatch()">Accepter</button>
-                                <button id="accept-button" (click)="refuseMatch()">Refuser</button>
+                                <button class="accept-button" (click)="acceptMatch()"
+                                [ngClass]="{'green' : matchAccepted}"
+                                >Accepter</button>
+                                <button class="refuse-button" (click)="refuseMatch()"
+                                [ngClass]="{'red' : matchRefuseCss}"
+                                routerLink="/ranked-init"
+                                >Refuser</button>
                             </div>
                         </div>
                     </div>

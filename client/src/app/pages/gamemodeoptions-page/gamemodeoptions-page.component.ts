@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { InfoClientService } from '@app/services/info-client.service';
 import * as GlobalConstants from '@app/classes/global-constants';
+import { InfoClientService } from '@app/services/info-client.service';
 import { UserService } from '@app/services/user.service';
 
 @Component({
@@ -13,6 +13,5 @@ export class GamemodeoptionsPageComponent {
 
     onClickMulti(mode: string) {
         this.infoClientService.gameMode = GlobalConstants.MODE_MULTI;
-        this.infoClientService.isLog2990Enabled = mode !== 'classic';
     }
 }

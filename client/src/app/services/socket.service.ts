@@ -184,6 +184,13 @@ export class SocketService {
         //this.infoClientService.player = player;
         this.rankedService.matchHasBeenFound();
         })
+        this.socket.on('closeModalOnRefuse', () => {
+            this.rankedService.closeModal();
+            //this.infoClientService.player = player;
+            })
+        this.socket.on('closeModal', () => {
+            this.rankedService.closeModal();
+            })
         this.socket.on('messageServer', (message) => {
             alert(message);
         });

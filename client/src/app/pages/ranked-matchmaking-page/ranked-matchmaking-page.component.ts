@@ -3,6 +3,7 @@ import { InfoClientService } from '@app/services/info-client.service';
 import { RankedService } from '@app/services/ranked.service';
 import { SocketService } from '@app/services/socket.service';
 import { TimerService } from '@app/services/timer.service';
+import { UserService } from '@app/services/user.service';
 
 @Component({
     selector: 'app-ranked-matchmaking-page',
@@ -11,10 +12,10 @@ import { TimerService } from '@app/services/timer.service';
 })
 export class RankedMatchmakingPageComponent {
     matchAccepted: boolean;
-    constructor(public timerService: TimerService, private socketService: SocketService, public infoClientService: InfoClientService, public rankedService:RankedService) {
+    matchRefuseCss: boolean;
+    constructor(public userService: UserService ,public timerService: TimerService, private socketService: SocketService, public infoClientService: InfoClientService, public rankedService:RankedService) {
         this.timerService.clearTimer();
         this.startTimer();
-        this.checkAcceptMatchTimer();
     }
     startTimer() {
         this.timerService.startMatchmakingTimer();
@@ -22,18 +23,13 @@ export class RankedMatchmakingPageComponent {
     
     acceptMatch() {
         this.matchAccepted = true;
-        this.timerService.clearTimer();
+        this.timerService.clearMatchmakingTimer();
+        this.socketService.socket.emit('acceptMatch', {user: this.userService.user});
     }
     refuseMatch() {
         this.matchAccepted = false;
-        this.timerService.clearTimer();
-        this.socketService.socket.emit('matchRefuse', {player: this.infoClientService.player});
-    }
-    checkAcceptMatchTimer() {
-        const timerInterval = setInterval(() => {
-            if (this.timerService.secondsValue <= 0) {
-                clearInterval(timerInterval);
-            }
-        }, 1000);
+        this.matchRefuseCss = true;
+        this.timerService.clearMatchmakingTimer();
+        this.socketService.socket.emit('refuseMatch', {user: this.userService.user});
     }
 }
