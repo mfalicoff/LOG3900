@@ -50,7 +50,7 @@ export class CommunicationBoxService {
                     this.playAreaService.changePlayer(game);
                     // if the power-card mode is active we add a power card to the player
                     player.nbValidWordPlaced++;
-                    if(game.gameMode === Constants.POWER_CARDS_MODE && player.nbValidWordPlaced >= 3) {
+                    if (game.gameMode === Constants.POWER_CARDS_MODE && player.nbValidWordPlaced >= 3) {
                         this.powerCardsService.givePowerCard(game, player);
                         player.nbValidWordPlaced = 0;
                     }

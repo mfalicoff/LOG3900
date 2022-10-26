@@ -66,22 +66,23 @@ button {
     width: 20%; /* Could be more or less, depending on screen size */
 }
 
-#table {
+.table {
+    margin-top: 8%;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;;
     border-collapse: collapse;
     width: 100%;
 }
 
-#table td, #table th {
+.table td, .table th {
     padding: 8px;
 }
 
-#table tr:hover {
+.table tr:hover {
     background-color: wheat;
     color: #0C483F;
 }
 
-#table th {
+.table th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
@@ -89,7 +90,7 @@ button {
     color: #0C483F;
 }
 
-#table td{
+.table td{
     border-bottom: 2px solid wheat;
 }
 
@@ -121,8 +122,76 @@ button {
     padding-left: 10px;
     padding-right: 10px;
     margin-right: 10px;
+    float: left;
+
     font-size: 15px;
     font-weight: bold;
     border-radius: 4px;
     border: 2px solid #0C483F;
 }
+
+#letterToChangeField{
+    margin-top: 5%;
+    margin-bottom: -15%;
+}
+
+.validateBtn{
+    background-color: #0C483F;
+    color: wheat;
+}
+
+.cardImg{
+    height: 130px;
+}
+/* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+.flip-card {
+    background-color: transparent;
+    width: 200px;
+    height: 120px;
+    perspective: 1000px; /* Remove this if you don't want the 3D effect */
+  }
+  
+  /* This container is needed to position the front and back side */
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.8s;
+    transform-style: preserve-3d;
+  }
+  
+  /* Do an horizontal flip when you move the mouse over the flip box container */
+  .flip-card:hover .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+  
+  /* Position the front and back side */
+  .flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden; /* Safari */
+    backface-visibility: hidden;
+  }
+  
+  /* Style the front side (fallback if image is missing) */
+  .flip-card-front {
+    background-color: wheat;
+    color: #0C483F;
+  }
+  
+  /* Style the back side */
+  .flip-card-back {
+    vertical-align: middle;
+    border: 2px solid #0C483F;
+    border-radius: 20px;
+    color: #0C483F;
+    transform: rotateY(180deg);
+  }
+
+  #titlePowerCardList{
+    font-weight: bold; 
+    position: relative;
+    font-size: large;
+  }

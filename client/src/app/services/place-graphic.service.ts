@@ -44,6 +44,9 @@ export class PlaceGraphicService {
                     return;
                 }
                 const placeMsg: string = this.createPlaceMessage();
+
+                // eslint-disable-next-line no-console
+                console.log('FinalWord: ' + placeMsg);
                 // clear the tmporary canvas to get rid of all unecessary drawings
                 // for example the arrow
                 this.socketService.socket.emit('clearTmpTileCanvas');

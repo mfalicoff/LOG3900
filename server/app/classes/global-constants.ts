@@ -48,7 +48,7 @@ export const DEFAULT_VALUE_NUMBER = -1;
 /// ////////////////////////////////////////////////////////////////////////
 // VARIABLE socketManager
 /// ////////////////////////////////////////////////////////////////////////
-export const MIN_PERSON_PLAYING = 1;
+export const MIN_PERSON_PLAYING = 2;
 export const MAX_PERSON_PLAYING = 4;
 export const TIME_PER_ROUND_DEFAULT = 1000;
 
@@ -108,9 +108,9 @@ export const NB_MIN_LETTER_BANK = 6;
 export const WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
 export const PLAYER_TRIED_A_WORD = ' a placé un mot non valide, son tour passe !';
 
-///////////////////////////////////////////////////////////////////////////
-/////////////// databaseService constants//////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
+/// ////////////////////////////////////////////////////////////////////////
+/// //////////// databaseService constants//////////////////////////////////
+/// //////////////////////////////////////////////////////////////////////
 export const DATABASE_URL = 'mongodb+srv://Stephane:HarryP0tter7@project-database.m7fal.mongodb.net/?retryWrites=true&w=majority';
 export const DATABASE_PROD = 'Project-Database';
 export const DATABASE_DEV = 'test';
@@ -121,12 +121,12 @@ export const DATABASE_COLLECTION_BEGINNER_NAMESVP = 'BeginnerVPNames';
 export const DATABASE_COLLECTION_EXPERT_NAMESVP = 'ExpertVPNames';
 export const GAME_NOT_STARTED = "La partie n'a pas commencée !";
 
-//OBJECTIVE CONSTANTS///////
+// OBJECTIVE CONSTANTS///////
 export const FAILED_OBJECTIVE = 'failed';
 export const COMPLETED_OBJECTIVE = 'completed';
 export const UNCOMPLETED_OBJECTIVE = 'uncompleted';
 
-//GAME MODE CONSTANTS
+// GAME MODE CONSTANTS
 export const POWER_CARDS_MODE = 'power-cards';
 export const CLASSIC_MODE = 'classic';
 
@@ -142,8 +142,9 @@ export const TIME_DELAY_RM_BAD_WORD = 3000;
 export const JUMP_NEXT_ENNEMY_TURN = 'Cette carte permet de faire sauter le tour du prochain joueur.';
 export const TRANFORM_EMPTY_TILE = 'Cette carte permet de transformer une tuile vide en case bonus de couleur aléatoire.';
 export const REDUCE_ENNEMY_TIME = 'Cette carte permet de réduire de moitié le temps de réflexion des prochains joueurs pendant 1 tour.';
-export const EXCHANGE_LETTER_JOKER = 'Cette carte permet d\'échanger une lettre de votre chevalet contre une lettre de votre choix du sac de lettres.';
-export const EXCHANGE_STAND = 'Cette carte permet d\'échanger votre chevalet avec celui d\'un de vos adversaires.';
-export const REMOVE_POINTS_FROM_MAX = 'Cette carte permet de retirer des points à l\'adversaire qui en a le plus et les redistribue à tous les autres joueurs.';
-export const ADD_1_MIN = 'Cette carte permet d\'ajouter 1 minute à votre temps de reglexion.';
+export const EXCHANGE_LETTER_JOKER = "Cette carte permet d'échanger une lettre de votre chevalet contre une lettre de votre choix du sac de lettres.";
+export const EXCHANGE_STAND = "Cette carte permet d'échanger votre chevalet avec celui d'un de vos adversaires.";
+export const REMOVE_POINTS_FROM_MAX =
+    "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.";
+export const ADD_1_MIN = "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.";
 export const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.';

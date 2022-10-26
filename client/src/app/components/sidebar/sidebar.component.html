@@ -66,29 +66,35 @@
     </div>
 
     <!-- The Modal to show the powers available to the player -->
-    <div class="modal" [style.display]="displayPowerModal">
+    <div class="modal" [style.display]="infoClientService.displayPowerModal">
         <div class="modal-content" >
             <span id="closeModalX" (click)="hidePowerModal()">X</span>
             <span *ngIf="infoClientService.player.powerCards.length === 0">
                 Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer {{3 - infoClientService.player.nbValidWordPlaced}} mot(s) valide(s) sur le plateau.
             </span>
+            <span id="titlePowerCardList">Cartes disponibles</span>
             <table *ngIf="infoClientService.player.powerCards.length > 0" class="table">
-                <thead>
-                  <tr>
-                    <th>Pouvoir Description</th>
-                    <th></th>
-                  </tr>
-                </thead>
                 <tbody>
                   <tr *ngFor="let powerCard of infoClientService.player.powerCards">
-                    <td>{{powerCard.name}}</td>
                     <td>
-                        <input 
-                            type="button" 
+                      <div class="flip-card">
+                        <div class="flip-card-inner">
+                          <div class="flip-card-front">
+                            <img src="../../../assets/card.png" alt="Avatar" class="cardImg">
+                          </div>
+                          <div class="flip-card-back">
+                            <br>{{powerCard.name}}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                        <button 
+                            mat-raised-button
+                            class="validateBtn"
                             id="buttonShowModal" 
-                            value="Utiliser" 
                             (click)="onPowerCardClick(powerCard.name)"
-                        >
+                        >Utiliser</button>
                     </td>
                   </tr>
                 </tbody>
@@ -97,7 +103,7 @@
     </div>
 
     <!-- the modal to choose the target player in case the player uses the card "EXCHANGE_STAND" -->
-    <div class="modal" [style.display]="displayExchStandModal">
+    <div class="modal" [style.display]="infoClientService.displayExchStandModal">
         <div class="modal-content" >
             <span>Cliquer sur le joueur avec lequel vous voulez échanger votre stand !</span>
             <div if="displayLogoPlayers">
@@ -110,7 +116,6 @@
                                 <img 
                                     [src]="player.avatarUri" 
                                     class="profile"
-                                    
                                 >
                             </td>
                             <td *ngIf="player.name !== infoClientService.player.name" (click)="onExchangeStandChoice(player.name)">
@@ -126,7 +131,7 @@
     <!-- the modal to choose the target letter on the satnd in case the player uses the card "EXCHANGE_LETTER_JOKER" -->
     <div class="modal" [style.display]="infoClientService.displayExchLetterModal">
         <div class="modal-content" >
-            <span style="font-size:16px">Cliquer sur la lettre que vous voulez échanger :</span>
+            <span style="font-size:16px">Cliquez sur la lettre que vous voulez échanger :</span>
             <br><br>
             <div id="divLetterStand" *ngFor="let tile of infoClientService.player.stand; let indexOfelement=index;">
                 <span 
@@ -138,7 +143,7 @@
                 </span>
             </div>
             <br><br>
-            <span style="font-size:16px">Cliquer sur la lettre que vous prendre de la reserve :</span>
+            <span style="font-size:16px">Cliquez sur la lettre que vous voulez prendre de la reserve :</span>
             <br><br>
             <div id="divLetterStand" *ngFor="let letter of this.infoClientService.letterReserve; let indexOfelement=index;">
                 <!-- +7 necessary to not confond the letter to exchange from the one to take from the reserve-->
@@ -151,7 +156,32 @@
                 </span>
             </div>
             <br><br>
-            <button mat-raised-button (click)="activateLetterExchange()">Valider</button>
+            <button 
+                mat-raised-button 
+                class="validateBtn" 
+                (click)="activateLetterExchange()"
+            >
+                Valider
+            </button>
+        </div>
+    </div> 
+
+    <!-- the modal to choose the target letter on the satnd in case the player uses the card "EXCHANGE_LETTER_JOKER" -->
+    <div class="modal" [style.display]="infoClientService.displayTransformTileModal">
+        <div class="modal-content" >
+            <span>Veuillez entrer les coordonnées de la case à changer :</span>
+            <br>
+            <mat-form-field id="letterToChangeField">
+                <mat-label>Coordonnées</mat-label>
+                <input matInput placeholder="Ex. a9" [(ngModel)]='coordsTileToChange'>
+            </mat-form-field>
+            <button 
+                mat-raised-button 
+                class="validateBtn" 
+                (click)="validateTileChangeCoords()"
+            >
+                Valider
+            </button>
         </div>
     </div> 
 </div>

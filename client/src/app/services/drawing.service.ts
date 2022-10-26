@@ -161,7 +161,7 @@ export class DrawingService {
     // function that draws all the stands in the game with the logic
     // also it always put the stand of the player playing at the bottom
     // it is much easier to do it this so that the drag and drop coords are not messed up
-    //in this function the order of the functions called are important don't change it !
+    // in this function the order of the functions called are important don't change it !
     drawSpectatorStands(players: Player[]) {
         const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
         const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;

@@ -53,7 +53,7 @@ export class Player {
         this.tileIndexManipulation = Constants.DEFAULT_VALUE_NUMBER;
         this.allLetterSwapped = false;
         this.isMoveBingo = false;
-        this.powerCards = [new PowerCard("test", true)];
+        this.powerCards = [new PowerCard(Constants.JUMP_NEXT_ENNEMY_TURN, true), new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true)];
         this.nbValidWordPlaced = 0;
 
         this.initStand();

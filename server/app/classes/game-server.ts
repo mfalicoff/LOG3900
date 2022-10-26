@@ -34,7 +34,6 @@ export class GameServer {
     noTileOnBoard: boolean;
 
     // GAME PARAMETERS SERVICE DATA
-    randomBonusesOn: boolean;
     gameMode: string;
     minutesByTurn: number;
     isGamePrivate: boolean;
@@ -50,24 +49,16 @@ export class GameServer {
     // SKIP TURN SERVICE DATA
     displaySkipTurn: string;
 
-    //POWER-CARDS SERVICE DATA
+    // POWER-CARDS SERVICE DATA
     powerCards: PowerCard[];
     jmpNextEnnemyTurn: boolean;
     reduceEnnemyNbTurn: number;
 
     startTime: number;
     endTime: number;
-    constructor(
-        minutesByTurn: number,
-        randomBonusesOn: boolean,
-        gameMode: string,
-        roomName: string,
-        isGamePrivate: boolean,
-        passwd: string,
-    ) {
+    constructor(minutesByTurn: number, gameMode: string, roomName: string, isGamePrivate: boolean, passwd: string) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;
-        this.randomBonusesOn = randomBonusesOn;
         this.gameMode = gameMode;
         this.isGamePrivate = isGamePrivate;
         this.passwd = passwd;
@@ -124,7 +115,6 @@ export class GameServer {
         this.initLettersArray();
         this.initBonusBoard();
         this.initPowerCards();
-        
     }
 
     // function that sets the master_timer for the game
@@ -183,52 +173,6 @@ export class GameServer {
 
     private initBonusBoard(): void {
         this.setMockTiles();
-        if (this.randomBonusesOn) {
-            const nbOfWordx3 = 8;
-            const nbOfWordx2 = 17;
-            const nbOfLetterx3 = 12;
-            const nbOfLetterx2 = 24;
-
-            const mapBonuses: Map<string, number> = new Map();
-            mapBonuses.set('wordx3', nbOfWordx3);
-            mapBonuses.set('wordx2', nbOfWordx2);
-            mapBonuses.set('letterx3', nbOfLetterx3);
-            mapBonuses.set('letterx2', nbOfLetterx2);
-
-            const columns = 15;
-            const rows = 15;
-
-            this.initBonusesArray(mapBonuses);
-
-            for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < columns; j++) {
-                    if (this.bonusBoard[i][j] !== 'xx') {
-                        let clear = false;
-                        while (!clear) {
-                            const random = this.generateRandomNumber();
-                            const key = this.bonuses[random];
-                            if (key && key !== undefined) {
-                                this.bonusBoard[i][j] = key;
-                                this.bonuses.splice(random, 1);
-                                clear = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private initBonusesArray(mapBonuses: Map<string, number>) {
-        this.bonuses = new Array<string>();
-        for (const key of mapBonuses.keys()) {
-            const bonusNumber = mapBonuses.get(key);
-            if (bonusNumber) {
-                for (let i = 0; i < bonusNumber; i++) {
-                    this.bonuses.push(key);
-                }
-            }
-        }
     }
 
     private initLettersArray(): void {
@@ -243,21 +187,16 @@ export class GameServer {
         }
     }
 
-    private generateRandomNumber() {
-        const maxNumberGenerated = 61;
-        return Math.floor(Math.random() * (maxNumberGenerated + 1)); // aléatoire entre 0 et 3
-    }
-
-    //need the powers locally in the game to be able to deactivate/activate them for each game
-    //by defaut they all are activated
-    private initPowerCards(){
-        // this.powerCards.push(new PowerCard(Constants.JUMP_NEXT_ENNEMY_TURN, true));
-        // this.powerCards.push(new PowerCard(Constants.TRANFORM_EMPTY_TILE, true));
-        // this.powerCards.push(new PowerCard(Constants.REDUCE_ENNEMY_TIME, true));
+    // need the powers locally in the game to be able to deactivate/activate them for each game
+    // by defaut they all are activated
+    private initPowerCards() {
+        this.powerCards.push(new PowerCard(Constants.JUMP_NEXT_ENNEMY_TURN, true));
+        this.powerCards.push(new PowerCard(Constants.TRANFORM_EMPTY_TILE, true));
+        this.powerCards.push(new PowerCard(Constants.REDUCE_ENNEMY_TIME, true));
         this.powerCards.push(new PowerCard(Constants.EXCHANGE_LETTER_JOKER, true));
-        // this.powerCards.push(new PowerCard(Constants.EXCHANGE_STAND, true));
-        // this.powerCards.push(new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true));
-        // this.powerCards.push(new PowerCard(Constants.ADD_1_MIN, true));
-        // this.powerCards.push(new PowerCard(Constants.REMOVE_1_POWER_CARD_FOR_EVERYONE, true));
+        this.powerCards.push(new PowerCard(Constants.EXCHANGE_STAND, true));
+        this.powerCards.push(new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true));
+        this.powerCards.push(new PowerCard(Constants.ADD_1_MIN, true));
+        this.powerCards.push(new PowerCard(Constants.REMOVE_1_POWER_CARD_FOR_EVERYONE, true));
     }
 }

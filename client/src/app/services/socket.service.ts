@@ -64,10 +64,10 @@ export class SocketService {
 
     private gameUpdateHandler() {
         this.socket.on('playerAndStandUpdate', (player) => {
-            //this is a disgusting block fix bug there isn't rly a better way to do it
-            //when the modal to choose the letter is open the player shouldn't update or it
-            //will refresh the visual in the sidebar component which is not what we want
-            if(this.infoClientService.displayExchLetterModal === 'block'){
+            // this is a disgusting block fix bug there isn't rly a better way to do it
+            // when the modal to choose the letter is open the player shouldn't update or it
+            // will refresh the visual in the sidebar component which is not what we want
+            if (this.infoClientService.displayExchLetterModal === 'block') {
                 return;
             }
             this.infoClientService.player = player;
@@ -127,6 +127,10 @@ export class SocketService {
         // by settings this variable to true (see server side in comm-box service)
         this.socket.on('changeIsTurnOursStatus', (isTurnOurs) => {
             this.infoClientService.isTurnOurs = isTurnOurs;
+            this.infoClientService.displayExchLetterModal = 'none';
+            this.infoClientService.displayTransformTileModal = 'none';
+            this.infoClientService.displayExchStandModal = 'none';
+            this.infoClientService.displayPowerModal = 'none';
         });
     }
 
@@ -168,10 +172,10 @@ export class SocketService {
     }
 
     private roomManipulationHandler() {
-        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, passwd, players, spectators }) => {
+        this.socket.on('addElementListRoom', ({ roomName, timeTurn, passwd, players, spectators }) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
             if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, passwd, players, spectators));
+                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, passwd, players, spectators));
             } else {
                 this.infoClientService.rooms[idxExistingRoom].players = players;
                 this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
@@ -220,7 +224,6 @@ export class SocketService {
         });
 
         this.socket.on('sendLetterReserve', (letterReserveArr) => {
-            console.log("letterReserveArr: ", letterReserveArr);
             this.infoClientService.letterReserve = letterReserveArr;
         });
     }

@@ -232,7 +232,7 @@ export class SocketManager {
         });
 
         socket.on('callTestFunction', () => {
-            const game = new GameServer(0, false, Constants.CLASSIC_MODE, 'defaultRoom', false, '');
+            const game = new GameServer(0, Constants.CLASSIC_MODE, 'defaultRoom', false, '');
             this.boardService.initBoardArray(game);
             socket.emit('gameBoardUpdate', game);
             // const gameStub = new GameServer(
@@ -422,8 +422,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('drawHorizontalArrow', arrowCoords);
         });
 
-        socket.on("powerCardClick", (powerCardName, additionnalParams) => {
-            console.log("additionalParam" + additionnalParams)
+        socket.on('powerCardClick', (powerCardName, additionnalParams) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -441,7 +440,7 @@ export class SocketManager {
             this.gameUpdateClients(game);
         });
 
-        socket.on("requestLetterReserve", ()=>{
+        socket.on('requestLetterReserve', () => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -450,14 +449,13 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            socket.emit("sendLetterReserve", this.letterBankService.getLettersInReserve(game));
+            socket.emit('sendLetterReserve', this.letterBankService.getLettersInReserve(game));
         });
     }
 
     private async createGameAndPlayer(
         gameMode: string,
         timeTurn: number,
-        isBonusRandom: boolean,
         playerName: string,
         socket: io.Socket,
         roomName: string,
@@ -466,7 +464,7 @@ export class SocketManager {
         activatedPowers: boolean[],
     ) {
         // We create the game and add it to the rooms map
-        const newGame: GameServer = new GameServer(timeTurn, isBonusRandom, gameMode, roomName, isGamePrivate, passwd);
+        const newGame: GameServer = new GameServer(timeTurn, gameMode, roomName, isGamePrivate, passwd);
         const newPlayer = new Player(playerName, true);
         newPlayer.idPlayer = socket.id;
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(playerName));
@@ -487,12 +485,10 @@ export class SocketManager {
         // Joining the room
         socket.join(roomName);
 
-        //activate of desactivate the power cards depending on the settings
-        //set by the creator of the game
-        if(gameMode === Constants.POWER_CARDS_MODE){
+        // activate of desactivate the power cards depending on the settings
+        // set by the creator of the game
+        if (gameMode === Constants.POWER_CARDS_MODE) {
             this.powerCardsService.initPowerCards(newGame, activatedPowers);
-            //TODO to remove later
-            this.powerCardsService.givePowerToPlayers(newGame);
         }
 
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
@@ -506,9 +502,9 @@ export class SocketManager {
 
     private shouldCreatorBeAbleToStartGame(game: GameServer) {
         let creatorCanStart = true;
-        if(game.gameStarted || game.gameFinished){
+        if (game.gameStarted || game.gameFinished) {
             creatorCanStart = false;
-        }else{
+        } else {
             const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
             if (nbRealPlayer < Constants.MIN_PERSON_PLAYING) {
                 creatorCanStart = false;
@@ -553,12 +549,7 @@ export class SocketManager {
             this.users.set(socket.id, { name, roomName: '' });
         });
 
-        socket.on('createRoomAndGame', async ({ 
-            roomName, playerName, timeTurn, 
-            isBonusRandom, gameMode, isGamePrivate, 
-            passwd, activatedPowers 
-        }) => {
-            console.log("activatedPowers efiboibfnomwqpioubvkj", activatedPowers)
+        socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, gameMode, isGamePrivate, passwd, activatedPowers }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
                 socket.emit('messageServer', 'Une salle avec ce nom existe déjà.');
@@ -569,10 +560,7 @@ export class SocketManager {
             if (user) {
                 user.roomName = roomName;
             }
-            await this.createGameAndPlayer(
-                gameMode, timeTurn, isBonusRandom, 
-                playerName, socket, roomName, 
-                isGamePrivate, passwd, activatedPowers);
+            await this.createGameAndPlayer(gameMode, timeTurn, playerName, socket, roomName, isGamePrivate, passwd, activatedPowers);
             const createdGame = this.rooms.get(roomName);
             if (!createdGame) {
                 return;
@@ -583,7 +571,6 @@ export class SocketManager {
             this.sio.sockets.emit('addElementListRoom', {
                 roomName,
                 timeTurn,
-                isBonusRandom,
                 passwd,
                 players,
                 spectators,
@@ -707,7 +694,6 @@ export class SocketManager {
             this.sio.sockets.emit('addElementListRoom', {
                 roomName,
                 timeTurn: game.minutesByTurn,
-                isBonusRandom: game.randomBonusesOn,
                 passwd: game.passwd,
                 players: Array.from(game.mapPlayers.values()),
                 spectators: Array.from(game.mapSpectators.values()),
@@ -796,7 +782,6 @@ export class SocketManager {
         this.sio.sockets.emit('addElementListRoom', {
             roomName: game.roomName,
             timeTurn: game.minutesByTurn,
-            isBonusRandom: game.randomBonusesOn,
             passwd: game.passwd,
             players,
             spectators,
@@ -872,7 +857,6 @@ export class SocketManager {
                     }
                     this.gameUpdateClients(game);
                     this.shouldCreatorBeAbleToStartGame(game);
-
                 }, waitBeforeAbandonment);
             } else {
                 this.gameFinishedAction(game);
@@ -911,7 +895,6 @@ export class SocketManager {
             socket.emit('addElementListRoom', {
                 roomName,
                 timeTurn: game.minutesByTurn,
-                isBonusRandom: game.randomBonusesOn,
                 passwd: game.passwd,
                 players: Array.from(game.mapPlayers.values()),
                 spectators: Array.from(game.mapSpectators.values()),

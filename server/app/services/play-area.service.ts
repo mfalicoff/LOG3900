@@ -45,18 +45,19 @@ export class PlayAreaService {
             // add a turn to the player that just played
             playerThatJustPlayed.turn += 1;
 
-            if(game.jmpNextEnnemyTurn){
+            if (game.jmpNextEnnemyTurn) {
                 game.jmpNextEnnemyTurn = false;
                 // we go to the next player that was supposed to play
                 game.idxPlayerPlaying = (game.idxPlayerPlaying + 1) % game.mapPlayers.size;
-                //we send a message to everyone in the room to tell that someone used a powerCard
+                // we send a message to everyone in the room to tell that someone used a powerCard
                 this.sendMsgToAllInRoom(
                     game,
-                    "Le joueur " 
-                    + playerThatJustPlayed.name 
-                    + " a utilisé une carte pouvoir et le tour de "
-                    + Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name
-                    + " a été sauté.");
+                    'Le joueur ' +
+                        playerThatJustPlayed.name +
+                        ' a utilisé une carte pouvoir et le tour de ' +
+                        Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name +
+                        ' a été sauté.',
+                );
             }
         }
         // is the game is finished we stop the game
@@ -176,7 +177,7 @@ export class PlayAreaService {
         }
     }
 
-    addSecsToTimePlayer(game: GameServer, timeToAdd: number){
+    addSecsToTimePlayer(game: GameServer, timeToAdd: number) {
         this.sio.to(game.roomName)?.emit('addSecsToTimer', timeToAdd);
     }
 
@@ -253,19 +254,16 @@ export class PlayAreaService {
     }
 
     private triggerTimer(game: GameServer) {
-        if(game.reduceEnnemyNbTurn > 0){
+        if (game.reduceEnnemyNbTurn > 0) {
             this.sio.to(game.roomName).emit('startClearTimer', {
                 minutesByTurn: game.minutesByTurn / 2,
                 currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
             });
             game.reduceEnnemyNbTurn--;
 
-            //we send a message to everyone in the room to tell that someone used a powerCard
-            this.sendMsgToAllInRoom(
-                game,
-                "Le temps est divisé par deux due à l'utilisation d'une carte de pouvoir !"
-            );
-        }else{
+            // we send a message to everyone in the room to tell that someone used a powerCard
+            this.sendMsgToAllInRoom(game, "Le temps est divisé par deux due à l'utilisation d'une carte de pouvoir !");
+        } else {
             this.sio.to(game.roomName).emit('startClearTimer', {
                 minutesByTurn: game.minutesByTurn,
                 currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,

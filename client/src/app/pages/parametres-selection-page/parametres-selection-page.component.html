@@ -63,14 +63,14 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <span *ngIf="infoClientService.gameMode==='power-cards'" class="powerCardsActivation">
+                    <!-- <span *ngIf="infoClientService.gameMode==='power-cards'" class="powerCardsActivation"> -->
                         <p>
                             <span>Activer ou désactiver des cartes de pouvoirs: </span>
                             <button id="bonusButtonMulti" (click)="showPowerModal()">
                                 Liste Cartes
                             </button>
                         </p>
-                    </span>
+                    <!-- </span> -->
                 </div>
             </div>
             <div class="container-3">
@@ -90,7 +90,14 @@
                 </div>
             </div>
         </div>
-        <button id="startButtonMulti" class="startbutton" (click)="createRoom()" [disabled]="name.invalid || (isChecked && mdp.invalid)">Demarrer</button>
+        <button 
+            id="startButtonMulti" 
+            class="startbutton" 
+            (click)="createRoom()" 
+            [disabled]="name.invalid || (isChecked && mdp.invalid)"
+        >
+            Demarrer
+        </button>
     </div>
 
     <!-- The Modal to show the powers available to the player -->
@@ -106,7 +113,18 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let powerCard of infoClientService.game.powerCards">
-                    <td>{{powerCard.name}}</td>
+                    <td>
+                      <div class="flip-card">
+                        <div class="flip-card-inner">
+                          <div class="flip-card-front">
+                            <img src="../../../assets/card.png" alt="Avatar" class="cardImg">
+                          </div>
+                          <div class="flip-card-back">
+                            {{powerCard.name}}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
                     <td>
                         <input 
                             type="checkbox" 

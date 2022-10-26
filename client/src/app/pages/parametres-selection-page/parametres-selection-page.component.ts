@@ -18,14 +18,11 @@ export class ParametresSelectionPageComponent implements OnInit {
     mockDictionary: MockDict;
     isChecked: false;
     displayPowerModal: string;
-    //we use a tmp array bc the one of the game get reseted in
-    //initializeService() function
+    // we use a tmp array bc the one of the game get reseted in
+    // initializeService() function
     activatedPowers: boolean[];
-    constructor(
-        private socketService: SocketService, 
-        public infoClientService: InfoClientService
-    ) {
-        this.activatedPowers = this.infoClientService.game.powerCards.map(powerCard => powerCard.isActivated);
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService) {
+        this.activatedPowers = this.infoClientService.game.powerCards.map((powerCard) => powerCard.isActivated);
     }
 
     ngOnInit() {
@@ -70,17 +67,15 @@ export class ParametresSelectionPageComponent implements OnInit {
     }
 
     createRoom() {
-        console.log("activatedPoers", this.activatedPowers)
         // useful to reset the ui
         this.infoClientService.initializeService();
         const passwd = document.getElementById('passwdInput') as HTMLInputElement;
         const inputElement = document.getElementById('roomName') as HTMLInputElement;
-        let roomName = inputElement.value;
+        const roomName = inputElement.value;
         this.socketService.socket.emit('createRoomAndGame', {
             roomName,
             playerName: this.infoClientService.playerName,
             timeTurn: this.infoClientService.minutesByTurn,
-            isBonusRandom: this.infoClientService.randomBonusesOn,
             gameMode: this.infoClientService.gameMode,
             isGamePrivate: this.infoClientService.isGamePrivate,
             passwd: passwd.value,
@@ -93,18 +88,18 @@ export class ParametresSelectionPageComponent implements OnInit {
         };
         this.infoClientService.dictionaries[0] = this.mockDictionary;
     }
-    
-    showPowerModal(){
+
+    showPowerModal() {
         this.displayPowerModal = 'block';
     }
 
-    hidePowerModal(){
+    hidePowerModal() {
         this.displayPowerModal = 'none';
     }
 
-    onPowerCardClick(powerCardName: string){
-        for(let i = 0; i < this.infoClientService.game.powerCards.length; i++){
-            if(this.infoClientService.game.powerCards[i].name === powerCardName){
+    onPowerCardClick(powerCardName: string) {
+        for (let i = 0; i < this.infoClientService.game.powerCards.length; i++) {
+            if (this.infoClientService.game.powerCards[i].name === powerCardName) {
                 this.activatedPowers[i] = !this.activatedPowers[i];
                 return;
             }
