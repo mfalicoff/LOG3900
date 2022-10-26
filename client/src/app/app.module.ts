@@ -1,7 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { BoardStandComponent } from '@app/components/board-stand/board-stand.component';
@@ -70,7 +69,6 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         AppMaterialModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        BrowserModule,
         FormsModule,
         HttpClientModule,
         ReactiveFormsModule,
