@@ -21,49 +21,75 @@ class _InfoPanelState extends State<InfoPanel> {
           Text(
             "En attente d'autres joueurs...",
             style: TextStyle(
-                color: Theme.of(context).colorScheme.primary, fontSize: 25),
+                color: Theme.of(context).colorScheme.primary, fontSize: 20),
           ),
-          SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           Row(
             children: [
-              ElevatedButton(
-                onPressed: _pass,
-                child: Text(
-                  "Passer",
-                  style:
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _pass,
+                  child: FittedBox(
+                    child: Text(
+                      "Passer",
+                      style:
                       TextStyle(color: Theme.of(context).colorScheme.secondary),
+                    ),
+                  ),
                 ),
               ),
-              SizedBox(width: 5,),
-              ElevatedButton(
-                onPressed: _trade,
-                child: Text(
-                  "Échanger",
-                  style:
-                  TextStyle(color: Theme.of(context).colorScheme.secondary),
+              const SizedBox(
+                width: 5,
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _trade,
+                  child: FittedBox(
+                    child: Text(
+                      "Échanger",
+                      style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                    ),
+                  ),
                 ),
               ),
-              SizedBox(width: 5,),
-              ElevatedButton(
-                onPressed: _cancel,
-                child: Text(
-                  "Annuler",
-                  style:
-                  TextStyle(color: Theme.of(context).colorScheme.secondary),
-                ),
+              const SizedBox(
+                width: 5,
               ),
-              SizedBox(width: 5,),
-              ElevatedButton(
-                onPressed: _play,
-                child: Text(
-                  "Jouer",
-                  style:
-                  TextStyle(color: Theme.of(context).colorScheme.secondary),
+              Expanded(
+                  child: ElevatedButton(
+                    onPressed: _cancel,
+                    child: FittedBox(
+                      child: Text(
+                        "Annuler",
+                        style:
+                        TextStyle(color: Theme.of(context).colorScheme.secondary),
+                      ),
+                    ),
+                  ),
+              ),
+              const SizedBox(
+                width: 5,
+              ),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: _play,
+                  child: FittedBox(
+                    child: Text(
+                      "Jouer",
+                      style:
+                      TextStyle(color: Theme.of(context).colorScheme.secondary),
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 5,),
+          const SizedBox(
+            height: 5,
+          ),
           DataTable(
             columns: [
               DataColumn(
