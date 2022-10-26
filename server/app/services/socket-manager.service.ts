@@ -488,6 +488,8 @@ export class SocketManager {
         // set by the creator of the game
         if (gameMode === Constants.POWER_CARDS_MODE) {
             this.powerCardsService.initPowerCards(newGame, activatedPowers);
+
+            this.powerCardsService.givePowerToPlayers(newGame);
         }
 
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
