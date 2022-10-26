@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Player } from '@app/classes/player';
 import { InfoClientService } from '@app/services/info-client.service';
 import { TimerService } from '@app/services/timer.service';
+import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
+import { environment } from '@app/../environments/environment';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { UserResponseInterface } from '@app/classes/response.interface';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-end-game-results-page',
@@ -14,14 +19,56 @@ export class EndGameResultsPageComponent implements OnInit {
     numberOfTurns: number = 0;
     gameStartDate: string;
     playingTime: string;
+    serverUrl = environment.serverUrl;
+    players: Player[];
     constructor(
-        private matDialogRef: MatDialogRef<EndGameResultsPageComponent>,
+        private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
         public infoClientService: InfoClientService,
         private timerService: TimerService,
+        private dialog: MatDialog,
+        private httpClient: HttpClient,
     ) {}
 
     ngOnInit() {
         this.nomSalle = this.infoClientService.actualRoom.name;
+        this.players = this.infoClientService.actualRoom.players.copyWithin(0, 0, 3);
+        this.findWinners(this.players);
+        this.findNumberOfTurns();
+        this.getGameStartDate();
+    }
+
+    getUserByName(playerName: string): Observable<UserResponseInterface> {
+        return this.httpClient.get<UserResponseInterface>(`${this.serverUrl}users/:name`, {
+            observe: 'body',
+            params: { name: playerName },
+            responseType: 'json',
+        });
+    }
+
+    openProfilePage(player: Player) {
+        this.getUserByName(player.name).subscribe({
+            next: (res) => {
+                this.dialog.open(ProfileReadOnlyPageComponent, {
+                    data: {
+                        message: 'userFound',
+                        userInfo: res.data,
+                    },
+                    height: '40%',
+                    width: '40%',
+                });
+            },
+            error: (error: HttpErrorResponse) => {
+                if (error.error instanceof ErrorEvent) {
+                    alert('Erreur: ' + error.status + error.error.message);
+                } else {
+                    alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
+                }
+            },
+        });
+    }
+
+    closeModalEndGame() {
+        this.matDialogRefEndGame.close();
     }
 
     lettersOnStand(player: Player): string {
@@ -33,19 +80,11 @@ export class EndGameResultsPageComponent implements OnInit {
         }
         return listLetterStillOnStand.toString();
     }
-    closeModalEndGame() {
-        this.matDialogRef.close();
-    }
 
     findWinners(players: Player[]): void {
         let bestScore = 0;
         for (const player of players) {
-            // subtract the score of the letters still on the stand
-            // player.score -= this.countDeductedScore(player);
-            // adds score final to database
-            // storing the id of the player with the highest score
             if (player.score > bestScore) {
-                // emptying the array
                 this.infoClientService.game.winners = [];
                 this.infoClientService.game.winners.push(player);
                 bestScore = player.score;
@@ -81,10 +120,13 @@ export class EndGameResultsPageComponent implements OnInit {
     }
 
     findCreatorOfGame(): string | undefined {
-        this.findWinners(this.infoClientService.actualRoom.players);
         // @ts-ignore
         return this.infoClientService.actualRoom.players.find((player: Player) => {
             if (player.isCreatorOfGame) return player.name;
         }).name;
+    }
+
+    isLinkEnabled(player: Player): boolean {
+        return player.idPlayer !== 'virtualPlayer';
     }
 }
