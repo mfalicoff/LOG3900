@@ -1,8 +1,6 @@
 import 'dart:ui';
 
-import 'package:client_leger/screens/create_game_page.dart';
-import 'package:client_leger/screens/game_page.dart';
-import 'package:client_leger/services/game_service.dart';
+import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -18,7 +16,7 @@ class GameListPage extends StatefulWidget {
 class _GameListPageState extends State<GameListPage> {
   late List<Room> rooms = [];
   final SocketService socketService = SocketService();
-  final GameService gameService = GameService();
+  final InfoClientService gameService = InfoClientService();
 
   @override
   void initState() {
@@ -30,7 +28,11 @@ class _GameListPageState extends State<GameListPage> {
     socketService.socket.on('addElementListRoom', (data) {
       if (mounted) {
         setState(() {
-          rooms.add(Room.fromJson(data));
+          Room room = Room.fromJson(data);
+          var exist = rooms.where((element) => element.roomName == room.roomName);
+          if(exist.isEmpty){
+            rooms.add(Room.fromJson(data));
+          }
         });
       }
     });
@@ -43,7 +45,7 @@ class _GameListPageState extends State<GameListPage> {
     });
     socketService.socket.on("roomChangeAccepted", (data) {
       if(mounted){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GamePage()));
+        Navigator.pushNamed(context, "/game");
       }
     });
     socketService.socket.emit("listRoom");
@@ -156,13 +158,11 @@ class _GameListPageState extends State<GameListPage> {
   }
 
   void _createGame() {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const CreateGamePage())
-    );
+    Navigator.pushNamed(context, "/create-game");
   }
 
   void _goBackHomePage() {
-    Navigator.of(context).pop();
+    Navigator.pop(context);
   }
 }
 

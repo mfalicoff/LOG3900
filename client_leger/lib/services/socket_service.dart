@@ -10,7 +10,6 @@ class SocketService {
   late IO.Socket socket;
 
   factory SocketService() {
-
     return _socketService;
   }
 

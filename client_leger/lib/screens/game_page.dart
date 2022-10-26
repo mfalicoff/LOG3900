@@ -1,4 +1,4 @@
-import 'package:client_leger/services/game_service.dart';
+import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +11,12 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  GameService gameService = GameService();
+  InfoClientService infoClientService = InfoClientService();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Row(
         children: [
           Container(
@@ -72,8 +73,8 @@ class _GamePageState extends State<GamePage> {
   }
 
   void _leaveGame() {
-    gameService.leaveGame();
-    Navigator.of(context).pop();
+    infoClientService.leaveGame();
+    Navigator.popUntil(context, ModalRoute.withName("/game-list"));
   }
 
 }

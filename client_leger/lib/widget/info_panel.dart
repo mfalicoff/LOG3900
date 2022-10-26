@@ -1,4 +1,4 @@
-import 'package:client_leger/services/game_service.dart';
+import 'package:client_leger/services/info_client_service.dart';
 import 'package:flutter/material.dart';
 
 class InfoPanel extends StatefulWidget {
@@ -9,7 +9,19 @@ class InfoPanel extends StatefulWidget {
 }
 
 class _InfoPanelState extends State<InfoPanel> {
-  final GameService gameService = GameService();
+  final InfoClientService gameService = InfoClientService();
+
+  @override
+  void initState() {
+    super.initState();
+    gameService.addListener(refresh);
+  }
+
+  void refresh() {
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -148,7 +160,10 @@ class _InfoPanelState extends State<InfoPanel> {
     );
   }
 
-  void _pass() {}
+  void _pass() {
+    gameService.game.players[2].name;
+    gameService.game.players[3].name;
+  }
 
   void _trade() {}
 

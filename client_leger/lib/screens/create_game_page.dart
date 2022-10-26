@@ -1,7 +1,6 @@
 import 'dart:ui';
 
-import 'package:client_leger/screens/game_page.dart';
-import 'package:client_leger/services/game_service.dart';
+import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -18,13 +17,14 @@ class _CreateGamePageState extends State<CreateGamePage> {
   late double? turnTime = 1;
   final _formKey = GlobalKey<FormState>();
   final SocketService socketService = SocketService();
-  final GameService gameService = GameService();
+  final InfoClientService gameService = InfoClientService();
 
   @override
   void initState() {
     socketService.socket.on("roomChangeAccepted", (data) {
       if(mounted){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const GamePage()));
+        FocusScope.of(context).unfocus();
+        Navigator.pushNamed(context, "/game");
       }
     });
     super.initState();
@@ -218,7 +218,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
   }
 
   void _goBackGameListPage() {
-    Navigator.of(context).pop();
+    Navigator.pop(context);
   }
 
   void _start() {

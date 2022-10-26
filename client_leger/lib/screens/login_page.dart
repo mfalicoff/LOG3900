@@ -2,57 +2,50 @@ import 'dart:ui';
 
 import 'package:client_leger/screens/home_page.dart';
 import 'package:client_leger/services/controller.dart';
-import 'package:client_leger/screens/signup_page.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
-
-import 'game_page.dart';
-
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/background.jpg"),
-              fit: BoxFit.cover,
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/background.jpg"),
+                fit: BoxFit.cover,
+              ),
             ),
-          ),
-          padding:
-          const EdgeInsets.symmetric(vertical: 100.0, horizontal: 200.0),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  shape: BoxShape.rectangle,
-                  color: Theme
-                      .of(context)
-                      .colorScheme
-                      .secondary,
-                  borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-                  border: Border.all(
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .primary, width: 3)),
-              padding:
-              const EdgeInsets.symmetric(vertical: 25.0, horizontal: 250.0),
-              child: const Center(
-                child: LoginForm(),
+            padding:
+                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 200.0),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 3)),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 25.0, horizontal: 250.0),
+                child: const Center(
+                  child: LoginForm(),
+                ),
               ),
             ),
           ),
-        )
-      ],
+        ],
+      ),
     );
   }
 }
-
 
 class LoginForm extends StatefulWidget {
   const LoginForm({Key? key}) : super(key: key);
@@ -76,10 +69,7 @@ class _LoginFormState extends State<LoginForm> {
         children: [
           Text(
             "Login",
-            style: Theme
-                .of(context)
-                .textTheme
-                .headlineLarge,
+            style: Theme.of(context).textTheme.headlineLarge,
           ),
           TextFormField(
             onSaved: (String? value) {
@@ -90,15 +80,9 @@ class _LoginFormState extends State<LoginForm> {
               border: const OutlineInputBorder(),
               labelText: "Adresse Courriel",
               labelStyle:
-              TextStyle(color: Theme
-                  .of(context)
-                  .colorScheme
-                  .primary),
+                  TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
-            style: TextStyle(color: Theme
-                .of(context)
-                .colorScheme
-                .primary),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           TextFormField(
             onSaved: (String? value) {
@@ -110,15 +94,9 @@ class _LoginFormState extends State<LoginForm> {
               border: const OutlineInputBorder(),
               labelText: "Mot de passe",
               labelStyle:
-              TextStyle(color: Theme
-                  .of(context)
-                  .colorScheme
-                  .primary),
+                  TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
-            style: TextStyle(color: Theme
-                .of(context)
-                .colorScheme
-                .primary),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
           ),
           ElevatedButton(
             style: ButtonStyle(
@@ -135,10 +113,7 @@ class _LoginFormState extends State<LoginForm> {
             child: Text(
               "Submit",
               style: TextStyle(
-                  fontSize: 20, color: Theme
-                  .of(context)
-                  .colorScheme
-                  .secondary),
+                  fontSize: 20, color: Theme.of(context).colorScheme.secondary),
             ),
           ),
           //TODO REMOVE THIS BUTTON LATER
@@ -150,10 +125,7 @@ class _LoginFormState extends State<LoginForm> {
             onTap: _toSignUpPage,
             child: Text(
               "Go to the Sign Up Page",
-              style: TextStyle(color: Theme
-                  .of(context)
-                  .colorScheme
-                  .primary),
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
           ),
         ],
@@ -165,11 +137,10 @@ class _LoginFormState extends State<LoginForm> {
     if (value == null || value.isEmpty) {
       return "Rentrez une adresse courriel";
     } else if (!RegExp(
-        r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(value)) {
       return "Rentrez une adresse courriel valide";
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -185,11 +156,12 @@ class _LoginFormState extends State<LoginForm> {
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
-      try{
-        globals.userLoggedIn = await controller.login(email: email, password: password);
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const MyHomePage()));
-      } on Exception{
+      try {
+        globals.userLoggedIn =
+            await controller.login(email: email, password: password);
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => const MyHomePage()));
+      } on Exception {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text("Impossible de se connecter"),
           backgroundColor: Colors.red.shade300,
@@ -199,12 +171,10 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _toGamePageState() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const GamePage()));
+    Navigator.pushNamed(context, "/home");
   }
 
   void _toSignUpPage() {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const SignUpPage()));
+    Navigator.pushNamed(context, "/signup");
   }
 }

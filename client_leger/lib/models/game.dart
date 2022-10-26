@@ -1,22 +1,22 @@
 import 'package:client_leger/models/player.dart';
 
 class Game {
-  List<Player> players = [];
+  List<PlayerOld> players = [];
   int timer = 0;
   bool waitingPlayers = true;
 
   Game.fromJSON(data){
     for(int i = 0; i < 4; i++){
-      players.add(Player.fromJSON(data["players"][i]));
+      players.add(PlayerOld.fromJSON(data["players"][i]));
     }
   }
-  Game(){
-  }
+
+  Game(){}
 
   updateFromJSON(data){
-    List<Player> playersTemp = [];
+    List<PlayerOld> playersTemp = [];
     for(int i = 0; i < 4; i++){
-      playersTemp.add(Player.fromJSON(data["players"][i]));
+      playersTemp.add(PlayerOld.fromJSON(data["players"][i]));
     }
     players = playersTemp;
   }

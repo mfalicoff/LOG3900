@@ -1,6 +1,6 @@
 class Room {
   late String roomName;
-  late String roomCreator;
+  late String roomCreator = "";
   int numberRealPlayer = 0;
   int numberVirtualPlayer = 0;
   late int numberSpectators;
