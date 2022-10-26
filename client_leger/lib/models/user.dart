@@ -6,8 +6,8 @@ class User {
   late List<dynamic>? actionHistory;
   late String? avatarPath;
   late String? avatarUri;
-  late double? averagePointsPerGame;
-  late double? averageTimePerGame;
+  late num? averagePointsPerGame;
+  late num? averageTimePerGame;
   late String? cookie;
   late String email;
   late List<dynamic>? gameHistory;

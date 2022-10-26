@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:client_leger/env/environment.dart';
@@ -30,7 +29,8 @@ class Controller {
     }
   }
 
-  Future<User> signUp({username = String, email = String, password = String}) async {
+  Future<User> signUp(
+      {username = String, email = String, password = String}) async {
     final response = await http.post(
       Uri.parse("$serverAddress/users"),
       headers: <String, String>{
@@ -58,8 +58,7 @@ class Controller {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
       },
-      body: jsonEncode(<String, String>{
-      }),
+      body: jsonEncode(<String, String>{}),
     );
 
     if (response.statusCode == 200) {
@@ -77,9 +76,7 @@ class Controller {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
       },
-      body: jsonEncode(<String, String>{
-        "name": newName
-      }),
+      body: jsonEncode(<String, String>{"name": newName}),
     );
 
     if (response.statusCode == 200) {
@@ -118,15 +115,23 @@ class Controller {
         'Content-Type': 'application/json; charset=UTF-8',
         'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
       },
-      body: jsonEncode(<String, String>{
-        "avatarPath": avatarPath
-      }),
+      body: jsonEncode(<String, String>{"avatarPath": avatarPath}),
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       return user;
     } else {
       throw Exception('Failed to logout');
+    }
+  }
+
+  Future<User> getUserByName(String id) async {
+    final response = await http.get(Uri.parse("$serverAddress/users/$id"));
+    if (response.statusCode == 200) {
+      User user = User.fromJson(json.decode(response.body));
+      return user;
+    } else {
+      throw Exception('Failed to get');
     }
   }
 }
