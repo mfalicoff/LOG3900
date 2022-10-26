@@ -3,12 +3,14 @@ class PlayerOld {
   late String idPlayer;
   late int score;
   late bool isCreatorOfGame;
+  late String? avatarUri;
 
   PlayerOld(this.name, this.idPlayer, this.score, this.isCreatorOfGame);
 
   PlayerOld.fromJSON(data){
     name = data["name"];
     score = data["score"];
+    avatarUri = data['avatarUri'];
   }
 }
 

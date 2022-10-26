@@ -25,6 +25,18 @@ class AvatarController {
             next(error);
         }
     };
+
+    saveAvatar = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const body = req.body;
+            const avatarUri = body.avatarUri;
+            const id = body.id;
+            await this.avatarService.saveAvatarForUser(avatarUri, id);
+            res.status(HTTPStatusCode.OK).json({ data: '', message: 'AvatarSaved' });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default AvatarController;

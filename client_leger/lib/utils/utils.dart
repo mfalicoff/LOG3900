@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -22,8 +24,14 @@ MaterialColor createMaterialColor(Color color) {
   return MaterialColor(color.value, swatch);
 }
 
-String readableTime(int timestamp){
+String readableTime(int timestamp) {
   DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(timestamp);
   return DateFormat('kk:mm:ss').format(dateTime);
 }
 
+CircleAvatar getAvatarFromString(double radius, String uri) {
+  return (CircleAvatar(
+    radius: radius,
+    backgroundImage: MemoryImage(base64Decode(uri.substring(22))),
+  ));
+}

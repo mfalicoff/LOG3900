@@ -10,6 +10,10 @@ class InfoClientService extends ChangeNotifier{
 
   SocketService socketService = SocketService();
   Game game = Game();
+  bool isSpectator = false;
+  bool creatorShouldBeAbleToStartGame = false;
+
+
 
   Player player = Player();
 
@@ -22,6 +26,18 @@ class InfoClientService extends ChangeNotifier{
         game.updateFromJSON(data);
         notifyListeners();
       }
+    );
+
+    socketService.socket.on('isSpectator', (isSpectatorVal) {
+        isSpectator = isSpectatorVal;
+        notifyListeners();
+    }
+    );
+
+    socketService.socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) {
+      creatorShouldBeAbleToStartGame = creatorCanStart;
+      notifyListeners();
+    }
     );
   }
 
