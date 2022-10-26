@@ -1,4 +1,5 @@
 import 'package:client_leger/screens/profile-page.dart';
+import 'package:client_leger/screens/search_page.dart';
 import 'package:client_leger/services/controller.dart';
 
 import 'package:flutter/material.dart';
@@ -51,6 +52,20 @@ class _MyHomePageState extends State<MyHomePage> {
                             borderRadius: BorderRadius.circular(100.0)))),
                 onPressed: _toChatPage,
                 child: const Icon(Icons.chat))),
+        Positioned(
+            top: 100.0,
+            right: 30.0,
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                          vertical: 18.0, horizontal: 0.0),
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100.0)))),
+                onPressed: _toSearchPage,
+                child: const Icon(Icons.search))),
         Positioned(
           top: 10.0,
           left: 30.0,
@@ -108,8 +123,15 @@ class _MyHomePageState extends State<MyHomePage> {
     Navigator.of(context).pushNamed('/chat');
   }
 
+  void _toSearchPage() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage())).then((value) {
+      setState(() {
+      });
+    });
+  }
+
   void _toProfilePage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage())).then((value) {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage())).then((value) {
       setState(() {
       });
     });

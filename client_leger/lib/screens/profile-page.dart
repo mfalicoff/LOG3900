@@ -49,7 +49,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                         color: Theme.of(context).colorScheme.primary,
                         width: 3)),
                 padding: const EdgeInsets.symmetric(
-                    vertical: 25.0, horizontal: 250.0),
+                    vertical: 25.0, horizontal: 150.0),
                 child: Center(
                   child: Column(
                     children: [
@@ -106,8 +106,11 @@ class _ProfileStatePage extends State<ProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          returnHistoryScrollView('Historique des Connections',
-                              globals.userLoggedIn.actionHistory!),
+                          Container(
+                            padding: const EdgeInsets.only(right: 50),
+                              child: returnHistoryScrollView(
+                                  'Historique des Connections',
+                                  globals.userLoggedIn.actionHistory!)),
                           returnHistoryScrollView('Historique des Parties',
                               globals.userLoggedIn.gameHistory!),
                         ],
