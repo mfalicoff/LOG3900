@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/game-server.dart';
-import '../models/game.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
 
@@ -29,6 +28,16 @@ class InfoClientService extends ChangeNotifier{
 
   InfoClientService._internal() {
     actualRoom = RoomData(name: 'default', timeTurn: '1', isBonusRandom: false, passwd: 'fake', players: [], spectators: []);
+  }
+
+  void updatePlayer(player){
+    player = Player.fromJson(player);
+    notifyListeners();
+  }
+
+  void updateGame(game){
+    game = GameServer.fromJson(game);
+    notifyListeners();
   }
 
 }

@@ -19,4 +19,9 @@ class Tile {
     borderColor = '#212121';
     isOnBoard = false;
   }
+
+  Tile.fromJson(tile){
+    //TODO position
+    //position = Vec4(tile["value"]);
+  }
 }

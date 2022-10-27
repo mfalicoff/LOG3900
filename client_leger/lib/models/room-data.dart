@@ -6,7 +6,7 @@ class RoomData with ChangeNotifier{
   late String name;
   late String timeTurn;
   late bool isBonusRandom;
-  late String passwd;
+  late String? passwd;
 
   late String roomCreator = "";
   int numberRealPlayer = 0;

@@ -107,6 +107,40 @@ class GameServer {
 
   }
 
+  GameServer.fromJson(game){
+    minutesByTurn = game["minutesByTurn"];
+    randomBonusesOn = game["randomBonusesOn"];
+    gameMode = game["gameMode"];
+    vpLevel = game["vpLevel"];
+    //TODO Trie
+    letters = List<String>.from(game["letters"]);
+
+    board = [];
+    var lines = game["board"];
+    for(var line in lines){
+      List<Tile> tempLine = [];
+      for(var tile in line){
+        tempLine.add(Tile.fromJson(tile));
+      }
+      board.add(tempLine);
+    }
+
+    roomName = game["roomName"];
+    //TODO mapLetterOnBoard
+    //TODO mapPlayers
+    //TODO mapSpectators
+    nbLetterReserve = game["nbLetterReserve"];
+    gameStarted = game["gameStarted"];
+    gameFinished = game["gameFinished"];
+    idxPlayerPlaying = game["idxPlayerPlaying"];
+    masterTimer = game["masterTimer"];
+    displaySkipTurn = game["displaySkipTurn"];
+    noTileOnBoard = game["noTileOnBoard"];
+    //TODO winners
+    //TODO letterBank
+    bonusBoard = game["bonusBoard"];
+  }
+
   initializeLettersArray() {
     letters = [];
 

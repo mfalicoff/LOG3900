@@ -97,11 +97,11 @@ class SocketService with ChangeNotifier{
 
   gameUpdateHandler() {
     socket.on('playerAndStandUpdate', (player) {
-
+      infoClientService.updatePlayer(player);
     });
 
     socket.on('gameBoardUpdate', (game) {
-
+      infoClientService.updateGame(game);
     });
 
     socket.on('playersSpectatorsUpdate', (data) {
