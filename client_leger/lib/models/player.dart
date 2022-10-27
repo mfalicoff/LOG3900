@@ -41,10 +41,12 @@ class Player with ChangeNotifier {
   late bool allLetterSwapped;
   late bool isMoveBingo;
 
-  Player() {
-    name = 'DefaultPlayerObject';
-    isCreatorOfGame = false;
-  }
+  // Player() {
+  //   name = 'DefaultPlayerObject';
+  //   isCreatorOfGame = false;
+  // }
+
+  Player(this.name, this.isCreatorOfGame);
 
   Player.fromJson(Map parsed) {
     name = parsed["name"];

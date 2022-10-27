@@ -20,7 +20,6 @@ class _InfoPanelState extends State<InfoPanel> {
     super.initState();
 
     gameService.addListener(refresh);
-    gameService.game.addListener(refresh);
     gameService.actualRoom.addListener(refresh);
     socketService.addListener(refresh);
   }
