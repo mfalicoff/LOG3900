@@ -180,17 +180,28 @@ export class SocketService {
 
     private otherSocketOn() {
         this.socket.on('matchFound', () => {
-        console.log('sdfg');
         //this.infoClientService.player = player;
         this.rankedService.matchHasBeenFound();
         })
+        this.socket.on('createRankedGame', (name) => {
+            this.socket.emit('createRoomAndGame',{ roomName:name, playerName:name, timeTurn: 1, isBonusRandom:false, gameMode:GlobalConstants.MODE_RANKED, vpLevel:'beginner', isGamePrivate:false, passwd:''});
+            let mockDict = this.infoClientService.dictionaries.find(element => element.title === 'Dictionnaire français par défaut');
+            this.socket.emit('dictionarySelected', mockDict);
+        })
+        this.socket.on('startGame', (roomName) => {
+            this.socket.emit('startGame', roomName);
+        })
+        this.socket.on('joinRoom', (gameName, socketId) => {
+            console.log(socketId);
+            this.socket.emit('joinRoom', gameName, socketId);
+            this.socket.emit('spectWantsToBePlayer', gameName, socketId);
+        })
         this.socket.on('closeModalOnRefuse', () => {
             this.rankedService.closeModal();
-            //this.infoClientService.player = player;
-            })
+        })
         this.socket.on('closeModal', () => {
             this.rankedService.closeModal();
-            })
+        })
         this.socket.on('messageServer', (message) => {
             alert(message);
         });

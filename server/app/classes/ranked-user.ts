@@ -5,6 +5,7 @@ export class RankedUser {
     eloDisparity:number;
     name:string;
     hasAccepted:boolean;
+    socketId:string;
     constructor(user:User, eloDisparity: number) {
         if(user.elo === undefined) {
             this.elo = 2000;
@@ -15,5 +16,6 @@ export class RankedUser {
         this.name = user.name;
         this.eloDisparity = eloDisparity;
         this.hasAccepted = false;
+        this.socketId = '';
     }
 }

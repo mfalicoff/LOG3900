@@ -468,7 +468,31 @@ export class SocketManager {
             this.shouldCreatorBeAbleToStartGame(newGame);
         }
     }
+    private createRankedGame(playerName: string,socket: io.Socket,) {
+        const newGame: GameServer = new GameServer(1, false, GlobalConstants.MODE_RANKED, 'begginer', playerName, false, '');
+        const newPlayer = new Player(playerName, true);
+        newPlayer.idPlayer = socket.id;
+        this.boardService.initBoardArray(newGame);
+        newGame.mapPlayers.set(newPlayer.name, newPlayer);
+        this.rooms.set(playerName, newGame);
 
+        // Joining the room
+        socket.join(playerName);
+
+        // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
+        this.putLogicService.initSioPutLogic(this.sio);
+        this.mouseEventService.initSioMouseEvent(this.sio);
+        this.playAreaService.initSioPlayArea(this.sio);
+        this.matchmakingService.initSioMatchmaking(this.sio);
+        
+        const createdGame = this.rooms.get(playerName);
+        if (!createdGame) {
+            return;
+        }
+        this.gameUpdateClients(createdGame);
+        // emit to change page on client after verification
+        socket.emit('roomChangeAccepted', '/game');
+    }
     private shouldCreatorBeAbleToStartGame(game: GameServer) {
         const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
         let creatorCanStart = true;
@@ -512,6 +536,9 @@ export class SocketManager {
             this.users.set(socket.id, { name, roomName: '' , elo: 2000});
         });
 
+        socket.on('CreateRankedRoomAndGame', ({playerName}) => {
+            this.createRankedGame(playerName, socket);
+        })
         socket.on('createRoomAndGame', ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
@@ -520,6 +547,8 @@ export class SocketManager {
             }
             // We add the roomName to the userMap
             const user = this.users.get(socket.id);
+            console.log(user);
+            console.log(roomName);
             if (user) {
                 user.roomName = roomName;
             }
@@ -549,16 +578,18 @@ export class SocketManager {
             this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
             //socket.emit('matchFound', player);
         })
-
         socket.on('refuseMatch',({user}) => {
             this.matchmakingService.onRefuse(socket, user);
         })
         socket.on('acceptMatch',({user}) => {
-            this.matchmakingService.onAccept(user);
+            this.matchmakingService.onAccept(socket, user);
         })
 
-        socket.on('joinRoom', ({ roomName, playerId }) => {
+        socket.on('joinRoom', ( roomName, playerId ) => {
+            // console.log(this.users);
+            // console.log(playerId);
             const userData = this.users.get(playerId);
+            // console.log(userData);
             if (!userData) {
                 return;
             }

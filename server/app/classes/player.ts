@@ -48,5 +48,6 @@ export class Player {
         this.tileIndexManipulation = GlobalConstants.DEFAULT_VALUE_NUMBER;
         this.allLetterSwapped = false;
         this.isMoveBingo = false;
+        this.elo = 2000;
     }
 }

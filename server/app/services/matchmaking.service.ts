@@ -44,7 +44,6 @@ export class MatchmakingService {
         socket.join(users[0].name);
         let rankedUser = new RankedUser(user,eloDisparity)
         this.rooms.get(users[0].name)?.push(rankedUser);
-        console.log(this.rooms);
     }
 
     createRoom(socket:io.Socket, user:User, eloDisparity:number){
@@ -71,11 +70,12 @@ export class MatchmakingService {
             }
         }
     }
-    onAccept(user:User) {
+    onAccept(socket:io.Socket, user:User) {
         for(const users of this.rooms.values()) {
             for(const rankedUser of users) {
                 if(rankedUser.name === user.name) {
                     rankedUser.hasAccepted = true;
+                    rankedUser.socketId = socket.id;
                 }
             }
         }
@@ -85,7 +85,6 @@ export class MatchmakingService {
             if (rankedGame.secondsValue <= 0) {
                 clearInterval(timerInterval);
                 const rankedUsers:RankedUser[] = this.rooms.get(rankedGame.name) as RankedUser[];
-                console.log(rankedUsers);
                 for(const user of rankedUsers) {
                     if(user.hasAccepted === false)
                     {
@@ -101,14 +100,26 @@ export class MatchmakingService {
     }
 
     createRankedGame(rankedGame:RankedGame) {
-        this.sio.to(rankedGame.name).emit('');
+        let creatorUser:RankedUser = rankedGame.rankedUsers[0];
+        for(const user of rankedGame.rankedUsers) {
+            if(user.name === rankedGame.name) {
+                creatorUser= user;
+                this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', user.name);
+            }
+        }
+        for(const user of rankedGame.rankedUsers) {
+            if(user.name !== rankedGame.name) {
+                console.log('joinRoom');
+                this.sio.sockets.sockets.get(user.socketId)?.emit('joinRoom', rankedGame.name, user.socketId);
+            }
+        }
+        this.sio.sockets.sockets.get(creatorUser.socketId)?.emit('startGame', creatorUser.name);
     }
 
     matchRefused(rankedGame:RankedGame) { 
         for(let i =0; i< rankedGame.rankedUsers.length;i++) {
             if(rankedGame.rankedUsers[i].hasAccepted === false) {
                 rankedGame.rankedUsers.splice(i,1);
-                console.log(this.sio.sockets.sockets);
             }
         }
         this.sio.to(rankedGame.name).emit('closeModal');

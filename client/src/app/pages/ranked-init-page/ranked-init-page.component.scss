@@ -183,6 +183,17 @@ html {
     color: wheat;
 }
 
+.MPButton {
+    cursor: pointer;
+    top: 10px;
+    left: 10px;
+    position: absolute;
+    transform: scale(1.5);
+    margin-top: 2%;
+    margin-left : 2%;
+    color: wheat;
+}
+
 /* The Modal (background) */
 .modal {
     display: none; /* Hidden by default */
