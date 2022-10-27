@@ -91,23 +91,19 @@ class UserService {
         throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
     }
 
-    /* async updateFavouriteGames(userId: string, userData: CreateGameSavedValidator): Promise<User> {
-        if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
+    async updateFavouriteGames(userId: string, gameId: string): Promise<User> {
+        if (isEmpty(gameId)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
         let updateUserById: User;
 
-        if (userData.savedGameId) {
-            updateUserById = (await this.users.findByIdAndUpdate(
-                userId,
-                { $addToSet: { favouriteGames: userData.savedGameId } },
-                { new: true },
-            )) as User;
+        if (gameId) {
+            updateUserById = (await this.users.findByIdAndUpdate(userId, { $addToSet: { favouriteGames: gameId } }, { new: true })) as User;
             if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
 
             updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
             return updateUserById;
         }
         throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
-    }*/
+    }
 
     async deleteUser(userId: string): Promise<User> {
         const deleteUserById: User = (await this.users.findByIdAndDelete(userId)) as User;

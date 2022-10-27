@@ -32,7 +32,8 @@
             <li> Nombre de tours totoal: {{this.findNumberOfTurns()}}</li>
             <li> Durée de la partie (en minutes) : {{this.displayPlayingTime()}}</li>
             <li> Date du début de la partie (timestamp) : {{this.getGameStartDate()}}</li>
-            <li> Ajouter cette partie dans vos favoris ? : <button class="button" (click)="saveGame()"> Ajouter dans Favoris </button></li>
+            <li> Ajouter cette partie dans vos favoris ? : <button class="button" (click)="addGameToFavourites()"> Ajouter dans Favoris </button></li>
+            <li> Sauvegarder la partie : <button class="button" (click)="saveGame()" > Sauegarder la partie </button></li>
         </ul>
     </div>
     <div class="title-box">

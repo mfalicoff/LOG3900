@@ -29,9 +29,12 @@ export class GameSaved {
         this.nbLetterReserve = nbLetterReserve;
         this.gameStartDate = gameStartDate;
         this.mapLettersOnStand = new Map<string, string>();
+        this.players = [];
+        this.spectators = [];
+        this.winners = [];
 
-        this.populateMap(players);
         this.populateArrays(players, spectators, winners);
+        this.populateMap(players);
     }
 
     populateArrays(players: Player[], spectators: Spectator[] | undefined, winners: Player[] | undefined) {
@@ -42,15 +45,12 @@ export class GameSaved {
             for (let index = 0; index < spectators.length; index++) {
                 this.spectators[index] = spectators[index].name;
             }
-        } else {
-            this.spectators = [];
         }
+
         if (winners) {
             for (let index = 0; index < winners.length; index++) {
                 this.winners[index] = winners[index].name;
             }
-        } else {
-            this.winners = [];
         }
     }
 
