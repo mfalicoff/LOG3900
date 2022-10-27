@@ -14,8 +14,11 @@ class InfoClientService extends ChangeNotifier{
   bool isSpectator = false;
   bool creatorShouldBeAbleToStartGame = false;
 
-
+  late List<RoomData> rooms = [];
   late RoomData actualRoom;
+
+  String playerName = 'DefaultPlayerName';
+
 
 
   factory InfoClientService(){

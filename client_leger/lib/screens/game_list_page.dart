@@ -25,6 +25,7 @@ class _GameListPageState extends State<GameListPage> {
   }
 
   void initSockets() {
+    // TODO NEEDS TO UPDATE INFO CLIENT SERVICE[ROOMS]
     socketService.socket.on('addElementListRoom', (data) {
       if (mounted) {
         setState(() {

@@ -3,7 +3,9 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 import '../env/environment.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:collection/collection.dart';
 
+import '../models/player.dart';
 import 'info_client_service.dart';
 
 
@@ -102,6 +104,19 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('playersSpectatorsUpdate', (data) {
+      int idxExistingRoom = infoClientService.rooms.indexWhere((element) => element.name == data['roomName']);
+      infoClientService.actualRoom = infoClientService.rooms[idxExistingRoom];
+      infoClientService.rooms[idxExistingRoom].players = data['players'];
+      if (infoClientService.isSpectator) {
+        // draw spec stand
+      }
+      infoClientService.rooms[idxExistingRoom].spectators = data['spectators'];
+
+      Player? tmpPlayer = infoClientService.actualRoom.players.firstWhereOrNull((player) => player.name == infoClientService.playerName);
+      if (tmpPlayer != null) {
+        infoClientService.player = tmpPlayer;
+      }
+
       infoClientService.game.updateFromJSON(data);
       notifyListeners();
     });
