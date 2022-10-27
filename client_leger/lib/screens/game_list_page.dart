@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:client_leger/models/room-data.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class GameListPage extends StatefulWidget {
 }
 
 class _GameListPageState extends State<GameListPage> {
-  late List<Room> rooms = [];
+  // late List<Room> rooms = [];
   final SocketService socketService = SocketService();
   final InfoClientService gameService = InfoClientService();
 
@@ -29,10 +30,12 @@ class _GameListPageState extends State<GameListPage> {
     socketService.socket.on('addElementListRoom', (data) {
       if (mounted) {
         setState(() {
-          Room room = Room.fromJson(data);
-          var exist = rooms.where((element) => element.roomName == room.roomName);
+          // Room room = Room.fromJson(data);
+          RoomData room = RoomData.fromJson(data);
+          var exist = gameService.rooms.where((element) => element.name == room.name);
           if(exist.isEmpty){
-            rooms.add(Room.fromJson(data));
+            // rooms.add(Room.fromJson(data));
+            gameService.rooms.add(room);
           }
         });
       }
@@ -40,7 +43,7 @@ class _GameListPageState extends State<GameListPage> {
     socketService.socket.on('removeElementListRoom', (data) {
       if (mounted) {
         setState(() {
-          rooms.removeWhere((element) => element.roomName == data);
+          gameService.rooms.removeWhere((element) => element.name == data);
         });
       }
     });
@@ -143,7 +146,7 @@ class _GameListPageState extends State<GameListPage> {
                           //   borderRadius: BorderRadius.circular(10),
                           // ),
                           child: gameList(
-                            rooms: rooms,
+                            rooms: gameService.rooms,
                           ),
                         ),
                       )
@@ -170,7 +173,7 @@ class _GameListPageState extends State<GameListPage> {
 class gameList extends StatefulWidget {
   gameList({Key? key, required this.rooms}) : super(key: key);
 
-  late List<Room> rooms;
+  late List<RoomData> rooms;
 
   @override
   State<gameList> createState() => _gameListState();
@@ -270,14 +273,14 @@ class _gameListState extends State<gameList> {
                 onSelectChanged: (bool? selected) {
                   if (selected!) {
                     socketService.socket.emit("joinRoom", {
-                      'roomName': widget.rooms[index].roomName,
+                      'roomName': widget.rooms[index].name,
                       'playerId': socketService.socket.id,
                     });
                   }
                 },
                 cells: [
                   DataCell(Text(
-                    widget.rooms[index].roomName,
+                    widget.rooms[index].name,
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.primary),
                   )),

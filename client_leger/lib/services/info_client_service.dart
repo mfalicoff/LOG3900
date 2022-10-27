@@ -2,6 +2,7 @@ import 'package:client_leger/models/tile.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
+import '../models/game-server.dart';
 import '../models/game.dart';
 import '../models/letter.dart';
 import '../models/player.dart';
@@ -12,8 +13,9 @@ class InfoClientService extends ChangeNotifier{
 
   static final InfoClientService _gameService = InfoClientService._internal();
 
-  Game game = Game();
-  Player player = Player();
+  GameServer game = GameServer(minutesByTurn: 0, randomBonusesOn: false, gameMode: 'Solo', vpLevel: 'defaultLevel', roomName: 'defaultRoom', isGamePrivate: false, passwd: '' );
+
+  Player player = Player('DefaultPlayerObject', false);
 
   //TODO remove these lines later
   //tmp stand for testing
