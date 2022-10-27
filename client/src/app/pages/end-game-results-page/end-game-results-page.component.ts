@@ -44,6 +44,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.gameSavedSubscription = this.saveGame().subscribe(
             (res) => {
                 // eslint-disable-next-line no-console
+                console.log(res);
                 this.gameSaved._id = res;
             },
             (error) => {
@@ -162,7 +163,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
             this.roomName,
             this.numberOfTurns,
             this.gameStartDate,
-            this.playingTime,
+            this.displayPlayingTime(),
             this.infoClientService.game.nbLetterReserve,
             this.infoClientService.actualRoom.spectators,
             this.infoClientService.game.winners,

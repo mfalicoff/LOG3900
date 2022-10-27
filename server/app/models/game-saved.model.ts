@@ -2,6 +2,10 @@ import { Document, model, Schema } from 'mongoose';
 import { GameSaved } from '@app/classes/game-saved';
 
 const gameSavedSchema: Schema = new Schema({
+    roomName: {
+        type: String,
+        required: true,
+    },
     players: {
         type: [String],
         required: true,
@@ -13,10 +17,6 @@ const gameSavedSchema: Schema = new Schema({
     winners: {
         type: [String],
         required: false,
-    },
-    roomName: {
-        type: String,
-        required: true,
     },
     numberOfTurns: {
         type: Number,

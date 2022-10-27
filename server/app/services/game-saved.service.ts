@@ -29,10 +29,10 @@ class GameSavedService {
         if (findSavedGame) throw new HttpException(HTTPStatusCode.Conflict, `The roomName ${gameData.roomName} of the game already exists`);
 
         return await this.gamesSaved.create({
+            roomName: gameData.roomName,
             players: gameData.players,
             spectators: gameData.spectators,
             winners: gameData.winners,
-            roomName: gameData.roomName,
             numberOfTurns: gameData.numberOfTurns,
             gameStartDate: gameData.gameStartDate,
             playingTime: gameData.playingTime,
