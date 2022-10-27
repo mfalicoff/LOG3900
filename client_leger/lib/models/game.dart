@@ -1,6 +1,7 @@
 import 'package:client_leger/models/player.dart';
+import 'package:flutter/cupertino.dart';
 
-class Game {
+class Game with ChangeNotifier{
   List<PlayerOld> players = [];
   int timer = 0;
   bool waitingPlayers = true;
@@ -9,6 +10,7 @@ class Game {
     for(int i = 0; i < 4; i++){
       players.add(PlayerOld.fromJSON(data["players"][i]));
     }
+    notifyListeners();
   }
 
   Game(){}
@@ -19,5 +21,6 @@ class Game {
       playersTemp.add(PlayerOld.fromJSON(data["players"][i]));
     }
     players = playersTemp;
+    notifyListeners();
   }
 }

@@ -3,6 +3,8 @@ import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
 import 'package:flutter/material.dart';
 
+import '../services/socket_service.dart';
+
 class GamePage extends StatefulWidget {
   const GamePage({Key? key}) : super(key: key);
 
@@ -12,6 +14,7 @@ class GamePage extends StatefulWidget {
 
 class _GamePageState extends State<GamePage> {
   InfoClientService infoClientService = InfoClientService();
+  SocketService socketService = SocketService();
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +82,7 @@ class _GamePageState extends State<GamePage> {
   }
 
   void _leaveGame() {
-    infoClientService.leaveGame();
+    socketService.socket.emit('leaveGame');
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
   }
 

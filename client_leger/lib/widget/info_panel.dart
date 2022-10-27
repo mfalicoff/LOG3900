@@ -17,12 +17,12 @@ class _InfoPanelState extends State<InfoPanel> {
   void initState() {
     super.initState();
     gameService.addListener(refresh);
+    gameService.game.addListener(refresh);
   }
 
   void refresh() {
     if(mounted){
       setState(() {
-
       });
     }
   }
