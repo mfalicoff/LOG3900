@@ -1,4 +1,5 @@
 import 'package:client_leger/services/info_client_service.dart';
+import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/utils.dart';
@@ -12,12 +13,16 @@ class InfoPanel extends StatefulWidget {
 
 class _InfoPanelState extends State<InfoPanel> {
   final InfoClientService gameService = InfoClientService();
+  final SocketService socketService = SocketService();
 
   @override
   void initState() {
     super.initState();
+
     gameService.addListener(refresh);
     gameService.game.addListener(refresh);
+    gameService.actualRoom.addListener(refresh);
+    socketService.addListener(refresh);
   }
 
   void refresh() {
@@ -141,21 +146,21 @@ class _InfoPanelState extends State<InfoPanel> {
               ),
             ],
             rows: List<DataRow>.generate(
-              gameService.game.players.length,
+              gameService.actualRoom.players.length,
               (int index) => DataRow(
                 cells: [
                   DataCell(getAvatarFromString(
-                      22, gameService.game.players[index].avatarUri!)),
+                      22, gameService.actualRoom.players[index].avatarUri)),
                   DataCell(
                     Text(
-                      gameService.game.players[index].name,
+                      gameService.actualRoom.players[index].name,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                   DataCell(
                     Text(
-                      gameService.game.players[index].score.toString(),
+                      gameService.actualRoom.players[index].score.toString(),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
