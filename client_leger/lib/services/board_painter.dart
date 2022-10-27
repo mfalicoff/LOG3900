@@ -6,21 +6,29 @@ import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
 import '../models/board.dart';
-import '../models/stand.dart';
+import '../models/letter.dart';
+import '../models/tile.dart';
+import 'info_client_service.dart';
 
 class BoardPainter extends CustomPainter {
+  InfoClientService infoClientService = InfoClientService();
   Board board;
-  Stand stand;
+  List<Tile> stand = [];
   double tilePadding = 2;
   late double tileSize;
   final int textTileColor = 0xFF104D45;
   final int textSideColor = 0xFF54534A;
   final int borderColor = 0xFFAAA38E;
+  final int tileBorderColor = 0xFF157DEC;
 
-  BoardPainter(this.board, this.stand);
+  BoardPainter(this.board){
+    stand = infoClientService.stand;
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
+    print(stand[0].letter.value);
+    print(stand.length);
     tileSize = crossProduct(WIDTH_EACH_SQUARE, size.height);
     tilePadding = crossProduct(WIDTH_LINE_BLOCKS, size.height);
     drawStands(canvas, size);
@@ -76,7 +84,7 @@ class BoardPainter extends CustomPainter {
             ),
             paint,
           );
-          drawTileText(
+          drawBonusText(
               canvas,
               textTilesMap[board.tiles[i][j]]!,
               Offset(startXY + j * (tileSize + tilePadding), startXY + i * (tileSize + tilePadding)));
@@ -107,7 +115,50 @@ class BoardPainter extends CustomPainter {
     }
   }
 
-  void drawTileText(Canvas canvas, String tileType, Offset tilePos){
+  void drawTileText(Canvas canvas, Letter letterToDraw, Offset tilePos){
+    final letterValueStyle = TextStyle(
+      color: createMaterialColor(Color(textTileColor)),
+      fontSize: 13,
+      fontWeight: FontWeight.bold,
+    );
+    final letterWeightStyle = TextStyle(
+      color: createMaterialColor(Color(textTileColor)),
+      fontSize: 7,
+      fontWeight: FontWeight.normal,
+    );
+    final letterValueSpan = TextSpan(
+      text: letterToDraw.value.toUpperCase(),
+      style: letterValueStyle,
+    );
+    final letterWeightSpan = TextSpan(
+      text: letterToDraw.weight.toString(),
+      style: letterWeightStyle,
+    );
+    final valuePainter = TextPainter(
+      textAlign: TextAlign.center,
+      text: letterValueSpan,
+      textDirection: TextDirection.ltr,
+    );
+    final weightPainter = TextPainter(
+      textAlign: TextAlign.center,
+      text: letterWeightSpan,
+      textDirection: TextDirection.ltr,
+    );
+    valuePainter.layout(
+      minWidth: 0,
+      maxWidth: tileSize - tilePadding * 2,
+    );
+    weightPainter.layout(
+      minWidth: 0,
+      maxWidth: tileSize - tilePadding * 2,
+    );
+    valuePainter.paint(canvas, Offset(tilePos.dx + ((tileSize - valuePainter.width) * 0.45),
+        tilePos.dy + (((tileSize+tilePadding) - valuePainter.height) * 0.5)));
+    weightPainter.paint(canvas, Offset(tilePos.dx + ((tileSize - valuePainter.width) * 0.95),
+        tilePos.dy + (((tileSize+tilePadding) - valuePainter.height) * 0.9)));
+  }
+
+  void drawBonusText(Canvas canvas, String tileType, Offset tilePos){
     final textStyle = TextStyle(
       color: createMaterialColor(Color(textTileColor)),
       fontSize: 7,
@@ -192,18 +243,47 @@ class BoardPainter extends CustomPainter {
         ),
         paint,
     );
-    for(int i = 0; i < stand.tiles.length; i++){
-      paint.color = createMaterialColor(Color(colorTilesMap[stand.tiles[i]]!));
-      canvas.drawRect(
-        Rect.fromLTWH(
-            startX + i * (tileSize + tilePadding) + crossProduct(SIZE_OUTER_BORDER_STAND, canvasSize.height),
-            startY + crossProduct(SIZE_OUTER_BORDER_STAND, canvasSize.height),
-            tileSize,
-            tileSize,
-        ),
-        paint,
-      );
+    for(int i = 0; i < stand.length; i++){
+      paint.color = createMaterialColor(Color(colorTilesMap["xx"]!));
+      double xPos = startX + i * (tileSize + tilePadding) + crossProduct(SIZE_OUTER_BORDER_STAND, canvasSize.height);
+      double yPos = startY + crossProduct(SIZE_OUTER_BORDER_STAND, canvasSize.height);
+      if(stand[i].letter.value == ''){
+        canvas.drawRect(
+          Rect.fromLTWH(xPos, xPos, tileSize, tileSize),
+          paint,
+        );
+      }else{
+        drawTile(xPos, yPos, stand[i], canvas, canvasSize);
+      }
     }
+  }
+
+  void drawTile(double xPos, double yPos, Tile tileToDraw, Canvas canvas, Size canvasSize){
+    final paint = Paint()
+      ..style = PaintingStyle.fill;
+
+    // Fill the rectangle with an initial color
+    // paint.color = Color(colorTilesMap["xx"]!);
+    paint.color = colorConvert(tileToDraw.backgroundColor);
+    canvas.drawRect(
+      Rect.fromLTWH(
+        xPos, yPos,
+        tileSize,
+        tileSize,
+      ),
+      paint,
+    );
+    drawTileText(canvas, tileToDraw.letter, Offset(xPos, yPos));
+  }
+
+  Color colorConvert(String color) {
+    color = color.replaceAll("#", "");
+    if (color.length == 6) {
+      return Color(int.parse("0xFF" + color));
+    } else if (color.length == 8) {
+      return Color(int.parse("0x" + color));
+    }
+    return const Color(0x00000000);
   }
 
   void drawVertiStand(double startX, double startY, Canvas canvas, Size canvasSize){
@@ -222,8 +302,8 @@ class BoardPainter extends CustomPainter {
       paint,
     );
 
-    for(int i = 0; i < stand.tiles.length; i++){
-      paint.color = createMaterialColor(Color(colorTilesMap[stand.tiles[i]]!));
+    for(int i = 0; i < stand.length; i++){
+      paint.color = createMaterialColor(Color(colorTilesMap["xx"]!));
       canvas.drawRect(
         Rect.fromLTWH(
           startX + crossProduct(SIZE_OUTER_BORDER_STAND, canvasSize.height),

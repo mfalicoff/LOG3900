@@ -37,6 +37,7 @@ export class Player {
         this.isCreatorOfGame = isCreatorOfGame;
         this.idPlayer = '';
         this.stand = [];
+        this.avatarUri = '';
         this.mapLetterOnStand = new Map();
         this.score = 0;
         this.nbLetterStand = Constants.NUMBER_SLOT_STAND;

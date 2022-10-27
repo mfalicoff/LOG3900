@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../models/board.dart';
 import '../models/stand.dart';
+import '../models/tile.dart';
 import '../services/board_painter.dart';
+import '../services/info_client_service.dart';
 
 class GameBoard extends StatefulWidget {
   const GameBoard({Key? key}) : super(key: key);
@@ -13,8 +15,8 @@ class GameBoard extends StatefulWidget {
 }
 
 class _GameBoardState extends State<GameBoard> {
+  InfoClientService infoClientService = InfoClientService();
   Board board = Board(constBoard1);
-  Stand stand = Stand(constStand1);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class _GameBoardState extends State<GameBoard> {
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: CustomPaint(
-                  painter: BoardPainter(board, stand),
+                  painter: BoardPainter(board),
                 ),
               )),
         ),
