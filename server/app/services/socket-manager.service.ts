@@ -10,6 +10,8 @@ import { Score } from '@app/classes/score';
 import { Spectator } from '@app/classes/spectator';
 import { Tile } from '@app/classes/tile';
 import { User } from '@app/classes/users.interface';
+import avatarService from '@app/services/avatar.service';
+import UserService from '@app/services/user.service';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from "typedi";
@@ -34,6 +36,8 @@ export class SocketManager {
     scoreClassic: Score[];
     scoreLOG2990: Score[];
     chatHistory: ChatMessage[] = [];
+    private userService = new UserService();
+    private avatarService = new avatarService();
 
     constructor(
         server: http.Server,
@@ -417,7 +421,7 @@ export class SocketManager {
         });
     }
 
-    private createGameAndPlayer(
+    private async createGameAndPlayer(
         gameMode: string,
         timeTurn: number,
         isBonusRandom: boolean,
@@ -432,13 +436,14 @@ export class SocketManager {
         const newGame: GameServer = new GameServer(timeTurn, isBonusRandom, gameMode, vpLevel, roomName, isGamePrivate, passwd);
         const newPlayer = new Player(playerName, true);
         newPlayer.idPlayer = socket.id;
+        newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(playerName));
         this.boardService.initBoardArray(newGame);
 
         // fill the remaining players with bots
         for (let i = 0; i < GlobalConstants.MAX_PERSON_PLAYING - 1; i++) {
             const virtualPlayerId = 'virtualPlayer';
             const newOpponent = new Player(this.databaseService.namesVP[i].firstName + ' ' + this.databaseService.namesVP[i].lastName, false);
-
+            newOpponent.avatarUri = await this.avatarService.getRandomAvatar();
             newOpponent.idPlayer = virtualPlayerId;
             newGame.mapPlayers.set(newOpponent.name, newOpponent);
         }
@@ -508,9 +513,10 @@ export class SocketManager {
         }
     }
 
-    private joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
+    private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
+        newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.idPlayer = socket.id;
         game?.mapPlayers.set(socket.id, newPlayer);
 
@@ -539,7 +545,7 @@ export class SocketManager {
         socket.on('CreateRankedRoomAndGame', ({playerName}) => {
             this.createRankedGame(playerName, socket);
         })
-        socket.on('createRoomAndGame', ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
+        socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
                 socket.emit('messageServer', 'Une salle avec ce nom existe déjà.');
@@ -552,7 +558,7 @@ export class SocketManager {
             if (user) {
                 user.roomName = roomName;
             }
-            this.createGameAndPlayer(gameMode, timeTurn, isBonusRandom, playerName, socket, roomName, vpLevel, isGamePrivate, passwd);
+            await this.createGameAndPlayer(gameMode, timeTurn, isBonusRandom, playerName, socket, roomName, vpLevel, isGamePrivate, passwd);
             const createdGame = this.rooms.get(roomName);
             if (!createdGame) {
                 return;
@@ -572,6 +578,7 @@ export class SocketManager {
             this.gameUpdateClients(createdGame);
 
             // emit to change page on client after verification
+            createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
         socket.on('startMatchmaking',({eloDisparity, user}) => {
@@ -586,10 +593,7 @@ export class SocketManager {
         })
 
         socket.on('joinRoom', ( roomName, playerId ) => {
-            // console.log(this.users);
-            // console.log(playerId);
             const userData = this.users.get(playerId);
-            // console.log(userData);
             if (!userData) {
                 return;
             }
@@ -645,7 +649,7 @@ export class SocketManager {
             this.sendListOfRooms(socket);
         });
 
-        socket.on('spectWantsToBePlayer', () => {
+        socket.on('spectWantsToBePlayer', async () => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -681,6 +685,7 @@ export class SocketManager {
             // set the new player attribute and add it to the map
             oldVirtualPlayer.idPlayer = socket.id;
             oldVirtualPlayer.name = user.name;
+            oldVirtualPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(user.name));
             game.mapPlayers.set(oldVirtualPlayer.name, oldVirtualPlayer);
 
             socket.emit('isSpectator', false);
@@ -834,7 +839,7 @@ export class SocketManager {
             return;
         }
         if (game.gameFinished) {
-            this.gameFinishedAction(game);
+            this.sio.sockets.emit('gameOver');
             return;
         }
 
@@ -846,14 +851,13 @@ export class SocketManager {
             const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
                 (player) => player.idPlayer !== 'virtualPlayer' && player.idPlayer !== playerThatLeaves?.idPlayer,
             ).length;
-
-            const nbSpectators = Array.from(game.mapSpectators.values()).length;
+            const nbSpectators = game.mapSpectators.size;
 
             if (nbRealPlayer >= 1 || nbSpectators >= 1) {
                 // we send to the opponent a update of the game
                 const waitBeforeAbandonment = 3000;
-                setTimeout(() => {
-                    this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
+                setTimeout(async () => {
+                    await this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
                     if (socket.id === game.masterTimer) {
                         game.setMasterTimer();
                     }
@@ -867,13 +871,21 @@ export class SocketManager {
                     if (!game.gameStarted) {
                         this.shouldCreatorBeAbleToStartGame(game);
                     }
+
+                    // check if we should delete the room game or not
+                    this.gameFinishedAction(game);
                 }, waitBeforeAbandonment);
             } else {
+                // we remove the player leaving in the map
+                game.mapPlayers.delete(playerThatLeaves.name);
+                // we decide if we delete the room or not
                 this.gameFinishedAction(game);
             }
         } else if (specThatLeaves) {
             // if it is a spectator that leaves
             game.mapSpectators.delete(socket.id);
+            // we check if we should delete the game or not
+            this.gameFinishedAction(game);
         } else {
             // should never go there
             // eslint-disable-next-line no-console
@@ -884,7 +896,6 @@ export class SocketManager {
         user.roomName = '';
         this.gameUpdateClients(game);
     }
-
     private gameFinishedAction(game: GameServer) {
         const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
         const nbSpectators = game?.mapSpectators.size;

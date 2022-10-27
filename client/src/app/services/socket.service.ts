@@ -6,6 +6,7 @@ import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { RoomData } from '@app/classes/room-data';
+import { BehaviorSubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { DrawingBoardService } from './drawing-board-service';
@@ -19,6 +20,7 @@ import { TimerService } from './timer.service';
 })
 export class SocketService {
     socket: Socket;
+    gameFinished: BehaviorSubject<boolean>;
     private urlString = environment.serverUrl;
 
     constructor(
@@ -30,6 +32,7 @@ export class SocketService {
         private drawingService: DrawingService,
     ) {
         this.socket = io(this.urlString);
+        this.gameFinished = new BehaviorSubject(this.infoClientService.game.gameFinished);
         this.socketListen();
     }
 
@@ -73,10 +76,14 @@ export class SocketService {
         });
 
         this.socket.on('gameBoardUpdate', (game) => {
-            this.infoClientService.game = game;
-            setTimeout(() => {
-                this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
-            }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+            if (!game.gameFinished) {
+                this.infoClientService.game = game;
+                setTimeout(() => {
+                    this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
+                }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+            } else {
+                this.gameFinished.next(true);
+            }
         });
 
         // updates the players and spectators list for each rooms

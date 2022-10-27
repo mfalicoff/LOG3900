@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
 import { ChatComponent } from '@app/pages/chat/chat.component';
+import { GameModeOptionsPageComponent } from '@app/pages/game-mode-options-page/game-mode-options-page.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
-import { GamemodeoptionsPageComponent } from '@app/pages/gamemodeoptions-page/gamemodeoptions-page.component';
 import { LeaderboardPageComponent } from '@app/pages/leaderboard-page/leaderboard-page.component';
 import { LoginPageComponent } from '@app/pages/login-page/login-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
@@ -27,7 +27,7 @@ const routes: Routes = [
     { path: 'admin', component: AdminPageComponent },
     { path: 'chat', component: ChatComponent },
     { path: 'login', component: LoginPageComponent },
-    { path: 'gamemode-options', component: GamemodeoptionsPageComponent },
+    { path: 'game-mode-options', component: GameModeOptionsPageComponent },
     { path: 'profile', component: ProfilePageComponent },
     { path: '**', redirectTo: '/home' },
 ];

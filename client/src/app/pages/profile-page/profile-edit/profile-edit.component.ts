@@ -16,7 +16,7 @@ export class ProfileEditComponent {
     constructor(private userService: UserService, private dialog: MatDialog) {}
 
     getUsername() {
-        return this.userService.getUserFromStorage().name;
+        return this.userService.user.name;
     }
 
     async updateUsername() {

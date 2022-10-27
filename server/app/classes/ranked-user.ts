@@ -7,7 +7,7 @@ export class RankedUser {
     hasAccepted:boolean;
     socketId:string;
     constructor(user:User, eloDisparity: number) {
-        if(user.elo === undefined) {
+        if(user.elo == undefined) {
             this.elo = 2000;
         }
         else {

@@ -9,15 +9,17 @@ import { DatabaseService } from './database.service';
 import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
 import { StandService } from './stand.service';
-import { VirtualPlayerService } from './virtual-player.service';
+// import { VirtualPlayerService } from './virtual-player.service';
+import AvatarService from '@app/services/avatar.service';
 
 @Service()
 export class PlayAreaService {
     sio: io.Server;
+    avatarService = new AvatarService();
     constructor(
         private standService: StandService,
         private letterBankService: LetterBankService,
-        private virtualPService: VirtualPlayerService,
+        // private virtualPService: VirtualPlayerService,
         private chatService: ChatService,
         private expertVPService: ExpertVP,
         private databaseService: DatabaseService,
@@ -120,7 +122,7 @@ export class PlayAreaService {
     }
 
     // function that transforms the playerThatLeaves into a virtual player
-    replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
+    async replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
         // we send to everyone that the player has left and has been replaced by a bot
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
@@ -143,6 +145,7 @@ export class PlayAreaService {
         // we replace him with the virtual player
         playerThatLeaves.idPlayer = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
+        playerThatLeaves.avatarUri = await this.avatarService.getRandomAvatar();
         this.insertInMapIndex(game.idxPlayerPlaying, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
 
         // if the game is not started we don't need to change the turn
@@ -212,12 +215,12 @@ export class PlayAreaService {
     }
 
     private randomActionVP(game: GameServer, player: Player): string {
-        const neinyPercent = 0.9;
-        const tenPercent = 0.1;
-        const probaMove: number = this.giveProbaMove();
-        let resultCommand = '';
+        // const neinyPercent = 0.9;
+        // const tenPercent = 0.1;
+        // const probaMove: number = this.giveProbaMove();
+        let resultCommand = '!passer';
 
-        if (probaMove < tenPercent) {
+        /* if (probaMove < tenPercent) {
             // 10% change to change letters
             if (this.letterBankService.getNbLettersInLetterBank(game.letterBank) < GlobalConstants.DEFAULT_NB_LETTER_STAND) {
                 this.chatService.passCommand('!passer', game, player);
@@ -233,18 +236,18 @@ export class PlayAreaService {
             if (choosedMoved) {
                 resultCommand = '!placer ' + choosedMoved.command + ' ' + choosedMoved.word;
             }
-        } else {
-            this.chatService.passCommand('!passer', game, player);
-            resultCommand = '!passer';
-        }
+        } else {*/
+        this.chatService.passCommand('!passer', game, player);
+        resultCommand = '!passer';
+        // }
 
         return resultCommand;
     }
 
-    private giveProbaMove(): number {
+    /* private giveProbaMove(): number {
         const returnValue: number = Math.random();
         return returnValue;
-    }
+    }*/
 
     private updateOldTiles(game: GameServer) {
         const board = game.board;

@@ -19,6 +19,17 @@ class UsersController {
         }
     };
 
+    getUserByName = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userName: string = req.query.name as string;
+            const findOneUserData: User = await this.userService.findUserByName(userName);
+
+            res.status(HTTPStatusCode.OK).json({ data: findOneUserData, message: 'findOne' });
+        } catch (error) {
+            next(error);
+        }
+    };
+
     getUserById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId: string = req.params.id;

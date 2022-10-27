@@ -69,6 +69,10 @@ export class LoginPageComponent {
                 })
                 // eslint-disable-next-line deprecation/deprecation
                 .subscribe({
+                    // next: (response) => {
+                    //     this.socketService.socket.emit('new-user', response.data.name);
+                    //     this.infoClientService.playerName = response.data.name;
+                    //     this.router.navigate(['/game-mode-options']);
                     next: () => {
                         this.http
                             .post<any>(this.serverUrl + 'login', {
@@ -112,18 +116,18 @@ export class LoginPageComponent {
     }
 
     private saveUserInfo(response: any) {
-        localStorage.setItem('cookie', response.token);
+        localStorage.setItem(`cookie-${response.data._id}`, response.token);
         this.userService.updateUserInstance(response.data);
         this.socketService.socket.emit('new-user', response.data.name);
         this.infoClientService.playerName = response.data.name;
-        this.router.navigate(['/gamemode-options']);
+        this.router.navigate(['/game-mode-options']);
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
             alert('Erreur: ' + error.status + error.error.message);
         } else {
-            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error.message}`);
+            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
         }
     }
 }

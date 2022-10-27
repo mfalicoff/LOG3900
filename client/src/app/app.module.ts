@@ -26,12 +26,16 @@ import { ModalVpLevelsComponent } from './components/modal-vp-levels/modal-vp-le
 import { UserHistoryComponent } from './components/user-history/user-history.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { ChatComponent } from './pages/chat/chat.component';
-import { GamemodeoptionsPageComponent } from './pages/gamemodeoptions-page/gamemodeoptions-page.component';
+import { GameModeOptionsPageComponent } from './pages/game-mode-options-page/game-mode-options-page.component';
 import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ModalComponent } from './pages/modal/modal.component';
 import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
 import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
+// eslint-disable-next-line import/no-unresolved
+import { EndGameResultsPageComponent } from '@app/pages/end-game-results-page/end-game-results-page.component';
+import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
+import { NgDisableLinkModule } from 'ng-disable-link';
 
 /**
  * Main module that is used in main.ts.
@@ -60,11 +64,13 @@ import { ProfilePageComponent } from './pages/profile-page/profile-page.componen
         ModalVpLevelsComponent,
         ChatComponent,
         LoginPageComponent,
-        GamemodeoptionsPageComponent,
+        GameModeOptionsPageComponent,
         ProfilePageComponent,
         UserHistoryComponent,
         ProfileEditComponent,
         GalleryComponent,
+        EndGameResultsPageComponent,
+        ProfileReadOnlyPageComponent,
     ],
     imports: [
         AppMaterialModule,
@@ -77,6 +83,7 @@ import { ProfilePageComponent } from './pages/profile-page/profile-page.componen
         RouterModule,
         MatGridListModule,
         NgxGalleryModule,
+        NgDisableLinkModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

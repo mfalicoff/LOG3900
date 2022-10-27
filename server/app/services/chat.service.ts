@@ -1,10 +1,10 @@
 import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
-import { EndGameService } from '@app/services/end-game.service';
 import { ValidationService } from '@app/services/validation.service';
 import { Service } from 'typedi';
 import UserService from '@app/services/user.service';
+import { EndGameService } from '@app/services/end-game.service';
 import { DEFAULT_VALUE_NUMBER } from '@app/classes/global-constants';
 
 enum Commands {
@@ -82,7 +82,8 @@ export class ChatService {
         player.chatHistory.push({ message: GlobalConstants.PLACE_CMD, isCommand: false, sender: 'S' });
 
         if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
-            this.showEndGameStats(game, player, false);
+            this.showEndGameStats(game, player);
+            // this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             game.gameFinished = true;
         }
     }
@@ -103,7 +104,8 @@ export class ChatService {
             }
         }
         if (didEveryonePass3Times) {
-            this.showEndGameStats(game, player, false);
+            this.showEndGameStats(game, player);
+            // this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             game.gameFinished = true;
         }
     }
@@ -201,7 +203,7 @@ export class ChatService {
         }
     }
 
-    private async showEndGameStats(game: GameServer, player: Player, gameAbandoned: boolean) {
+    private async showEndGameStats(game: GameServer, player: Player) {
         game.endTime = new Date().getTime();
         this.pushMsgToAllPlayers(game, player.name, GlobalConstants.END_OF_GAME, false, 'S');
         for (const playerElem of game.mapPlayers.values()) {
@@ -215,10 +217,7 @@ export class ChatService {
             const gameLength = game.endTime - game.startTime;
             await this.userService.updateStatsAtEndOfGame(gameLength, playerElem);
         }
-
-        if (!gameAbandoned) {
-            this.sendWinnerMessage(game, player);
-        }
+        await this.sendWinnerMessage(game, player);
     }
 
     private async sendWinnerMessage(game: GameServer, player: Player) {

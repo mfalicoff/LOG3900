@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-
 @Injectable({
     providedIn: 'root',
 })
@@ -8,6 +7,7 @@ export class TimerService {
     matchmakingDisplayTimer = '';
     secondsValue: number = 0;
     matchmakingSecondsValue: number = 0;
+    playingTime: number = 0.0;
     private timerInterval: NodeJS.Timeout;
     private timerMatchmaking: NodeJS.Timeout;
 
@@ -23,6 +23,7 @@ export class TimerService {
         const oneSecond = 1000;
         this.timerInterval = setInterval(() => {
             this.secondsValue--;
+            this.playingTime++;
             if (this.secondsValue >= 0) {
                 if (this.secondsValue % secondsInMinute <= displayZero) {
                     this.displayTimer = `Temps Restant : ${Math.floor(this.secondsValue / secondsInMinute)}:0${this.secondsValue % secondsInMinute}`;
