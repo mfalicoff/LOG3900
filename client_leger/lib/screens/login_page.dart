@@ -171,7 +171,7 @@ class _LoginFormState extends State<LoginForm> {
   }
 
   void _toGamePageState() {
-    Navigator.pushNamed(context, "/home");
+    Navigator.pushNamed(context, "/game");
   }
 
   void _toSignUpPage() {
