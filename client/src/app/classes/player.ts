@@ -6,7 +6,7 @@ import { Tile } from './tile';
 import { Vec4 } from './vec4';
 
 export class Player {
-    idPlayer: string;
+    id: string;
     name: string;
     stand: Tile[];
     avatarUri: string;
@@ -40,7 +40,7 @@ export class Player {
     constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
         this.isCreatorOfGame = isCreatorOfGame;
-        this.idPlayer = '';
+        this.id = '';
         this.stand = [];
         this.mapLetterOnStand = new Map();
         this.score = 0;

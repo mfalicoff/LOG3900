@@ -76,7 +76,7 @@ export class CommunicationBoxService {
                     }
                     // we don't want to explicitly switch the player's turn for now
                     // bc it the following timeout would make problems so we control his actions
-                    this.playAreaService.sio.sockets.sockets.get(player.idPlayer)?.emit('changeIsTurnOursStatus', false);
+                    this.playAreaService.sio.sockets.sockets.get(player.id)?.emit('changeIsTurnOursStatus', false);
 
                     // timeout bc this is the time before the letter are back to the player
                     setTimeout(() => {

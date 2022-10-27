@@ -76,7 +76,7 @@ export class InfoClientService {
         this.nameVP1dictionary0 = 0;
         this.isSpectator = false;
         this.creatorShouldBeAbleToStartGame = false;
-        this.actualRoom = new RoomData('default', '1', 'fake', [], []);
+        this.actualRoom = new RoomData('default', 'classic', '1', 'fake', [], []);
         this.powerUsedForTurn = false;
         this.displayPowerModal = 'none';
         this.displayExchStandModal = 'none';

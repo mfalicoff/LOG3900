@@ -158,7 +158,7 @@ export class PutLogicService {
 
         // we send an update of the player object for each respective client
         for (const player of game.mapPlayers.values()) {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
+            this.sio.sockets.sockets.get(player.id)?.emit('playerAndStandUpdate', player);
         }
     }
 

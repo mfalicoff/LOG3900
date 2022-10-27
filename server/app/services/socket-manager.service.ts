@@ -465,7 +465,7 @@ export class SocketManager {
         // We create the game and add it to the rooms map
         const newGame: GameServer = new GameServer(timeTurn, gameMode, roomName, isGamePrivate, passwd);
         const newPlayer = new Player(playerName, true);
-        newPlayer.idPlayer = socket.id;
+        newPlayer.id = socket.id;
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(playerName));
         this.boardService.initBoardArray(newGame);
 
@@ -474,7 +474,7 @@ export class SocketManager {
             const virtualPlayerId = 'virtualPlayer';
             const newOpponent = new Player(this.databaseService.namesVP[i].firstName + ' ' + this.databaseService.namesVP[i].lastName, false);
             newOpponent.avatarUri = await this.avatarService.getRandomAvatar();
-            newOpponent.idPlayer = virtualPlayerId;
+            newOpponent.id = virtualPlayerId;
             newGame.mapPlayers.set(newOpponent.name, newOpponent);
         }
 
@@ -506,7 +506,7 @@ export class SocketManager {
         if (game.gameStarted || game.gameFinished) {
             creatorCanStart = false;
         } else {
-            const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
+            const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.id !== 'virtualPlayer').length;
             if (nbRealPlayer < Constants.MIN_PERSON_PLAYING) {
                 creatorCanStart = false;
             }
@@ -516,7 +516,7 @@ export class SocketManager {
             if (!player.isCreatorOfGame) {
                 continue;
             }
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('creatorShouldBeAbleToStartGame', creatorCanStart);
+            this.sio.sockets.sockets.get(player.id)?.emit('creatorShouldBeAbleToStartGame', creatorCanStart);
             break;
         }
     }
@@ -525,7 +525,7 @@ export class SocketManager {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
-        newPlayer.idPlayer = socket.id;
+        newPlayer.id = socket.id;
         game?.mapPlayers.set(socket.id, newPlayer);
 
         this.playAreaService.sendMsgToAllInRoom(game, userData?.name + ' a rejoint la partie.');
@@ -570,6 +570,7 @@ export class SocketManager {
             const players = Array.from(createdGame.mapPlayers.values());
             const spectators = Array.from(createdGame.mapSpectators.values());
             this.sio.sockets.emit('addElementListRoom', {
+                gameMode,
                 roomName,
                 timeTurn,
                 passwd,
@@ -604,7 +605,7 @@ export class SocketManager {
                 userData.roomName = game.roomName;
                 for (const creatorOfGame of game.mapPlayers.values()) {
                     if (creatorOfGame.isCreatorOfGame) {
-                        this.sio.sockets.sockets.get(creatorOfGame.idPlayer)?.emit('askForEntrance', userData.name, playerId);
+                        this.sio.sockets.sockets.get(creatorOfGame.id)?.emit('askForEntrance', userData.name, playerId);
                         return;
                     }
                 }
@@ -660,7 +661,7 @@ export class SocketManager {
             let oldVirtualPlayer;
             // take the first virtualPlayer that the server founds
             for (const player of game.mapPlayers.values()) {
-                if (player.idPlayer === 'virtualPlayer') {
+                if (player.id === 'virtualPlayer') {
                     oldVirtualPlayer = player;
                     break;
                 }
@@ -675,7 +676,7 @@ export class SocketManager {
             game.mapPlayers.delete(oldVirtualPlayer.name);
 
             // set the new player attribute and add it to the map
-            oldVirtualPlayer.idPlayer = socket.id;
+            oldVirtualPlayer.id = socket.id;
             oldVirtualPlayer.name = user.name;
             oldVirtualPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(user.name));
             game.mapPlayers.set(oldVirtualPlayer.name, oldVirtualPlayer);
@@ -694,6 +695,7 @@ export class SocketManager {
             // in the room
             this.sio.sockets.emit('addElementListRoom', {
                 roomName,
+                gameMode: game.gameMode,
                 timeTurn: game.minutesByTurn,
                 passwd: game.passwd,
                 players: Array.from(game.mapPlayers.values()),
@@ -782,6 +784,7 @@ export class SocketManager {
 
         this.sio.sockets.emit('addElementListRoom', {
             roomName: game.roomName,
+            gameMode: game.gameMode,
             timeTurn: game.minutesByTurn,
             passwd: game.passwd,
             players,
@@ -803,7 +806,7 @@ export class SocketManager {
 
         // we send an update of the player object for each respective client
         for (const player of game.mapPlayers.values()) {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
+            this.sio.sockets.sockets.get(player.id)?.emit('playerAndStandUpdate', player);
         }
     }
 
@@ -838,7 +841,7 @@ export class SocketManager {
         if (playerThatLeaves) {
             // if there are only virtualPlayers in the game we delete the game
             const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
-                (player) => player.idPlayer !== 'virtualPlayer' && player.idPlayer !== playerThatLeaves?.idPlayer,
+                (player) => player.id !== 'virtualPlayer' && player.id !== playerThatLeaves?.id,
             ).length;
             const nbSpectators = game.mapSpectators.size;
 
@@ -886,7 +889,7 @@ export class SocketManager {
         this.gameUpdateClients(game);
     }
     private gameFinishedAction(game: GameServer) {
-        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
+        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.id !== 'virtualPlayer').length;
         const nbSpectators = game?.mapSpectators.size;
         // if this is the last player to leave the room we delete it
         if (nbRealPlayer + nbSpectators <= 1) {
@@ -904,6 +907,7 @@ export class SocketManager {
 
             socket.emit('addElementListRoom', {
                 roomName,
+                gameMode: game.gameMode,
                 timeTurn: game.minutesByTurn,
                 passwd: game.passwd,
                 players: Array.from(game.mapPlayers.values()),

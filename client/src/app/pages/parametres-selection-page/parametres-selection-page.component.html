@@ -63,14 +63,12 @@
                             </mat-option>
                         </mat-select>
                     </mat-form-field>
-                    <span *ngIf="infoClientService.gameMode==='power-cards'">
-                        <p>
-                            <span>Activer ou désactiver des cartes de pouvoirs: </span>
-                            <button id="bonusButtonMulti" (click)="showPowerModal()">
-                                Liste Cartes
-                            </button>
-                        </p>
-                    </span>
+                    <p *ngIf="infoClientService.gameMode==='power-cards'">
+                        <span>Activer ou désactiver des cartes de pouvoirs: </span>
+                        <button id="bonusButtonMulti" (click)="showPowerModal()">
+                            Liste Cartes
+                        </button>
+                    </p>
                 </div>
             </div>
             <div class="container-3">

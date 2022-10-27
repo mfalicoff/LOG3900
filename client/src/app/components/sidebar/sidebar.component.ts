@@ -72,7 +72,7 @@ export class SidebarComponent {
         if (this.infoClientService.game.gameFinished || !this.infoClientService.isSpectator) {
             return false;
         }
-        const nbVirtualPlayer = Array.from(this.infoClientService.actualRoom.players).filter((player) => player.idPlayer === 'virtualPlayer').length;
+        const nbVirtualPlayer = Array.from(this.infoClientService.actualRoom.players).filter((player) => player.id === 'virtualPlayer').length;
         if (nbVirtualPlayer > 0) {
             return true;
         } else {

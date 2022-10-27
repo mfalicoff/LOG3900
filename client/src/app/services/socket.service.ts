@@ -179,10 +179,10 @@ export class SocketService {
     }
 
     private roomManipulationHandler() {
-        this.socket.on('addElementListRoom', ({ roomName, timeTurn, passwd, players, spectators }) => {
+        this.socket.on('addElementListRoom', ({ roomName, gameMode, timeTurn, passwd, players, spectators }) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
             if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, passwd, players, spectators));
+                this.infoClientService.rooms.push(new RoomData(roomName, gameMode, timeTurn, passwd, players, spectators));
             } else {
                 this.infoClientService.rooms[idxExistingRoom].players = players;
                 this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
@@ -263,7 +263,7 @@ export class SocketService {
     }
 
     private updateUiBeforeStartGame(players: Player[]) {
-        const nbRealPlayer = players?.filter((player: Player) => player.idPlayer !== 'virtualPlayer').length;
+        const nbRealPlayer = players?.filter((player: Player) => player.id !== 'virtualPlayer').length;
         if (nbRealPlayer >= GlobalConstants.MIN_PERSON_PLAYING) {
             this.infoClientService.displayTurn = GlobalConstants.WAITING_FOR_CREATOR;
         } else {

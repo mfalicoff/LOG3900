@@ -4,7 +4,7 @@ import { PowerCard } from './power-card';
 import { Tile } from './tile';
 
 export class Player {
-    idPlayer: string;
+    id: string;
     name: string;
     stand: Tile[];
 
@@ -40,7 +40,7 @@ export class Player {
     constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
         this.isCreatorOfGame = isCreatorOfGame;
-        this.idPlayer = '';
+        this.id = '';
         this.stand = [];
         this.mapLetterOnStand = new Map();
         this.score = 0;

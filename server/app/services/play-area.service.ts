@@ -70,7 +70,7 @@ export class PlayAreaService {
         // changes the current player
         game.idxPlayerPlaying = (game.idxPlayerPlaying + 1) % game.mapPlayers.size;
         const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-        if (playerPlaying.idPlayer === 'virtualPlayer') {
+        if (playerPlaying.id === 'virtualPlayer') {
             this.virtualPlayerAction(game, playerPlaying);
         }
 
@@ -106,7 +106,7 @@ export class PlayAreaService {
 
         const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         // make the virtual player play
-        if (playerPlaying && playerPlaying.idPlayer === 'virtualPlayer') {
+        if (playerPlaying && playerPlaying.id === 'virtualPlayer') {
             this.virtualPlayerAction(game, playerPlaying);
         }
         // update board tiles to old
@@ -141,14 +141,14 @@ export class PlayAreaService {
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
 
         // we keep the old id to determine later to change the old player's turn or not
-        const oldIdPlayer = playerThatLeaves.idPlayer;
+        const oldIdPlayer = playerThatLeaves.id;
 
         let isChangeTurnNeccesary = false;
         // we check if we will have to change the turn of the player that just left
         if (game.gameStarted) {
             // we change the player turn if it was the player that left's turn
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-            if (playerPlaying.idPlayer === oldIdPlayer) {
+            if (playerPlaying.id === oldIdPlayer) {
                 isChangeTurnNeccesary = true;
             }
         }
@@ -156,7 +156,7 @@ export class PlayAreaService {
         game.mapPlayers.delete(playerThatLeaves.name);
 
         // we replace him with the virtual player
-        playerThatLeaves.idPlayer = 'virtualPlayer';
+        playerThatLeaves.id = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
         playerThatLeaves.avatarUri = await this.avatarService.getRandomAvatar();
         this.insertInMapIndex(game.idxPlayerPlaying, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
@@ -284,7 +284,7 @@ export class PlayAreaService {
 
         // we send an update of the player object for each respective client
         for (const player of game.mapPlayers.values()) {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
+            this.sio.sockets.sockets.get(player.id)?.emit('playerAndStandUpdate', player);
         }
     }
 

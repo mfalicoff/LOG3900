@@ -127,6 +127,6 @@ export class EndGameResultsPageComponent implements OnInit {
     }
 
     isLinkEnabled(player: Player): boolean {
-        return player.idPlayer !== 'virtualPlayer';
+        return player.id !== 'virtualPlayer';
     }
 }

@@ -123,10 +123,10 @@ export class GameServer {
     setMasterTimer() {
         // try to find a player to give him the master timer
         for (const player of this.mapPlayers.values()) {
-            if (player.idPlayer === 'virtualPlayer') {
+            if (player.id === 'virtualPlayer') {
                 continue;
             }
-            this.masterTimer = player.idPlayer;
+            this.masterTimer = player.id;
             return;
         }
         // if no player found, try to find a spectator to give him the master timer
@@ -137,7 +137,7 @@ export class GameServer {
     }
     // takes the first players and makes it creator of game
     setNewCreatorOfGame() {
-        const realPlayers = Array.from(this.mapPlayers.values()).filter((player) => !player.isCreatorOfGame && player.idPlayer !== 'virtualPlayer');
+        const realPlayers = Array.from(this.mapPlayers.values()).filter((player) => !player.isCreatorOfGame && player.id !== 'virtualPlayer');
 
         // takes the first players and makes it creator of game
         if (realPlayers.length > 0) {
