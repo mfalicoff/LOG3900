@@ -5,6 +5,7 @@ class Game with ChangeNotifier{
   List<PlayerOld> players = [];
   int timer = 0;
   bool waitingPlayers = true;
+  bool gameFinished = false;
 
   Game.fromJSON(data){
     for(int i = 0; i < 4; i++){

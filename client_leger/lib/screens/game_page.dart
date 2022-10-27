@@ -81,6 +81,19 @@ class _GamePageState extends State<GamePage> {
     );
   }
 
+  bool shouldSpecBeAbleToBePlayer() {
+    if (infoClientService.game.gameFinished || !infoClientService.isSpectator) {
+      return false;
+    }
+    num nbVirtualPlayer =  infoClientService.actualRoom.players.where((element) => element.idPlayer == 'virtualPlayer').length;
+    if (nbVirtualPlayer > 0) {
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
   void _leaveGame() {
     socketService.socket.emit('leaveGame');
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
