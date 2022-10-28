@@ -119,6 +119,7 @@ class GameServer {
     letters = List<String>.from(game["letters"]);
 
     board = [];
+    bonusBoard = [];
     var lines = game["board"];
     for(var line in lines){
       List<Tile> tempLine = [];
@@ -141,7 +142,14 @@ class GameServer {
     noTileOnBoard = game["noTileOnBoard"];
     //TODO winners
     //TODO letterBank
-    bonusBoard = game["bonusBoard"];
+    var mapBonusBoard = game["bonusBoard"];
+    for(var row in mapBonusBoard) {
+      List<String> newRow = [];
+      for(var val in row){
+        newRow.add(val);
+      }
+      bonusBoard.add(newRow);
+    }
   }
 
   initializeLettersArray() {
@@ -181,7 +189,7 @@ class GameServer {
 
   initBoardArray() {
     for(int i = 0; i < NUMBER_SQUARE_H_AND_W + 2; i++) {
-      board[i] = [];
+      board.add([]);
       for(int j = 0; j < NUMBER_SQUARE_H_AND_W + 2; j++) {
         Tile newTile = Tile();
         Letter newLetter = Letter();

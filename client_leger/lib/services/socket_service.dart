@@ -10,6 +10,7 @@ import 'dart:async';
 
 
 import '../models/player.dart';
+import '../models/room-data.dart';
 import 'info_client_service.dart';
 
 
@@ -51,16 +52,22 @@ class SocketService with ChangeNotifier{
   roomManipulationHandler() {
 
     socket.on('addElementListRoom', (data) {
-
+      RoomData room = RoomData.fromJson(data);
+      var exist = infoClientService.rooms.where((element) => element.name == room.name);
+      if(exist.isEmpty){
+        infoClientService.rooms.add(room);
+        notifyListeners();
+      }
     });
 
     socket.on('removeElementListRoom', (roomNameToDelete) {
-
+      infoClientService.rooms.removeWhere((element) => element.name == roomNameToDelete);
+      notifyListeners();
     });
 
-    socket.on('roomChangeAccepted', (page) {
-
-    });
+    // socket.on('roomChangeAccepted', (page) {
+    //
+    // });
 
   }
 
@@ -87,7 +94,7 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('isSpectator', (isSpectator) {
-
+      infoClientService.isSpectator = isSpectator;
     });
 
     socket.on('askForEntrance', (data) {
@@ -95,7 +102,7 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('gameOver', (data) {
-
+      infoClientService.game.gameFinished = true;
     });
 
   }
@@ -103,10 +110,19 @@ class SocketService with ChangeNotifier{
   gameUpdateHandler() {
     socket.on('playerAndStandUpdate', (player) {
       infoClientService.updatePlayer(player);
+      // TODO
+      // setTimeout(() => {
+      // this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
+      // }, GlobalConstants.WAIT_FOR_CANVAS_INI);
     });
 
     socket.on('gameBoardUpdate', (game) {
       infoClientService.updateGame(game);
+
+      // TODO
+      // setTimeout(() => {
+      // this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
+      // }, GlobalConstants.WAIT_FOR_CANVAS_INI);
     });
 
     socket.on('playersSpectatorsUpdate', (data) {
@@ -114,7 +130,10 @@ class SocketService with ChangeNotifier{
       infoClientService.actualRoom = infoClientService.rooms[idxExistingRoom];
       infoClientService.rooms[idxExistingRoom].players = Player.createPLayersFromArray(data);
       if (infoClientService.isSpectator) {
-        // draw spec stand
+        // TODO
+        // setTimeout(() => {
+        // this.drawingService.drawSpectatorStands(players);
+        // }, GlobalConstants.WAIT_FOR_CANVAS_INI);
       }
       infoClientService.rooms[idxExistingRoom].spectators = Spectator.createSpectatorsFromArray(data);
 
@@ -122,6 +141,15 @@ class SocketService with ChangeNotifier{
       if (tmpPlayer != null) {
         infoClientService.player = tmpPlayer;
       }
+
+      // TODO
+      // do we need this?
+      // this.updateUiForSpectator(this.infoClientService.game);
+      // // update display turn to show that we are waiting for creator or other players
+      // if (!this.infoClientService.game.gameStarted) {
+      //   this.updateUiBeforeStartGame(players);
+      // }
+
       infoClientService.notifyListeners();
     });
 
@@ -130,11 +158,11 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) {
-
+      infoClientService.creatorShouldBeAbleToStartGame = creatorCanStart;
     });
 
     socket.on('changeIsTurnOursStatus', (isTurnOurs) {
-
+      infoClientService.isTurnOurs = isTurnOurs;
     });
   }
 
