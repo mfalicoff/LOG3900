@@ -6,7 +6,7 @@ class RoomData with ChangeNotifier{
   late String name;
   late String timeTurn;
   late bool isBonusRandom;
-  late String passwd;
+  late String? passwd;
 
   late String roomCreator = "";
   int numberRealPlayer = 0;
@@ -44,7 +44,7 @@ class RoomData with ChangeNotifier{
     List<Spectator> newSpects = [];
     for(var mapSpect in mapSpects){
       Spectator spect = Spectator.fromJson(mapSpect);
-      mapSpects.add(spect);
+      newSpects.add(spect);
     }
 
     players = newPlayers;

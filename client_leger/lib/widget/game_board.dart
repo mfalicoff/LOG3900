@@ -2,8 +2,6 @@ import 'package:client_leger/constants/constants_test.dart';
 import 'package:flutter/material.dart';
 
 import '../models/board.dart';
-import '../models/stand.dart';
-import '../models/tile.dart';
 import '../services/board_painter.dart';
 import '../services/info_client_service.dart';
 
@@ -16,6 +14,20 @@ class GameBoard extends StatefulWidget {
 
 class _GameBoardState extends State<GameBoard> {
   InfoClientService infoClientService = InfoClientService();
+
+  @override
+  void initState() {
+    super.initState();
+
+    infoClientService.addListener(refresh);
+  }
+
+  void refresh() {
+    if(mounted){
+      setState(() {
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -13,7 +13,7 @@ import 'info_client_service.dart';
 class BoardPainter extends CustomPainter {
   InfoClientService infoClientService = InfoClientService();
   List<List<Tile>> board = [[]];
-  List<Tile> stand = [];
+  List<List<Tile>> stands = [];
   double tilePadding = 2;
   late double tileSize;
   final int textTileColor = 0xFF104D45;
@@ -22,15 +22,12 @@ class BoardPainter extends CustomPainter {
   final int tileBorderColor = 0xFF157DEC;
 
   BoardPainter(){
-    infoClientService.initBoard();
     board = infoClientService.game.board;
-    stand = infoClientService.stand;
+    stands = infoClientService.actualRoom.players.map((player) => player.stand).toList();
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    print(board.length);
-    print(board[0].length);
     tileSize = crossProduct(WIDTH_EACH_SQUARE, size.height);
     tilePadding = crossProduct(WIDTH_LINE_BLOCKS, size.height);
     drawStands(canvas, size);
@@ -70,21 +67,21 @@ class BoardPainter extends CustomPainter {
               board[i][j], canvas, canvasSize);
         }else{
           if(i == 8 && j == 8){
-            paint.color = createMaterialColor(colorConvert(board[i][j].backgroundColor));
+            paint.color = createMaterialColor(Color(colorTilesMap["wordx2"]!));
             canvas.drawRect(
               Rect.fromLTWH(
                 startXY + j * (tileSize + tilePadding),
                 startXY + i * (tileSize + tilePadding),
                 tileSize,
                 tileSize,
-              ),
-              paint,
-            );
-            drawStar(canvas, Offset(startXY + j * (tileSize + tilePadding), startXY + i * (tileSize+ tilePadding)));
-          } else {
-            paint.color = createMaterialColor(colorConvert(board[i][j].backgroundColor));
-            canvas.drawRect(
-              Rect.fromLTWH(
+            ),
+            paint,
+          );
+          drawStar(canvas, Offset(startXY + j * (tileSize + tilePadding), startXY + i * (tileSize+ tilePadding)));
+        } else {
+          paint.color = createMaterialColor(Color(colorTilesMap[infoClientService.game.bonusBoard[i][j]]!));
+          canvas.drawRect(
+            Rect.fromLTWH(
                 startXY + j * (tileSize + tilePadding),
                 startXY + i * (tileSize + tilePadding),
                 tileSize,
@@ -94,7 +91,7 @@ class BoardPainter extends CustomPainter {
             );
             drawBonusText(
                 canvas,
-                textTilesMap[board[i][j]]!,
+                textTilesMap[board[i][j].bonus]!,
                 Offset(startXY + j * (tileSize + tilePadding), startXY + i * (tileSize + tilePadding)));
           }
         }
@@ -223,18 +220,34 @@ class BoardPainter extends CustomPainter {
         + crossProduct(WIDTH_HEIGHT_BOARD, canvasSize.height)
         + crossProduct(PADDING_BET_BOARD_AND_STAND, canvasSize.height);
 
-    //top stand
-    drawHorizStand(constPosXYForStands, 0, canvas, canvasSize);
-    //left stand
-    drawVertiStand(0, constPosXYForStands, canvas, canvasSize);
-    //right stand
-    drawVertiStand(
-        paddingForRightAndBottomStands, constPosXYForStands,
-        canvas, canvasSize);
+    num idxPlayerPlaying = infoClientService.game.idxPlayerPlaying;
+    //when game is not started idxPlayerPlaying is -1
+    if(idxPlayerPlaying < 0){
+      idxPlayerPlaying = 0;
+    }
     //bottom Stand
     drawHorizStand(
         constPosXYForStands, paddingForRightAndBottomStands,
-        canvas, canvasSize);
+        canvas, canvasSize, stands[idxPlayerPlaying.toInt()]);
+    // we go to the next player
+    idxPlayerPlaying = (idxPlayerPlaying + 1) % stands.length;
+
+    if(infoClientService.isSpectator) {
+      //left stand
+      drawVertiStand(0, constPosXYForStands, canvas, canvasSize, stands[idxPlayerPlaying.toInt()]);
+      // we go to the next player
+      idxPlayerPlaying = (idxPlayerPlaying + 1) % stands.length;
+
+      //top stand
+      drawHorizStand(constPosXYForStands, 0, canvas, canvasSize, stands[idxPlayerPlaying.toInt()]);
+      // we go to the next player
+      idxPlayerPlaying = (idxPlayerPlaying + 1) % stands.length;
+
+      //right stand
+      drawVertiStand(
+          paddingForRightAndBottomStands, constPosXYForStands,
+          canvas, canvasSize, stands[idxPlayerPlaying.toInt()]);
+    }
   }
 
   void drawTile(double xPos, double yPos, Tile tileToDraw, Canvas canvas, Size canvasSize){
@@ -253,6 +266,7 @@ class BoardPainter extends CustomPainter {
       paint,
     );
     drawTileText(canvas, tileToDraw, Offset(xPos, yPos));
+    roundRect(xPos, yPos, tileSize, tileSize, tileToDraw.borderColor, canvas);
   }
 
   Color colorConvert(String color) {
@@ -265,7 +279,7 @@ class BoardPainter extends CustomPainter {
     return const Color(0x00000000);
   }
 
-  void drawHorizStand(double startX, double startY, Canvas canvas, Size canvasSize){
+  void drawHorizStand(double startX, double startY, Canvas canvas, Size canvasSize, List<Tile> stand){
     final paint = Paint()
       ..style = PaintingStyle.fill
       ..color = Color(borderColor);
@@ -289,12 +303,11 @@ class BoardPainter extends CustomPainter {
         );
       }else{
         drawTile(xPos, yPos, stand[i], canvas, canvasSize);
-        roundRect(xPos, yPos, tileSize, tileSize, stand[i].borderColor, canvas);
       }
     }
   }
 
-  void drawVertiStand(double startX, double startY, Canvas canvas, Size canvasSize){
+  void drawVertiStand(double startX, double startY, Canvas canvas, Size canvasSize, List<Tile> stand){
     final paint = Paint()
       ..style = PaintingStyle.fill
       ..color = Color(borderColor);
@@ -319,7 +332,6 @@ class BoardPainter extends CustomPainter {
         );
       }else{
         drawTile(xPos, yPos, stand[i], canvas, canvasSize);
-        roundRect(xPos, yPos, tileSize, tileSize, stand[i].borderColor, canvas);
       }
     }
   }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
 import '../models/game-server.dart';
-import '../models/game.dart';
 import '../models/letter.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
@@ -13,7 +12,7 @@ class InfoClientService extends ChangeNotifier{
 
   static final InfoClientService _gameService = InfoClientService._internal();
 
-  GameServer game = GameServer(minutesByTurn: 0, randomBonusesOn: false, gameMode: 'Solo', vpLevel: 'defaultLevel', roomName: 'defaultRoom', isGamePrivate: false, passwd: '' );
+  late GameServer game;
 
   Player player = Player('DefaultPlayerObject', false);
 
@@ -29,7 +28,8 @@ class InfoClientService extends ChangeNotifier{
 
   String playerName = 'DefaultPlayerName';
 
-
+  String displayTurn = "En attente d'un autre joueur...";
+  bool isTurnOurs = false;
 
   factory InfoClientService(){
     return _gameService;
@@ -37,8 +37,8 @@ class InfoClientService extends ChangeNotifier{
 
   InfoClientService._internal() {
     actualRoom = RoomData(name: 'default', timeTurn: '1', isBonusRandom: false, passwd: 'fake', players: [], spectators: []);
+    game = GameServer(minutesByTurn: 0, randomBonusesOn: false, gameMode: 'Solo', vpLevel: 'defaultLevel', roomName: 'defaultRoom', isGamePrivate: false, passwd: '' );
     initStand();
-    initBoard();
   }
 
   //tmp function to initialize the stand
@@ -134,6 +134,16 @@ class InfoClientService extends ChangeNotifier{
         game.board[i.toInt()].add(newTile);
       }
     }
+  }
+
+  void updatePlayer(player){
+    player = Player.fromJson(player);
+    notifyListeners();
+  }
+
+  void updateGame(data){
+    game = GameServer.fromJson(data);
+    notifyListeners();
   }
 
 }

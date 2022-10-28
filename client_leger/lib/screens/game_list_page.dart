@@ -23,30 +23,38 @@ class _GameListPageState extends State<GameListPage> {
   void initState() {
     initSockets();
     super.initState();
+    gameService.addListener(refresh);
+  }
+
+  void refresh() {
+    if(mounted){
+      setState(() {
+      });
+    }
   }
 
   void initSockets() {
     // TODO NEEDS TO UPDATE INFO CLIENT SERVICE[ROOMS]
-    socketService.socket.on('addElementListRoom', (data) {
-      if (mounted) {
-        setState(() {
-          // Room room = Room.fromJson(data);
-          RoomData room = RoomData.fromJson(data);
-          var exist = gameService.rooms.where((element) => element.name == room.name);
-          if(exist.isEmpty){
-            // rooms.add(Room.fromJson(data));
-            gameService.rooms.add(room);
-          }
-        });
-      }
-    });
-    socketService.socket.on('removeElementListRoom', (data) {
-      if (mounted) {
-        setState(() {
-          gameService.rooms.removeWhere((element) => element.name == data);
-        });
-      }
-    });
+    // socketService.socket.on('addElementListRoom', (data) {
+    //   if (mounted) {
+    //     setState(() {
+    //       // Room room = Room.fromJson(data);
+    //       RoomData room = RoomData.fromJson(data);
+    //       var exist = gameService.rooms.where((element) => element.name == room.name);
+    //       if(exist.isEmpty){
+    //         // rooms.add(Room.fromJson(data));
+    //         gameService.rooms.add(room);
+    //       }
+    //     });
+    //   }
+    // });
+    // socketService.socket.on('removeElementListRoom', (data) {
+    //   if (mounted) {
+    //     setState(() {
+    //       gameService.rooms.removeWhere((element) => element.name == data);
+    //     });
+    //   }
+    // });
     socketService.socket.on("roomChangeAccepted", (data) {
       if(mounted){
         Navigator.pushNamed(context, "/game");

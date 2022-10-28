@@ -19,4 +19,20 @@ class Tile {
     borderColor = '#212121';
     isOnBoard = false;
   }
+
+  Tile.fromJson(tile){
+    position = Vec4();
+    position.x1 = tile["position"]["x1"];
+    position.y1 = tile["position"]["y1"];
+    position.width = tile["position"]["width"];
+    position.height = tile["position"]["height"];
+    letter = Letter();
+    letter.value = tile["letter"]["value"];
+    letter.weight = tile["letter"]["weight"];
+    bonus = tile["bonus"];
+    old = tile["old"];
+    backgroundColor = tile["backgroundColor"];
+    borderColor = tile["borderColor"];
+    isOnBoard = tile["isOnBoard"];
+  }
 }

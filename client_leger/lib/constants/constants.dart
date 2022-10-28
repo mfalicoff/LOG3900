@@ -52,4 +52,11 @@ const double HEIGHT_STAND = WIDTH_EACH_SQUARE + SIZE_OUTER_BORDER_STAND * 2;
 
 const double PADDING_BOARD_FOR_STANDS = HEIGHT_STAND + PADDING_BET_BOARD_AND_STAND;
 
+const num NUMBER_SQUARE_H_AND_W = 15;
+
+const num MIN_PERSON_PLAYING = 2;
+const String WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
+const String WAIT_FOR_OTHER_PLAYERS = "En attente d'autres joueurs...";
+
+
 //CONSTANTS FOR

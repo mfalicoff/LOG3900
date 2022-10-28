@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
 
+import 'package:client_leger/models/tile.dart';
+
+import 'command.dart';
+
 class PlayerOld {
   late String name;
   late String idPlayer;
@@ -19,17 +23,17 @@ class PlayerOld {
 class Player with ChangeNotifier {
   late String idPlayer;
   late String name;
-  late String stand; //TODO add Tile class
+  late List<Tile> stand = [];
   late String avatarUri;
   late bool isCreatorOfGame;
 
-  late String mapLetterOnStand;
+  late Map<String, Object> mapLetterOnStand;
   late int score;
   late int nbLetterStand;
 
   // CHAT SERVICE DATA
   late String lastWordPlaced;
-  late String chatHistory; //TODO change the type and decide if we keep Command class
+  late List<Command> chatHistory;
   late bool debugOn;
   late int passInARow;
 
@@ -52,7 +56,13 @@ class Player with ChangeNotifier {
     name = parsed["name"];
     isCreatorOfGame = parsed["isCreatorOfGame"];
     idPlayer = parsed["idPlayer"];
-    // TODO STAND
+
+    // TODO verify this works
+    var tileList = parsed["stand"];
+    for(var tile in tileList){
+      stand.add(Tile.fromJson(tile));
+    }
+
     // TODO MAPLETTERSONSTAND
     score = parsed["score"];
     nbLetterStand = parsed["nbLetterStand"];
