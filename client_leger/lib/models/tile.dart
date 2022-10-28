@@ -21,7 +21,16 @@ class Tile {
   }
 
   Tile.fromJson(tile){
-    //TODO position
-    //position = Vec4(tile["value"]);
+    position = Vec4();
+    position.x1 = tile["position"]["x1"];
+    position.y1 = tile["position"]["y1"];
+    position.width = tile["position"]["width"];
+    position.height = tile["position"]["height"];
+    //TODO letter
+    bonus = tile["bonus"];
+    old = tile["old"];
+    backgroundColor = tile["backgroundColor"];
+    borderColor = tile["borderColor"];
+    isOnBoard = tile["isOnBoard"];
   }
 }
