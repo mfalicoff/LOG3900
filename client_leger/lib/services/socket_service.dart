@@ -122,7 +122,7 @@ class SocketService with ChangeNotifier{
       if (tmpPlayer != null) {
         infoClientService.player = tmpPlayer;
       }
-      notifyListeners();
+      infoClientService.notifyListeners();
     });
 
     socket.on('findTileToPlaceArrow', (realPosInBoardPx) {

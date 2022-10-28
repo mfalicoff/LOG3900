@@ -23,7 +23,7 @@ class PlayerOld {
 class Player with ChangeNotifier {
   late String idPlayer;
   late String name;
-  late List<Tile> stand;
+  late List<Tile> stand = [];
   late String avatarUri;
   late bool isCreatorOfGame;
 
