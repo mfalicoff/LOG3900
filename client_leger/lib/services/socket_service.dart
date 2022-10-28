@@ -3,6 +3,7 @@ import 'package:client_leger/services/timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
+import '../constants/constants.dart';
 import '../env/environment.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:collection/collection.dart';
@@ -95,6 +96,7 @@ class SocketService with ChangeNotifier{
 
     socket.on('isSpectator', (isSpectator) {
       infoClientService.isSpectator = isSpectator;
+      infoClientService.notifyListeners();
     });
 
     socket.on('askForEntrance', (data) {
@@ -127,7 +129,8 @@ class SocketService with ChangeNotifier{
     socket.on('playersSpectatorsUpdate', (data) {
       int idxExistingRoom = infoClientService.rooms.indexWhere((element) => element.name == data['roomName']);
       infoClientService.actualRoom = infoClientService.rooms[idxExistingRoom];
-      infoClientService.rooms[idxExistingRoom].players = Player.createPLayersFromArray(data);
+      List<Player> updatedPlayers = Player.createPLayersFromArray(data);
+      infoClientService.rooms[idxExistingRoom].players = updatedPlayers;
       if (infoClientService.isSpectator) {
         // TODO
         // setTimeout(() => {
@@ -145,9 +148,9 @@ class SocketService with ChangeNotifier{
       // do we need this?
       // this.updateUiForSpectator(this.infoClientService.game);
       // // update display turn to show that we are waiting for creator or other players
-      // if (!this.infoClientService.game.gameStarted) {
-      //   this.updateUiBeforeStartGame(players);
-      // }
+      if (!infoClientService.game.gameStarted) {
+        updateUiBeforeStartGame(updatedPlayers);
+      }
 
       infoClientService.notifyListeners();
     });
@@ -188,6 +191,7 @@ class SocketService with ChangeNotifier{
 
       timerService.clearTimer();
       timerService.startTimer(minutesByTurn);
+      infoClientService.notifyListeners();
 
     });
 
@@ -228,8 +232,17 @@ class SocketService with ChangeNotifier{
     });
   }
 
+  updateUiBeforeStartGame(List<Player> players) {
+    if(infoClientService.actualRoom.numberRealPlayer >= MIN_PERSON_PLAYING) {
+      infoClientService.displayTurn = WAITING_FOR_CREATOR;
+    } else {
+      infoClientService.displayTurn = WAIT_FOR_OTHER_PLAYERS;
+    }
+  }
+
   displayChangeEndGameCallBack(String displayChange) {
     infoClientService.displayTurn = displayChange;
+    infoClientService.notifyListeners();
   }
 
   setTimeoutForTimer() {

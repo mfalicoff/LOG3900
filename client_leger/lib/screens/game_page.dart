@@ -51,12 +51,33 @@ class _GamePageState extends State<GamePage> {
                   ),
                 ),
                 Container(
-                    child: infoClientService.creatorShouldBeAbleToStartGame == true
-                        ? Text('Start Game')
-                        : Container()),
+                    child:
+                        infoClientService.creatorShouldBeAbleToStartGame == true
+                            ? Text('Start Game')
+                            : Container()),
                 Container(
-                    child: infoClientService.isSpectator == true
-                        ? Text('Prendre la place de un joueur virtuel')
+                    child: shouldSpecBeAbleToBePlayer() == true
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                              padding: MaterialStateProperty.all(
+                                const EdgeInsets.symmetric(
+                                    vertical: 6.0, horizontal: 3.0),
+                              ),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                            ),
+                            onPressed: spectWantsToBePlayer,
+                            child: Text(
+                              "Remplacer joueur virtuel",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          )
                         : Container())
               ],
             ),
@@ -85,18 +106,19 @@ class _GamePageState extends State<GamePage> {
     if (infoClientService.game.gameFinished || !infoClientService.isSpectator) {
       return false;
     }
-    num nbVirtualPlayer =  infoClientService.actualRoom.players.where((element) => element.idPlayer == 'virtualPlayer').length;
-    if (nbVirtualPlayer > 0) {
+    if (infoClientService.actualRoom.numberVirtualPlayer > 0) {
       return true;
     } else {
       return false;
     }
+  }
 
+  spectWantsToBePlayer() {
+    socketService.socket.emit('spectWantsToBePlayer');
   }
 
   void _leaveGame() {
     socketService.socket.emit('leaveGame');
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
   }
-
 }

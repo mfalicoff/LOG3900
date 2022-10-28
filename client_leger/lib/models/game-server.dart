@@ -71,7 +71,7 @@ class GameServer {
     gameFinished = false;
     idxPlayerPlaying = -1;
     masterTimer = '';
-    displaySkipTurn = "En attente d'un autre joueur..";
+    displaySkipTurn = "En attente d'autres joueurs...";
     noTileOnBoard = true;
     winners = List.from([Player('', false)]);
 

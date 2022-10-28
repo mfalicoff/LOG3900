@@ -28,9 +28,8 @@ class _InfoPanelState extends State<InfoPanel> {
   }
 
   void refresh() {
-    if(mounted){
-      setState(() {
-      });
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -54,66 +53,74 @@ class _InfoPanelState extends State<InfoPanel> {
           const SizedBox(
             height: 5,
           ),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _pass,
-                  child: FittedBox(
-                    child: Text(
-                      "Passer",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
+          Container(
+            child: gameService.isSpectator == true
+                ? Container()
+                : Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _pass,
+                          child: FittedBox(
+                            child: Text(
+                              "Passer",
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _trade,
+                          child: FittedBox(
+                            child: Text(
+                              "Échanger",
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _cancel,
+                          child: FittedBox(
+                            child: Text(
+                              "Annuler",
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _play,
+                          child: FittedBox(
+                            child: Text(
+                              "Jouer",
+                              style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _trade,
-                  child: FittedBox(
-                    child: Text(
-                      "Échanger",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _cancel,
-                  child: FittedBox(
-                    child: Text(
-                      "Annuler",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _play,
-                  child: FittedBox(
-                    child: Text(
-                      "Jouer",
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                  ),
-                ),
-              ),
-            ],
           ),
           const SizedBox(
             height: 5,
@@ -181,7 +188,11 @@ class _InfoPanelState extends State<InfoPanel> {
     );
   }
 
-  void _pass() {}
+  void _pass() {
+    if(gameService.isTurnOurs && gameService.game.gameStarted) {
+      socketService.socket.emit('onExchangeClick');
+    }
+  }
 
   void _trade() {}
 

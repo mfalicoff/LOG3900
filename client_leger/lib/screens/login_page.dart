@@ -5,6 +5,8 @@ import 'package:client_leger/services/controller.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
 
+import '../services/info_client_service.dart';
+
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -59,6 +61,7 @@ class _LoginFormState extends State<LoginForm> {
   String? email = "";
   String? password = "";
   Controller controller = Controller();
+  final InfoClientService infoClientService = InfoClientService();
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +162,7 @@ class _LoginFormState extends State<LoginForm> {
       try {
         globals.userLoggedIn =
             await controller.login(email: email, password: password);
+        infoClientService.playerName = globals.userLoggedIn.username;
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => const MyHomePage()));
       } on Exception {
