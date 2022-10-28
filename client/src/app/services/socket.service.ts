@@ -190,16 +190,19 @@ export class SocketService {
         //this.infoClientService.player = player;
         this.rankedService.matchHasBeenFound();
         })
-        this.socket.on('createRankedGame', (name) => {
+        this.socket.on('createRankedGame', async (name) => {
             this.socket.emit('createRoomAndGame',{ roomName:name, playerName:name, timeTurn: 1, isBonusRandom:false, gameMode:GlobalConstants.MODE_RANKED, vpLevel:'beginner', isGamePrivate:false, passwd:''});
-            let mockDict = this.infoClientService.dictionaries.find(element => element.title === 'Dictionnaire français par défaut');
+            let mockDict = {
+                title: 'Dictionnaire français par défaut',
+                description: 'Ce dictionnaire contient environ trente mille mots français',
+            };
+    
             this.socket.emit('dictionarySelected', mockDict);
         })
         this.socket.on('startGame', (roomName) => {
             this.socket.emit('startGame', roomName);
         })
         this.socket.on('joinRoom', (gameName, socketId) => {
-            console.log(socketId);
             this.socket.emit('joinRoom', gameName, socketId);
             this.socket.emit('spectWantsToBePlayer', gameName, socketId);
         })

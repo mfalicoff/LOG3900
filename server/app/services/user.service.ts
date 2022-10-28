@@ -147,10 +147,10 @@ class UserService {
             );
     }
 
-    async changeEloUser(player: Player, newElo: number) {
+    async changeEloUser(player: Player) {
         await this.users.updateOne(
             {name: player.name},
-            { $push: {elo: newElo}},
+            { $push: {elo: player.elo}},
         );
     }
 

@@ -5,7 +5,7 @@ import { Tile } from './tile';
 export class Player {
     idPlayer: string;
     name: string;
-    elo: number;
+    elo: number = 2000;
     eloDisparity: number;
     stand: Tile[];
 
@@ -50,6 +50,5 @@ export class Player {
         this.tileIndexManipulation = GlobalConstants.DEFAULT_VALUE_NUMBER;
         this.allLetterSwapped = false;
         this.isMoveBingo = false;
-        this.elo = 2000;
     }
 }

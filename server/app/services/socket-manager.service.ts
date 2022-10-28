@@ -101,6 +101,16 @@ export class SocketManager {
     }
 
     private clientEventHandler(socket: io.Socket) {
+
+        socket.on('changeElo', (player) => {
+            this.userService.changeEloUser(player);
+        })
+
+        socket.on('leaveRankedGame', (player) => {
+            player.elo -= 20;
+            this.userService.changeEloUser(player);
+        })
+
         socket.on('turnFinished', () => {
             const user = this.users.get(socket.id);
             if (!user) {
@@ -472,31 +482,7 @@ export class SocketManager {
             // create button for creator to start the game if enough reel player are in the game
             this.shouldCreatorBeAbleToStartGame(newGame);
         }
-    }
-    private createRankedGame(playerName: string,socket: io.Socket,) {
-        const newGame: GameServer = new GameServer(1, false, GlobalConstants.MODE_RANKED, 'begginer', playerName, false, '');
-        const newPlayer = new Player(playerName, true);
-        newPlayer.idPlayer = socket.id;
-        this.boardService.initBoardArray(newGame);
-        newGame.mapPlayers.set(newPlayer.name, newPlayer);
-        this.rooms.set(playerName, newGame);
-
-        // Joining the room
-        socket.join(playerName);
-
-        // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
-        this.putLogicService.initSioPutLogic(this.sio);
-        this.mouseEventService.initSioMouseEvent(this.sio);
-        this.playAreaService.initSioPlayArea(this.sio);
-        this.matchmakingService.initSioMatchmaking(this.sio);
-        
-        const createdGame = this.rooms.get(playerName);
-        if (!createdGame) {
-            return;
-        }
-        this.gameUpdateClients(createdGame);
-        // emit to change page on client after verification
-        socket.emit('roomChangeAccepted', '/game');
+        console.log('created');
     }
     private shouldCreatorBeAbleToStartGame(game: GameServer) {
         const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
@@ -541,10 +527,6 @@ export class SocketManager {
         socket.on('new-user', (name) => {
             this.users.set(socket.id, { name, roomName: '' , elo: 2000});
         });
-
-        socket.on('CreateRankedRoomAndGame', ({playerName}) => {
-            this.createRankedGame(playerName, socket);
-        })
         socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
@@ -553,8 +535,6 @@ export class SocketManager {
             }
             // We add the roomName to the userMap
             const user = this.users.get(socket.id);
-            console.log(user);
-            console.log(roomName);
             if (user) {
                 user.roomName = roomName;
             }
@@ -715,6 +695,7 @@ export class SocketManager {
 
         // called when the creator of a multiplayer game wants to start the game
         socket.on('startGame', (roomName) => {
+            console.log('start');
             // OLD CODE REPLACED BY THE FACT THAT THE CREATOR OF THE GAME STARTS THE GAME
             const game = this.rooms.get(roomName);
             if (!game) {

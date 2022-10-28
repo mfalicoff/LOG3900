@@ -1,14 +1,15 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Player } from '@app/classes/player';
-import { InfoClientService } from '@app/services/info-client.service';
-import { TimerService } from '@app/services/timer.service';
-import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { environment } from '@app/../environments/environment';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Player } from '@app/classes/player';
 import { UserResponseInterface } from '@app/classes/response.interface';
+import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
+import { EloChangeService } from '@app/services/elo-change.service';
+import { InfoClientService } from '@app/services/info-client.service';
+import { SocketService } from '@app/services/socket.service';
+import { TimerService } from '@app/services/timer.service';
 import { Observable } from 'rxjs';
-
 @Component({
     selector: 'app-end-game-results-page',
     templateUrl: './end-game-results-page.component.html',
@@ -21,12 +22,16 @@ export class EndGameResultsPageComponent implements OnInit {
     playingTime: string;
     serverUrl = environment.serverUrl;
     players: Player[];
+    newPlayersElo:Player[];
+
     constructor(
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
         public infoClientService: InfoClientService,
         private timerService: TimerService,
         private dialog: MatDialog,
         private httpClient: HttpClient,
+        private eloChangeService:EloChangeService,
+        private socketService: SocketService
     ) {}
 
     ngOnInit() {
@@ -35,6 +40,8 @@ export class EndGameResultsPageComponent implements OnInit {
         this.findWinners(this.players);
         this.findNumberOfTurns();
         this.getGameStartDate();
+        this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
+        this.changeEloOfPlayersDB(); 
     }
 
     getUserByName(playerName: string): Observable<UserResponseInterface> {
@@ -65,6 +72,12 @@ export class EndGameResultsPageComponent implements OnInit {
                 }
             },
         });
+    }
+
+    changeEloOfPlayersDB() {
+        for(const player of this.newPlayersElo) {
+            this.socketService.socket.emit('changeElo', player);
+        }
     }
 
     closeModalEndGame() {

@@ -196,7 +196,7 @@ export class PlayAreaService {
     }
 
     private virtualPlayerAction(game: GameServer, player: Player) {
-        const fourSecondsWait = 4000;
+        const fourSecondsWait = 1000;
         const intervalId = setInterval(() => {
             if (game.vpLevel === 'expert') {
                 this.randomActionExpertVP(game, player);

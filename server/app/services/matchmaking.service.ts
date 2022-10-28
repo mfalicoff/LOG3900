@@ -56,7 +56,7 @@ export class MatchmakingService {
 
     rankedMatchFound(socket:io.Socket, users: RankedUser[]){
         this.sio.to(users[0].name).emit('matchFound');
-        let rankedGame: RankedGame = new RankedGame( users[0].name, 0.26, users);
+        let rankedGame: RankedGame = new RankedGame( users[0].name, 0.30, users);
         this.checkForUsersAccept(rankedGame);
     }
     onRefuse(socket:io.Socket, user:User) {
@@ -82,7 +82,7 @@ export class MatchmakingService {
     }
     checkForUsersAccept(rankedGame:RankedGame) {
         const timerInterval = setInterval(() => {
-            if (rankedGame.secondsValue <= 0) {
+            if (rankedGame.secondsValue <= 2) {
                 clearInterval(timerInterval);
                 const rankedUsers:RankedUser[] = this.rooms.get(rankedGame.name) as RankedUser[];
                 for(const user of rankedUsers) {
@@ -99,21 +99,27 @@ export class MatchmakingService {
         }, 1000);
     }
 
-    createRankedGame(rankedGame:RankedGame) {
+    async createRankedGame(rankedGame:RankedGame) {
         let creatorUser:RankedUser = rankedGame.rankedUsers[0];
         for(const user of rankedGame.rankedUsers) {
             if(user.name === rankedGame.name) {
                 creatorUser= user;
-                this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', user.name);
+                await this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', user.name);
             }
         }
-        for(const user of rankedGame.rankedUsers) {
-            if(user.name !== rankedGame.name) {
-                console.log('joinRoom');
-                this.sio.sockets.sockets.get(user.socketId)?.emit('joinRoom', rankedGame.name, user.socketId);
+        const timerInterval = setInterval(() => {
+        if (rankedGame.secondsValue <= 1) {
+            for(const user of rankedGame.rankedUsers) {
+                if(user.name !== rankedGame.name) {
+                    this.sio.sockets.sockets.get(user.socketId)?.emit('joinRoom', rankedGame.name, user.socketId);
+                }
             }
         }
-        this.sio.sockets.sockets.get(creatorUser.socketId)?.emit('startGame', creatorUser.name);
+        if(rankedGame.secondsValue <= 0) {
+            clearInterval(timerInterval);
+            this.sio.sockets.sockets.get(creatorUser.socketId)?.emit('startGame', creatorUser.name);
+        }
+    },1000)
     }
 
     matchRefused(rankedGame:RankedGame) { 
