@@ -38,10 +38,11 @@ class InfoClientService extends ChangeNotifier{
   InfoClientService._internal() {
     actualRoom = RoomData(name: 'default', timeTurn: '1', isBonusRandom: false, passwd: 'fake', players: [], spectators: []);
     initStand();
-    print(stand);
+    initBoard();
   }
 
   //tmp function to initialize the stand
+  //DO NOT REUSE IT
   void initStand(){
     const letterInit = 'abcdefg';
     const nbOccupiedSquare = 7;
@@ -50,42 +51,89 @@ class InfoClientService extends ChangeNotifier{
     i < NUMBER_SLOT_STAND;
     i++, j += WIDTH_EACH_SQUARE + WIDTH_LINE_BLOCKS
     ) {
-    Vec4 newPosition = Vec4();
-    Tile newTile = Tile();
-    Letter newLetter = Letter();
+      Vec4 newPosition = Vec4();
+      Tile newTile = Tile();
+      Letter newLetter = Letter();
 
-    // Initialising the position
-    newPosition.x1 = j + PADDING_BOARD_FOR_STANDS + WIDTH_HEIGHT_BOARD / 2 - WIDTH_STAND / 2;
-    newPosition.y1 =
-      PADDING_BET_BOARD_AND_STAND +
-      SIZE_OUTER_BORDER_STAND +
-      PADDING_BOARD_FOR_STANDS +
-      WIDTH_HEIGHT_BOARD;
-    newPosition.width = WIDTH_EACH_SQUARE;
-    newPosition.height = WIDTH_EACH_SQUARE;
-    newTile.position = newPosition;
+      // Initialising the position
+      newPosition.x1 = j + PADDING_BOARD_FOR_STANDS + WIDTH_HEIGHT_BOARD / 2 -
+          WIDTH_STAND / 2;
+      newPosition.y1 =
+          PADDING_BET_BOARD_AND_STAND +
+              SIZE_OUTER_BORDER_STAND +
+              PADDING_BOARD_FOR_STANDS +
+              WIDTH_HEIGHT_BOARD;
+      newPosition.width = WIDTH_EACH_SQUARE;
+      newPosition.height = WIDTH_EACH_SQUARE;
+      newTile.position = newPosition;
 
-    // Fills the occupiedSquare
-    if (i < nbOccupiedSquare) {
-      newLetter.weight = 1;
-      newLetter.value = letterInit[i.toInt()];
+      // Fills the occupiedSquare
+      if (i < nbOccupiedSquare) {
+        newLetter.weight = 1;
+        newLetter.value = letterInit[i.toInt()];
 
-      newTile.letter = newLetter;
-      newTile.bonus = '0';
+        newTile.letter = newLetter;
+        newTile.bonus = '0';
 
-      stand.add(newTile);
+        stand.add(newTile);
+      }
+      // Fills the rest
+      else {
+        newLetter.weight = 0;
+        newLetter.value = '';
+
+        newTile.letter = newLetter;
+        newTile.bonus = '0';
+
+        stand.add(newTile);
+      }
     }
-    // Fills the rest
-    else {
-      newLetter.weight = 0;
-      newLetter.value = '';
-
-      newTile.letter = newLetter;
-      newTile.bonus = '0';
-
-      stand.add(newTile);
-     }
   }
+
+  //tmp function to initialize the board
+  //DO NOT REUSE IT
+  void initBoard() {
+    print("hello");
+    for (
+    double i = 0,
+        l =
+            SIZE_OUTER_BORDER_BOARD -
+                WIDTH_EACH_SQUARE -
+                WIDTH_LINE_BLOCKS +
+                PADDING_BOARD_FOR_STANDS;
+    i < NB_SQUARE_H_AND_W + 2;
+    i++, l += WIDTH_EACH_SQUARE + WIDTH_LINE_BLOCKS
+    ) {
+      game.board[i.toInt()] = [];
+      for (
+      double j = 0,
+          k =
+              SIZE_OUTER_BORDER_BOARD -
+                  WIDTH_EACH_SQUARE -
+                  WIDTH_LINE_BLOCKS +
+                  PADDING_BOARD_FOR_STANDS;
+      j < NB_SQUARE_H_AND_W + 2;
+      j++, k += WIDTH_EACH_SQUARE + WIDTH_LINE_BLOCKS
+      ) {
+        Tile newTile = Tile();
+        Vec4 newPosition = Vec4();
+        Letter newLetter = Letter();
+
+        newPosition.x1 = k;
+        newPosition.y1 = l;
+        newPosition.width = WIDTH_EACH_SQUARE;
+        newPosition.height = WIDTH_EACH_SQUARE;
+
+        newLetter.weight = 0;
+        newLetter.value = '';
+
+        newTile.letter = newLetter;
+        newTile.position = newPosition;
+        newTile.bonus = game.bonusBoard[i.toInt()][j.toInt()];
+
+        game.board[i.toInt()].add(newTile);
+      }
+    }
   }
 
 }

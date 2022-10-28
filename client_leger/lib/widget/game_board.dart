@@ -16,7 +16,6 @@ class GameBoard extends StatefulWidget {
 
 class _GameBoardState extends State<GameBoard> {
   InfoClientService infoClientService = InfoClientService();
-  Board board = Board(constBoard1);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +32,7 @@ class _GameBoardState extends State<GameBoard> {
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: CustomPaint(
-                  painter: BoardPainter(board),
+                  painter: BoardPainter(),
                 ),
               )),
         ),
