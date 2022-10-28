@@ -69,13 +69,11 @@ export class UserService {
             });
     }
 
-    async updateFavourites(gameId: string) {
+    async updateFavourites(idOfGame: string) {
         return this.http
-            .put<UserResponseInterface>(
+            .patch<UserResponseInterface>(
                 environment.serverUrl + 'users/' + this.user._id,
-                {
-                    gameSavedId: gameId,
-                },
+                { gameId: idOfGame },
                 {
                     headers: this.getCookieHeader(),
                 },

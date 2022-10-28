@@ -92,17 +92,16 @@ class UserService {
     }
 
     async updateFavouriteGames(userId: string, gameId: string): Promise<User> {
-        if (isEmpty(gameId)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
+        if (userId === '' || userId === undefined) throw new HttpException(HTTPStatusCode.BadRequest, 'No user id sent');
         let updateUserById: User;
 
-        if (gameId) {
-            updateUserById = (await this.users.findByIdAndUpdate(userId, { $addToSet: { favouriteGames: gameId } }, { new: true })) as User;
-            if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+        if (gameId === '' || gameId === undefined) throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
+        // eslint-disable-next-line prefer-const
+        updateUserById = (await this.users.findByIdAndUpdate(userId, { $addToSet: { favouriteGames: gameId } }, { new: true })) as User;
+        if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
 
-            updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
-            return updateUserById;
-        }
-        throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
+        updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
+        return updateUserById;
     }
 
     async deleteUser(userId: string): Promise<User> {

@@ -21,7 +21,7 @@ class UsersController {
 
     getUserByName = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const userName: string = req.query.name as string;
+            const userName: string = req.params.name;
             const findOneUserData: User = await this.userService.findUserByName(userName);
 
             res.status(HTTPStatusCode.OK).json({ data: findOneUserData, message: 'findOne' });
@@ -67,7 +67,7 @@ class UsersController {
     updateFavouriteGames = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const userId: string = req.params.id;
-            const gameId: string = req.body;
+            const gameId: string = req.body.gameId;
             const updateUserData: User = await this.userService.updateFavouriteGames(userId, gameId);
 
             res.status(HTTPStatusCode.OK).json({ data: updateUserData, message: 'updated' });

@@ -64,9 +64,8 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     }
 
     getUserByName(playerName: string): Observable<UserResponseInterface> {
-        return this.httpClient.get<UserResponseInterface>(`${this.serverUrl}users/:name`, {
+        return this.httpClient.get<UserResponseInterface>(`${this.serverUrl}users/${playerName}`, {
             observe: 'body',
-            params: { name: playerName },
             responseType: 'json',
         });
     }
