@@ -1,5 +1,6 @@
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
+import 'package:client_leger/services/timer.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/utils.dart';
@@ -14,6 +15,7 @@ class InfoPanel extends StatefulWidget {
 class _InfoPanelState extends State<InfoPanel> {
   final InfoClientService gameService = InfoClientService();
   final SocketService socketService = SocketService();
+  final TimerService timerService = TimerService();
 
   @override
   void initState() {
@@ -22,6 +24,7 @@ class _InfoPanelState extends State<InfoPanel> {
     gameService.addListener(refresh);
     gameService.actualRoom.addListener(refresh);
     socketService.addListener(refresh);
+    timerService.addListener(refresh);
   }
 
   void refresh() {
@@ -39,7 +42,12 @@ class _InfoPanelState extends State<InfoPanel> {
       child: Column(
         children: [
           Text(
-            "En attente d'autres joueurs...",
+            gameService.displayTurn,
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.primary, fontSize: 20),
+          ),
+          Text(
+            timerService.displayTimer,
             style: TextStyle(
                 color: Theme.of(context).colorScheme.primary, fontSize: 20),
           ),

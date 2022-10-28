@@ -28,7 +28,8 @@ class InfoClientService extends ChangeNotifier{
 
   String playerName = 'DefaultPlayerName';
 
-
+  String displayTurn = "En attente d'un autre joueur...";
+  bool isTurnOurs = false;
 
   factory InfoClientService(){
     return _gameService;
