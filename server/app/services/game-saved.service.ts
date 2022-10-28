@@ -26,7 +26,7 @@ class GameSavedService {
         if (!gameData) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
 
         const findSavedGame: GameSaved = (await this.gamesSaved.findOne({ roomName: gameData.roomName })) as GameSaved;
-        if (findSavedGame) throw new HttpException(HTTPStatusCode.Conflict, `The roomName ${gameData.roomName} of the game already exists`);
+        if (findSavedGame) return findSavedGame;
 
         return await this.gamesSaved.create({
             roomName: gameData.roomName,

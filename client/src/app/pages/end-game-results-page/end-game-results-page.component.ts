@@ -41,6 +41,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.findWinners(this.players);
         this.findNumberOfTurns();
         this.getGameStartDate();
+        this.displayPlayingTime();
         this.gameSavedSubscription = this.saveGame().subscribe(
             (res) => {
                 // eslint-disable-next-line no-console
@@ -119,7 +120,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         }
     }
 
-    displayPlayingTime(): string {
+    displayPlayingTime(): void {
         const secondsInMinute = 60;
         const displayZero = 9;
         let time = '';
@@ -129,21 +130,18 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
             time = `0${Math.floor(this.timerService.playingTime / secondsInMinute)}:${this.timerService.playingTime % secondsInMinute}`;
         }
         this.playingTime = time;
-        return this.playingTime;
     }
 
-    findNumberOfTurns(): number {
+    findNumberOfTurns(): void {
         this.numberOfTurns =
             this.infoClientService.actualRoom.players[0].turn +
             this.infoClientService.actualRoom.players[1].turn +
             this.infoClientService.actualRoom.players[2].turn +
             this.infoClientService.actualRoom.players[3].turn;
-        return this.numberOfTurns;
     }
 
-    getGameStartDate(): string {
+    getGameStartDate(): void {
         this.gameStartDate = this.infoClientService.game.gameStart.toString();
-        return this.gameStartDate;
     }
 
     findCreatorOfGame(): string | undefined {
@@ -163,7 +161,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
             this.roomName,
             this.numberOfTurns,
             this.gameStartDate,
-            this.displayPlayingTime(),
+            this.playingTime,
             this.infoClientService.game.nbLetterReserve,
             this.infoClientService.actualRoom.spectators,
             this.infoClientService.game.winners,
@@ -171,8 +169,8 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         return this.httpClient.post<string>(environment.serverUrl + 'games', { savedGame: this.gameSaved });
     }
 
-    addGameToFavourites() {
-        this.userService.updateFavourites(this.gameSaved._id as string).then((r) => {});
+    async addGameToFavourites() {
+        await this.userService.updateFavourites(this.gameSaved._id as string);
         // @ts-ignore
         console.log(this.userService.user?.favouriteGames[0]);
     }
