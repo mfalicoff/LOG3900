@@ -44,7 +44,7 @@ class RoomData with ChangeNotifier{
     List<Spectator> newSpects = [];
     for(var mapSpect in mapSpects){
       Spectator spect = Spectator.fromJson(mapSpect);
-      mapSpects.add(spect);
+      newSpects.add(spect);
     }
 
     players = newPlayers;

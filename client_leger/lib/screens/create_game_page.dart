@@ -239,6 +239,8 @@ class CreateGameModel{
   final String gameMode = "Multi";
   final bool isLog2990Enabled = false;
   final String vpLevel = "";
+  final bool isGamePrivate = false;
+  final String passwd = "";
 
   Map<String, dynamic> toJson(){
     return {
@@ -249,6 +251,8 @@ class CreateGameModel{
       'gameMode': gameMode,
       'isLog2990Enabled': isLog2990Enabled,
       'vpLevel' : vpLevel,
+      'isGamePrivate' : isGamePrivate,
+      'passwd' : passwd,
     };
   }
 
