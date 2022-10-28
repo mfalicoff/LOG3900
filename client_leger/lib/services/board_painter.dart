@@ -59,7 +59,7 @@ class BoardPainter extends CustomPainter {
       crossProduct(PADDING_BOARD_FOR_STANDS, canvasSize.height)
       - (tileSize + tilePadding) //gets rid of the start at index 1 instead of putting (i-1) everywhere in the code
       + crossProduct(SIZE_OUTER_BORDER_BOARD, canvasSize.height); //adds border
-    for(var i = 1; i < board.tiles.length - 1; i++){
+    for(var i = 1; i < infoClientService.game.bonusBoard.length - 1; i++){
       for(var j = 1; j < board.tiles.length - 1; j++){
         if(i == 8 && j == 8){
           paint.color = createMaterialColor(Color(colorTilesMap["wordx2"]!));
@@ -74,7 +74,7 @@ class BoardPainter extends CustomPainter {
           );
           drawStar(canvas, Offset(startXY + j * (tileSize + tilePadding), startXY + i * (tileSize+ tilePadding)));
         } else {
-          paint.color = createMaterialColor(Color(colorTilesMap[board.tiles[i][j]]!));
+          paint.color = createMaterialColor(Color(colorTilesMap[infoClientService.game.bonusBoard[i][j]]!));
           canvas.drawRect(
             Rect.fromLTWH(
                 startXY + j * (tileSize + tilePadding),
@@ -86,7 +86,7 @@ class BoardPainter extends CustomPainter {
           );
           drawBonusText(
               canvas,
-              textTilesMap[board.tiles[i][j]]!,
+              textTilesMap[infoClientService.game.bonusBoard[i][j]]!,
               Offset(startXY + j * (tileSize + tilePadding), startXY + i * (tileSize + tilePadding)));
         }
       }
@@ -97,7 +97,7 @@ class BoardPainter extends CustomPainter {
     double startXY =
       crossProduct(PADDING_BOARD_FOR_STANDS, canvasSize.height);
     const magicToCenterLetter = 4;
-    for(var i = 1; i < board.tiles.length - 1; i++) {
+    for(var i = 1; i < infoClientService.game.bonusBoard.length - 1; i++) {
       drawSideText(
         canvas, i.toString(),
         Offset(

@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'package:client_leger/constants/constants_test.dart';
 import 'package:client_leger/models/player.dart';
 import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/models/tile.dart';
@@ -74,6 +75,8 @@ class GameServer {
     noTileOnBoard = true;
     winners = List.from([Player('', false)]);
 
+    bonusBoard = constBoard1;
+
     letterBank = {
       'A': LetterData(quantity: 9, weight: 1),
       'B': LetterData(quantity: 2, weight: 3),
@@ -142,14 +145,17 @@ class GameServer {
     noTileOnBoard = game["noTileOnBoard"];
     //TODO winners
     //TODO letterBank
-    var mapBonusBoard = game["bonusBoard"];
-    for(var row in mapBonusBoard) {
-      List<String> newRow = [];
-      for(var val in row){
-        newRow.add(val);
+
+    bonusBoard = [];
+    var bonusLines = game["bonusBoard"];
+    for(var bonusLine in bonusLines){
+      List<String> tempLine = [];
+      for(var bonus in bonusLine){
+        tempLine.add(bonus);
       }
-      bonusBoard.add(newRow);
+      bonusBoard.add(tempLine);
     }
+
   }
 
   initializeLettersArray() {

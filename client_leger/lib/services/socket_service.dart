@@ -98,7 +98,6 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('askForEntrance', (data) {
-
     });
 
     socket.on('gameOver', (data) {
@@ -154,7 +153,7 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('findTileToPlaceArrow', (realPosInBoardPx) {
-
+        //Est-ce nécessaire pour le mobile?
     });
 
     socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) {
