@@ -17,6 +17,19 @@ class _GamePageState extends State<GamePage> {
   SocketService socketService = SocketService();
 
   @override
+  void initState() {
+    super.initState();
+
+    infoClientService.addListener(refresh);
+  }
+
+  void refresh() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
