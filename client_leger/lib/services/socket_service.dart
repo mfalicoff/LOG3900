@@ -1,10 +1,13 @@
 import 'package:client_leger/models/spectator.dart';
+import 'package:client_leger/services/timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 import '../env/environment.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:collection/collection.dart';
+import 'dart:async';
+
 
 import '../models/player.dart';
 import 'info_client_service.dart';
@@ -16,6 +19,8 @@ class SocketService with ChangeNotifier{
   static final SocketService _socketService = SocketService._internal();
 
   InfoClientService infoClientService = InfoClientService();
+  TimerService timerService = TimerService();
+
   late IO.Socket socket;
 
   factory SocketService() {
@@ -136,19 +141,37 @@ class SocketService with ChangeNotifier{
   timerHandler() {
 
     socket.on('displayChangeEndGame', (displayChange) {
-
+      displayChangeEndGameCallBack(displayChange);
     });
 
     socket.on('startClearTimer', (data) {
+      // this.drawingBoardService.lettersDrawn = '';
+      num minutesByTurn = data["minutesByTurn"];
+      String currentNamePlayerPlaying = data["currentNamePlayerPlaying"];
+
+      if(currentNamePlayerPlaying == infoClientService.playerName) {
+        infoClientService.displayTurn = "C'est votre tour !";
+        infoClientService.isTurnOurs = true;
+
+      } else {
+        Player playerPlaying = infoClientService.actualRoom.players.singleWhere((player) => player.name == currentNamePlayerPlaying);
+        infoClientService.displayTurn = "C'est au tour de ${playerPlaying.name} de jouer !";
+        infoClientService.isTurnOurs = false;
+      }
+
+      timerService.clearTimer();
+      timerService.startTimer(minutesByTurn);
 
     });
 
     socket.on('setTimeoutTimerStart', (_) {
-
+      // this.drawingBoardService.lettersDrawn = '';
+      setTimeoutForTimer();
     });
 
     socket.on('stopTimer', (_) {
-
+      // this.drawingBoardService.lettersDrawn = '';
+      timerService.clearTimer();
     });
 
   }
@@ -177,5 +200,23 @@ class SocketService with ChangeNotifier{
 
     });
   }
+
+  displayChangeEndGameCallBack(String displayChange) {
+    infoClientService.displayTurn = displayChange;
+  }
+
+  setTimeoutForTimer() {
+    int oneSecond = 1000;
+    Timer.periodic(Duration(milliseconds: oneSecond), (timer) {
+      if (timerService.secondsValue <= 0 && infoClientService.game.masterTimer == socket.id) {
+        socket.emit('turnFinished');
+      }
+      if (infoClientService.game.gameFinished) {
+        // this.drawingBoardService.lettersDrawn = '';
+        timer.cancel();
+      }
+    });
+  }
+
 
 }
