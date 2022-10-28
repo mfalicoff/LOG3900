@@ -87,15 +87,14 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('isSpectator', (isSpectator) {
-
+      infoClientService.isSpectator = isSpectator;
     });
 
     socket.on('askForEntrance', (data) {
-
     });
 
     socket.on('gameOver', (data) {
-
+      infoClientService.game.gameFinished = true;
     });
 
   }
@@ -126,15 +125,15 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('findTileToPlaceArrow', (realPosInBoardPx) {
-
+        //Est-ce nécessaire pour le mobile?
     });
 
     socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) {
-
+      infoClientService.creatorShouldBeAbleToStartGame = creatorCanStart;
     });
 
     socket.on('changeIsTurnOursStatus', (isTurnOurs) {
-
+      infoClientService.isTurnOurs = isTurnOurs;
     });
   }
 
