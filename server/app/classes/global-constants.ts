@@ -48,7 +48,7 @@ export const DEFAULT_VALUE_NUMBER = -1;
 /// ////////////////////////////////////////////////////////////////////////
 // VARIABLE socketManager
 /// ////////////////////////////////////////////////////////////////////////
-export const MIN_PERSON_PLAYING = 1;
+export const MIN_PERSON_PLAYING = 2;
 export const MAX_PERSON_PLAYING = 4;
 export const TIME_PER_ROUND_DEFAULT = 1000;
 
