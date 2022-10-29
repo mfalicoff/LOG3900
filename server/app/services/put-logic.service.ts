@@ -197,6 +197,11 @@ export class PutLogicService {
         const wordArray = this.boardExplorerService.getWordArray(startPosition, game.board);
         const wordList = this.boardExplorerService.formWordString(wordArray);
 
+        // very useful debug to check the words put on the board
+        // source of many errors
+        // eslint-disable-next-line no-console
+        console.log('Mots formé(s) à la position : ' + startPosition + ' sont: ', wordList);
+
         wordList.forEach((word) => {
             if (!this.dictionaryService.containsWord(word, game.trie)) {
                 isArrayValid = false;

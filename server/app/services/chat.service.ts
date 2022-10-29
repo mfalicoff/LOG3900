@@ -48,7 +48,7 @@ export class ChatService {
             }
 
             if (command === Commands.Place) {
-                const graphicsError = this.validator.verifyPlacementOnBoard(input.split(' ', 3), game, player);
+                const graphicsError = this.validator.verifyPlacementOnBoard(input.split(' ', 3), game);
                 if (graphicsError !== '') {
                     player.chatHistory.push({ message: GlobalConstants.UNABLE_TO_PROCESS_COMMAND + graphicsError, isCommand: true, sender: 'S' });
                     return false;
