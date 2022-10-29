@@ -45,12 +45,12 @@ export class DrawingService {
         canvas.fillStyle = tile.backgroundColor;
         canvas.strokeStyle = tile.backgroundColor;
         // draws background of tile
-        canvas.fillRect(tile.position.x1 + 1, tile.position.y1 + 1, tile.position.width - 2, tile.position.height - 2);
+        canvas.fillRect(tile.position.x1, tile.position.y1, tile.position.width, tile.position.height);
         // the number are so the letter tiles are smaller than the tile of the board
         canvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
         canvas.strokeStyle = tile.borderColor;
         // draws border of tile
-        this.roundRect(tile.position.x1 + 1, tile.position.y1 + 1, tile.position.width - 2, tile.position.height - 2, canvas);
+        this.roundRect(tile.position.x1, tile.position.y1, tile.position.width, tile.position.height, canvas);
         // the number are so the letter tiles are smaller than the tile of the board
         canvas.fillStyle = '#212121';
         const letterData = letterBank.get(letterToDraw.toUpperCase());
@@ -58,13 +58,13 @@ export class DrawingService {
         if (letterData) {
             letterWeight = letterData.weight;
         }
-        const spaceForLetter: Vec2 = { x: 4, y: 25 };
-        const spaceForNumber: Vec2 = { x: 23, y: 25 };
+        const spaceForLetter: Vec2 = { x: 12, y: 26 };
+        const spaceForNumber: Vec2 = { x: 27, y: 29 };
         const actualFont = canvas.font;
-        canvas.font = '18px bold system-ui';
+        canvas.font = 'bold 17px Roboto';
         canvas.fillText(letterToDrawUpper, tile.position.x1 + spaceForLetter.x, tile.position.y1 + spaceForLetter.y);
 
-        canvas.font = '12px bold system-ui';
+        canvas.font = '10px Roboto';
         if (letterWeight) {
             canvas.fillText(letterWeight.toString(), tile.position.x1 + spaceForNumber.x, tile.position.y1 + spaceForNumber.y);
         } else {
