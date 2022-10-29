@@ -44,21 +44,6 @@ export class DrawingBoardService {
         this.playAreaCanvas = playAreaCanvas;
         this.tmpTileCanvas = tmpTileCanvas;
         this.drawingService.canvasInit(playAreaCanvas, tmpTileCanvas);
-
-        this.drawingService.reDrawStand(this.infoClientService.player.stand, this.infoClientService.letterBank);
-        this.drawBoardInit(this.infoClientService.game.bonusBoard);
-        for (let x = 0; x < Constants.NUMBER_SQUARE_H_AND_W + 2; x++) {
-            for (let y = 0; y < Constants.NUMBER_SQUARE_H_AND_W + 2; y++) {
-                if (this.infoClientService.game.board[x][y] !== undefined && this.infoClientService.game.board[x][y].letter.value !== '') {
-                    this.drawingService.drawOneLetter(
-                        this.infoClientService.game.board[x][y].letter.value,
-                        this.infoClientService.game.board[x][y],
-                        this.playAreaCanvas,
-                        this.infoClientService.game.letterBank,
-                    );
-                }
-            }
-        }
     }
 
     drawBoardInit(bonusBoard: string[][]) {
