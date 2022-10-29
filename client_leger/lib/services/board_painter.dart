@@ -13,7 +13,8 @@ import 'info_client_service.dart';
 class BoardPainter extends CustomPainter {
   InfoClientService infoClientService = InfoClientService();
   List<List<Tile>> board = [[]];
-  List<List<Tile>> stands = [];
+  List<List<Tile>> standsSpec = [];
+  List<Tile> standPlayer = [];
   double tilePadding = 2;
   late double tileSize;
   final int textTileColor = 0xFF104D45;
@@ -23,7 +24,8 @@ class BoardPainter extends CustomPainter {
 
   BoardPainter(){
     board = infoClientService.game.board;
-    stands = infoClientService.actualRoom.players.map((player) => player.stand).toList();
+    standsSpec = infoClientService.actualRoom.players.map((player) => player.stand).toList();
+    standPlayer = infoClientService.player.stand;
   }
 
   @override
@@ -220,33 +222,38 @@ class BoardPainter extends CustomPainter {
         + crossProduct(WIDTH_HEIGHT_BOARD, canvasSize.height)
         + crossProduct(PADDING_BET_BOARD_AND_STAND, canvasSize.height);
 
-    num idxPlayerPlaying = infoClientService.game.idxPlayerPlaying;
-    //when game is not started idxPlayerPlaying is -1
-    if(idxPlayerPlaying < 0){
-      idxPlayerPlaying = 0;
-    }
-    //bottom Stand
-    drawHorizStand(
-        constPosXYForStands, paddingForRightAndBottomStands,
-        canvas, canvasSize, stands[idxPlayerPlaying.toInt()]);
-    // we go to the next player
-    idxPlayerPlaying = (idxPlayerPlaying + 1) % stands.length;
-
     if(infoClientService.isSpectator) {
-      //left stand
-      drawVertiStand(0, constPosXYForStands, canvas, canvasSize, stands[idxPlayerPlaying.toInt()]);
+      num idxPlayerPlaying = infoClientService.game.idxPlayerPlaying;
+      //when game is not started idxPlayerPlaying is -1
+      if(idxPlayerPlaying < 0){
+        idxPlayerPlaying = 0;
+      }
+      //bottom Stand
+      drawHorizStand(
+          constPosXYForStands, paddingForRightAndBottomStands,
+          canvas, canvasSize, standsSpec[idxPlayerPlaying.toInt()]);
       // we go to the next player
-      idxPlayerPlaying = (idxPlayerPlaying + 1) % stands.length;
+      idxPlayerPlaying = (idxPlayerPlaying + 1) % standsSpec.length;
+
+      //left stand
+      drawVertiStand(0, constPosXYForStands, canvas, canvasSize, standsSpec[idxPlayerPlaying.toInt()]);
+      // we go to the next player
+      idxPlayerPlaying = (idxPlayerPlaying + 1) % standsSpec.length;
 
       //top stand
-      drawHorizStand(constPosXYForStands, 0, canvas, canvasSize, stands[idxPlayerPlaying.toInt()]);
+      drawHorizStand(constPosXYForStands, 0, canvas, canvasSize, standsSpec[idxPlayerPlaying.toInt()]);
       // we go to the next player
-      idxPlayerPlaying = (idxPlayerPlaying + 1) % stands.length;
+      idxPlayerPlaying = (idxPlayerPlaying + 1) % standsSpec.length;
 
       //right stand
       drawVertiStand(
           paddingForRightAndBottomStands, constPosXYForStands,
-          canvas, canvasSize, stands[idxPlayerPlaying.toInt()]);
+          canvas, canvasSize, standsSpec[idxPlayerPlaying.toInt()]);
+    }else{//means it's the player playing not the spectator
+      //bottom Stand
+      drawHorizStand(
+          constPosXYForStands, paddingForRightAndBottomStands,
+          canvas, canvasSize, standPlayer);
     }
   }
 
@@ -255,7 +262,6 @@ class BoardPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     // Fill the rectangle with an initial color
-    // paint.color = Color(colorTilesMap["xx"]!);
     paint.color = colorConvert(tileToDraw.backgroundColor);
     canvas.drawRect(
       Rect.fromLTWH(
