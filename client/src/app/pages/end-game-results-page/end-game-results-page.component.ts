@@ -44,8 +44,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.displayPlayingTime();
         this.gameSavedSubscription = this.saveGame().subscribe(
             (res) => {
-                // eslint-disable-next-line no-console
-                console.log(res);
                 this.gameSaved._id = res;
             },
             (error) => {
@@ -171,6 +169,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     async addGameToFavourites() {
         await this.userService.updateFavourites(this.gameSaved._id as string);
         // @ts-ignore
-        console.log(this.userService.user?.favouriteGames[0]);
+        console.log(this.userService.user.name);
     }
 }

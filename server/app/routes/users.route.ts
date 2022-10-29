@@ -20,7 +20,7 @@ class UsersRoute implements Routes {
         this.router.get(`${this.path}/:id`, this.usersController.getUserById);
         this.router.post(`${this.path}`, validationMiddleware(CreateUserValidator, 'body'), this.usersController.createUser);
         this.router.put(`${this.path}/:id`, authMiddleware, validationMiddleware(CreateUserValidator, 'body', true), this.usersController.updateUser);
-        this.router.patch(`${this.path}/:id`, this.usersController.updateFavouriteGames);
+        this.router.patch(`${this.path}/:id`, authMiddleware, this.usersController.updateFavouriteGames);
         this.router.delete(`${this.path}/:id`, authMiddleware, this.usersController.deleteUser);
     }
 }
