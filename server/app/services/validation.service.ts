@@ -3,6 +3,7 @@ import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Player } from '@app/classes/player';
+import { Vec2 } from '@app/classes/vec2';
 import { Service } from 'typedi';
 import { BoardService } from './board.service';
 import { LetterBankService } from './letter-bank.service';
@@ -51,7 +52,7 @@ export class ValidationService {
         }
     }
 
-    verifyPlacementOnBoard(splittedInput: string[], game: GameServer, player: Player): string {
+    verifyPlacementOnBoard(splittedInput: string[], game: GameServer): string {
         const position: string = splittedInput[1];
         const word: string = splittedInput[2];
 
@@ -63,21 +64,14 @@ export class ValidationService {
             return GlobalConstants.WORD_DONT_FIT_BOARD;
         }
 
+        // verifies that the word touches at least one letter of the board
         if (!game.noTileOnBoard && !this.lettersHaveContactWithOthers(word, position, game)) {
             return GlobalConstants.LETTERS_MUST_TOUCH_OTHERS;
         }
 
-        // verify that letters used from canvas are on the right place
-        if (!this.areLettersUsedFromCanvasWellPlaced(word, position, game, player)) {
-            return GlobalConstants.LETTERS_FROM_BOARD_WRONG;
-        }
-
-        // verify that the tmporary letters are touching each other
-        // TODO this function does not work in this case:
-        // LE A on the same line or column but with a space beetween the letters.
-        // in this case the system consider that the position is good but it is not
-        // we could fix it but it also could be a feature in case the perso misplaced his letter
-        if (!this.tmpLettersTouchEachOther(game)) {
+        // verify that the temporary letters are touching each other in case
+        // there is no tile beetween them
+        if (!this.tmpLettersTouchEachOther(game, position)) {
             return GlobalConstants.TMP_LETTERS_MUST_TOUCH;
         }
 
@@ -141,35 +135,26 @@ export class ValidationService {
         return '';
     }
 
-    private areLettersUsedFromCanvasWellPlaced(word: string, position: string, game: GameServer, player: Player) {
+    private tmpLettersTouchEachOther(game: GameServer, position: string): boolean {
         const letterWay: string = position.slice(GlobalConstants.POSITION_LAST_LETTER);
-        let indexLine: number =
-            position.slice(0, GlobalConstants.END_POSITION_INDEX_LINE).toLowerCase().charCodeAt(0) - GlobalConstants.ASCII_CODE_SHIFT;
-        let indexColumn = Number(position.slice(GlobalConstants.END_POSITION_INDEX_LINE, position.length + GlobalConstants.POSITION_LAST_LETTER));
+        const idxsTmpLetters: Vec2[] = this.boardService.getIdxsTmpLetters(game);
 
-        for (const letterOfWord of word) {
-            // we verify that only the board has our letter
-            if (game.mapLetterOnBoard.has(letterOfWord) && !player.mapLetterOnStand.has(letterOfWord)) {
-                if (game.board[indexLine][indexColumn].letter.value !== letterOfWord) {
+        // NEW FUNCTION
+        for (let i = 0; i < idxsTmpLetters.length - 1; i++) {
+            if (letterWay === 'h') {
+                if (
+                    idxsTmpLetters[i].y + 1 !== idxsTmpLetters[i + 1].y &&
+                    game.board[idxsTmpLetters[i].x][idxsTmpLetters[i].y + 1].letter.value === ''
+                ) {
                     return false;
                 }
-            }
-            if (letterWay === 'h') {
-                indexColumn += 1;
             } else {
-                indexLine += 1;
-            }
-        }
-        return true;
-    }
-
-    private tmpLettersTouchEachOther(game: GameServer): boolean {
-        const idxsTmpLetters = this.boardService.getIdxsTmpLetters(game);
-        // we stop at length - 1 because in the loop we check the +1 letter
-        for (let i = 0; i < idxsTmpLetters.length - 1; i++) {
-            // if both letters coordinates have nothing in common we return false
-            if (idxsTmpLetters[i].x !== idxsTmpLetters[i + 1].x && idxsTmpLetters[i].y !== idxsTmpLetters[i + 1].y) {
-                return false;
+                if (
+                    idxsTmpLetters[i].x + 1 !== idxsTmpLetters[i + 1].x &&
+                    game.board[idxsTmpLetters[i].x + 1][idxsTmpLetters[i].y].letter.value === ''
+                ) {
+                    return false;
+                }
             }
         }
 

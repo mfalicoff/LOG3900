@@ -43,6 +43,10 @@ export class PlaceGraphicService {
                 if (!this.drawingBoardService.lettersDrawn) {
                     return;
                 }
+
+                // reconstruct the word if it is using a letter
+                // already on the board
+                this.drawingBoardService.lettersDrawn = this.constructWord();
                 const placeMsg: string = this.createPlaceMessage();
 
                 // eslint-disable-next-line no-console
@@ -130,6 +134,61 @@ export class PlaceGraphicService {
 
     isArrowsEnabled() {
         return !this.placeMethodIsDragDrop || this.drawingBoardService.lettersDrawn === '';
+    }
+
+    // function that make the word whole in case it is using a letter already on the board
+    // for exemple lets say an "i" is on the board and we want to place the word "vie"
+    // using the tile already on the board. The constant "lettersDrawn" will have "ve" so
+    // we need to reconstruct the word to also take the "i" from the board.
+    private constructWord(): string {
+        let finalWord: string = this.drawingBoardService.lettersDrawn[0];
+        let lastXPos: number = this.drawingBoardService.coordsLettersDrawn[0].x;
+        let lastYPos: number = this.drawingBoardService.coordsLettersDrawn[0].y;
+        for (let i = 1; i < this.drawingBoardService.coordsLettersDrawn.length; i++) {
+            if (this.isWordVertical(this.drawingBoardService.coordsLettersDrawn)) {
+                if (this.drawingBoardService.coordsLettersDrawn[i].y === lastYPos + 1) {
+                    finalWord += this.drawingBoardService.lettersDrawn[i];
+                    lastYPos = this.drawingBoardService.coordsLettersDrawn[i].y;
+                } else {
+                    // in some cases the word is not continuous on the board so we check for index and leave
+                    // if the index is superior to the length of the board
+                    if (lastYPos + 1 > Constants.NUMBER_SQUARE_H_AND_W) {
+                        return finalWord;
+                    }
+
+                    // had some problem where the tile would be undefined. Didn't find why since it never happend again in a lot of game
+                    // but putting this check as a precaution
+                    if (this.infoClientService.game.board[lastYPos + 1][this.drawingBoardService.coordsLettersDrawn[i].x]) {
+                        finalWord += this.infoClientService.game.board[lastYPos + 1][this.drawingBoardService.coordsLettersDrawn[i].x].letter.value;
+                    }
+                    lastYPos = lastYPos + 1;
+                    // we want to check the same index as the one we tried since it was a tile from the board
+                    i--;
+                }
+            } else {
+                if (this.drawingBoardService.coordsLettersDrawn[i].x === lastXPos + 1) {
+                    finalWord += this.drawingBoardService.lettersDrawn[i];
+                    lastXPos = this.drawingBoardService.coordsLettersDrawn[i].x;
+                } else {
+                    // in some cases the word is not continuous on the board so we check for index and leave
+                    // if the index is superior to the length of the board
+                    if (lastXPos + 1 > Constants.NUMBER_SQUARE_H_AND_W) {
+                        return finalWord;
+                    }
+
+                    // had some problem where the tile would be undefined. Didn't find why since it never happend again in a lot of game
+                    // but putting this check as a precaution
+                    if (this.infoClientService.game.board[this.drawingBoardService.coordsLettersDrawn[i].y][lastXPos + 1]) {
+                        finalWord += this.infoClientService.game.board[this.drawingBoardService.coordsLettersDrawn[i].y][lastXPos + 1].letter.value;
+                    }
+                    lastXPos = lastXPos + 1;
+                    // we want to check the same index as the one we tried since it was a tile from the board
+                    i--;
+                }
+            }
+        }
+
+        return finalWord;
     }
 
     private resetVariablePlacement() {
