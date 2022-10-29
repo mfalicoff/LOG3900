@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as GlobalConstants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
@@ -16,10 +15,15 @@ interface TimeIntervals {
 })
 export class ParametresSelectionPageComponent implements OnInit {
     timeIntervals: TimeIntervals[];
-    vpLevels: string[];
     mockDictionary: MockDict;
     isChecked: false;
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
+    displayPowerModal: string;
+    // we use a tmp array bc the one of the game get reseted in
+    // initializeService() function
+    activatedPowers: boolean[];
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService) {
+        this.activatedPowers = this.infoClientService.game.powerCards.map((powerCard) => powerCard.isActivated);
+    }
 
     ngOnInit() {
         this.timeIntervals = [
@@ -34,7 +38,6 @@ export class ParametresSelectionPageComponent implements OnInit {
             { value: 4.5, viewValue: '4min 30sec' },
             { value: 5, viewValue: '5 min' },
         ];
-        this.vpLevels = ['debutant', 'expert'];
         this.mockDictionary = {
             title: 'Dictionnaire français par défaut',
             description: 'Ce dictionnaire contient environ trente mille mots français',
@@ -49,13 +52,6 @@ export class ParametresSelectionPageComponent implements OnInit {
         this.mockDictionary = dictionary;
     }
 
-    vpLevelSelection(level: string) {
-        this.infoClientService.vpLevel = level;
-    }
-
-    randomizeBonuses() {
-        this.infoClientService.randomBonusesOn = !this.infoClientService.randomBonusesOn;
-    }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onTypeGameChange(event: any) {
         switch (event.target.value) {
@@ -73,40 +69,41 @@ export class ParametresSelectionPageComponent implements OnInit {
     createRoom() {
         // useful to reset the ui
         this.infoClientService.initializeService();
-        let roomName = '';
         const passwd = document.getElementById('passwdInput') as HTMLInputElement;
-        if (this.infoClientService.gameMode === GlobalConstants.MODE_MULTI) {
-            const inputElement = document.getElementById('roomName') as HTMLInputElement;
-            roomName = inputElement.value;
-            this.socketService.socket.emit('createRoomAndGame', {
-                roomName,
-                playerName: this.infoClientService.playerName,
-                timeTurn: this.infoClientService.minutesByTurn,
-                isBonusRandom: this.infoClientService.randomBonusesOn,
-                gameMode: this.infoClientService.gameMode,
-                vpLevel: '',
-                isGamePrivate: this.infoClientService.isGamePrivate,
-                passwd: passwd.value,
-            });
-        } else {
-            roomName = 'roomOf' + this.socketService.socket.id.toString();
-            this.socketService.socket.emit('createRoomAndGame', {
-                roomName,
-                playerName: this.infoClientService.playerName,
-                timeTurn: this.infoClientService.minutesByTurn,
-                isBonusRandom: this.infoClientService.randomBonusesOn,
-                gameMode: this.infoClientService.gameMode,
-                vpLevel: this.infoClientService.vpLevel,
-                isGamePrivate: this.infoClientService.isGamePrivate,
-                passwd: passwd.value,
-            });
-        }
+        const inputElement = document.getElementById('roomName') as HTMLInputElement;
+        const roomName = inputElement.value;
+        this.socketService.socket.emit('createRoomAndGame', {
+            roomName,
+            playerName: this.infoClientService.playerName,
+            timeTurn: this.infoClientService.minutesByTurn,
+            gameMode: this.infoClientService.gameMode,
+            isGamePrivate: this.infoClientService.isGamePrivate,
+            passwd: passwd.value,
+            activatedPowers: this.activatedPowers,
+        });
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
         this.mockDictionary = {
             title: 'Dictionnaire français par défaut',
             description: 'Ce dictionnaire contient environ trente mille mots français',
         };
         this.infoClientService.dictionaries[0] = this.mockDictionary;
+    }
+
+    showPowerModal() {
+        this.displayPowerModal = 'block';
+    }
+
+    hidePowerModal() {
+        this.displayPowerModal = 'none';
+    }
+
+    onPowerCardClick(powerCardName: string) {
+        for (let i = 0; i < this.infoClientService.game.powerCards.length; i++) {
+            if (this.infoClientService.game.powerCards[i].name === powerCardName) {
+                this.activatedPowers[i] = !this.activatedPowers[i];
+                return;
+            }
+        }
     }
 
     private timeSelection(interval: string) {

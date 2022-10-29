@@ -40,9 +40,9 @@ export class StandService {
         this.letterBankService.addLettersToBankAndArray(player.stand[position].letter.value, letters, letterBank);
     }
 
-    randomExchangeVP(player: Player, letters: string[], letterBank: Map<string, LetterData>, vpLevel: string): string {
+    randomExchangeVP(player: Player, letters: string[], letterBank: Map<string, LetterData>): string {
         let lettersExchanged = '';
-        const nbLettersToRemove = vpLevel === 'expert' ? Constants.NUMBER_SLOT_STAND : this.giveRandomNbLetterToDelete(player);
+        const nbLettersToRemove = this.giveRandomNbLetterToDelete(player);
 
         // Delete the chosen letters
         for (let i = 0; i < nbLettersToRemove; i++) {

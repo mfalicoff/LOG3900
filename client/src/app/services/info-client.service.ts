@@ -15,11 +15,9 @@ export class InfoClientService {
     player: Player;
 
     gameMode: string;
-    isLog2990Enabled: boolean;
 
     // Game parameters
     minutesByTurn: number;
-    randomBonusesOn: boolean;
     playerName: string;
     isGamePrivate: boolean;
 
@@ -40,8 +38,7 @@ export class InfoClientService {
     actualRoom: RoomData;
 
     letterBank: Map<string, LetterData>;
-
-    vpLevel: string;
+    letterReserve: string[];
 
     // useful to know to hide stands or not
     isSpectator: boolean;
@@ -52,11 +49,16 @@ export class InfoClientService {
     incommingPlayer: string;
     incommingPlayerId: string;
 
+    // variable used for the power-cards feature
+    powerUsedForTurn: boolean;
+    displayPowerModal: string;
+    displayExchStandModal: string;
+    displayExchLetterModal: string;
+    displayTransformTileModal: string;
+
     constructor() {
-        this.gameMode = GlobalConstants.MODE_MULTI;
-        this.isLog2990Enabled = true;
+        this.gameMode = GlobalConstants.CLASSIC_MODE;
         this.minutesByTurn = 1;
-        this.randomBonusesOn = false;
         this.isGamePrivate = false;
         this.playerName = 'DefaultPlayerName';
         this.incommingPlayer = '';
@@ -67,16 +69,21 @@ export class InfoClientService {
 
     // public bc it is reused to reset for new games
     initializeService() {
-        this.game = new GameServer(0, false, GlobalConstants.MODE_SOLO, 'defaultLevel', 'defaultRoom', false, '');
+        this.game = new GameServer(0, GlobalConstants.CLASSIC_MODE, 'defaultRoom', false, '');
         this.player = new Player('DefaultPlayerObject', false);
         this.displayTurn = "En attente d'un autre joueur...";
         this.isTurnOurs = false;
         this.nameVP1dictionary0 = 0;
-        this.vpLevel = 'debutant';
         this.isSpectator = false;
         this.creatorShouldBeAbleToStartGame = false;
-        this.actualRoom = new RoomData('default', '1', false, 'fake', [], []);
+        this.actualRoom = new RoomData('default', 'classic', '1', 'fake', [], []);
+        this.powerUsedForTurn = false;
+        this.displayPowerModal = 'none';
+        this.displayExchStandModal = 'none';
+        this.displayExchLetterModal = 'none';
+        this.displayTransformTileModal = 'none';
 
+        this.letterReserve = ['a', 'b'];
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
             ['B', { quantity: 2, weight: 3 }],

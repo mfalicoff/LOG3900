@@ -253,6 +253,6 @@ export class MouseEventService {
     }
 
     private sendStandToClient(player: Player) {
-        this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
+        this.sio.sockets.sockets.get(player.id)?.emit('playerAndStandUpdate', player);
     }
 }

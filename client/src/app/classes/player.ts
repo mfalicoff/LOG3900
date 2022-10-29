@@ -1,11 +1,12 @@
 import * as Constants from '@app/classes/global-constants';
 import { Command } from './command';
 import { Letter } from './letter';
+import { PowerCard } from './power-card';
 import { Tile } from './tile';
 import { Vec4 } from './vec4';
 
 export class Player {
-    idPlayer: string;
+    id: string;
     name: string;
     stand: Tile[];
     avatarUri: string;
@@ -32,10 +33,14 @@ export class Player {
     allLetterSwapped: boolean;
     isMoveBingo: boolean;
 
+    // POWERS
+    powerCards: PowerCard[];
+    nbValidWordPlaced: number;
+
     constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
         this.isCreatorOfGame = isCreatorOfGame;
-        this.idPlayer = '';
+        this.id = '';
         this.stand = [];
         this.mapLetterOnStand = new Map();
         this.score = 0;
@@ -48,6 +53,8 @@ export class Player {
         this.tileIndexManipulation = Constants.DEFAULT_VALUE_NUMBER;
         this.allLetterSwapped = false;
         this.isMoveBingo = false;
+        this.powerCards = [new PowerCard(Constants.JUMP_NEXT_ENNEMY_TURN, true), new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true)];
+        this.nbValidWordPlaced = 0;
 
         this.initStand();
     }

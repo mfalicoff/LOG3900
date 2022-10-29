@@ -1,7 +1,6 @@
 /* eslint-disable*/
 import { Component } from '@angular/core';
 import { InfoClientService } from '@app/services/info-client.service';
-import * as GlobalConstants from '@app/classes/global-constants';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
@@ -13,11 +12,14 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./game-mode-options-page.component.scss'],
 })
 export class GameModeOptionsPageComponent {
-    constructor(private infoClientService: InfoClientService, private http: HttpClient, private router: Router, public userService: UserService) {}
+    constructor(
+        private infoClientService: InfoClientService, 
+        private http: HttpClient, private router: Router, 
+        public userService: UserService
+    ) {}
 
-    onClickMulti(mode: string) {
-        this.infoClientService.gameMode = GlobalConstants.MODE_MULTI;
-        this.infoClientService.isLog2990Enabled = mode !== 'classic';
+    setGameMode(gameMode: string) {
+        this.infoClientService.gameMode = gameMode;
     }
 
     async logOut() {
