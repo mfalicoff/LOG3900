@@ -1,6 +1,7 @@
 import 'dart:core';
 import 'dart:math';
 
+import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -10,6 +11,7 @@ import 'info_client_service.dart';
 
 class BoardPainter extends CustomPainter {
   InfoClientService infoClientService = InfoClientService();
+  TapService tapService = TapService();
   List<List<Tile>> board = [[]];
   List<List<Tile>> standsSpec = [];
   List<Tile> standPlayer = [];
@@ -26,12 +28,17 @@ class BoardPainter extends CustomPainter {
     standPlayer = infoClientService.player.stand;
   }
 
+
   @override
   void paint(Canvas canvas, Size size) {
     tileSize = crossProduct(WIDTH_EACH_SQUARE, size.height);
     tilePadding = crossProduct(WIDTH_LINE_BLOCKS, size.height);
     drawStands(canvas, size);
     drawBoard(canvas, size);
+    if(tapService.isDragging == true) {
+      print('here1');
+      drawTile(tapService.xPos, tapService.yPos, tapService.draggedTile, canvas, 692 as Size);
+    }
   }
 
   //draw the board (border/text/tiles)
