@@ -892,7 +892,7 @@ export class SocketManager {
         const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.id !== 'virtualPlayer').length;
         const nbSpectators = game?.mapSpectators.size;
         // if this is the last player to leave the room we delete it
-        if (nbRealPlayer + nbSpectators <= 1) {
+        if (nbRealPlayer + nbSpectators < 1) {
             this.rooms.delete(game.roomName);
             this.sio.sockets.emit('removeElementListRoom', game.roomName);
         }
