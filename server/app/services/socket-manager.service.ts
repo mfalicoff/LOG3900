@@ -495,10 +495,10 @@ export class SocketManager {
     private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
-        game?.mapPlayers.set(socket.id, newPlayer);
+        game?.mapPlayers.set(socket.id, newPlayer); //dont delete this even if its duplicate code
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.idPlayer = socket.id;
-        game?.mapPlayers.set(socket.id, newPlayer);
+        game?.mapPlayers.set(socket.id, newPlayer);//dont delete this even if its duplicate code
 
         this.playAreaService.sendMsgToAllInRoom(game, userData?.name + ' a rejoint la partie.');
         this.playAreaService.sendMsgToAllInRoom(game, 'La partie commence !');
