@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+import { ChatMessage } from '@app/classes/chat-message.interface';
 import { DictJSON } from '@app/classes/dict-json';
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
@@ -7,7 +8,10 @@ import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { Score } from '@app/classes/score';
 import { Spectator } from '@app/classes/spectator';
+import { Tile } from '@app/classes/tile';
 import { User } from '@app/classes/users.interface';
+import avatarService from '@app/services/avatar.service';
+import UserService from '@app/services/user.service';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
@@ -16,16 +20,12 @@ import { ChatService } from './chat.service';
 import { CommunicationBoxService } from './communication-box.service';
 import { DatabaseService } from './database.service';
 import { DictionaryService } from './dictionary.service';
+import { LetterBankService } from './letter-bank.service';
 import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
-import { PutLogicService } from './put-logic.service';
-import { ChatMessage } from '@app/classes/chat-message.interface';
-import { Tile } from '@app/classes/tile';
-import { StandService } from './stand.service';
-import UserService from '@app/services/user.service';
-import avatarService from '@app/services/avatar.service';
 import { PowerCardsService } from './power-cards.service';
-import { LetterBankService } from './letter-bank.service';
+import { PutLogicService } from './put-logic.service';
+import { StandService } from './stand.service';
 
 @Service()
 export class SocketManager {
@@ -70,6 +70,7 @@ export class SocketManager {
             this.disconnectAbandonHandler(socket);
             // handling dictionnaries, VP names and highscores
             this.adminHandler(socket);
+            this.searchHandler(socket);
         });
     }
 
@@ -570,8 +571,8 @@ export class SocketManager {
             const players = Array.from(createdGame.mapPlayers.values());
             const spectators = Array.from(createdGame.mapSpectators.values());
             this.sio.sockets.emit('addElementListRoom', {
-                gameMode,
                 roomName,
+                gameMode,
                 timeTurn,
                 passwd,
                 players,
@@ -1005,6 +1006,22 @@ export class SocketManager {
             await this.databaseService.expertVPNamesCollection.editNameVP(vpName, formerVPName);
             await this.databaseService.updateDBNames();
             socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
+        });
+    }
+
+    private searchHandler(socket: io.Socket) {
+        const MAX_USERS = 5;
+        socket.on('getPlayerNames', async (data) => {
+            const usersFound = await this.userService.users
+                .find({
+                    name: {
+                        $regex: data,
+                        $options: 'i',
+                    },
+                })
+                .select('name')
+                .limit(MAX_USERS);
+            socket.emit('getPlayerNames', usersFound);
         });
     }
 }

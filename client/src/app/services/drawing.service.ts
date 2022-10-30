@@ -86,27 +86,20 @@ export class DrawingService {
         this.tmpTileCanvas.fillStyle = tileToDraw.backgroundColor;
         this.tmpTileCanvas.strokeStyle = tileToDraw.backgroundColor;
         // draws background of tile
-        this.tmpTileCanvas.fillRect(posToDrawCentered.x, posToDrawCentered.y + 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2);
-        // the number are so the letter tiles are smaller than the tile of the board
+        this.tmpTileCanvas.fillRect(posToDrawCentered.x, posToDrawCentered.y, tileToDraw.position.width, tileToDraw.position.height);
         this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
         this.tmpTileCanvas.strokeStyle = '#ffaaff';
         // draws border of tile
-        this.roundRect(
-            posToDrawCentered.x + 1,
-            posToDrawCentered.y + 1,
-            tileToDraw.position.width - 2,
-            tileToDraw.position.height - 2,
-            this.tmpTileCanvas,
-        );
+        this.roundRect(posToDrawCentered.x, posToDrawCentered.y, tileToDraw.position.width, tileToDraw.position.height, this.tmpTileCanvas);
         // the number are so the letter tiles are smaller than the tile of the board
         this.tmpTileCanvas.fillStyle = '#212121';
-        const spaceForLetter: Vec2 = { x: 4, y: 25 };
-        const spaceForNumber: Vec2 = { x: 23, y: 25 };
+        const spaceForLetter: Vec2 = { x: 12, y: 26 };
+        const spaceForNumber: Vec2 = { x: 27, y: 29 };
         const actualFont = this.tmpTileCanvas.font;
-        this.tmpTileCanvas.font = '18px bold system-ui';
+        this.tmpTileCanvas.font = 'bold 17px Roboto';
         this.tmpTileCanvas.fillText(letterToDrawUpper, posToDrawCentered.x + spaceForLetter.x, posToDrawCentered.y + spaceForLetter.y);
 
-        this.tmpTileCanvas.font = '12px bold system-ui';
+        this.tmpTileCanvas.font = '10px Roboto';
         if (tileToDraw.letter.weight) {
             this.tmpTileCanvas.fillText(
                 tileToDraw.letter.weight.toString(),

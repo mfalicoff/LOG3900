@@ -14,3 +14,5 @@ coverage/
 .idea/libraries/
 
 client/build/
+
+server/assets/avatars/*.jpg
