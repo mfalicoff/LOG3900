@@ -30,7 +30,7 @@ export class ChatService {
             }
             const isActionCommand: boolean = command === Commands.Place || command === Commands.Exchange || command === Commands.Pass;
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-            if (isActionCommand && !(player.idPlayer === playerPlaying.idPlayer)) {
+            if (isActionCommand && !(player.id === playerPlaying.id)) {
                 player.chatHistory.push({ message: 'You ' + ' : ' + input, isCommand: true, sender: 'P' });
                 player.chatHistory.push({ message: GlobalConstants.NOT_YOUR_TURN, isCommand: false, sender: 'S' });
                 return false;
@@ -48,7 +48,7 @@ export class ChatService {
             }
 
             if (command === Commands.Place) {
-                const graphicsError = this.validator.verifyPlacementOnBoard(input.split(' ', 3), game, player);
+                const graphicsError = this.validator.verifyPlacementOnBoard(input.split(' ', 3), game);
                 if (graphicsError !== '') {
                     player.chatHistory.push({ message: GlobalConstants.UNABLE_TO_PROCESS_COMMAND + graphicsError, isCommand: true, sender: 'S' });
                     return false;
@@ -82,7 +82,7 @@ export class ChatService {
         player.chatHistory.push({ message: GlobalConstants.PLACE_CMD, isCommand: false, sender: 'S' });
 
         if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
-            this.showEndGameStats(game, player, true);
+            this.showEndGameStats(game, player);
             // this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             game.gameFinished = true;
         }
@@ -104,7 +104,7 @@ export class ChatService {
             }
         }
         if (didEveryonePass3Times) {
-            this.showEndGameStats(game, player, true);
+            this.showEndGameStats(game, player);
             // this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             game.gameFinished = true;
         }
@@ -190,7 +190,7 @@ export class ChatService {
 
     private debugCommand(input: string, player: Player, game: GameServer) {
         for (const playerElem of game.mapPlayers.values()) {
-            if (playerElem.idPlayer === 'virtualPlayer') {
+            if (playerElem.id === 'virtualPlayer') {
                 playerElem.debugOn = !playerElem.debugOn;
             }
         }
@@ -203,7 +203,7 @@ export class ChatService {
         }
     }
 
-    private async showEndGameStats(game: GameServer, player: Player, gameAbandoned: boolean) {
+    private async showEndGameStats(game: GameServer, player: Player) {
         game.endTime = new Date().getTime();
         this.pushMsgToAllPlayers(game, player.name, GlobalConstants.END_OF_GAME, false, 'S');
         for (const playerElem of game.mapPlayers.values()) {
@@ -217,10 +217,7 @@ export class ChatService {
             const gameLength = game.endTime - game.startTime;
             await this.userService.updateStatsAtEndOfGame(gameLength, playerElem);
         }
-
-        if (!gameAbandoned) {
-            this.sendWinnerMessage(game, player);
-        }
+        await this.sendWinnerMessage(game, player);
     }
 
     private async sendWinnerMessage(game: GameServer, player: Player) {

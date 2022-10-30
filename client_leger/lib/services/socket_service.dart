@@ -156,7 +156,7 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('findTileToPlaceArrow', (realPosInBoardPx) {
-        //Est-ce nécessaire pour le mobile?
+        //Est-ce nécessaire pour le mobile? - nope!
     });
 
     socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) {

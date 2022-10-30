@@ -59,7 +59,7 @@ export class DebugCommandService {
         }
 
         for (const playerElem of game.mapPlayers.values()) {
-            if (playerElem.idPlayer === 'virtualPlayer') {
+            if (playerElem.id === 'virtualPlayer') {
                 continue;
             }
             playerElem.chatHistory.push({ message: message + '(' + moveToPlay.score + ')', isCommand: false, sender: 'O' });

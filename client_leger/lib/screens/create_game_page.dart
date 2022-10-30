@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:client_leger/models/power-cards.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
@@ -235,24 +236,20 @@ class CreateGameModel{
   late String roomName;
   late String playerName;
   late double timeTurn;
-  final bool isBonusRandom = false;
   final String gameMode = "Multi";
-  final bool isLog2990Enabled = false;
-  final String vpLevel = "";
   final bool isGamePrivate = false;
   final String passwd = "";
+  final List<PowerCard> activatedPowers = [];
 
   Map<String, dynamic> toJson(){
     return {
       'roomName': roomName,
       'playerName': playerName,
       'timeTurn': timeTurn,
-      'isBonusRandom': isBonusRandom,
       'gameMode': gameMode,
-      'isLog2990Enabled': isLog2990Enabled,
-      'vpLevel' : vpLevel,
       'isGamePrivate' : isGamePrivate,
       'passwd' : passwd,
+      'activatedPowers': activatedPowers,
     };
   }
 

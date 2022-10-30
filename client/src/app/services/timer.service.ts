@@ -34,4 +34,8 @@ export class TimerService {
     clearTimer() {
         clearInterval(this.timerInterval);
     }
+
+    addSecsToTimer(secs: number) {
+        this.secondsValue += secs;
+    }
 }

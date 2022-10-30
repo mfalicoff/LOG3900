@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 
 class RoomData with ChangeNotifier{
   late String name;
+  late String gameMode;
   late String timeTurn;
-  late bool isBonusRandom;
   late String? passwd;
 
   late String roomCreator = "";
@@ -18,13 +18,13 @@ class RoomData with ChangeNotifier{
   List<Spectator> spectators = [];
 
   RoomData(
-      {required this.name, required this.timeTurn, required this.isBonusRandom, required this.passwd, required this.players, required this.spectators});
+      {required this.name, required this.gameMode, required this.timeTurn, required this.passwd, required this.players, required this.spectators});
 
 
   RoomData.fromJson(Map parsed){
     name = parsed["roomName"];
+    gameMode = parsed["gameMode"];
     timeTurn = parsed["timeTurn"].toString();
-    isBonusRandom = parsed["isBonusRandom"];
     passwd = parsed["passwd"];
 
     var mapPlayers = parsed["players"];
@@ -32,7 +32,7 @@ class RoomData with ChangeNotifier{
     for(var mapPlayer in mapPlayers){
       Player player = Player.fromJson(mapPlayer);
       if(player.isCreatorOfGame) roomCreator = player.name;
-      if(player.idPlayer == "virtualPlayer") {
+      if(player.id == "virtualPlayer") {
         numberVirtualPlayer++;
       } else {
         numberRealPlayer++;

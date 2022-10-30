@@ -1,11 +1,11 @@
 import 'dart:core';
+import 'package:client_leger/constants/constants.dart';
 import 'package:client_leger/constants/constants_test.dart';
 import 'package:client_leger/models/player.dart';
+import 'package:client_leger/models/power-cards.dart';
 import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/models/tile.dart';
 import 'package:client_leger/models/trie.dart';
-import 'package:client_leger/constants/constants.dart';
-import 'package:client_leger/models/vec4.dart';
 
 import 'letter-data.dart';
 import 'letter.dart';
@@ -40,7 +40,6 @@ class GameServer {
   late bool noTileOnBoard;
 
   // GAME PARAMETERS SERVICE DATA
-  late bool randomBonusesOn;
   late String gameMode;
   late num minutesByTurn;
   late bool isGamePrivate;
@@ -56,10 +55,21 @@ class GameServer {
   // SKIP TURN SERVICE DATA
   late String displaySkipTurn;
 
-  late String vpLevel;
+  // POWER-CARDS SERVICE DATA
+  late List<PowerCard> powerCards;
+  late bool jmpNextEnnemyTurn;
+  late num reduceEnnemyNbTurn;
 
-  GameServer(
-      {required this.minutesByTurn, required this.randomBonusesOn, required this.gameMode, required this.vpLevel, required this.roomName, required this.isGamePrivate, required this.passwd}) {
+  late num startTime;
+  late num endTime;
+
+  GameServer({
+    required this.minutesByTurn,
+    required this.gameMode,
+    required this.roomName,
+    required this.isGamePrivate,
+    required this.passwd
+  }) {
     trie = Trie();
     letters = [];
     board = [];
@@ -74,8 +84,12 @@ class GameServer {
     displaySkipTurn = "En attente d'autres joueurs...";
     noTileOnBoard = true;
     winners = List.from([Player('', false)]);
-
     bonusBoard = constBoard1;
+    powerCards = [];
+    jmpNextEnnemyTurn = false;
+    reduceEnnemyNbTurn = 0;
+    startTime = 0;
+    endTime = 0;
 
     letterBank = {
       'A': LetterData(quantity: 9, weight: 1),
@@ -110,13 +124,12 @@ class GameServer {
     initializeLettersArray();
     initializeBonusBoard();
     initBoardArray();
+    initPowerCards();
   }
 
   GameServer.fromJson(game){
     minutesByTurn = game["minutesByTurn"];
-    randomBonusesOn = game["randomBonusesOn"];
     gameMode = game["gameMode"];
-    vpLevel = game["vpLevel"];
     //TODO Trie
     letters = List<String>.from(game["letters"]);
 
@@ -208,5 +221,18 @@ class GameServer {
         board[i].add(newTile);
       }
     }
+  }
+
+  // need the powers locally in the game to be able to deactivate/activate them for each game
+  // by defaut they all are activated
+  initPowerCards() {
+    powerCards.add(PowerCard(name: JUMP_NEXT_ENNEMY_TURN, isActivated: true));
+    powerCards.add(PowerCard(name:TRANFORM_EMPTY_TILE, isActivated:true));
+    powerCards.add(PowerCard(name:REDUCE_ENNEMY_TIME, isActivated:true));
+    powerCards.add(PowerCard(name:EXCHANGE_LETTER_JOKER, isActivated:true));
+    powerCards.add(PowerCard(name:EXCHANGE_STAND, isActivated:true));
+    powerCards.add(PowerCard(name:REMOVE_POINTS_FROM_MAX, isActivated:true));
+    powerCards.add(PowerCard(name:ADD_1_MIN, isActivated:true));
+    powerCards.add(PowerCard(name:REMOVE_1_POWER_CARD_FOR_EVERYONE, isActivated:true));
   }
 }

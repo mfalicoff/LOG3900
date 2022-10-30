@@ -58,5 +58,14 @@ const num MIN_PERSON_PLAYING = 2;
 const String WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
 const String WAIT_FOR_OTHER_PLAYERS = "En attente d'autres joueurs...";
 
-
+// POWER CARDS CONSTANTS
+const JUMP_NEXT_ENNEMY_TURN = 'Cette carte permet de faire sauter le tour du prochain joueur.';
+const TRANFORM_EMPTY_TILE = 'Cette carte permet de transformer une tuile vide en case bonus de couleur aléatoire.';
+const REDUCE_ENNEMY_TIME = 'Cette carte permet de réduire de moitié le temps de réflexion des prochains joueurs pendant 1 tour.';
+const EXCHANGE_LETTER_JOKER = "Cette carte permet d'échanger une lettre de votre chevalet contre une lettre de votre choix du sac de lettres.";
+const EXCHANGE_STAND = "Cette carte permet d'échanger votre chevalet avec celui d'un de vos adversaires.";
+const REMOVE_POINTS_FROM_MAX =
+    "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.";
+const ADD_1_MIN = "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.";
+const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.';
 //CONSTANTS FOR

@@ -1,22 +1,22 @@
 /* tslint:disable:no-unused-variable */
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { EndGameResultsPageComponent } from './end-game-results-page.component';
+import { ProfileReadOnlyPageComponent } from './profile-read-only-page.component';
 
-describe('EndGameResultsPageComponent', () => {
-    let component: EndGameResultsPageComponent;
-    let fixture: ComponentFixture<EndGameResultsPageComponent>;
+describe('ProfileReadOnlyPageComponent', () => {
+    let component: ProfileReadOnlyPageComponent;
+    let fixture: ComponentFixture<ProfileReadOnlyPageComponent>;
 
     beforeEach(
         waitForAsync(() => {
             TestBed.configureTestingModule({
-                declarations: [EndGameResultsPageComponent],
+                declarations: [ProfileReadOnlyPageComponent],
             }).compileComponents();
         }),
     );
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(EndGameResultsPageComponent);
+        fixture = TestBed.createComponent(ProfileReadOnlyPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

@@ -1,7 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { BoardStandComponent } from '@app/components/board-stand/board-stand.component';
@@ -17,7 +16,6 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { MultiplayerInitPageComponent } from '@app/pages/multiplayer-init-page/multiplayer-init-page.component';
 import { ParametresSelectionPageComponent } from '@app/pages/parametres-selection-page/parametres-selection-page.component';
-import { ModalVpLevelsComponent } from './components/modal-vp-levels/modal-vp-levels.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { GameModeOptionsPageComponent } from './pages/game-mode-options-page/game-mode-options-page.component';
 import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
@@ -30,8 +28,10 @@ import { MatGridListModule } from '@angular/material/grid-list';
 import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
 // eslint-disable-next-line import/no-unresolved
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
-import { GalleryComponent } from './components/gallery/gallery.component';
-import { EndGameResultsPageComponent } from './pages/end-game-results-page/end-game-results-page.component';
+import { GalleryComponent } from '@app/components/gallery/gallery.component';
+import { EndGameResultsPageComponent } from '@app/pages/end-game-results-page/end-game-results-page.component';
+import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
+import { NgDisableLinkModule } from 'ng-disable-link';
 
 /**
  * Main module that is used in main.ts.
@@ -55,7 +55,6 @@ import { EndGameResultsPageComponent } from './pages/end-game-results-page/end-g
         LeaderboardPageComponent,
         AdminPageComponent,
         ModalComponent,
-        ModalVpLevelsComponent,
         ChatComponent,
         LoginPageComponent,
         GameModeOptionsPageComponent,
@@ -64,18 +63,19 @@ import { EndGameResultsPageComponent } from './pages/end-game-results-page/end-g
         ProfileEditComponent,
         GalleryComponent,
         EndGameResultsPageComponent,
+        ProfileReadOnlyPageComponent,
     ],
     imports: [
         AppMaterialModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        BrowserModule,
         FormsModule,
         HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
         MatGridListModule,
         NgxGalleryModule,
+        NgDisableLinkModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

@@ -42,6 +42,7 @@
     "angular-material": "^1.2.3",
     "ci": "^2.1.1",
     "file-saver": "^2.0.5",
+    "ng-disable-link": "^1.0.0",
     "rxjs": "~6.6.0",
     "socket.io": "^4.5.2",
     "socket.io-client": "^4.5.2",

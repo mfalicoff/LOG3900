@@ -3,8 +3,7 @@ import * as Constants from '@app/classes/global-constants';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingBoardService } from '@app/services/drawing-board-service';
-// import { DrawingService } from '@app/services/drawing.service';
-// import { InfoClientService } from '@app/services/info-client.service';
+import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
 import { PlaceGraphicService } from '@app/services/place-graphic.service';
 import { SocketService } from '@app/services/socket.service';
@@ -28,12 +27,11 @@ export class BoardStandComponent implements AfterViewInit {
     bufferMouseEvent: number = 0;
     lastBoardIndexsHover: Vec2 = new Vec2();
     constructor(
-        // private drawingService: DrawingService,
         private drawingBoardService: DrawingBoardService,
         private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
         private placeGraphicService: PlaceGraphicService,
-        // private infoClientService: InfoClientService,
         private socketService: SocketService,
+        private infoClientService: InfoClientService,
     ) {}
 
     @HostListener('document:keydown.escape', ['$event'])
@@ -82,7 +80,7 @@ export class BoardStandComponent implements AfterViewInit {
         if (this.placeGraphicService.drapDropEnabled()) {
             this.socketService.socket.emit('clearTmpTileCanvas');
         }
-        if (this.areCoordsOnBoard(coordsClick)) {
+        if (this.areCoordsOnBoard(coordsClick) && this.infoClientService.isTurnOurs) {
             // if we have a tile selected we process it
             if (this.clickedTile && this.clickedTile?.letter.value !== '' && this.placeGraphicService.drapDropEnabled()) {
                 if (this.placeGraphicService.tileClickedFromStand) {
@@ -99,7 +97,8 @@ export class BoardStandComponent implements AfterViewInit {
                 this.clickedTile &&
                 this.clickedTile?.letter.value !== '' &&
                 !this.placeGraphicService.tileClickedFromStand &&
-                this.placeGraphicService.drapDropEnabled()
+                this.placeGraphicService.drapDropEnabled() &&
+                this.infoClientService.isTurnOurs
             ) {
                 this.mouseKeyboardEventHandler.onBoardToStandDrop(coordsClick, this.clickedTile, this.clickedTileIndex);
             } else {
@@ -124,7 +123,7 @@ export class BoardStandComponent implements AfterViewInit {
     }
 
     private handleMouseMove(event: MouseEvent) {
-        if (!this.isMouseDown || !this.clickedTile || this.clickedTile?.letter.value === '') {
+        if (!this.isMouseDown || !this.clickedTile || this.clickedTile?.letter.value === '' || !this.infoClientService.isTurnOurs) {
             return;
         }
         // if we have some letter placed on the board and this is by keyboard not drag and drop

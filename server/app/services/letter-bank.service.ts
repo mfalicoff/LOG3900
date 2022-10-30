@@ -1,3 +1,4 @@
+import { GameServer } from '@app/classes/game-server';
 import { LetterData } from '@app/classes/letter-data';
 import { Service } from 'typedi';
 
@@ -59,6 +60,11 @@ export class LetterBankService {
             }
         }
         return nbLettersInMap;
+    }
+
+    getLettersInReserve(game: GameServer) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        return Array.from(game.letterBank.keys()).filter((letter) => game.letterBank.get(letter)!.quantity > 0);
     }
 
     private removeLetterFromBank(letter: string, letterBank: Map<string, LetterData>): string {

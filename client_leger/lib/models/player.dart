@@ -1,27 +1,29 @@
+import 'package:client_leger/models/power-cards.dart';
+import 'package:client_leger/constants/constants.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:client_leger/models/tile.dart';
 
 import 'command.dart';
 
-class PlayerOld {
-  late String name;
-  late String idPlayer;
-  late int score;
-  late bool isCreatorOfGame;
-  late String? avatarUri;
-
-  PlayerOld(this.name, this.idPlayer, this.score, this.isCreatorOfGame);
-
-  PlayerOld.fromJSON(data){
-    name = data["name"];
-    score = data["score"];
-    avatarUri = data['avatarUri'];
-  }
-}
+// class PlayerOld {
+//   late String name;
+//   late String id;
+//   late int score;
+//   late bool isCreatorOfGame;
+//   late String? avatarUri;
+//
+//   PlayerOld(this.name, this.id, this.score, this.isCreatorOfGame);
+//
+//   PlayerOld.fromJSON(data){
+//     name = data["name"];
+//     score = data["score"];
+//     avatarUri = data['avatarUri'];
+//   }
+// }
 
 class Player with ChangeNotifier {
-  late String idPlayer;
+  late String id;
   late String name;
   late List<Tile> stand = [];
   late String avatarUri;
@@ -45,17 +47,19 @@ class Player with ChangeNotifier {
   late bool allLetterSwapped;
   late bool isMoveBingo;
 
-  // Player() {
-  //   name = 'DefaultPlayerObject';
-  //   isCreatorOfGame = false;
-  // }
+  // POWERS
+  late List<PowerCard> powerCards;
+  late num nbValidWordPlaced;
 
-  Player(this.name, this.isCreatorOfGame);
+  Player(this.name, this.isCreatorOfGame){
+    powerCards = [PowerCard(name: JUMP_NEXT_ENNEMY_TURN, isActivated: true), PowerCard(name: REMOVE_POINTS_FROM_MAX, isActivated: true)];
+    nbValidWordPlaced = 0;
+  }
 
   Player.fromJson(Map parsed) {
     name = parsed["name"];
     isCreatorOfGame = parsed["isCreatorOfGame"];
-    idPlayer = parsed["idPlayer"];
+    id = parsed["id"];
 
     // TODO verify this works
     var tileList = parsed["stand"];
@@ -72,6 +76,12 @@ class Player with ChangeNotifier {
     tileIndexManipulation = parsed["tileIndexManipulation"];
     allLetterSwapped = parsed["allLetterSwapped"];
     avatarUri = parsed["avatarUri"];
+    var powerCardsList = parsed["powerCards"];
+    for(var powerCards in powerCardsList){
+      powerCards.add(PowerCard.fromJson(powerCards));
+    }
+    nbValidWordPlaced = parsed["nbValidWordPlaced"];
+
     notifyListeners();
   }
 

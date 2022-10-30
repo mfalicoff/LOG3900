@@ -158,7 +158,7 @@ export class PutLogicService {
 
         // we send an update of the player object for each respective client
         for (const player of game.mapPlayers.values()) {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
+            this.sio.sockets.sockets.get(player.id)?.emit('playerAndStandUpdate', player);
         }
     }
 
@@ -196,6 +196,11 @@ export class PutLogicService {
         let isArrayValid = true;
         const wordArray = this.boardExplorerService.getWordArray(startPosition, game.board);
         const wordList = this.boardExplorerService.formWordString(wordArray);
+
+        // very useful debug to check the words put on the board
+        // source of many errors
+        // eslint-disable-next-line no-console
+        console.log('Mots formé(s) à la position : ' + startPosition + ' sont: ', wordList);
 
         wordList.forEach((word) => {
             if (!this.dictionaryService.containsWord(word, game.trie)) {

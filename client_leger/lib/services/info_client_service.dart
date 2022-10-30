@@ -36,8 +36,8 @@ class InfoClientService extends ChangeNotifier{
   }
 
   InfoClientService._internal() {
-    actualRoom = RoomData(name: 'default', timeTurn: '1', isBonusRandom: false, passwd: 'fake', players: [], spectators: []);
-    game = GameServer(minutesByTurn: 0, randomBonusesOn: false, gameMode: 'Solo', vpLevel: 'defaultLevel', roomName: 'defaultRoom', isGamePrivate: false, passwd: '' );
+    actualRoom = RoomData(name: 'default', gameMode: 'classic', timeTurn: '1', passwd: 'fake', players: [], spectators: []);
+    game = GameServer(minutesByTurn: 0, gameMode: 'Solo', roomName: 'defaultRoom', isGamePrivate: false, passwd: '' );
     initStand();
   }
 

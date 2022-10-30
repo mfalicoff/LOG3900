@@ -83,13 +83,13 @@ export class DrawingBoardService {
         const shouldDrawStar = true;
         this.playAreaCanvas.font = fontSizeBonusWord;
         // Handles the color of each square
-        for (let x = 0; x < Constants.NUMBER_SQUARE_H_AND_W; x++) {
-            for (let y = 0; y < Constants.NUMBER_SQUARE_H_AND_W; y++) {
-                const tileData = mapTileColours.get(bonusBoard[x][y]);
+        for (let idxLine = 0; idxLine < Constants.NUMBER_SQUARE_H_AND_W; idxLine++) {
+            for (let idxColumn = 0; idxColumn < Constants.NUMBER_SQUARE_H_AND_W; idxColumn++) {
+                const tileData = mapTileColours.get(bonusBoard[idxLine][idxColumn]);
                 if (tileData) {
                     this.playAreaCanvas.fillStyle = tileData;
                 }
-                this.drawTileAtPos(x, bonusBoard, y);
+                this.drawTileAtPos(idxLine, bonusBoard, idxColumn);
             }
         }
 
@@ -267,9 +267,9 @@ export class DrawingBoardService {
         this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
     }
 
-    drawTileAtPos(xPos: number, bonusBoard: string[][], yPos: number, width?: number) {
+    drawTileAtPos(idxLine: number, bonusBoard: string[][], idxColumn: number, width?: number) {
         const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
-        if (xPos > Constants.NUMBER_SQUARE_H_AND_W || yPos > Constants.NUMBER_SQUARE_H_AND_W) {
+        if (idxLine > Constants.NUMBER_SQUARE_H_AND_W || idxColumn > Constants.NUMBER_SQUARE_H_AND_W) {
             return;
         }
         const savedFont = this.playAreaCanvas.font;
@@ -279,22 +279,22 @@ export class DrawingBoardService {
         const marginForRoundedNumberAndLook = 2;
         this.playAreaCanvas.font = fontSizeBonusWord;
         const xPosPx =
-            xPos * (Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS) +
+            idxColumn * (Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS) +
             Constants.SIZE_OUTER_BORDER_BOARD -
             marginForRoundedNumberAndLook / 2 +
             paddingForStands;
         const yPosPx =
-            yPos * (Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS) +
+            idxLine * (Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS) +
             Constants.SIZE_OUTER_BORDER_BOARD -
             marginForRoundedNumberAndLook / 2 +
             paddingForStands;
 
         if (width || width === 0) {
-            yPos += 1;
+            idxColumn += 1;
         }
-        this.getFillTileColor(xPos, yPos, bonusBoard);
+        this.getFillTileColor(idxLine, idxColumn, bonusBoard);
         const isPosTheCenterTile: boolean =
-            xPos === Math.floor(Constants.NUMBER_SQUARE_H_AND_W / 2) && yPos - 1 === Math.floor(Constants.NUMBER_SQUARE_H_AND_W / 2);
+            idxLine === Math.floor(Constants.NUMBER_SQUARE_H_AND_W / 2) && idxColumn - 1 === Math.floor(Constants.NUMBER_SQUARE_H_AND_W / 2);
         if (isPosTheCenterTile && this.isArrowPlaced) {
             this.redrawStar(xPosPx, yPosPx, width);
             this.playAreaCanvas.font = savedFont;
@@ -311,14 +311,14 @@ export class DrawingBoardService {
                 Constants.WIDTH_EACH_SQUARE + marginForRoundedNumberAndLook,
             );
         }
-        if (bonusBoard[xPos][yPos] !== 'xx') {
+        if (bonusBoard[idxLine][idxColumn] !== 'xx') {
             this.playAreaCanvas.fillStyle = '#104D45';
             // We don't want to draw the letter on the center
-            if (xPos === (Constants.NUMBER_SQUARE_H_AND_W - 1) / 2 && yPos === (Constants.NUMBER_SQUARE_H_AND_W - 1) / 2) {
+            if (idxLine === (Constants.NUMBER_SQUARE_H_AND_W - 1) / 2 && idxColumn === (Constants.NUMBER_SQUARE_H_AND_W - 1) / 2) {
                 this.playAreaCanvas.font = savedFont;
                 return;
             }
-            if (bonusBoard[xPos][yPos].includes('letter')) {
+            if (bonusBoard[idxLine][idxColumn].includes('letter')) {
                 this.playAreaCanvas.fillText(
                     'LETTRE',
                     xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText('LETTRE').width) / 2 + marginForRoundedNumberAndLook / 2,
@@ -331,7 +331,7 @@ export class DrawingBoardService {
                     yPosPx + Constants.WIDTH_EACH_SQUARE / 2 + marginForRoundedNumberAndLook / 2,
                 );
             }
-            if (bonusBoard[xPos][yPos].includes('x2')) {
+            if (bonusBoard[idxLine][idxColumn].includes('x2')) {
                 this.playAreaCanvas.fillText(
                     'x2',
                     xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText('x2').width) / 2 + marginForRoundedNumberAndLook / 2,

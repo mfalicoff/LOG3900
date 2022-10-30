@@ -14,7 +14,7 @@ class Room {
       if(player["isCreatorOfGame"]){
         roomCreator = player["name"];
       }
-      if(player["idPlayer"] == "virtualPlayer"){
+      if(player["id"] == "virtualPlayer"){
         numberVirtualPlayer++;
       }
       else{
