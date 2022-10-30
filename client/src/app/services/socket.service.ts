@@ -190,31 +190,40 @@ export class SocketService {
         //this.infoClientService.player = player;
         this.rankedService.matchHasBeenFound();
         })
+
         this.socket.on('createRankedGame', async (name) => {
-            this.socket.emit('createRoomAndGame',{ roomName:name, playerName:name, timeTurn: 1, isBonusRandom:false, gameMode:GlobalConstants.MODE_RANKED, vpLevel:'beginner', isGamePrivate:false, passwd:''});
             let mockDict = {
                 title: 'Dictionnaire français par défaut',
                 description: 'Ce dictionnaire contient environ trente mille mots français',
             };
-    
             this.socket.emit('dictionarySelected', mockDict);
+            this.socket.emit('createRoomAndGame',{ roomName:name, playerName:name, timeTurn: 1, isBonusRandom:false, gameMode:GlobalConstants.MODE_RANKED, vpLevel:'beginner', isGamePrivate:false, passwd:''});
         })
+
         this.socket.on('startGame', (roomName) => {
             this.socket.emit('startGame', roomName);
         })
-        this.socket.on('joinRoom', (gameName, socketId) => {
+
+        this.socket.on('joinRankedRoom', (gameName, socketId) => {
             this.socket.emit('joinRoom', gameName, socketId);
             this.socket.emit('spectWantsToBePlayer', gameName, socketId);
         })
+        this.socket.on('joinRoom', (gameName, socketId) => {
+            this.socket.emit('joinRoom', gameName, socketId);
+        })
+
         this.socket.on('closeModalOnRefuse', () => {
             this.rankedService.closeModal();
         })
+
         this.socket.on('closeModal', () => {
             this.rankedService.closeModal();
         })
+
         this.socket.on('messageServer', (message) => {
             alert(message);
         });
+        
         this.socket.on('SendDictionariesToClient', (dictionaries: MockDict[]) => {
             this.infoClientService.dictionaries = dictionaries;
         });

@@ -15,6 +15,7 @@ export class RankedService {
         this.timerService.startTimer(0.25);
     }
     closeModal() {
+        this.timerService.clearTimer();
         this.isShowModal = false;
     }
     

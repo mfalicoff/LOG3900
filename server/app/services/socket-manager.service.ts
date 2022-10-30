@@ -69,6 +69,8 @@ export class SocketManager {
             this.disconnectAbandonHandler(socket);
             // handling dictionnaries, VP names and highscores
             this.adminHandler(socket);
+            // handling the ranked/matchmaking events
+            this.rankedHandler(socket);
         });
     }
 
@@ -101,15 +103,6 @@ export class SocketManager {
     }
 
     private clientEventHandler(socket: io.Socket) {
-
-        socket.on('changeElo', (player) => {
-            this.userService.changeEloUser(player);
-        })
-
-        socket.on('leaveRankedGame', (player) => {
-            player.elo -= 20;
-            this.userService.changeEloUser(player);
-        })
 
         socket.on('turnFinished', () => {
             const user = this.users.get(socket.id);
@@ -502,6 +495,7 @@ export class SocketManager {
     private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
+        game?.mapPlayers.set(socket.id, newPlayer);
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.idPlayer = socket.id;
         game?.mapPlayers.set(socket.id, newPlayer);
@@ -561,16 +555,7 @@ export class SocketManager {
             createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
-        socket.on('startMatchmaking',({eloDisparity, user}) => {
-            this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
-            //socket.emit('matchFound', player);
-        })
-        socket.on('refuseMatch',({user}) => {
-            this.matchmakingService.onRefuse(socket, user);
-        })
-        socket.on('acceptMatch',({user}) => {
-            this.matchmakingService.onAccept(socket, user);
-        })
+       
 
         socket.on('joinRoom', ( roomName, playerId ) => {
             const userData = this.users.get(playerId);
@@ -641,6 +626,7 @@ export class SocketManager {
             }
             const spectator = game.mapSpectators.get(socket.id);
             if (!spectator) {
+                //enters here for wanting to be spect
                 return;
             }
             game.mapSpectators.delete(socket.id);
@@ -695,7 +681,6 @@ export class SocketManager {
 
         // called when the creator of a multiplayer game wants to start the game
         socket.on('startGame', (roomName) => {
-            console.log('start');
             // OLD CODE REPLACED BY THE FACT THAT THE CREATOR OF THE GAME STARTS THE GAME
             const game = this.rooms.get(roomName);
             if (!game) {
@@ -753,8 +738,12 @@ export class SocketManager {
         // if condition respected it means the new user is a player and not a spectator
         // else it is a spectator
         if (game.mapPlayers.size < GlobalConstants.MAX_PERSON_PLAYING) {
+            console.log('1');
+            console.log(userData);
             this.joinGameAsPlayer(socket, game, userData);
         } else {
+            console.log('2');
+            console.log(userData);
             this.joinGameAsSpectator(socket, game, userData);
         }
 
@@ -808,6 +797,30 @@ export class SocketManager {
         socket.on('giveUpGame', () => {
             this.leaveGame(socket, ' a abandonné la partie.');
         });
+    }
+
+    private rankedHandler(socket: io.Socket) {
+        socket.on('changeElo', (player) => {
+            this.userService.changeEloUser(player);
+        })
+
+        socket.on('leaveRankedGame', (player) => {
+            player.elo -= 20;
+            this.userService.changeEloUser(player);
+        })
+        
+        socket.on('startMatchmaking',({eloDisparity, user}) => {
+            this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
+            //socket.emit('matchFound', player);
+        })
+
+        socket.on('refuseMatch',({user}) => {
+            this.matchmakingService.onRefuse(socket, user);
+        })
+
+        socket.on('acceptMatch',({user}) => {
+            this.matchmakingService.onAccept(socket, user);
+        })
     }
 
     private leaveGame(socket: io.Socket, leaveMsg: string) {

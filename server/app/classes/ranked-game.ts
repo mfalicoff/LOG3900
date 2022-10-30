@@ -6,9 +6,8 @@ export class RankedGame {
     private timerInterval: NodeJS.Timeout;
     secondsValue: number = 0;
 
-    constructor(name:string, timeInMinutes: number, rankedUsers: RankedUser[]) {
+    constructor(name:string, rankedUsers: RankedUser[]) {
         this.rankedUsers = rankedUsers;
-        this.startTimer(timeInMinutes);
         this.name = name;
     }
 
