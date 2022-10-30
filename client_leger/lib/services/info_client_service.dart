@@ -31,6 +31,8 @@ class InfoClientService extends ChangeNotifier{
   String displayTurn = "En attente d'un autre joueur...";
   bool isTurnOurs = false;
 
+  String gameMode = CLASSIC_MODE;
+
   factory InfoClientService(){
     return _gameService;
   }

@@ -5,8 +5,6 @@ import 'package:client_leger/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
-import '../models/board.dart';
-import '../models/letter.dart';
 import '../models/tile.dart';
 import 'info_client_service.dart';
 

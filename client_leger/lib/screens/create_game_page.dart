@@ -18,7 +18,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
   late double? turnTime = 1;
   final _formKey = GlobalKey<FormState>();
   final SocketService socketService = SocketService();
-  final InfoClientService gameService = InfoClientService();
+  final InfoClientService infoClientService = InfoClientService();
 
   @override
   void initState() {
@@ -226,7 +226,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       socketService.socket.emit("createRoomAndGame",
-          CreateGameModel(roomName!, globals.userLoggedIn.username, turnTime!)
+          CreateGameModel(roomName!, globals.userLoggedIn.username, turnTime!, infoClientService.gameMode)
       );
     }
   }
@@ -236,7 +236,7 @@ class CreateGameModel{
   late String roomName;
   late String playerName;
   late double timeTurn;
-  final String gameMode = "Multi";
+  late String gameMode;
   final bool isGamePrivate = false;
   final String passwd = "";
   final List<PowerCard> activatedPowers = [];
@@ -253,5 +253,5 @@ class CreateGameModel{
     };
   }
 
-  CreateGameModel(this.roomName, this.playerName, this.timeTurn);
+  CreateGameModel(this.roomName, this.playerName, this.timeTurn, this.gameMode);
 }

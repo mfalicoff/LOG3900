@@ -68,4 +68,7 @@ const REMOVE_POINTS_FROM_MAX =
     "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.";
 const ADD_1_MIN = "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.";
 const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.';
-//CONSTANTS FOR
+
+// GAME MODE CONSTANTS
+const POWER_CARDS_MODE = 'power-cards';
+const CLASSIC_MODE = 'classic';

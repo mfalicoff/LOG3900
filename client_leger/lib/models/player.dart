@@ -76,9 +76,10 @@ class Player with ChangeNotifier {
     tileIndexManipulation = parsed["tileIndexManipulation"];
     allLetterSwapped = parsed["allLetterSwapped"];
     avatarUri = parsed["avatarUri"];
+    powerCards = [];
     var powerCardsList = parsed["powerCards"];
-    for(var powerCards in powerCardsList){
-      powerCards.add(PowerCard.fromJson(powerCards));
+    for(var powerCard in powerCardsList){
+      powerCards.add(PowerCard.fromJson(powerCard));
     }
     nbValidWordPlaced = parsed["nbValidWordPlaced"];
 

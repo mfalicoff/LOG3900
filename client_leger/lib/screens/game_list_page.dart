@@ -17,13 +17,13 @@ class GameListPage extends StatefulWidget {
 class _GameListPageState extends State<GameListPage> {
   // late List<Room> rooms = [];
   final SocketService socketService = SocketService();
-  final InfoClientService gameService = InfoClientService();
+  final InfoClientService infoClientService = InfoClientService();
 
   @override
   void initState() {
     initSockets();
     super.initState();
-    gameService.addListener(refresh);
+    infoClientService.addListener(refresh);
   }
 
   void refresh() {
@@ -154,7 +154,7 @@ class _GameListPageState extends State<GameListPage> {
                           //   borderRadius: BorderRadius.circular(10),
                           // ),
                           child: gameList(
-                            rooms: gameService.rooms,
+                            rooms: infoClientService.rooms.where((room) => room.gameMode == infoClientService.gameMode).toList(),
                           ),
                         ),
                       )

@@ -1,6 +1,8 @@
 import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/screens/search_page.dart';
 import 'package:client_leger/services/controller.dart';
+import 'package:client_leger/services/info_client_service.dart';
+import '../constants/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -15,6 +17,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final Controller controller = Controller();
+  final InfoClientService infoClientService = InfoClientService();
 
   @override
   Widget build(BuildContext context) {
@@ -99,8 +102,18 @@ class _MyHomePageState extends State<MyHomePage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: _toGameListPage,
+                onPressed: (){
+                  infoClientService.gameMode = CLASSIC_MODE;
+                  _toGameListPage();
+                },
                 child: const Text("Mode Classique"),
+              ),
+              ElevatedButton(
+                onPressed: (){
+                  infoClientService.gameMode = POWER_CARDS_MODE;
+                  _toGameListPage();
+                },
+                child: const Text("Mode Carte De Pouvoir Configurable"),
               ),
             ],
           ),
@@ -128,6 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toGameListPage() {
+    print("GameModeIs: " + infoClientService.gameMode);
     Navigator.pushNamed(context, "/game-list");
   }
 
