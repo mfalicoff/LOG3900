@@ -120,13 +120,11 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     displayPlayingTime(): void {
         const secondsInMinute = 60;
         const displayZero = 9;
-        let time = '';
         if (this.timerService.playingTime % secondsInMinute <= displayZero) {
-            time = `${Math.floor(this.timerService.playingTime / secondsInMinute)}:0${this.timerService.playingTime % secondsInMinute}`;
+            this.playingTime = `${Math.floor(this.timerService.playingTime / secondsInMinute)}:0${this.timerService.playingTime % secondsInMinute}`;
         } else {
-            time = `0${Math.floor(this.timerService.playingTime / secondsInMinute)}:${this.timerService.playingTime % secondsInMinute}`;
+            this.playingTime = `0${Math.floor(this.timerService.playingTime / secondsInMinute)}:${this.timerService.playingTime % secondsInMinute}`;
         }
-        this.playingTime = time;
     }
 
     findNumberOfTurns(): void {
@@ -169,6 +167,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     async addGameToFavourites() {
         await this.userService.updateFavourites(this.gameSaved._id as string);
         // @ts-ignore
-        console.log(this.userService.user.name);
+        console.log(this.userService.user.name + '  ' + this.gameSaved._id);
     }
 }

@@ -25,7 +25,17 @@ class GameSavedService {
     async saveFavouriteGame(gameData: GameSaved) {
         if (!gameData) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
 
-        const findSavedGame: GameSaved = (await this.gamesSaved.findOne({ roomName: gameData.roomName })) as GameSaved;
+        const findSavedGame: GameSaved = (await this.gamesSaved.findOne({
+            roomName: gameData.roomName,
+            players: { $in: gameData.players },
+            spectators: { $in: gameData.spectators },
+            winners: { $in: gameData.winners },
+            numberOfTurns: gameData.numberOfTurns,
+            gameStartDate: gameData.gameStartDate,
+            nbLetterReserve: gameData.nbLetterReserve,
+        })) as GameSaved;
+        console.log(gameData);
+        console.log(findSavedGame);
         if (findSavedGame) return findSavedGame;
 
         return await this.gamesSaved.create({
