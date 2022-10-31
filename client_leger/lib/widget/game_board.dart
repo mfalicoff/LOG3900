@@ -85,8 +85,8 @@ class _GameBoardState extends State<GameBoard> {
                       // print(clickedTile?.toJson());
                       Vec2 coords = Vec2.withParams(
                           crossProductTest(details.localPosition.dx), crossProductTest(details.localPosition.dy));
-                      // socketService.socket
-                      //     .emit('tileDraggedOnCanvas', [clickedTile?.toJson(), coords.toJson()]);
+                      socketService.socket
+                          .emit('tileDraggedOnCanvas', [clickedTile?.toJson(), coords.toJson()]);
                     },
                     child: CustomPaint(
                       painter: boardPainter,

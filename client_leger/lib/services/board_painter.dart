@@ -32,6 +32,8 @@ class BoardPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     board = infoClientService.game.board;
+    standsSpec = infoClientService.actualRoom.players.map((player) => player.stand).toList();
+    standPlayer = infoClientService.player.stand;
     tileSize = crossProduct(WIDTH_EACH_SQUARE, size.height);
     tilePadding = crossProduct(WIDTH_LINE_BLOCKS, size.height);
     drawStands(canvas, size);

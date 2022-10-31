@@ -88,8 +88,8 @@ class TapService with ChangeNotifier{
     Vec2 boardIndexs = getIndexOnBoardLogicFromClick(mouseCoords);
 
     draggedTile = clickedTile;
-    xPos = mouseCoords.x as double;
-    yPos = mouseCoords.y as double;
+    xPos = (mouseCoords.x - WIDTH_EACH_SQUARE_CORRECTED/2);
+    yPos = (mouseCoords.y - WIDTH_EACH_SQUARE_CORRECTED /2);
     notifyListeners();
   }
 

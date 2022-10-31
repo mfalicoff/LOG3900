@@ -42,7 +42,8 @@ class Tile {
     'bonus': bonus,
     'backgroundColor': backgroundColor,
     'borderColor': borderColor,
-    'isOnBoard': isOnBoard
+    'isOnBoard': isOnBoard,
+    'old': old,
   };
 
 }
