@@ -56,13 +56,13 @@ class SocketService with ChangeNotifier{
       RoomData room = RoomData.fromJson(data);
       var exist = infoClientService.rooms.where((element) => element.name == room.name);
       if(exist.isEmpty){
-        infoClientService.rooms.add(room);
+        infoClientService.addRoom(room);
         notifyListeners();
       }
     });
 
     socket.on('removeElementListRoom', (roomNameToDelete) {
-      infoClientService.rooms.removeWhere((element) => element.name == roomNameToDelete);
+      infoClientService.removeRoom(roomNameToDelete);
       notifyListeners();
     });
 

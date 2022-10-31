@@ -13,7 +13,7 @@ class InfoPanel extends StatefulWidget {
 }
 
 class _InfoPanelState extends State<InfoPanel> {
-  final InfoClientService gameService = InfoClientService();
+  final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
   final TimerService timerService = TimerService();
 
@@ -21,8 +21,8 @@ class _InfoPanelState extends State<InfoPanel> {
   void initState() {
     super.initState();
 
-    gameService.addListener(refresh);
-    gameService.actualRoom.addListener(refresh);
+    infoClientService.addListener(refresh);
+    infoClientService.actualRoom.addListener(refresh);
     socketService.addListener(refresh);
     timerService.addListener(refresh);
   }
@@ -41,7 +41,7 @@ class _InfoPanelState extends State<InfoPanel> {
       child: Column(
         children: [
           Text(
-            gameService.displayTurn,
+            infoClientService.displayTurn,
             style: TextStyle(
                 color: Theme.of(context).colorScheme.primary, fontSize: 20),
           ),
@@ -54,7 +54,7 @@ class _InfoPanelState extends State<InfoPanel> {
             height: 5,
           ),
           Container(
-            child: gameService.isSpectator == true
+            child: infoClientService.isSpectator == true
                 ? Container()
                 : Row(
                     children: [
@@ -160,21 +160,21 @@ class _InfoPanelState extends State<InfoPanel> {
               ),
             ],
             rows: List<DataRow>.generate(
-              gameService.actualRoom.players.length,
+              infoClientService.actualRoom.players.length,
               (int index) => DataRow(
                 cells: [
                   DataCell(getAvatarFromString(
-                      22, gameService.actualRoom.players[index].avatarUri)),
+                      22, infoClientService.actualRoom.players[index].avatarUri)),
                   DataCell(
                     Text(
-                      gameService.actualRoom.players[index].name,
+                      infoClientService.actualRoom.players[index].name,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
                   ),
                   DataCell(
                     Text(
-                      gameService.actualRoom.players[index].score.toString(),
+                      infoClientService.actualRoom.players[index].score.toString(),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
@@ -189,7 +189,7 @@ class _InfoPanelState extends State<InfoPanel> {
   }
 
   void _pass() {
-    if(gameService.isTurnOurs && gameService.game.gameStarted) {
+    if(infoClientService.isTurnOurs && infoClientService.game.gameStarted) {
       socketService.socket.emit('onExchangeClick');
     }
   }
