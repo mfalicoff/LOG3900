@@ -45,7 +45,7 @@ export class MouseKeyboardEventHandlerService {
         const posDropBoardIdxs: Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
         // if the tile on which we drop the new one is an old one (from a precedent turn)
         // we do nothing
-        if (this.infoClientService.game?.board[posDropBoardIdxs.y][posDropBoardIdxs.x].old) {
+        if (this.infoClientService.game?.board[posDropBoardIdxs.y][posDropBoardIdxs.x].letter.value !== '') {
             return;
         }
 
@@ -69,7 +69,7 @@ export class MouseKeyboardEventHandlerService {
 
         // if the tile on which we drop the new one is an old one (from a precedent turn)
         // we do nothing
-        if (this.infoClientService.game?.board[posDropBoardIdxs.y][posDropBoardIdxs.x].old) {
+        if (this.infoClientService.game?.board[posDropBoardIdxs.y][posDropBoardIdxs.x].letter.value !== '') {
             return;
         }
 

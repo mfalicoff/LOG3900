@@ -55,4 +55,7 @@ export class TimerService {
     clearMatchmakingTimer() {
         clearInterval(this.timerMatchmaking);
     }
+    addSecsToTimer(secs: number) {
+        this.secondsValue += secs;
+    }
 }

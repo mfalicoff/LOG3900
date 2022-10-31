@@ -30,7 +30,7 @@ export class ChatService {
             }
             const isActionCommand: boolean = command === Commands.Place || command === Commands.Exchange || command === Commands.Pass;
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-            if (isActionCommand && !(player.idPlayer === playerPlaying.idPlayer)) {
+            if (isActionCommand && !(player.id === playerPlaying.id)) {
                 player.chatHistory.push({ message: 'You ' + ' : ' + input, isCommand: true, sender: 'P' });
                 player.chatHistory.push({ message: GlobalConstants.NOT_YOUR_TURN, isCommand: false, sender: 'S' });
                 return false;
@@ -48,7 +48,7 @@ export class ChatService {
             }
 
             if (command === Commands.Place) {
-                const graphicsError = this.validator.verifyPlacementOnBoard(input.split(' ', 3), game, player);
+                const graphicsError = this.validator.verifyPlacementOnBoard(input.split(' ', 3), game);
                 if (graphicsError !== '') {
                     player.chatHistory.push({ message: GlobalConstants.UNABLE_TO_PROCESS_COMMAND + graphicsError, isCommand: true, sender: 'S' });
                     return false;
@@ -190,7 +190,7 @@ export class ChatService {
 
     private debugCommand(input: string, player: Player, game: GameServer) {
         for (const playerElem of game.mapPlayers.values()) {
-            if (playerElem.idPlayer === 'virtualPlayer') {
+            if (playerElem.id === 'virtualPlayer') {
                 playerElem.debugOn = !playerElem.debugOn;
             }
         }

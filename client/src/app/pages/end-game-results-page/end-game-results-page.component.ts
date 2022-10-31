@@ -37,11 +37,16 @@ export class EndGameResultsPageComponent implements OnInit {
     ngOnInit() {
         this.nomSalle = this.infoClientService.actualRoom.name;
         this.players = this.infoClientService.actualRoom.players.copyWithin(0, 0, 3);
+        this.orderPlayerByScore();
         this.findWinners(this.players);
         this.findNumberOfTurns();
         this.getGameStartDate();
         this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
         this.changeEloOfPlayersDB(); 
+    }
+
+    orderPlayerByScore() {
+        this.players = this.players.sort((element1,element2) => element2.score-element1.score);
     }
 
     getUserByName(playerName: string): Observable<UserResponseInterface> {
@@ -140,6 +145,6 @@ export class EndGameResultsPageComponent implements OnInit {
     }
 
     isLinkEnabled(player: Player): boolean {
-        return player.idPlayer !== 'virtualPlayer';
+        return player.id !== 'virtualPlayer';
     }
 }

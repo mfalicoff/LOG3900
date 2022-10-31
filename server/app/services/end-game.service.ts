@@ -33,10 +33,6 @@ export class EndGameService {
                 game.winners.push(player);
             }
         }
-        // if(game.gameMode === GlobalConstants.MODE_RANKED) {
-        //     this.changeEloOfPlayers(game);
-        // }
-        //return winnerPlayer;
         return game.winners;
     }
 
@@ -59,39 +55,4 @@ export class EndGameService {
         }
         return scoreDeducted;
     }
-    // changeEloOfPlayers(game:GameServer) {
-    //     let players = this.orderPlayerByScore(game);
-    //     const averageElo = this.calculateAverageElo(players);
-    //     for (let i =0; i<players.length/2; i++) {
-    //         players[i].elo += Math.round((2-(i))*10 + ((averageElo - players[i].elo)/20));
-    //         game.mapPlayers.set(players[i].name, players[i]);
-    //     }
-    //     for (let i = 2; i<players.length; i++) {
-    //         players[i].elo += Math.round((1-(i))*10 + ((averageElo - players[i].elo)/20));
-    //         game.mapPlayers.set(players[i].name, players[i]);
-    //     }
-        
-    //     // this.sio.to(game.roomName).emit('changeElo', );
-    //     console.log(game.mapPlayers);
-    // }
-    // orderPlayerByScore(game:GameServer) : Player[] {
-    //     const players = Array.from(game.mapPlayers.values());
-    //     players.sort((player1, player2) => {
-    //         if(player1.score> player2.score) {
-    //             return 1;
-    //         }
-    //         if (player1.score < player2.score) {
-    //             return -1;
-    //         }
-    //         return 0;
-    //     })
-    //     return players;
-    // }
-    // calculateAverageElo(players:Player[]):number {
-    //     let averageElo:number = 0;
-    //     for(const player of players) {
-    //         averageElo += player.elo;
-    //     }
-    //     return averageElo/players.length;
-    // }
 }

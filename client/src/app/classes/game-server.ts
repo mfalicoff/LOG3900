@@ -1,14 +1,10 @@
-// magic number error are linked to the attribution of points for the objectives
-// its useless to create new variables therefore we use the following line
-/* eslint-disable @typescript-eslint/no-magic-numbers*/
 import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { Player } from './player';
 import { Spectator } from './spectator';
 import { Tile } from './tile';
 import { Trie } from './trie';
-import { Vec4 } from './vec4';
-import { Letter } from './letter';
+import { PowerCard } from './power-card';
 
 export class GameServer {
     // LETTER BANK SERVICE DATA
@@ -38,7 +34,6 @@ export class GameServer {
     noTileOnBoard: boolean;
 
     // GAME PARAMETERS SERVICE DATA
-    randomBonusesOn: boolean;
     gameMode: string;
     minutesByTurn: number;
     isGamePrivate: boolean;
@@ -54,22 +49,17 @@ export class GameServer {
     // SKIP TURN SERVICE DATA
     displaySkipTurn: string;
 
-    vpLevel: string;
+    // POWER-CARDS SERVICE DATA
+    powerCards: PowerCard[];
+    jmpNextEnnemyTurn: boolean;
+    reduceEnnemyNbTurn: number;
 
-    constructor(
-        minutesByTurn: number,
-        randomBonusesOn: boolean,
-        gameMode: string,
-        vpLevel: string,
-        roomName: string,
-        isGamePrivate: boolean,
-        passwd: string,
-    ) {
+    startTime: number;
+    endTime: number;
+    constructor(minutesByTurn: number, gameMode: string, roomName: string, isGamePrivate: boolean, passwd: string) {
         // Set the basic attributes from the constructor parameters
         this.minutesByTurn = minutesByTurn;
-        this.randomBonusesOn = randomBonusesOn;
         this.gameMode = gameMode;
-        this.vpLevel = vpLevel;
         this.isGamePrivate = isGamePrivate;
         this.passwd = passwd;
 
@@ -89,6 +79,9 @@ export class GameServer {
         this.displaySkipTurn = "En attente d'un autre joueur..";
         this.noTileOnBoard = true;
         this.winners = [new Player('', false)];
+        this.powerCards = [];
+        this.jmpNextEnnemyTurn = false;
+        this.reduceEnnemyNbTurn = 0;
 
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
@@ -119,51 +112,40 @@ export class GameServer {
             ['Z', { quantity: 1, weight: 10 }],
             ['*', { quantity: 2, weight: 0 }],
         ]);
-        this.initializeLettersArray();
-        this.initializeBonusBoard();
-        this.initBoardArray(this);
+        this.initLettersArray();
+        this.initBonusBoard();
+        this.initPowerCards();
     }
 
-    initBoardArray(game: GameServer) {
-        for (
-            let i = 0,
-                l =
-                    Constants.SIZE_OUTER_BORDER_BOARD -
-                    Constants.WIDTH_EACH_SQUARE -
-                    Constants.WIDTH_LINE_BLOCKS +
-                    Constants.PADDING_BOARD_FOR_STANDS;
-            i < Constants.NUMBER_SQUARE_H_AND_W + 2;
-            i++, l += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
-        ) {
-            game.board[i] = new Array<Tile>();
-            for (
-                let j = 0,
-                    k =
-                        Constants.SIZE_OUTER_BORDER_BOARD -
-                        Constants.WIDTH_EACH_SQUARE -
-                        Constants.WIDTH_LINE_BLOCKS +
-                        Constants.PADDING_BOARD_FOR_STANDS;
-                j < Constants.NUMBER_SQUARE_H_AND_W + 2;
-                j++, k += Constants.WIDTH_EACH_SQUARE + Constants.WIDTH_LINE_BLOCKS
-            ) {
-                const newTile = new Tile();
-                const newPosition = new Vec4();
-                const newLetter = new Letter();
-
-                newPosition.x1 = k;
-                newPosition.y1 = l;
-                newPosition.width = Constants.WIDTH_EACH_SQUARE;
-                newPosition.height = Constants.WIDTH_EACH_SQUARE;
-
-                newLetter.weight = 0;
-                newLetter.value = '';
-
-                newTile.letter = newLetter;
-                newTile.position = newPosition;
-                newTile.bonus = game.bonusBoard[i][j];
-
-                game.board[i].push(newTile);
+    // function that sets the master_timer for the game
+    // (reminder:) the master_timer is the client that make the turn stop
+    // when there is no time (it's not the server bc multiple setTimeout would be a nightmare)
+    setMasterTimer() {
+        // try to find a player to give him the master timer
+        for (const player of this.mapPlayers.values()) {
+            if (player.id === 'virtualPlayer') {
+                continue;
             }
+            this.masterTimer = player.id;
+            return;
+        }
+        // if no player found, try to find a spectator to give him the master timer
+        for (const spectator of this.mapSpectators.values()) {
+            this.masterTimer = spectator.socketId;
+            return;
+        }
+    }
+    // takes the first players and makes it creator of game
+    setNewCreatorOfGame() {
+        const realPlayers = Array.from(this.mapPlayers.values()).filter((player) => !player.isCreatorOfGame && player.id !== 'virtualPlayer');
+
+        // takes the first players and makes it creator of game
+        if (realPlayers.length > 0) {
+            realPlayers[0].isCreatorOfGame = true;
+            return;
+        } else {
+            // eslint-disable-next-line no-console
+            console.log('Game is broken in GameServer::setNewCreatorOfGame', realPlayers);
         }
     }
 
@@ -189,57 +171,11 @@ export class GameServer {
         ];
     }
 
-    private initializeBonusBoard(): void {
+    private initBonusBoard(): void {
         this.setMockTiles();
-        if (this.randomBonusesOn) {
-            const nbOfWordx3 = 8;
-            const nbOfWordx2 = 17;
-            const nbOfLetterx3 = 12;
-            const nbOfLetterx2 = 24;
-
-            const mapBonuses: Map<string, number> = new Map();
-            mapBonuses.set('wordx3', nbOfWordx3);
-            mapBonuses.set('wordx2', nbOfWordx2);
-            mapBonuses.set('letterx3', nbOfLetterx3);
-            mapBonuses.set('letterx2', nbOfLetterx2);
-
-            const columns = 15;
-            const rows = 15;
-
-            this.initializeBonusesArray(mapBonuses);
-
-            for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < columns; j++) {
-                    if (this.bonusBoard[i][j] !== 'xx') {
-                        let clear = false;
-                        while (!clear) {
-                            const random = this.generateRandomNumber();
-                            const key = this.bonuses[random];
-                            if (key && key !== undefined) {
-                                this.bonusBoard[i][j] = key;
-                                this.bonuses.splice(random, 1);
-                                clear = true;
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 
-    private initializeBonusesArray(mapBonuses: Map<string, number>) {
-        this.bonuses = new Array<string>();
-        for (const key of mapBonuses.keys()) {
-            const bonusNumber = mapBonuses.get(key);
-            if (bonusNumber) {
-                for (let i = 0; i < bonusNumber; i++) {
-                    this.bonuses.push(key);
-                }
-            }
-        }
-    }
-
-    private initializeLettersArray(): void {
+    private initLettersArray(): void {
         this.letters = new Array<string>();
         for (const key of this.letterBank.keys()) {
             const letterData = this.letterBank.get(key)?.quantity;
@@ -251,8 +187,16 @@ export class GameServer {
         }
     }
 
-    private generateRandomNumber() {
-        const maxNumberGenerated = 61;
-        return Math.floor(Math.random() * (maxNumberGenerated + 1)); // aléatoire entre 0 et 3
+    // need the powers locally in the game to be able to deactivate/activate them for each game
+    // by defaut they all are activated
+    private initPowerCards() {
+        this.powerCards.push(new PowerCard(Constants.JUMP_NEXT_ENNEMY_TURN, true));
+        this.powerCards.push(new PowerCard(Constants.TRANFORM_EMPTY_TILE, true));
+        this.powerCards.push(new PowerCard(Constants.REDUCE_ENNEMY_TIME, true));
+        this.powerCards.push(new PowerCard(Constants.EXCHANGE_LETTER_JOKER, true));
+        this.powerCards.push(new PowerCard(Constants.EXCHANGE_STAND, true));
+        this.powerCards.push(new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true));
+        this.powerCards.push(new PowerCard(Constants.ADD_1_MIN, true));
+        this.powerCards.push(new PowerCard(Constants.REMOVE_1_POWER_CARD_FOR_EVERYONE, true));
     }
 }

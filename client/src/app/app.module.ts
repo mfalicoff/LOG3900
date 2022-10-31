@@ -1,8 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatGridListModule } from '@angular/material/grid-list';
-import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { BoardStandComponent } from '@app/components/board-stand/board-stand.component';
@@ -22,7 +20,6 @@ import { RankedInitPageComponent } from '@app/pages/ranked-init-page/ranked-init
 import { RankedMatchmakingPageComponent } from '@app/pages/ranked-matchmaking-page/ranked-matchmaking-page.component';
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { GalleryComponent } from './components/gallery/gallery.component';
-import { ModalVpLevelsComponent } from './components/modal-vp-levels/modal-vp-levels.component';
 import { UserHistoryComponent } from './components/user-history/user-history.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { ChatComponent } from './pages/chat/chat.component';
@@ -61,7 +58,6 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         LeaderboardPageComponent,
         AdminPageComponent,
         ModalComponent,
-        ModalVpLevelsComponent,
         ChatComponent,
         LoginPageComponent,
         GameModeOptionsPageComponent,
@@ -76,12 +72,10 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         AppMaterialModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        BrowserModule,
         FormsModule,
         HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
-        MatGridListModule,
         NgxGalleryModule,
         NgDisableLinkModule,
     ],

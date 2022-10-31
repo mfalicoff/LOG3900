@@ -1,5 +1,5 @@
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
 import { Spectator } from '@app/classes/spectator';
 import { PutLogicService } from '@app/services/put-logic.service';
@@ -7,6 +7,7 @@ import { Service } from 'typedi';
 import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
 import { PlayAreaService } from './play-area.service';
+import { PowerCardsService } from './power-cards.service';
 import { StandService } from './stand.service';
 
 @Service()
@@ -17,6 +18,7 @@ export class CommunicationBoxService {
         private playAreaService: PlayAreaService,
         private standService: StandService,
         private boardService: BoardService,
+        private powerCardsService: PowerCardsService,
     ) {}
 
     // function that shows the content of the input, place it in the array of message then delte the input field
@@ -27,7 +29,7 @@ export class CommunicationBoxService {
         // we don't want commands until the game is started
         if (dataSeparated[0][0] === '!' && !game.gameStarted) {
             player?.chatHistory.push({
-                message: GlobalConstants.GAME_NOT_STARTED,
+                message: Constants.GAME_NOT_STARTED,
                 isCommand: false,
                 sender: 'S',
             });
@@ -46,6 +48,12 @@ export class CommunicationBoxService {
                 if (this.putLogicService.computeWordToDraw(game, player, dataSeparated[1], dataSeparated[2])) {
                     // We change the turn if word is valid
                     this.playAreaService.changePlayer(game);
+                    // if the power-card mode is active we add a power card to the player
+                    player.nbValidWordPlaced++;
+                    if (game.gameMode === Constants.POWER_CARDS_MODE && player.nbValidWordPlaced >= 3) {
+                        this.powerCardsService.givePowerCard(game, player);
+                        player.nbValidWordPlaced = 0;
+                    }
                 } else {
                     // word isn't valid
                     // pops the msg that shoulnd't have beent sent
@@ -56,7 +64,7 @@ export class CommunicationBoxService {
                             // poping the msg "Vous avez placé vos lettres"
                             playerElem.chatHistory.pop();
                             playerElem.chatHistory.push({
-                                message: GlobalConstants.WORD_DOESNT_EXIST,
+                                message: Constants.WORD_DOESNT_EXIST,
                                 isCommand: false,
                                 sender: 'S',
                             });
@@ -68,7 +76,7 @@ export class CommunicationBoxService {
                     }
                     // we don't want to explicitly switch the player's turn for now
                     // bc it the following timeout would make problems so we control his actions
-                    this.playAreaService.sio.sockets.sockets.get(player.idPlayer)?.emit('changeIsTurnOursStatus', false);
+                    this.playAreaService.sio.sockets.sockets.get(player.id)?.emit('changeIsTurnOursStatus', false);
 
                     // timeout bc this is the time before the letter are back to the player
                     setTimeout(() => {
@@ -79,14 +87,14 @@ export class CommunicationBoxService {
                                 continue;
                             }
                             playerElem.chatHistory.push({
-                                message: 'Le joueur ' + player.name + GlobalConstants.PLAYER_TRIED_A_WORD,
+                                message: 'Le joueur ' + player.name + Constants.PLAYER_TRIED_A_WORD,
                                 isCommand: false,
                                 sender: 'S',
                             });
                         }
                         for (const spectator of game.mapSpectators.values()) {
                             spectator.chatHistory.push({
-                                message: 'Le joueur ' + player.name + GlobalConstants.PLAYER_TRIED_A_WORD,
+                                message: 'Le joueur ' + player.name + Constants.PLAYER_TRIED_A_WORD,
                                 isCommand: false,
                                 sender: 'S',
                             });
@@ -99,7 +107,7 @@ export class CommunicationBoxService {
                         this.putLogicService.sendGameToAllClientInRoom(game);
                         // switch the turn of the player
                         this.playAreaService.changePlayer(game);
-                    }, GlobalConstants.TIME_DELAY_RM_BAD_WORD);
+                    }, Constants.TIME_DELAY_RM_BAD_WORD);
                     return false;
                 }
                 break;
@@ -135,7 +143,7 @@ export class CommunicationBoxService {
         if (this.chatService.validator.entryIsTooLong(input)) {
             // verify the length of the command
             spec.chatHistory.push({
-                message: GlobalConstants.INVALID_LENGTH,
+                message: Constants.INVALID_LENGTH,
                 isCommand: false,
                 sender: 'S',
             });

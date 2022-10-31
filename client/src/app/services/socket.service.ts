@@ -69,6 +69,12 @@ export class SocketService {
 
     private gameUpdateHandler() {
         this.socket.on('playerAndStandUpdate', (player) => {
+            // this is a disgusting block fix bug there isn't rly a better way to do it
+            // when the modal to choose the letter is open the player shouldn't update or it
+            // will refresh the visual in the sidebar component which is not what we want
+            if (this.infoClientService.displayExchLetterModal === 'block') {
+                return;
+            }
             this.infoClientService.player = player;
             setTimeout(() => {
                 this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
@@ -130,6 +136,10 @@ export class SocketService {
         // by settings this variable to true (see server side in comm-box service)
         this.socket.on('changeIsTurnOursStatus', (isTurnOurs) => {
             this.infoClientService.isTurnOurs = isTurnOurs;
+            this.infoClientService.displayExchLetterModal = 'none';
+            this.infoClientService.displayTransformTileModal = 'none';
+            this.infoClientService.displayExchStandModal = 'none';
+            this.infoClientService.displayPowerModal = 'none';
         });
     }
 
@@ -141,6 +151,7 @@ export class SocketService {
         this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
+            this.infoClientService.powerUsedForTurn = false;
             this.drawingBoardService.lettersDrawn = '';
             if (currentNamePlayerPlaying === this.infoClientService.playerName) {
                 this.infoClientService.displayTurn = "C'est votre tour !";
@@ -163,13 +174,17 @@ export class SocketService {
             this.drawingBoardService.lettersDrawn = '';
             this.timerService.clearTimer();
         });
+
+        this.socket.on('addSecsToTimer', (secsToAdd) => {
+            this.timerService.addSecsToTimer(secsToAdd);
+        });
     }
 
     private roomManipulationHandler() {
-        this.socket.on('addElementListRoom', ({ roomName, timeTurn, isBonusRandom, passwd, players, spectators }) => {
+        this.socket.on('addElementListRoom', ({ roomName, gameMode, timeTurn, passwd, players, spectators }) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
             if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
-                this.infoClientService.rooms.push(new RoomData(roomName, timeTurn, isBonusRandom, passwd, players, spectators));
+                this.infoClientService.rooms.push(new RoomData(roomName, gameMode, timeTurn, passwd, players, spectators));
             } else {
                 this.infoClientService.rooms[idxExistingRoom].players = players;
                 this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
@@ -248,6 +263,13 @@ export class SocketService {
             this.infoClientService.incommingPlayer = newPlayerName;
             this.infoClientService.incommingPlayerId = newPlayerId;
         });
+        this.socket.on('gameOver', () => {
+            this.infoClientService.game.gameFinished = true;
+        });
+
+        this.socket.on('sendLetterReserve', (letterReserveArr) => {
+            this.infoClientService.letterReserve = letterReserveArr;
+        });
     }
 
     private setTimeoutForTimer() {
@@ -278,7 +300,7 @@ export class SocketService {
     }
 
     private updateUiBeforeStartGame(players: Player[]) {
-        const nbRealPlayer = players?.filter((player: Player) => player.idPlayer !== 'virtualPlayer').length;
+        const nbRealPlayer = players?.filter((player: Player) => player.id !== 'virtualPlayer').length;
         if (nbRealPlayer >= GlobalConstants.MIN_PERSON_PLAYING) {
             this.infoClientService.displayTurn = GlobalConstants.WAITING_FOR_CREATOR;
         } else {

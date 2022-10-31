@@ -13,12 +13,10 @@ export class EloChangeService {
         let newPlayers:Player[] = [];
         oldPlayers.forEach(val => newPlayers.push(Object.assign({}, val)));
         const averageElo = this.calculateAverageElo(oldPlayers);
-        console.log(averageElo);
         newPlayers[0].elo += Math.round(20 + ((averageElo - oldPlayers[0].elo)/20));
         newPlayers[1].elo += Math.round(10 + ((averageElo - oldPlayers[1].elo)/20));
         newPlayers[2].elo -= Math.round(10 + ((averageElo - oldPlayers[2].elo)/20));
         newPlayers[3].elo -= Math.round(20 + ((averageElo - oldPlayers[3].elo)/20));
-        console.log(newPlayers);
         return newPlayers;
     }
     private calculateAverageElo(players:Player[]):number {
