@@ -10,6 +10,7 @@ import { UserResponseInterface } from '@app/classes/response.interface';
 import { Observable, Subscription } from 'rxjs';
 import { GameSaved } from '@app/classes/game-saved';
 import { UserService } from '@app/services/user.service';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-end-game-results-page',
@@ -24,7 +25,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     serverUrl = environment.serverUrl;
     players: Player[];
     gameSaved: GameSaved;
-    gameSavedSubscription: Subscription;
+    gameSavedSubscription: Subscription | null;
     openProfileSubscription: Subscription;
     constructor(
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
@@ -33,6 +34,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private timerService: TimerService,
         private dialog: MatDialog,
         private httpClient: HttpClient,
+        private socketService: SocketService,
     ) {}
 
     ngOnInit() {
@@ -42,22 +44,11 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.findNumberOfTurns();
         this.getGameStartDate();
         this.displayPlayingTime();
-        this.gameSavedSubscription = this.saveGame().subscribe(
-            (res) => {
-                this.gameSaved._id = res;
-            },
-            (error) => {
-                if (error.error instanceof ErrorEvent) {
-                    alert('Erreur: ' + error.status + error.error.message);
-                } else {
-                    alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
-                }
-            },
-        );
+        this.gameSavedSubscription = this.saveGame();
     }
 
     ngOnDestroy() {
-        this.gameSavedSubscription.unsubscribe();
+        if (this.gameSavedSubscription !== null) this.gameSavedSubscription.unsubscribe();
         if (this.openProfileSubscription) this.openProfileSubscription.unsubscribe();
     }
 
@@ -150,18 +141,32 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         return player.id !== 'virtualPlayer';
     }
 
-    saveGame() {
-        this.gameSaved = new GameSaved(
-            this.infoClientService.actualRoom.players,
-            this.roomName,
-            this.numberOfTurns,
-            this.gameStartDate,
-            this.playingTime,
-            this.infoClientService.game.nbLetterReserve,
-            this.infoClientService.actualRoom.spectators,
-            this.infoClientService.game.winners,
-        );
-        return this.httpClient.post<string>(environment.serverUrl + 'games', { savedGame: this.gameSaved });
+    saveGame(): Subscription | null {
+        if (this.socketService.socket.id === this.infoClientService.game.masterTimer) {
+            this.gameSaved = new GameSaved(
+                this.infoClientService.actualRoom.players,
+                this.roomName,
+                this.numberOfTurns,
+                this.gameStartDate,
+                this.playingTime,
+                this.infoClientService.game.nbLetterReserve,
+                this.infoClientService.actualRoom.spectators,
+                this.infoClientService.game.winners,
+            );
+            return this.httpClient.post<string>(environment.serverUrl + 'games', { savedGame: this.gameSaved }).subscribe(
+                (res) => {
+                    this.gameSaved._id = res;
+                },
+                (error) => {
+                    if (error.error instanceof ErrorEvent) {
+                        alert('Erreur: ' + error.status + error.error.message);
+                    } else {
+                        alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
+                    }
+                },
+            );
+        }
+        return null;
     }
 
     async addGameToFavourites() {
