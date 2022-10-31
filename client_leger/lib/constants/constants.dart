@@ -34,6 +34,8 @@ const Map<int, String> indexToLetter = {
   15 : "O",
 };
 
+const int ASCII_CODE_SHIFT = 96;
+
 const num DEFAULT_VALUE_NUMBER = -1;
 
 const double WIDTH_HEIGHT_BOARD = 750;
@@ -64,13 +66,25 @@ double WIDTH_EACH_SQUARE_CORRECTED = crossProductGlobal(WIDTH_EACH_SQUARE);
 double WIDTH_STAND_CORRECTED = crossProductGlobal(WIDTH_STAND);
 double HEIGHT_STAND_CORRECTED = crossProductGlobal(HEIGHT_STAND);
 double PADDING_BOARD_FOR_STANDS_CORRECTED = crossProductGlobal(PADDING_BOARD_FOR_STANDS);
+double SIZE_OUTER_BORDER_STAND_CORECTED = crossProductGlobal(SIZE_OUTER_BORDER_STAND);
+
 
 double crossProductGlobal(double valueToConvert){
   const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
   return (valueToConvert * 692)/originalSizeCanvas;
 }
 
+double crossProductGlobal1(num valueToConvert){
+  const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
+  return (valueToConvert * 692)/originalSizeCanvas;
+}
+
 double crossProductTest(double valueToConvert){
+  const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
+  return (valueToConvert * originalSizeCanvas)/692;
+}
+
+num crossProductTest1(num valueToConvert){
   const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
   return (valueToConvert * originalSizeCanvas)/692;
 }

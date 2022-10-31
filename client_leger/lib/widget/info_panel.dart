@@ -1,5 +1,6 @@
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
+import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,7 @@ class _InfoPanelState extends State<InfoPanel> {
   final InfoClientService gameService = InfoClientService();
   final SocketService socketService = SocketService();
   final TimerService timerService = TimerService();
+  final TapService tapService = TapService();
 
   @override
   void initState() {
@@ -190,7 +192,7 @@ class _InfoPanelState extends State<InfoPanel> {
 
   void _pass() {
     if(gameService.isTurnOurs && gameService.game.gameStarted) {
-      socketService.socket.emit('onExchangeClick');
+      socketService.socket.emit('turnFinished');
     }
   }
 
@@ -198,5 +200,7 @@ class _InfoPanelState extends State<InfoPanel> {
 
   void _cancel() {}
 
-  void _play() {}
+  void _play() {
+    tapService.play(socketService.socket);
+  }
 }
