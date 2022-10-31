@@ -1,9 +1,15 @@
 import { AfterViewInit, Component, ElementRef, Inject, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { GameSaved } from '@app/classes/game-saved';
 
 interface Data {
     title: string;
     data: string[];
+    isFavouriteGames: boolean;
+}
+interface Games {
+    title: string;
+    data: GameSaved[];
     isFavouriteGames: boolean;
 }
 
@@ -20,7 +26,7 @@ export class UserHistoryComponent implements AfterViewInit {
     actionHistory: string[] = this.data.data as string[];
     private scrollContainer: Element;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: Data, private dialog: MatDialog) {}
+    constructor(@Inject(MAT_DIALOG_DATA) public data: Data | Games, private dialog: MatDialog) {}
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;

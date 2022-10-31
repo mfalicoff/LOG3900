@@ -8,17 +8,25 @@ import { HttpException } from '@app/classes/http.exception';
 class GameSavedService {
     gamesSaved = gameSavedModel;
 
-    async findAllFavouriteGames(): Promise<GameSaved[]> {
+    async findAllGames(): Promise<GameSaved[]> {
         return this.gamesSaved.find();
     }
 
-    async findGameById(gameId: string): Promise<GameSaved> {
-        if (gameId === '' || gameId === undefined) {
-            throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no id sent');
+    async findGamesById(gamesIds: string[]): Promise<GameSaved[]> {
+        if (!gamesIds) {
+            throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no ids sent');
         }
-        const findFavouriteGame: GameSaved = (await this.gamesSaved.findOne({ _id: gameId })) as GameSaved;
-        if (!findFavouriteGame) throw new HttpException(HTTPStatusCode.NotFound, 'Game not found');
-        return findFavouriteGame;
+
+        // eslint-disable-next-line prefer-const
+        let favouriteGames: GameSaved[] = [];
+        for await (const gameId of gamesIds) {
+            const findGame = (await this.gamesSaved.findOne({ _id: gameId })) as GameSaved;
+
+            if (!findGame) throw new HttpException(HTTPStatusCode.NotFound, 'Game not found');
+
+            favouriteGames.push((await this.gamesSaved.findOne({ _id: gameId })) as GameSaved);
+        }
+        return favouriteGames;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

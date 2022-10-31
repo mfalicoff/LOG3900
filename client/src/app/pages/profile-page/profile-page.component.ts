@@ -4,6 +4,7 @@ import { UserHistoryComponent } from '@app/components/user-history/user-history.
 import { UserService } from '@app/services/user.service';
 import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profile-edit.component';
 import { Subscription } from 'rxjs';
+import { GameSaved } from '@app/classes/game-saved';
 
 @Component({
     selector: 'app-profile-page',
@@ -12,6 +13,7 @@ import { Subscription } from 'rxjs';
 })
 export class ProfilePageComponent implements OnInit, OnDestroy {
     favourtieGamesSubscription: Subscription;
+    favouriteGames: GameSaved[];
     constructor(private dialog: MatDialog, public userService: UserService) {}
 
     ngOnInit() {}
@@ -50,7 +52,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
             width: '75%',
             data: {
                 title: 'Parties favorites',
-                data: this.userService.user.favouriteGames,
+                data: this.favouriteGames,
                 isFavouriteGames: true,
             },
             panelClass: 'matDialogWheat',
