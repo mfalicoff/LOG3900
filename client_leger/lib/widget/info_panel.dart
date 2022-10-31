@@ -23,7 +23,6 @@ class _InfoPanelState extends State<InfoPanel> {
 
     infoClientService.addListener(refresh);
     infoClientService.actualRoom.addListener(refresh);
-    socketService.addListener(refresh);
     timerService.addListener(refresh);
   }
 
