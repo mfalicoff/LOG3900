@@ -1,14 +1,14 @@
+import * as Constants from '@app/classes/global-constants';
+import { RankedGame } from '@app/classes/ranked-game';
+import { RankedUser } from '@app/classes/ranked-user';
+import { User } from '@app/classes/users.interface';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
-import { RankedGame } from '../classes/ranked-game';
-import { RankedUser } from '../classes/ranked-user';
-import { User } from '../classes/users.interface';
 
 @Service()
-// players that join are not added to the player map
 export class MatchmakingService {
     sio: io.Server;
-    rooms: Map<string, RankedGame>; // key:first player name value:Game
+    rooms: Map<string, RankedGame>; // key:first player name value:RankedGame
     constructor() {
         this.sio = new io.Server();
         this.rooms = new Map<string, RankedGame>();
@@ -22,7 +22,7 @@ export class MatchmakingService {
         for (const value of this.rooms.values()) {
             if (this.doesPlayerFitInARoom(value, eloDisparity, user.elo)) {
                 this.joinRoom(socket, value, user, eloDisparity);
-                if (value.rankedUsers.length === 4) {
+                if (value.rankedUsers.length === Constants.MAX_PERSON_PLAYING) {
                     this.rankedMatchFound(value);
                 }
                 return;
@@ -34,7 +34,7 @@ export class MatchmakingService {
     doesPlayerFitInARoom(value: RankedGame, eloDisparity: number, playerElo: number): boolean {
         for (const rankedUser of value.rankedUsers) {
             const eloDiff: number = Math.abs(playerElo - rankedUser.elo);
-            if (eloDiff > rankedUser.eloDisparity || eloDiff > eloDisparity || value.rankedUsers.length >= 4) {
+            if (eloDiff > rankedUser.eloDisparity || eloDiff > eloDisparity || value.rankedUsers.length >= Constants.MAX_PERSON_PLAYING) {
                 return false;
             }
         }
@@ -56,8 +56,9 @@ export class MatchmakingService {
     }
 
     rankedMatchFound(rankedGame: RankedGame) {
+        const twnetyOneSecondDelay = 0.35;
         this.sio.to(rankedGame.name).emit('matchFound');
-        rankedGame.startTimer(0.35);
+        rankedGame.startTimer(twnetyOneSecondDelay);
         this.checkForUsersAccept(rankedGame);
     }
     onRefuse(socket: io.Socket, user: User) {
@@ -82,8 +83,10 @@ export class MatchmakingService {
         }
     }
     checkForUsersAccept(rankedGame: RankedGame) {
+        const secondInterval = 1000;
+        const fiveSecondDelay = 5;
         const timerInterval = setInterval(() => {
-            if (rankedGame.secondsValue === 5) {
+            if (rankedGame.secondsValue === fiveSecondDelay) {
                 clearInterval(timerInterval);
                 for (const user of rankedGame.rankedUsers) {
                     if (user.hasAccepted === false) {
@@ -95,10 +98,11 @@ export class MatchmakingService {
                 this.createRankedGame(rankedGame);
                 this.rooms.delete(rankedGame.name);
             }
-        }, 1000);
+        }, secondInterval);
     }
 
     async createRankedGame(rankedGame: RankedGame) {
+        const secondInterval = 1000;
         let creatorUser: RankedUser = rankedGame.rankedUsers[0];
         creatorUser = rankedGame.rankedUsers[0];
         for (const user of rankedGame.rankedUsers) {
@@ -106,7 +110,8 @@ export class MatchmakingService {
                 await this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', rankedGame.name);
             }
         }
-        let i = 3;
+        const threeSecondDelay = 3;
+        let i = threeSecondDelay;
         const timerInterval = setInterval(() => {
             if (rankedGame.secondsValue === i + 1) {
                 // for(const user of rankedGame.rankedUsers) {
@@ -125,7 +130,7 @@ export class MatchmakingService {
                 rankedGame.clearTimer();
                 this.sio.sockets.sockets.get(creatorUser.socketId)?.emit('startGame', creatorUser.name);
             }
-        }, 1000);
+        }, secondInterval);
     }
 
     matchRefused(rankedGame: RankedGame) {

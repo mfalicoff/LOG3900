@@ -6,19 +6,19 @@ import { SocketService } from './socket.service';
     providedIn: 'root',
 })
 export class EloChangeService {
-    baseEloChangeForFirstOrLast = 20;
-    baseEloChangeForSecondOrThird = 10;
-    eloDisparityFactor = 20;
     constructor(public socketService: SocketService) {}
 
     changeEloOfPlayers(oldPlayers: Player[]): Player[] {
+        const baseEloChangeForFirstOrLast = 20;
+        const baseEloChangeForSecondOrThird = 10;
+        const eloDisparityFactor = 20;
         const newPlayers: Player[] = [];
         oldPlayers.forEach((val) => newPlayers.push(Object.assign({}, val)));
         const averageElo = this.calculateAverageElo(oldPlayers);
-        newPlayers[0].elo += Math.round(this.baseEloChangeForFirstOrLast + (averageElo - oldPlayers[0].elo) / this.eloDisparityFactor);
-        newPlayers[1].elo += Math.round(this.baseEloChangeForSecondOrThird + (averageElo - oldPlayers[1].elo) / this.eloDisparityFactor);
-        newPlayers[2].elo -= Math.round(this.baseEloChangeForSecondOrThird + (averageElo - oldPlayers[2].elo) / this.eloDisparityFactor);
-        newPlayers[3].elo -= Math.round(this.baseEloChangeForFirstOrLast + (averageElo - oldPlayers[3].elo) / this.eloDisparityFactor);
+        newPlayers[0].elo += Math.round(baseEloChangeForFirstOrLast + (averageElo - oldPlayers[0].elo) / eloDisparityFactor);
+        newPlayers[1].elo += Math.round(baseEloChangeForSecondOrThird + (averageElo - oldPlayers[1].elo) / eloDisparityFactor);
+        newPlayers[2].elo -= Math.round(baseEloChangeForSecondOrThird + (averageElo - oldPlayers[2].elo) / eloDisparityFactor);
+        newPlayers[3].elo -= Math.round(baseEloChangeForFirstOrLast + (averageElo - oldPlayers[3].elo) / eloDisparityFactor);
         return newPlayers;
     }
     private calculateAverageElo(players: Player[]): number {

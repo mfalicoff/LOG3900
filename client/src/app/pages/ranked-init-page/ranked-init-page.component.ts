@@ -9,8 +9,11 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./ranked-init-page.component.scss'],
 })
 export class RankedInitPageComponent {
-    eloDisparity: number = 60;
-    constructor(public infoClientService: InfoClientService, public userService: UserService, private socketService: SocketService) {}
+    eloDisparity: number;
+    constructor(public infoClientService: InfoClientService, public userService: UserService, private socketService: SocketService) {
+        const baseElodisparity = 60;
+        this.eloDisparity = baseElodisparity;
+    }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onEloDisparityChange(value: any) {
