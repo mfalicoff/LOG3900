@@ -16,19 +16,20 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { MultiplayerInitPageComponent } from '@app/pages/multiplayer-init-page/multiplayer-init-page.component';
 import { ParametresSelectionPageComponent } from '@app/pages/parametres-selection-page/parametres-selection-page.component';
+import { RankedInitPageComponent } from '@app/pages/ranked-init-page/ranked-init-page.component';
+import { RankedMatchmakingPageComponent } from '@app/pages/ranked-matchmaking-page/ranked-matchmaking-page.component';
+import { NgxGalleryModule } from '@kolkov/ngx-gallery';
+import { GalleryComponent } from './components/gallery/gallery.component';
+import { UserHistoryComponent } from './components/user-history/user-history.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { ChatComponent } from './pages/chat/chat.component';
 import { GameModeOptionsPageComponent } from './pages/game-mode-options-page/game-mode-options-page.component';
 import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ModalComponent } from './pages/modal/modal.component';
-import { ChatComponent } from './pages/chat/chat.component';
-import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
-import { UserHistoryComponent } from './components/user-history/user-history.component';
-import { MatGridListModule } from '@angular/material/grid-list';
 import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
+import { ProfilePageComponent } from './pages/profile-page/profile-page.component';
 // eslint-disable-next-line import/no-unresolved
-import { NgxGalleryModule } from '@kolkov/ngx-gallery';
-import { GalleryComponent } from '@app/components/gallery/gallery.component';
 import { EndGameResultsPageComponent } from '@app/pages/end-game-results-page/end-game-results-page.component';
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { NgDisableLinkModule } from 'ng-disable-link';
@@ -49,6 +50,8 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         BoardStandComponent,
         ParametresSelectionPageComponent,
         MultiplayerInitPageComponent,
+        RankedInitPageComponent,
+        RankedMatchmakingPageComponent,
         CommunicationBoxComponent,
         TimerComponent,
         InfoPanelComponent,
@@ -73,7 +76,6 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         HttpClientModule,
         ReactiveFormsModule,
         RouterModule,
-        MatGridListModule,
         NgxGalleryModule,
         NgDisableLinkModule,
     ],

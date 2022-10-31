@@ -118,7 +118,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
             // get random key
             const roomName: string = rooms[Math.floor(Math.random() * rooms.length)].name;
             // join room
-            this.socketService.socket.emit('joinRoom', { roomName, playerId: this.socketService.socket.id });
+            this.joinRoom(roomName);
         } else {
             alert("Il n'y a pas de salle disponible.");
         }
@@ -146,9 +146,6 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
 
     private joinRoom(roomName: string) {
         // joins the room
-        this.socketService.socket.emit('joinRoom', {
-            roomName,
-            playerId: this.socketService.socket.id,
-        });
+        this.socketService.socket.emit('joinRoom', roomName, this.socketService.socket.id);
     }
 }
