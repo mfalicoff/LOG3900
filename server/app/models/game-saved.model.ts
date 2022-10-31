@@ -10,6 +10,10 @@ const gameSavedSchema: Schema = new Schema({
         type: [String],
         required: true,
     },
+    scores: {
+        type: [Number],
+        required: true,
+    },
     spectators: {
         type: [String],
         required: false,

@@ -6,6 +6,7 @@ export class GameSaved {
     players: string[];
     spectators: string[];
     winners: string[];
+    scores: number[];
     numberOfTurns: number;
     gameStartDate: string;
     playingTime: string;
@@ -32,6 +33,7 @@ export class GameSaved {
         this.players = [];
         this.spectators = [];
         this.winners = [];
+        this.scores = [];
 
         this.populateArrays(players, spectators, winners);
         this.populateMap(players);
@@ -40,6 +42,10 @@ export class GameSaved {
     populateArrays(players: Player[], spectators: Spectator[] | undefined, winners: Player[] | undefined) {
         for (let index = 0; index < players.length; index++) {
             this.players[index] = players[index].name;
+        }
+        const quatre = 4;
+        for (let index = 0; index < quatre; index++) {
+            this.scores[index] = players[index].score;
         }
         if (spectators) {
             for (let index = 0; index < spectators.length; index++) {

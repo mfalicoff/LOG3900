@@ -36,6 +36,7 @@ class GameSavedService {
         const findSavedGame: GameSaved = (await this.gamesSaved.findOne({
             roomName: gameData.roomName,
             players: { $in: gameData.players },
+            scores: { $in: gameData.scores },
             spectators: { $in: gameData.spectators },
             winners: { $in: gameData.winners },
             numberOfTurns: gameData.numberOfTurns,
@@ -47,6 +48,7 @@ class GameSavedService {
         return await this.gamesSaved.create({
             roomName: gameData.roomName,
             players: gameData.players,
+            scores: gameData.scores,
             spectators: gameData.spectators,
             winners: gameData.winners,
             numberOfTurns: gameData.numberOfTurns,
