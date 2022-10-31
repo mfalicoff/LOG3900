@@ -1,15 +1,15 @@
-import { hash } from 'bcrypt';
-import { HttpException } from '@app/classes/http.exception';
-import { User } from '@app/classes/users.interface';
-import { isEmpty } from '@app/utils/utils';
-import { CreateUserValidator } from '@app/utils/validators';
-import userModel from '@app/models/users.model';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import { SALT_ROUNDS } from '@app/classes/global-constants';
-import { addActionHistory } from '@app/utils/auth';
+import { HttpException } from '@app/classes/http.exception';
 import { Player } from '@app/classes/player';
-import { Service } from 'typedi';
+import { User } from '@app/classes/users.interface';
+import userModel from '@app/models/users.model';
 import AvatarService from '@app/services/avatar.service';
+import { addActionHistory } from '@app/utils/auth';
+import { isEmpty } from '@app/utils/utils';
+import { CreateUserValidator } from '@app/utils/validators';
+import { hash } from 'bcrypt';
+import { Service } from 'typedi';
 import GameSavedService from './game-saved.service';
 import { GameSaved } from '@app/classes/game-saved';
 
@@ -171,6 +171,10 @@ class UserService {
                 { name: player.name },
                 { $push: { gameHistory: `Partie Perdu le ${start.toLocaleString()}:${start.toDateString()}` } },
             );
+    }
+
+    async changeEloUser(player: Player) {
+        await this.users.updateOne({ name: player.name }, { $push: { elo: player.elo } });
     }
 
     async populateAvatarField(user: User): Promise<string> {

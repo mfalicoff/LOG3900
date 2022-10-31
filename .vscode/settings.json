@@ -1,6 +1,6 @@
 {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.codeActionsOnSave": {
         "source.organizeImports": true,
         "source.fixAll.eslint": true
@@ -10,7 +10,7 @@
     "eslint.workingDirectories": ["./client", "./server"],
     "eslint.probe": ["javascript", "typescript", "html", "vue", "markdown"],
     "eslint.validate": ["javascript", "typescript", "html", "vue", "markdown"],
-    "cSpell.words": ["boite", "commande", "favourite"],
+    "cSpell.words": ["boite", "commande"],
     "[typescript]": {
         "editor.defaultFormatter": "vscode.typescript-language-features"
     },

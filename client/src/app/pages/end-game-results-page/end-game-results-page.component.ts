@@ -1,16 +1,17 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Player } from '@app/classes/player';
-import { InfoClientService } from '@app/services/info-client.service';
-import { TimerService } from '@app/services/timer.service';
-import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { environment } from '@app/../environments/environment';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Player } from '@app/classes/player';
 import { UserResponseInterface } from '@app/classes/response.interface';
+import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
+import { EloChangeService } from '@app/services/elo-change.service';
+import { InfoClientService } from '@app/services/info-client.service';
+import { SocketService } from '@app/services/socket.service';
+import { TimerService } from '@app/services/timer.service';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, Subscription } from 'rxjs';
 import { GameSaved } from '@app/classes/game-saved';
 import { UserService } from '@app/services/user.service';
-import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-end-game-results-page',
@@ -26,6 +27,8 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     players: Player[];
     gameSaved: GameSaved;
     openProfileSubscription: Subscription;
+    newPlayersElo: Player[];
+
     constructor(
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
         public infoClientService: InfoClientService,
@@ -33,21 +36,29 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private timerService: TimerService,
         private dialog: MatDialog,
         private httpClient: HttpClient,
+        private eloChangeService: EloChangeService,
         private socketService: SocketService,
     ) {}
 
     ngOnInit() {
         this.roomName = this.infoClientService.actualRoom.name;
         this.players = this.infoClientService.actualRoom.players.copyWithin(0, 0, 3);
+        this.orderPlayerByScore();
         this.findWinners(this.players);
         this.findNumberOfTurns();
         this.getGameStartDate();
         this.displayPlayingTime();
         this.saveGame();
+        this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
+        this.changeEloOfPlayersDB();
     }
 
     ngOnDestroy() {
         if (this.openProfileSubscription) this.openProfileSubscription.unsubscribe();
+    }
+
+    orderPlayerByScore() {
+        this.players = this.players.sort((element1, element2) => element2.score - element1.score);
     }
 
     getUserByName(playerName: string): Observable<UserResponseInterface> {
@@ -77,6 +88,12 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
                 }
             },
         });
+    }
+
+    changeEloOfPlayersDB() {
+        for (const player of this.newPlayersElo) {
+            this.socketService.socket.emit('changeElo', player);
+        }
     }
 
     closeModalEndGame() {

@@ -126,6 +126,9 @@ export const FAILED_OBJECTIVE = 'failed';
 export const COMPLETED_OBJECTIVE = 'completed';
 export const UNCOMPLETED_OBJECTIVE = 'uncompleted';
 
+/// //GAME MODE CONSTANTS
+export const MODE_MULTI = 'Multi';
+export const MODE_RANKED = 'Ranked';
 // GAME MODE CONSTANTS
 export const POWER_CARDS_MODE = 'power-cards';
 export const CLASSIC_MODE = 'classic';

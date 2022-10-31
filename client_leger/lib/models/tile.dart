@@ -35,4 +35,15 @@ class Tile {
     borderColor = tile["borderColor"];
     isOnBoard = tile["isOnBoard"];
   }
+
+  Map<String, dynamic> toJson() => {
+    'position': position.toJson(),
+    'letter': letter.toJson(),
+    'bonus': bonus,
+    'backgroundColor': backgroundColor,
+    'borderColor': borderColor,
+    'isOnBoard': isOnBoard,
+    'old': old,
+  };
+
 }

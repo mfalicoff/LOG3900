@@ -12,6 +12,7 @@ export interface User {
     avatarPath?: string;
     avatarUri?: string;
     favouriteGames?: string[];
+    elo: number;
 
     name: string;
     roomName: string;

@@ -15,6 +15,7 @@ export class InfoClientService {
     player: Player;
 
     gameMode: string;
+    eloDisparity: number;
 
     // Game parameters
     minutesByTurn: number;

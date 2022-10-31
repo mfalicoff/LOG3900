@@ -69,6 +69,7 @@ export const COMPLETED_OBJECTIVE = 'completed';
 export const UNCOMPLETED_OBJECTIVE = 'uncompleted';
 
 // GAME MODE CONSTANTS
+export const MODE_RANKED = 'Ranked';
 export const POWER_CARDS_MODE = 'power-cards';
 export const CLASSIC_MODE = 'classic';
 

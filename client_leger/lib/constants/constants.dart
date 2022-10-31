@@ -1,3 +1,5 @@
+import 'package:client_leger/services/board_painter.dart';
+
 const Map<String, int> colorTilesMap = {
   "xx": 0xFFBEB9a6,
   "wordx3": 0xFFF75D59,
@@ -32,13 +34,12 @@ const Map<int, String> indexToLetter = {
   15 : "O",
 };
 
+const num DEFAULT_VALUE_NUMBER = -1;
+
 const double WIDTH_HEIGHT_BOARD = 750;
-
 const double WIDTH_PLAY_AREA = 900;
-
 const double PADDING_BET_BOARD_AND_STAND = 5;
 const double SIZE_OUTER_BORDER_BOARD = 40;
-
 const double NB_SQUARE_H_AND_W = 15;
 const double WIDTH_LINE_BLOCKS = 4;
 const double WIDTH_BOARD_NOBORDER = WIDTH_HEIGHT_BOARD - SIZE_OUTER_BORDER_BOARD * 2;
@@ -49,8 +50,30 @@ const double NUMBER_SLOT_STAND = 7;
 const double SIZE_OUTER_BORDER_STAND = 6;
 const double WIDTH_STAND = WIDTH_EACH_SQUARE * NUMBER_SLOT_STAND + WIDTH_LINE_BLOCKS * (NUMBER_SLOT_STAND - 1) + SIZE_OUTER_BORDER_STAND * 2;
 const double HEIGHT_STAND = WIDTH_EACH_SQUARE + SIZE_OUTER_BORDER_STAND * 2;
-
 const double PADDING_BOARD_FOR_STANDS = HEIGHT_STAND + PADDING_BET_BOARD_AND_STAND;
+
+// CLIENT_LEGER_CONSTANTS
+double WIDTH_HEIGHT_BOARD_CORRECTED = crossProductGlobal(WIDTH_HEIGHT_BOARD);
+double WIDTH_PLAY_AREA_CORRECTED = crossProductGlobal(WIDTH_PLAY_AREA);
+double PADDING_BET_BOARD_AND_STAND_CORRECTED = crossProductGlobal(PADDING_BET_BOARD_AND_STAND);
+double SIZE_OUTER_BORDER_BOARD_CORRECTED = crossProductGlobal(SIZE_OUTER_BORDER_BOARD);
+double NB_SQUARE_H_AND_W_CORRECTED = crossProductGlobal(NB_SQUARE_H_AND_W);
+double WIDTH_LINE_BLOCKS_CORRECTED = crossProductGlobal(WIDTH_LINE_BLOCKS);
+double WIDTH_BOARD_NOBORDER_CORRECTED = crossProductGlobal(WIDTH_BOARD_NOBORDER);
+double WIDTH_EACH_SQUARE_CORRECTED = crossProductGlobal(WIDTH_EACH_SQUARE);
+double WIDTH_STAND_CORRECTED = crossProductGlobal(WIDTH_STAND);
+double HEIGHT_STAND_CORRECTED = crossProductGlobal(HEIGHT_STAND);
+double PADDING_BOARD_FOR_STANDS_CORRECTED = crossProductGlobal(PADDING_BOARD_FOR_STANDS);
+
+double crossProductGlobal(double valueToConvert){
+  const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
+  return (valueToConvert * 692)/originalSizeCanvas;
+}
+
+double crossProductTest(double valueToConvert){
+  const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
+  return (valueToConvert * originalSizeCanvas)/692;
+}
 
 const num NUMBER_SQUARE_H_AND_W = 15;
 

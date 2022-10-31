@@ -6,4 +6,9 @@ class Letter {
     value = '';
     weight = 0;
   }
+
+  Map<String, dynamic> toJson() => {
+    'weight': weight,
+    'value': value
+  };
 }

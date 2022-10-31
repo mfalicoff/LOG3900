@@ -23,6 +23,7 @@ import { DatabaseService } from './database.service';
 import { DictionaryService } from './dictionary.service';
 import GameSavedService from './game-saved.service';
 import { LetterBankService } from './letter-bank.service';
+import { MatchmakingService } from './matchmaking.service';
 import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
 import { PowerCardsService } from './power-cards.service';
@@ -53,6 +54,7 @@ export class SocketManager {
         private putLogicService: PutLogicService,
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
+        private matchmakingService: MatchmakingService,
         private standService: StandService,
         private powerCardsService: PowerCardsService,
         private letterBankService: LetterBankService,
@@ -60,6 +62,7 @@ export class SocketManager {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
         this.rooms = new Map<string, GameServer>();
+        this.matchmakingService.initSioMatchmaking(this.sio);
     }
 
     handleSockets(): void {
@@ -73,6 +76,8 @@ export class SocketManager {
             this.disconnectAbandonHandler(socket);
             // handling dictionaries, VP names and high scores
             this.adminHandler(socket);
+            // handling the ranked/matchmaking events
+            this.rankedHandler(socket);
             this.searchHandler(socket);
         });
     }
@@ -505,11 +510,11 @@ export class SocketManager {
         this.putLogicService.initSioPutLogic(this.sio);
         this.mouseEventService.initSioMouseEvent(this.sio);
         this.playAreaService.initSioPlayArea(this.sio);
+        this.matchmakingService.initSioMatchmaking(this.sio);
 
         // create button for creator to start the game if enough reel player are in the game
         this.shouldCreatorBeAbleToStartGame(newGame);
     }
-
     private shouldCreatorBeAbleToStartGame(game: GameServer) {
         let creatorCanStart = true;
         if (game.gameStarted || game.gameFinished) {
@@ -533,6 +538,7 @@ export class SocketManager {
     private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
+        game?.mapPlayers.set(socket.id, newPlayer); // dont delete this even if its duplicate code
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.id = socket.id;
         game?.mapPlayers.set(socket.id, newPlayer);
@@ -556,7 +562,7 @@ export class SocketManager {
 
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', (name) => {
-            this.users.set(socket.id, { name, roomName: '' });
+            this.users.set(socket.id, { name, roomName: '', elo: 2000 });
         });
 
         socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, gameMode, isGamePrivate, passwd, activatedPowers }) => {
@@ -594,7 +600,7 @@ export class SocketManager {
             socket.emit('roomChangeAccepted', '/game');
         });
 
-        socket.on('joinRoom', ({ roomName, playerId }) => {
+        socket.on('joinRoom', (roomName, playerId) => {
             const userData = this.users.get(playerId);
             if (!userData) {
                 return;
@@ -663,6 +669,7 @@ export class SocketManager {
             }
             const spectator = game.mapSpectators.get(socket.id);
             if (!spectator) {
+                // enters here for wanting to be spect
                 return;
             }
             game.mapSpectators.delete(socket.id);
@@ -729,6 +736,7 @@ export class SocketManager {
                 this.putLogicService.initSioPutLogic(this.sio);
                 this.playAreaService.initSioPlayArea(this.sio);
                 this.mouseEventService.initSioMouseEvent(this.sio);
+                this.matchmakingService.initSioMatchmaking(this.sio);
 
                 // we start the game
                 this.playAreaService.playGame(game);
@@ -827,6 +835,30 @@ export class SocketManager {
 
         socket.on('giveUpGame', () => {
             this.leaveGame(socket, ' a abandonné la partie.');
+        });
+    }
+
+    private rankedHandler(socket: io.Socket) {
+        socket.on('changeElo', (player) => {
+            this.userService.changeEloUser(player);
+        });
+
+        socket.on('leaveRankedGame', (player) => {
+            player.elo -= 20;
+            this.userService.changeEloUser(player);
+        });
+
+        socket.on('startMatchmaking', ({ eloDisparity, user }) => {
+            this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
+            // socket.emit('matchFound', player);
+        });
+
+        socket.on('refuseMatch', ({ user }) => {
+            this.matchmakingService.onRefuse(socket, user);
+        });
+
+        socket.on('acceptMatch', ({ user }) => {
+            this.matchmakingService.onAccept(socket, user);
         });
     }
 

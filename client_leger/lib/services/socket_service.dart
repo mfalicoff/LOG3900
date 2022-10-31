@@ -1,4 +1,5 @@
 import 'package:client_leger/models/spectator.dart';
+import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -12,6 +13,8 @@ import 'dart:async';
 
 import '../models/player.dart';
 import '../models/room-data.dart';
+import '../models/tile.dart';
+import '../models/vec2.dart';
 import 'info_client_service.dart';
 
 
@@ -22,6 +25,8 @@ class SocketService with ChangeNotifier{
 
   InfoClientService infoClientService = InfoClientService();
   TimerService timerService = TimerService();
+  TapService tapService = TapService();
+
 
   late IO.Socket socket;
 
@@ -119,6 +124,8 @@ class SocketService with ChangeNotifier{
 
     socket.on('gameBoardUpdate', (game) {
       infoClientService.updateGame(game);
+      tapService.draggedTile = null;
+      tapService.notifyListeners();
 
       // TODO
       // setTimeout(() => {
@@ -217,10 +224,13 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('tileDraggedOnCanvas', (data) {
-      // Should switch to type tile when done
-      dynamic clickedTile = data[0];
-      // should switch to type vec2
-      dynamic mouseCoords = data[1];
+      Tile clickedTile = Tile.fromJson(data[0]);
+      Vec2 mouseCoords = Vec2.fromJson(data[1]);
+      print('original: ${mouseCoords.toJson()}');
+      mouseCoords.x = crossProductGlobal(mouseCoords.x.toDouble());
+      mouseCoords.y = crossProductGlobal(mouseCoords.y.toDouble());
+      print('modified: ${mouseCoords.toJson()}');
+      tapService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
     });
 
     socket.on('drawVerticalArrow', (arrowCoords) {
