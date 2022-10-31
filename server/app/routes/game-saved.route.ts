@@ -13,7 +13,6 @@ class GameSavedRoute implements Routes {
 
     initializeRoutes() {
         this.router.get(`${this.path}`, this.gameSavedController.getGames);
-        this.router.get(`${this.path}/favourites`, this.gameSavedController.getGamesById);
         this.router.post(`${this.path}`, this.gameSavedController.saveGame);
     }
 }

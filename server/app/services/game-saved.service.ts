@@ -12,7 +12,7 @@ class GameSavedService {
         return this.gamesSaved.find();
     }
 
-    async findGamesById(gamesIds: string[]): Promise<GameSaved[]> {
+    async findGamesById(gamesIds: string[] | undefined): Promise<GameSaved[]> {
         if (!gamesIds) {
             throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no ids sent');
         }
@@ -42,8 +42,6 @@ class GameSavedService {
             gameStartDate: gameData.gameStartDate,
             nbLetterReserve: gameData.nbLetterReserve,
         })) as GameSaved;
-        console.log(gameData);
-        console.log(findSavedGame);
         if (findSavedGame) return findSavedGame;
 
         return await this.gamesSaved.create({

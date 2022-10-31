@@ -18,16 +18,6 @@ export class GameSavedController {
         }
     };
 
-    getGamesById = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-            const gamesId = req.body;
-            const findGamesData: GameSaved[] = await this.gameSavedService.findGamesById(gamesId.favouriteGames);
-
-            res.status(HTTPStatusCode.OK).json({ data: findGamesData, message: 'findMany' });
-        } catch (error) {
-            next(error);
-        }
-    };
 
     saveGame = async (req: Request, res: Response, next: NextFunction) => {
         try {

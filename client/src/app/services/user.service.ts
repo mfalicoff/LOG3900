@@ -4,6 +4,7 @@ import { User } from '@app/classes/user.interface';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { UserResponseInterface } from '@app/classes/response.interface';
+import { GameSaved } from '@app/classes/game-saved';
 
 @Injectable({
     providedIn: 'root',
@@ -86,6 +87,10 @@ export class UserService {
                     this.handleErrorPOST(error);
                 },
             });
+    }
+
+    async getFavouriteGames() {
+        return this.http.get<GameSaved>(environment.serverUrl + 'games/favourites', {});
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {

@@ -10,11 +10,14 @@ import { addActionHistory } from '@app/utils/auth';
 import { Player } from '@app/classes/player';
 import { Service } from 'typedi';
 import AvatarService from '@app/services/avatar.service';
+import GameSavedService from './game-saved.service';
+import { GameSaved } from '@app/classes/game-saved';
 
 @Service()
 class UserService {
     users = userModel;
     avatarService = new AvatarService();
+    gamesSavedService = new GameSavedService();
 
     async findAllUser(): Promise<User[]> {
         return this.users.find();
@@ -39,6 +42,15 @@ class UserService {
         if (!findUser || username === 'DefaultPlayerName') throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
         findUser.avatarUri = await this.populateAvatarField(findUser);
         return findUser;
+    }
+
+    async findFavouriteGames(userId: string): Promise<GameSaved[]> {
+        if (isEmpty(userId)) {
+            throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no id sent');
+        }
+        const findUser: User = (await this.users.findOne({ _id: userId })) as User;
+        if (!findUser) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+        return this.gamesSavedService.findGamesById(findUser.favouriteGames);
     }
 
     async createUser(userData: CreateUserValidator): Promise<User> {

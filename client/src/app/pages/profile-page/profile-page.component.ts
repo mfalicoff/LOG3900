@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserHistoryComponent } from '@app/components/user-history/user-history.component';
 import { UserService } from '@app/services/user.service';
 import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profile-edit.component';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { GameSaved } from '@app/classes/game-saved';
 
 @Component({
@@ -72,5 +72,9 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         const m = date.getMinutes();
         const s = date.getSeconds();
         return `${m}m:${s}s.`;
+    }
+
+    getFavouriteGames(): Observable<GameSaved> {
+        return;
     }
 }

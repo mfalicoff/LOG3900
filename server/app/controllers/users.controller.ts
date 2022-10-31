@@ -3,6 +3,7 @@ import { CreateUserValidator } from '@app/utils/validators';
 import { User } from '@app/classes/users.interface';
 import UserService from '@app/services/user.service';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
+import { GameSaved } from '@app/classes/game-saved';
 
 /* eslint-disable no-invalid-this */
 
@@ -14,6 +15,17 @@ class UsersController {
             const findAllUsersData: User[] = await this.userService.findAllUser();
 
             res.status(HTTPStatusCode.OK).json({ data: findAllUsersData, message: 'findAll' });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    getFavouriteGames = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId: string = req.params.id;
+            const findGamesData: GameSaved[] = await this.userService.findFavouriteGames(userId);
+
+            res.status(HTTPStatusCode.OK).send(findGamesData);
         } catch (error) {
             next(error);
         }
