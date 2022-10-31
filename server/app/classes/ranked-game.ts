@@ -1,12 +1,12 @@
 import { RankedUser } from './ranked-user';
 
 export class RankedGame {
-    name:string;
-    rankedUsers:RankedUser[];
-    private timerInterval: NodeJS.Timeout;
+    name: string;
+    rankedUsers: RankedUser[];
     secondsValue: number = 0;
+    private timerInterval: NodeJS.Timeout;
 
-    constructor(name:string, rankedUsers: RankedUser[]) {
+    constructor(name: string, rankedUsers: RankedUser[]) {
         this.rankedUsers = rankedUsers;
         this.name = name;
     }
@@ -22,7 +22,6 @@ export class RankedGame {
         const oneSecond = 1000;
         this.timerInterval = setInterval(() => {
             this.secondsValue--;
-
         }, oneSecond);
     }
     clearTimer() {

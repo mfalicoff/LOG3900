@@ -60,7 +60,7 @@ export class SidebarComponent {
     }
 
     leaveGame() {
-        if(this.infoClientService.game.gameMode === 'Ranked' && this.infoClientService.game.gameFinished) {
+        if (this.infoClientService.game.gameMode === 'Ranked' && this.infoClientService.game.gameFinished) {
             this.socketService.socket.emit('leaveRankedGame', this.infoClientService.player);
         }
         this.socketService.socket.emit('leaveGame');

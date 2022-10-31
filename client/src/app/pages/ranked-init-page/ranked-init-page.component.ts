@@ -9,21 +9,17 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./ranked-init-page.component.scss'],
 })
 export class RankedInitPageComponent {
-    constructor(public infoClientService: InfoClientService, public userService: UserService,
-        private socketService: SocketService){
-
-    }
     eloDisparity: number = 60;
+    constructor(public infoClientService: InfoClientService, public userService: UserService, private socketService: SocketService) {}
 
-    onEloDisparityChange(value: any) {
+    onEloDisparityChange(value: unknown) {
         this.eloDisparity = value.value;
     }
     onConfirm() {
         this.infoClientService.eloDisparity = this.eloDisparity;
         this.startMatchmaking();
-        
     }
     startMatchmaking() {
-        this.socketService.socket.emit('startMatchmaking', {eloDisparity: this.eloDisparity, user: this.userService.user});
+        this.socketService.socket.emit('startMatchmaking', { eloDisparity: this.eloDisparity, user: this.userService.user });
     }
 }

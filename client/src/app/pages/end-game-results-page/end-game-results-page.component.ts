@@ -22,7 +22,7 @@ export class EndGameResultsPageComponent implements OnInit {
     playingTime: string;
     serverUrl = environment.serverUrl;
     players: Player[];
-    newPlayersElo:Player[];
+    newPlayersElo: Player[];
 
     constructor(
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
@@ -30,8 +30,8 @@ export class EndGameResultsPageComponent implements OnInit {
         private timerService: TimerService,
         private dialog: MatDialog,
         private httpClient: HttpClient,
-        private eloChangeService:EloChangeService,
-        private socketService: SocketService
+        private eloChangeService: EloChangeService,
+        private socketService: SocketService,
     ) {}
 
     ngOnInit() {
@@ -42,11 +42,11 @@ export class EndGameResultsPageComponent implements OnInit {
         this.findNumberOfTurns();
         this.getGameStartDate();
         this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
-        this.changeEloOfPlayersDB(); 
+        this.changeEloOfPlayersDB();
     }
 
     orderPlayerByScore() {
-        this.players = this.players.sort((element1,element2) => element2.score-element1.score);
+        this.players = this.players.sort((element1, element2) => element2.score - element1.score);
     }
 
     getUserByName(playerName: string): Observable<UserResponseInterface> {
@@ -80,7 +80,7 @@ export class EndGameResultsPageComponent implements OnInit {
     }
 
     changeEloOfPlayersDB() {
-        for(const player of this.newPlayersElo) {
+        for (const player of this.newPlayersElo) {
             this.socketService.socket.emit('changeElo', player);
         }
     }

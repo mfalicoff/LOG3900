@@ -148,10 +148,7 @@ class UserService {
     }
 
     async changeEloUser(player: Player) {
-        await this.users.updateOne(
-            {name: player.name},
-            { $push: {elo: player.elo}},
-        );
+        await this.users.updateOne({ name: player.name }, { $push: { elo: player.elo } });
     }
 
     async populateAvatarField(user: User): Promise<string> {

@@ -5,18 +5,18 @@ import { TimerService } from '@app/services/timer.service';
     providedIn: 'root',
 })
 export class RankedService {
-    isShowModal:boolean;
+    isShowModal: boolean;
     constructor(public timerService: TimerService) {
         this.isShowModal = false;
     }
 
     matchHasBeenFound() {
-        this.isShowModal= true;
-        this.timerService.startTimer(0.25);
+        const timerTime = 0.25;
+        this.isShowModal = true;
+        this.timerService.startTimer(timerTime);
     }
     closeModal() {
         this.timerService.clearTimer();
         this.isShowModal = false;
     }
-    
 }

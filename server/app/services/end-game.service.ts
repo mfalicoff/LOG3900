@@ -19,7 +19,7 @@ export class EndGameService {
         }
         let bestScore = 0;
         for (const player of players) {
-            //subtract the score of the letters still on the stand
+            // subtract the score of the letters still on the stand
             player.score -= this.countDeductedScore(player);
             // adds score final to database
             this.databaseService.addScoreClassicToDb(player);

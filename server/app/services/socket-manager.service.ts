@@ -14,7 +14,7 @@ import avatarService from '@app/services/avatar.service';
 import UserService from '@app/services/user.service';
 import * as http from 'http';
 import * as io from 'socket.io';
-import { Service } from "typedi";
+import { Service } from 'typedi';
 import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
 import { CommunicationBoxService } from './communication-box.service';
@@ -108,7 +108,6 @@ export class SocketManager {
     }
 
     private clientEventHandler(socket: io.Socket) {
-
         socket.on('turnFinished', () => {
             const user = this.users.get(socket.id);
             if (!user) {
@@ -531,7 +530,7 @@ export class SocketManager {
     private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
-        game?.mapPlayers.set(socket.id, newPlayer); //dont delete this even if its duplicate code
+        game?.mapPlayers.set(socket.id, newPlayer); // dont delete this even if its duplicate code
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.id = socket.id;
         game?.mapPlayers.set(socket.id, newPlayer);
@@ -555,7 +554,7 @@ export class SocketManager {
 
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', (name) => {
-            this.users.set(socket.id, { name, roomName: '' , elo: 2000});
+            this.users.set(socket.id, { name, roomName: '', elo: 2000 });
         });
 
         socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, gameMode, isGamePrivate, passwd, activatedPowers }) => {
@@ -592,9 +591,8 @@ export class SocketManager {
             createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
-       
 
-        socket.on('joinRoom', ( roomName, playerId ) => {
+        socket.on('joinRoom', (roomName, playerId) => {
             const userData = this.users.get(playerId);
             if (!userData) {
                 return;
@@ -663,7 +661,7 @@ export class SocketManager {
             }
             const spectator = game.mapSpectators.get(socket.id);
             if (!spectator) {
-                //enters here for wanting to be spect
+                // enters here for wanting to be spect
                 return;
             }
             game.mapSpectators.delete(socket.id);
@@ -835,25 +833,25 @@ export class SocketManager {
     private rankedHandler(socket: io.Socket) {
         socket.on('changeElo', (player) => {
             this.userService.changeEloUser(player);
-        })
+        });
 
         socket.on('leaveRankedGame', (player) => {
             player.elo -= 20;
             this.userService.changeEloUser(player);
-        })
-        
-        socket.on('startMatchmaking',({eloDisparity, user}) => {
+        });
+
+        socket.on('startMatchmaking', ({ eloDisparity, user }) => {
             this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
-            //socket.emit('matchFound', player);
-        })
+            // socket.emit('matchFound', player);
+        });
 
-        socket.on('refuseMatch',({user}) => {
+        socket.on('refuseMatch', ({ user }) => {
             this.matchmakingService.onRefuse(socket, user);
-        })
+        });
 
-        socket.on('acceptMatch',({user}) => {
+        socket.on('acceptMatch', ({ user }) => {
             this.matchmakingService.onAccept(socket, user);
-        })
+        });
     }
 
     private leaveGame(socket: io.Socket, leaveMsg: string) {

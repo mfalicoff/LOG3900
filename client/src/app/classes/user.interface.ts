@@ -11,7 +11,7 @@ export interface User {
     password?: string;
     avatarPath?: string;
     avatarUri?: string;
-    elo:number;
+    elo: number;
 
     name: string;
     roomName: string;

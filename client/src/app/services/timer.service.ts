@@ -42,9 +42,13 @@ export class TimerService {
         this.timerMatchmaking = setInterval(() => {
             this.matchmakingSecondsValue++;
             if (this.matchmakingSecondsValue % secondsInMinute <= displayZero) {
-                this.matchmakingDisplayTimer = `Temps écoulé : ${Math.floor(this.matchmakingSecondsValue / secondsInMinute)}:0${this.matchmakingSecondsValue % secondsInMinute}`;
+                this.matchmakingDisplayTimer = `Temps écoulé : ${Math.floor(this.matchmakingSecondsValue / secondsInMinute)}:0${
+                    this.matchmakingSecondsValue % secondsInMinute
+                }`;
             } else {
-                this.matchmakingDisplayTimer = `Temps écoulé : ${Math.floor(this.matchmakingSecondsValue / secondsInMinute)}:${this.matchmakingSecondsValue % secondsInMinute}`;
+                this.matchmakingDisplayTimer = `Temps écoulé : ${Math.floor(this.matchmakingSecondsValue / secondsInMinute)}:${
+                    this.matchmakingSecondsValue % secondsInMinute
+                }`;
             }
         }, oneSecond);
     }
