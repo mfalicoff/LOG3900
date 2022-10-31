@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 interface Data {
     title: string;
     data: string[];
+    isFavouriteGames: boolean;
 }
 
 @Component({

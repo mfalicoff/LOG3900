@@ -1,4 +1,4 @@
-<div id="historyWrapper">
+<div *ngIf="!data.isFavouriteGames" id="historyWrapper">
     <h1>{{this.data.title}}</h1>
     <div class="sidebar" #scrollFrame>
         <div *ngFor="let action of actionHistory" #commands>
@@ -8,4 +8,7 @@
         </div>
     </div>
     <button (click)="closeDialog()">Fermer</button>
+</div>
+<div *ngIf="data.isFavouriteGames" >
+
 </div>

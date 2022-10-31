@@ -1,16 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UserHistoryComponent } from '@app/components/user-history/user-history.component';
 import { UserService } from '@app/services/user.service';
 import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profile-edit.component';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-profile-page',
     templateUrl: './profile-page.component.html',
     styleUrls: ['./profile-page.component.scss'],
 })
-export class ProfilePageComponent {
+export class ProfilePageComponent implements OnInit, OnDestroy {
+    favourtieGamesSubscription: Subscription;
     constructor(private dialog: MatDialog, public userService: UserService) {}
+
+    ngOnInit() {}
+
+    ngOnDestroy() {}
 
     openActionHistoryComponent(): void {
         this.dialog.open(UserHistoryComponent, {
@@ -19,6 +25,7 @@ export class ProfilePageComponent {
             data: {
                 title: 'Historique des connections',
                 data: this.userService.user.actionHistory,
+                isFavouriteGames: false,
             },
             panelClass: 'matDialogWheat',
         });
@@ -31,6 +38,20 @@ export class ProfilePageComponent {
             data: {
                 title: 'Historique des Parties',
                 data: this.userService.user.gameHistory,
+                isFavouriteGames: false,
+            },
+            panelClass: 'matDialogWheat',
+        });
+    }
+
+    openFavouriteGamesComponent(): void {
+        this.dialog.open(UserHistoryComponent, {
+            height: '75%',
+            width: '75%',
+            data: {
+                title: 'Parties favorites',
+                data: this.userService.user.favouriteGames,
+                isFavouriteGames: true,
             },
             panelClass: 'matDialogWheat',
         });

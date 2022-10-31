@@ -21,6 +21,7 @@ export class GameSavedController {
     getGameById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const gameId: string = req.params._id;
+            console.log(gameId);
             const findOneGameData: GameSaved = await this.gameSavedService.findGameById(gameId);
 
             res.status(HTTPStatusCode.OK).json({ data: findOneGameData, message: 'findOne' });

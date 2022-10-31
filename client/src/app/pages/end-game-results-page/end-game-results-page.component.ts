@@ -166,7 +166,5 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
 
     async addGameToFavourites() {
         await this.userService.updateFavourites(this.gameSaved._id as string);
-        // @ts-ignore
-        console.log(this.userService.user.name + '  ' + this.gameSaved._id);
     }
 }
