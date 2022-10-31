@@ -24,7 +24,6 @@ class UserService {
         if (isEmpty(userId)) {
             throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no id sent');
         }
-
         const findUser: User = (await this.users.findOne({ _id: userId })) as User;
         if (!findUser) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
         findUser.avatarUri = await this.populateAvatarField(findUser);

@@ -13,7 +13,7 @@ class GameSavedService {
     }
 
     async findGameById(gameId: string): Promise<GameSaved> {
-        if (!gameId) {
+        if (gameId === '' || gameId === undefined) {
             throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no id sent');
         }
         const findFavouriteGame: GameSaved = (await this.gamesSaved.findOne({ _id: gameId })) as GameSaved;
