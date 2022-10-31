@@ -12,7 +12,8 @@ export class RankedInitPageComponent {
     eloDisparity: number = 60;
     constructor(public infoClientService: InfoClientService, public userService: UserService, private socketService: SocketService) {}
 
-    onEloDisparityChange(value: unknown) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    onEloDisparityChange(value: any) {
         this.eloDisparity = value.value;
     }
     onConfirm() {
