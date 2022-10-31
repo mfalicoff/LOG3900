@@ -280,10 +280,10 @@ class _gameListState extends State<gameList> {
             (int index) => DataRow(
                 onSelectChanged: (bool? selected) {
                   if (selected!) {
-                    socketService.socket.emit("joinRoom", {
-                      'roomName': widget.rooms[index].name,
-                      'playerId': socketService.socket.id,
-                    });
+                    socketService.socket.emit("joinRoom",
+                      [widget.rooms[index].name,
+                      socketService.socket.id,]
+                    );
                   }
                 },
                 cells: [
