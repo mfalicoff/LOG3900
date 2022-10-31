@@ -22,7 +22,7 @@ export class GameSavedController {
     saveGame = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const gameData = req.body;
-            const savedGameData: GameSaved = await this.gameSavedService.saveFavouriteGame(gameData.savedGame);
+            const savedGameData: GameSaved = await this.gameSavedService.saveGame(gameData.savedGame);
 
             res.status(HTTPStatusCode.Created).send(savedGameData._id);
         } catch (error) {

@@ -30,7 +30,7 @@ class GameSavedService {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async saveFavouriteGame(gameData: GameSaved) {
+    async saveGame(gameData: GameSaved) {
         if (!gameData) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
 
         const findSavedGame: GameSaved = (await this.gamesSaved.findOne({

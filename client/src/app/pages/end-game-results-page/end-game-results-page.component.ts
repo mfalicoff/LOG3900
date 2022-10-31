@@ -25,7 +25,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     serverUrl = environment.serverUrl;
     players: Player[];
     gameSaved: GameSaved;
-    gameSavedSubscription: Subscription | null;
     openProfileSubscription: Subscription;
     constructor(
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
@@ -44,11 +43,10 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.findNumberOfTurns();
         this.getGameStartDate();
         this.displayPlayingTime();
-        this.gameSavedSubscription = this.saveGame();
+        this.saveGame();
     }
 
     ngOnDestroy() {
-        if (this.gameSavedSubscription !== null) this.gameSavedSubscription.unsubscribe();
         if (this.openProfileSubscription) this.openProfileSubscription.unsubscribe();
     }
 
@@ -141,7 +139,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         return player.id !== 'virtualPlayer';
     }
 
-    saveGame(): Subscription | null {
+    saveGame(): void {
         if (this.socketService.socket.id === this.infoClientService.game.masterTimer) {
             this.gameSaved = new GameSaved(
                 this.infoClientService.actualRoom.players,
@@ -153,23 +151,11 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
                 this.infoClientService.actualRoom.spectators,
                 this.infoClientService.game.winners,
             );
-            return this.httpClient.post<string>(environment.serverUrl + 'games', { savedGame: this.gameSaved }).subscribe(
-                (res) => {
-                    this.gameSaved._id = res;
-                },
-                (error) => {
-                    if (error.error instanceof ErrorEvent) {
-                        alert('Erreur: ' + error.status + error.error.message);
-                    } else {
-                        alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
-                    }
-                },
-            );
+            this.socketService.socket.emit('saveGame', this.gameSaved);
         }
-        return null;
     }
 
     async addGameToFavourites() {
-        await this.userService.updateFavourites(this.gameSaved._id as string);
+        await this.userService.updateFavourites(this.socketService.gameId);
     }
 }
