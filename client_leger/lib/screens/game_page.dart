@@ -1,3 +1,4 @@
+import 'package:client_leger/constants/constants.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
@@ -63,10 +64,35 @@ class _GamePageState extends State<GamePage> {
                     ),
                   ),
                 ),
+                if(infoClientService.gameMode == CLASSIC_MODE)...[
+                  PowerListDialog(
+                    notifyParent: refresh,
+                  ),
+                  // ElevatedButton(
+                  //   style: ButtonStyle(
+                  //     padding: MaterialStateProperty.all(
+                  //       const EdgeInsets.symmetric(
+                  //           vertical: 6.0, horizontal: 3.0),
+                  //     ),
+                  //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  //       RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(10.0),
+                  //       ),
+                  //     ),
+                  //   ),
+                  //   onPressed: _leaveGame,
+                  //   child: Text(
+                  //     "Liste pouvoirs",
+                  //     style: TextStyle(
+                  //       color: Theme.of(context).colorScheme.secondary,
+                  //     ),
+                  //   ),
+                  // ),
+                ],
                 Container(
                     child:
                         infoClientService.creatorShouldBeAbleToStartGame == true
-                            ? Text('Start Game')
+                            ? const Text('Start Game')
                             : Container()),
                 Container(
                     child: shouldSpecBeAbleToBePlayer() == true
@@ -133,5 +159,74 @@ class _GamePageState extends State<GamePage> {
   void _leaveGame() {
     socketService.socket.emit('leaveGame');
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+  }
+}
+
+class PowerListDialog extends StatefulWidget {
+  final Function() notifyParent;
+
+  const PowerListDialog({super.key, required this.notifyParent});
+
+  @override
+  State<PowerListDialog> createState() => _PowerListDialog();
+}
+
+class _PowerListDialog extends State<PowerListDialog> {
+  InfoClientService infoClientService = InfoClientService();
+  final _formKey = GlobalKey<FormState>();
+  late String? newName = "";
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: (infoClientService.player.powerCards.isNotEmpty) ? const Text('Cartes disponibles') : const Text(''),
+          content: (infoClientService.player.powerCards.isEmpty) ? Text("Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer " + (3 - infoClientService.player.nbValidWordPlaced).toString() + " mot(s) valide(s) sur le plateau.") : const Text(''),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          actions: <Widget>[
+            Container(
+              decoration: BoxDecoration(border: Border.all()),
+              height: 100,
+              width: 200,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: infoClientService.player.powerCards.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Text('\u2022 ${infoClientService.player.powerCards[index].name}',
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 11,
+                            decoration: TextDecoration.none));
+                  }
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'Cancel'),
+              child: const Text('Cancel'),
+            ),
+          ],
+        ),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.primary),
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(
+              vertical: 6.0, horizontal: 3.0),
+        ),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+        ),
+      ),
+      child: Text(
+        "Liste pouvoirs",
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.secondary,
+        ),
+      ),
+    );
   }
 }

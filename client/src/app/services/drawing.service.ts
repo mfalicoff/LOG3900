@@ -90,13 +90,7 @@ export class DrawingService {
         this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
         this.tmpTileCanvas.strokeStyle = '#ffaaff';
         // draws border of tile
-        this.roundRect(
-            posToDrawCentered.x,
-            posToDrawCentered.y,
-            tileToDraw.position.width,
-            tileToDraw.position.height,
-            this.tmpTileCanvas,
-        );
+        this.roundRect(posToDrawCentered.x, posToDrawCentered.y, tileToDraw.position.width, tileToDraw.position.height, this.tmpTileCanvas);
         // the number are so the letter tiles are smaller than the tile of the board
         this.tmpTileCanvas.fillStyle = '#212121';
         const spaceForLetter: Vec2 = { x: 12, y: 26 };
