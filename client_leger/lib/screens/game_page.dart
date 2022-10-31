@@ -64,7 +64,7 @@ class _GamePageState extends State<GamePage> {
                     ),
                   ),
                 ),
-                if(infoClientService.gameMode == CLASSIC_MODE)...[
+                if (infoClientService.gameMode == CLASSIC_MODE) ...[
                   PowerListDialog(
                     notifyParent: refresh,
                   ),
@@ -90,10 +90,30 @@ class _GamePageState extends State<GamePage> {
                   // ),
                 ],
                 Container(
-                    child:
-                        infoClientService.creatorShouldBeAbleToStartGame == true
-                            ? const Text('Start Game')
-                            : Container()),
+                    child: infoClientService.creatorShouldBeAbleToStartGame ==
+                            true
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                              padding: MaterialStateProperty.all(
+                                const EdgeInsets.symmetric(
+                                    vertical: 6.0, horizontal: 3.0),
+                              ),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                            ),
+                            onPressed: _startGame,
+                            child: Text(
+                              "Demarrer partie",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          )
+                        : null),
                 Container(
                     child: shouldSpecBeAbleToBePlayer() == true
                         ? ElevatedButton(
@@ -156,6 +176,11 @@ class _GamePageState extends State<GamePage> {
     socketService.socket.emit('spectWantsToBePlayer');
   }
 
+  void _startGame() {
+    socketService.socket.emit('startGame', infoClientService.game.roomName);
+    infoClientService.creatorShouldBeAbleToStartGame = false;
+  }
+
   void _leaveGame() {
     socketService.socket.emit('leaveGame');
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
@@ -173,7 +198,6 @@ class PowerListDialog extends StatefulWidget {
 
 class _PowerListDialog extends State<PowerListDialog> {
   InfoClientService infoClientService = InfoClientService();
-  final _formKey = GlobalKey<FormState>();
   late String? newName = "";
 
   @override
@@ -182,8 +206,16 @@ class _PowerListDialog extends State<PowerListDialog> {
       onPressed: () => showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: (infoClientService.player.powerCards.isNotEmpty) ? const Text('Cartes disponibles') : const Text(''),
-          content: (infoClientService.player.powerCards.isEmpty) ? Text("Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer " + (3 - infoClientService.player.nbValidWordPlaced).toString() + " mot(s) valide(s) sur le plateau.") : const Text(''),
+          title: (infoClientService.player.powerCards.isNotEmpty)
+              ? const Text('Cartes disponibles')
+              : const Text(''),
+          content: (infoClientService.player.powerCards.isEmpty)
+              ? Text(
+                  "Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer " +
+                      (3 - infoClientService.player.nbValidWordPlaced)
+                          .toString() +
+                      " mot(s) valide(s) sur le plateau.")
+              : const Text(''),
           backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: <Widget>[
             Container(
@@ -194,13 +226,13 @@ class _PowerListDialog extends State<PowerListDialog> {
                   shrinkWrap: true,
                   itemCount: infoClientService.player.powerCards.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Text('\u2022 ${infoClientService.player.powerCards[index].name}',
+                    return Text(
+                        '\u2022 ${infoClientService.player.powerCards[index].name}',
                         style: const TextStyle(
                             color: Colors.black,
                             fontSize: 11,
                             decoration: TextDecoration.none));
-                  }
-              ),
+                  }),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -210,10 +242,10 @@ class _PowerListDialog extends State<PowerListDialog> {
         ),
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.primary),
+        backgroundColor: MaterialStatePropertyAll<Color>(
+            Theme.of(context).colorScheme.primary),
         padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(
-              vertical: 6.0, horizontal: 3.0),
+          const EdgeInsets.symmetric(vertical: 6.0, horizontal: 3.0),
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
