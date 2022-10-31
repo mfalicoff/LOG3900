@@ -11,7 +11,7 @@ class TapService with ChangeNotifier{
   bool isDragging = false;
   late double xPos;
   late double yPos;
-  late Tile draggedTile;
+  late Tile? draggedTile = null;
 
   bool tileClickedFromStand = false;
 
@@ -90,6 +90,7 @@ class TapService with ChangeNotifier{
     draggedTile = clickedTile;
     xPos = mouseCoords.x as double;
     yPos = mouseCoords.y as double;
+    notifyListeners();
   }
 
 

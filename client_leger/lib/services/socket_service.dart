@@ -124,6 +124,8 @@ class SocketService with ChangeNotifier{
 
     socket.on('gameBoardUpdate', (game) {
       infoClientService.updateGame(game);
+      tapService.draggedTile = null;
+      tapService.notifyListeners();
 
       // TODO
       // setTimeout(() => {
@@ -222,12 +224,12 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('tileDraggedOnCanvas', (data) {
-      print('here');
-      print(data);
       Tile clickedTile = Tile.fromJson(data[0]);
       Vec2 mouseCoords = Vec2.fromJson(data[1]);
-      mouseCoords.x = crossProductTest(mouseCoords.x.toDouble());
-      mouseCoords.y = crossProductTest(mouseCoords.y.toDouble());
+      print('original: ${mouseCoords.toJson()}');
+      mouseCoords.x = crossProductGlobal(mouseCoords.x.toDouble());
+      mouseCoords.y = crossProductGlobal(mouseCoords.y.toDouble());
+      print('modified: ${mouseCoords.toJson()}');
       tapService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
     });
 

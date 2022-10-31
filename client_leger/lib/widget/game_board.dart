@@ -69,9 +69,9 @@ class _GameBoardState extends State<GameBoard> {
                                 details.localPosition.dy));
                         clickedTileIndex = tapService
                             .getIndexOnBoardLogicFromClick(coordsClick);
-                        print(clickedTile);
-                        print(clickedTileIndex.x);
-                        print(clickedTileIndex.y);
+                        // print(clickedTile);
+                        // print(clickedTileIndex.x);
+                        // print(clickedTileIndex.y);
                       }
                     },
                     onPanUpdate: (details) {
@@ -82,7 +82,7 @@ class _GameBoardState extends State<GameBoard> {
                       //     infoClientService.isTurnOurs) {
                       //   return;
                       // }
-                      print(clickedTile?.toJson());
+                      // print(clickedTile?.toJson());
                       Vec2 coords = Vec2.withParams(
                           crossProductTest(details.localPosition.dx), crossProductTest(details.localPosition.dy));
                       // socketService.socket

@@ -36,10 +36,12 @@ class BoardPainter extends CustomPainter {
     tilePadding = crossProduct(WIDTH_LINE_BLOCKS, size.height);
     drawStands(canvas, size);
     drawBoard(canvas, size);
-    // if(tapService.isDragging == true) {
-    //   print('here1');
-    //   drawTile(tapService.xPos, tapService.yPos, tapService.draggedTile, canvas, 692 as Size);
-    // }
+    if(tapService.draggedTile != null) {
+      // print('dragging');
+      // print(tapService.xPos);
+      // print(tapService.yPos);
+      drawTile(tapService.xPos, tapService.yPos, tapService.draggedTile!, canvas, size);
+    }
   }
 
   //draw the board (border/text/tiles)
