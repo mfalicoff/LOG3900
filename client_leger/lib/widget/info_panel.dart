@@ -189,7 +189,7 @@ class _InfoPanelState extends State<InfoPanel> {
 
   void _pass() {
     if(infoClientService.isTurnOurs && infoClientService.game.gameStarted) {
-      socketService.socket.emit('onExchangeClick');
+      socketService.socket.emit('turnFinished');
     }
   }
 

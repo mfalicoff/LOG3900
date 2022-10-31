@@ -44,25 +44,55 @@ class _GamePageState extends State<GamePage> {
                 const SizedBox(
                   height: 30,
                 ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(
-                          vertical: 6.0, horizontal: 3.0),
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
+                Container(
+                  child: shouldBeAbleToLeaveGame()
+                      ? ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 6.0, horizontal: 3.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: _leaveGame,
+                          child: Text(
+                            "Quitter partie",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        )
+                      : null,
+                ),
+                Container(
+                  child: shouldBeAbleToGiveUpGame()
+                      ? ElevatedButton(
+                    style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            vertical: 6.0, horizontal: 3.0),
+                      ),
+                      shape: MaterialStateProperty.all<
+                          RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
                       ),
                     ),
-                  ),
-                  onPressed: _leaveGame,
-                  child: Text(
-                    "Quitter partie",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
+                    onPressed: _giveUpGame(context),
+                    child: Text(
+                      "Abandonner",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
                     ),
-                  ),
+                  )
+                      : null,
                 ),
                 if (infoClientService.gameMode == CLASSIC_MODE) ...[
                   PowerListDialog(
@@ -161,6 +191,20 @@ class _GamePageState extends State<GamePage> {
     );
   }
 
+  bool shouldBeAbleToLeaveGame() {
+    if (infoClientService.isSpectator || !infoClientService.game.gameStarted || infoClientService.game.gameFinished) {
+      return true;
+    }
+    return false;
+  }
+
+  bool shouldBeAbleToGiveUpGame() {
+    if (!infoClientService.isSpectator && infoClientService.game.gameStarted && !infoClientService.game.gameFinished) {
+      return true;
+    }
+    return false;
+  }
+
   bool shouldSpecBeAbleToBePlayer() {
     if (infoClientService.game.gameFinished || !infoClientService.isSpectator) {
       return false;
@@ -184,6 +228,39 @@ class _GamePageState extends State<GamePage> {
   void _leaveGame() {
     socketService.socket.emit('leaveGame');
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+  }
+
+  _giveUpGame(context) {
+    showAlertDialog(context);
+  }
+
+  showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('You clicked on'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: const [
+                Text('Do you want to give up the game?'),
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              child: const Text('Give Up'),
+              onPressed: () {
+                socketService.socket.emit('giveUpGame');
+                Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
