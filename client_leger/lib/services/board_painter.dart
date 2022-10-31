@@ -31,14 +31,15 @@ class BoardPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    board = infoClientService.game.board;
     tileSize = crossProduct(WIDTH_EACH_SQUARE, size.height);
     tilePadding = crossProduct(WIDTH_LINE_BLOCKS, size.height);
     drawStands(canvas, size);
     drawBoard(canvas, size);
-    if(tapService.isDragging == true) {
-      print('here1');
-      drawTile(tapService.xPos, tapService.yPos, tapService.draggedTile, canvas, 692 as Size);
-    }
+    // if(tapService.isDragging == true) {
+    //   print('here1');
+    //   drawTile(tapService.xPos, tapService.yPos, tapService.draggedTile, canvas, 692 as Size);
+    // }
   }
 
   //draw the board (border/text/tiles)
