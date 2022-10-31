@@ -1,7 +1,7 @@
 import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
-import { Spectator } from './spectator';
 import { Player } from './player';
+import { Spectator } from './spectator';
 import { Tile } from './tile';
 import { Trie } from './trie';
 import { PowerCard } from './power-card';

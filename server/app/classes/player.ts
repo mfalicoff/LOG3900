@@ -6,6 +6,8 @@ import { Tile } from './tile';
 export class Player {
     id: string;
     name: string;
+    elo: number;
+    eloDisparity: number;
     stand: Tile[];
 
     isCreatorOfGame: boolean;
@@ -37,7 +39,7 @@ export class Player {
 
     avatarUri: string;
 
-    constructor(namePlayer: string, isCreatorOfGame: boolean) {
+    constructor(namePlayer: string, isCreatorOfGame: boolean, elo?: number) {
         this.name = namePlayer;
         this.isCreatorOfGame = isCreatorOfGame;
         this.id = '';
@@ -55,5 +57,9 @@ export class Player {
         this.isMoveBingo = false;
         this.powerCards = [];
         this.nbValidWordPlaced = 0;
+        if (elo === undefined) {
+            const startingElo = 2000;
+            this.elo = startingElo;
+        }
     }
 }

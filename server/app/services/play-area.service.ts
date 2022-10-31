@@ -192,7 +192,7 @@ export class PlayAreaService {
     }
 
     private virtualPlayerAction(game: GameServer, player: Player) {
-        const fourSecondsWait = 4000;
+        const fourSecondsWait = 1000;
         const intervalId = setInterval(() => {
             this.randomActionVP(game, player);
             this.changePlayer(game);

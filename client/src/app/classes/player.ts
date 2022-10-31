@@ -6,6 +6,8 @@ import { Tile } from './tile';
 import { Vec4 } from './vec4';
 
 export class Player {
+    elo: number;
+    eloDisparity: number;
     id: string;
     name: string;
     stand: Tile[];
