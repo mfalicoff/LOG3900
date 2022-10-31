@@ -347,22 +347,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('drawBorderTileForTmpHover', boardIndexs);
         });
 
-        socket.on('tileDraggedOnCanvas1', () => {
-            console.log('gile dragged');
-            // const user = this.users.get(socket.id);
-            // if (!user) {
-            //     return;
-            // }
-            // const game = this.rooms.get(user.roomName);
-            // if (!game) {
-            //     return;
-            // }
-            // console.log('gile dragged', clickedTile, mouseCoords);
-            // this.sio.to(game.roomName).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
-        });
-
         socket.on('tileDraggedOnCanvas', (clickedTile, mouseCoords) => {
-            console.log('gile dragged', clickedTile, mouseCoords);
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -371,7 +356,6 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            console.log('ok');
             this.sio.to(game.roomName).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
         });
 
