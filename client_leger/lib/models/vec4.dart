@@ -11,4 +11,11 @@ class Vec4 {
     width = 0;
     height = 0;
   }
+
+  Map<String, dynamic> toJson() => {
+    'x1': x1,
+    'y1': y1,
+    'width': width,
+    'height': height,
+  };
 }
