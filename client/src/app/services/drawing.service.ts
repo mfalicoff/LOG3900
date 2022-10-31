@@ -45,12 +45,12 @@ export class DrawingService {
         canvas.fillStyle = tile.backgroundColor;
         canvas.strokeStyle = tile.backgroundColor;
         // draws background of tile
-        canvas.fillRect(tile.position.x1 + 1, tile.position.y1 + 1, tile.position.width - 2, tile.position.height - 2);
+        canvas.fillRect(tile.position.x1, tile.position.y1, tile.position.width, tile.position.height);
         // the number are so the letter tiles are smaller than the tile of the board
         canvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
         canvas.strokeStyle = tile.borderColor;
         // draws border of tile
-        this.roundRect(tile.position.x1 + 1, tile.position.y1 + 1, tile.position.width - 2, tile.position.height - 2, canvas);
+        this.roundRect(tile.position.x1, tile.position.y1, tile.position.width, tile.position.height, canvas);
         // the number are so the letter tiles are smaller than the tile of the board
         canvas.fillStyle = '#212121';
         const letterData = letterBank.get(letterToDraw.toUpperCase());
@@ -58,13 +58,13 @@ export class DrawingService {
         if (letterData) {
             letterWeight = letterData.weight;
         }
-        const spaceForLetter: Vec2 = { x: 4, y: 25 };
-        const spaceForNumber: Vec2 = { x: 23, y: 25 };
+        const spaceForLetter: Vec2 = { x: 12, y: 26 };
+        const spaceForNumber: Vec2 = { x: 27, y: 29 };
         const actualFont = canvas.font;
-        canvas.font = '18px bold system-ui';
+        canvas.font = 'bold 17px Roboto';
         canvas.fillText(letterToDrawUpper, tile.position.x1 + spaceForLetter.x, tile.position.y1 + spaceForLetter.y);
 
-        canvas.font = '12px bold system-ui';
+        canvas.font = '10px Roboto';
         if (letterWeight) {
             canvas.fillText(letterWeight.toString(), tile.position.x1 + spaceForNumber.x, tile.position.y1 + spaceForNumber.y);
         } else {
@@ -86,27 +86,20 @@ export class DrawingService {
         this.tmpTileCanvas.fillStyle = tileToDraw.backgroundColor;
         this.tmpTileCanvas.strokeStyle = tileToDraw.backgroundColor;
         // draws background of tile
-        this.tmpTileCanvas.fillRect(posToDrawCentered.x, posToDrawCentered.y + 1, tileToDraw.position.width - 2, tileToDraw.position.height - 2);
-        // the number are so the letter tiles are smaller than the tile of the board
+        this.tmpTileCanvas.fillRect(posToDrawCentered.x, posToDrawCentered.y, tileToDraw.position.width, tileToDraw.position.height);
         this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS / 2;
         this.tmpTileCanvas.strokeStyle = '#ffaaff';
         // draws border of tile
-        this.roundRect(
-            posToDrawCentered.x + 1,
-            posToDrawCentered.y + 1,
-            tileToDraw.position.width - 2,
-            tileToDraw.position.height - 2,
-            this.tmpTileCanvas,
-        );
+        this.roundRect(posToDrawCentered.x, posToDrawCentered.y, tileToDraw.position.width, tileToDraw.position.height, this.tmpTileCanvas);
         // the number are so the letter tiles are smaller than the tile of the board
         this.tmpTileCanvas.fillStyle = '#212121';
-        const spaceForLetter: Vec2 = { x: 4, y: 25 };
-        const spaceForNumber: Vec2 = { x: 23, y: 25 };
+        const spaceForLetter: Vec2 = { x: 12, y: 26 };
+        const spaceForNumber: Vec2 = { x: 27, y: 29 };
         const actualFont = this.tmpTileCanvas.font;
-        this.tmpTileCanvas.font = '18px bold system-ui';
+        this.tmpTileCanvas.font = 'bold 17px Roboto';
         this.tmpTileCanvas.fillText(letterToDrawUpper, posToDrawCentered.x + spaceForLetter.x, posToDrawCentered.y + spaceForLetter.y);
 
-        this.tmpTileCanvas.font = '12px bold system-ui';
+        this.tmpTileCanvas.font = '10px Roboto';
         if (tileToDraw.letter.weight) {
             this.tmpTileCanvas.fillText(
                 tileToDraw.letter.weight.toString(),
@@ -161,6 +154,7 @@ export class DrawingService {
     // function that draws all the stands in the game with the logic
     // also it always put the stand of the player playing at the bottom
     // it is much easier to do it this so that the drag and drop coords are not messed up
+    // in this function the order of the functions called are important don't change it !
     drawSpectatorStands(players: Player[]) {
         const paddingForStands = Constants.DEFAULT_HEIGHT_STAND + Constants.PADDING_BET_BOARD_AND_STAND;
         const constPosXYForStands = paddingForStands + Constants.DEFAULT_WIDTH_BOARD / 2 - Constants.DEFAULT_WIDTH_STAND / 2;
@@ -179,17 +173,17 @@ export class DrawingService {
 
         // we go to the next player
         idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
+        // top stand
+        this.drawHorizStand(constPosXYForStands, 0, players[idxPlayerPlaying]);
+
+        // we go to the next player
+        idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
         // right stand
         this.drawVertiStand(
             paddingForStands + Constants.DEFAULT_WIDTH_BOARD + Constants.PADDING_BET_BOARD_AND_STAND,
             constPosXYForStands,
             players[idxPlayerPlaying],
         );
-
-        // we go to the next player
-        idxPlayerPlaying = (idxPlayerPlaying + 1) % players.length;
-        // top stand
-        this.drawHorizStand(constPosXYForStands, 0, players[idxPlayerPlaying]);
     }
 
     // the x and y are coords of the point in the top left corner of the stand

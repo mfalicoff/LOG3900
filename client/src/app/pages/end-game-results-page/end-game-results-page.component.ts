@@ -147,7 +147,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     }
 
     isLinkEnabled(player: Player): boolean {
-        return player.idPlayer !== 'virtualPlayer';
+        return player.id !== 'virtualPlayer';
     }
 
     saveGame() {

@@ -6,7 +6,7 @@ const PREFIX_URL = 'data:image/png;base64,';
 const DEFAULT_AVATAR_COUNT = 8;
 
 class AvatarService {
-    assetDir = path.join(__dirname, '..', 'assets', 'avatars');
+    assetDir = path.join(__dirname, '..', '..', 'assets', 'avatars');
 
     async findAllAvatars(): Promise<Avatar[]> {
         const avatars: Avatar[] = [];
@@ -22,8 +22,12 @@ class AvatarService {
         return avatars;
     }
 
-    async findAvatarByPath(avatarPath: string): Promise<string> {
-        const filePath = `${this.assetDir}/${avatarPath}.png`;
+    async findAvatarByPath(avatarPath: string, id: string): Promise<string> {
+        let filePath = '';
+
+        if (avatarPath === 'customAvatar') filePath = `${this.assetDir}/${id}.jpg`;
+        else filePath = `${this.assetDir}/${avatarPath}.png`;
+
         const file = fs.readFileSync(filePath);
         return PREFIX_URL.concat(file.toString('base64'));
     }
@@ -33,6 +37,13 @@ class AvatarService {
         const filePath = `${this.assetDir}/avatar${randomNumber}.png`;
         const file = fs.readFileSync(filePath);
         return PREFIX_URL.concat(file.toString('base64'));
+    }
+
+    async saveAvatarForUser(avatarUri: string, id: string): Promise<void> {
+        if (id !== '') {
+            const formattedUri = avatarUri.replace(/^data:image\/png;base64,/, '');
+            fs.writeFileSync(`${this.assetDir}/${id}.jpg`, formattedUri, 'base64');
+        }
     }
 }
 

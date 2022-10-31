@@ -1,13 +1,17 @@
 /* eslint-disable max-lines */
+import { ChatMessage } from '@app/classes/chat-message.interface';
 import { DictJSON } from '@app/classes/dict-json';
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { Score } from '@app/classes/score';
 import { Spectator } from '@app/classes/spectator';
+import { Tile } from '@app/classes/tile';
 import { User } from '@app/classes/users.interface';
+import avatarService from '@app/services/avatar.service';
+import UserService from '@app/services/user.service';
 import * as http from 'http';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
@@ -16,14 +20,12 @@ import { ChatService } from './chat.service';
 import { CommunicationBoxService } from './communication-box.service';
 import { DatabaseService } from './database.service';
 import { DictionaryService } from './dictionary.service';
+import { LetterBankService } from './letter-bank.service';
 import { MouseEventService } from './mouse-event.service';
 import { PlayAreaService } from './play-area.service';
+import { PowerCardsService } from './power-cards.service';
 import { PutLogicService } from './put-logic.service';
-import { ChatMessage } from '@app/classes/chat-message.interface';
-import { Tile } from '@app/classes/tile';
 import { StandService } from './stand.service';
-import UserService from '@app/services/user.service';
-import avatarService from '@app/services/avatar.service';
 
 @Service()
 export class SocketManager {
@@ -49,6 +51,8 @@ export class SocketManager {
         private databaseService: DatabaseService,
         private dictionaryService: DictionaryService,
         private standService: StandService,
+        private powerCardsService: PowerCardsService,
+        private letterBankService: LetterBankService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -66,6 +70,7 @@ export class SocketManager {
             this.disconnectAbandonHandler(socket);
             // handling dictionnaries, VP names and highscores
             this.adminHandler(socket);
+            this.searchHandler(socket);
         });
     }
 
@@ -227,7 +232,7 @@ export class SocketManager {
         });
 
         socket.on('callTestFunction', () => {
-            const game = new GameServer(0, false, GlobalConstants.MODE_SOLO, 'defaultLevel', 'defaultRoom', false, '');
+            const game = new GameServer(0, Constants.CLASSIC_MODE, 'defaultRoom', false, '');
             this.boardService.initBoardArray(game);
             socket.emit('gameBoardUpdate', game);
             // const gameStub = new GameServer(
@@ -416,32 +421,61 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('clearTmpTileCanvas');
             this.sio.to(game.roomName).emit('drawHorizontalArrow', arrowCoords);
         });
+
+        socket.on('powerCardClick', (powerCardName, additionnalParams) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            const player = game.mapPlayers.get(user.name);
+            if (!player) {
+                return;
+            }
+            this.powerCardsService.powerCardsHandler(game, player, powerCardName, additionnalParams);
+            // we update the board state
+            this.gameUpdateClients(game);
+        });
+
+        socket.on('requestLetterReserve', () => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const game = this.rooms.get(user.roomName);
+            if (!game) {
+                return;
+            }
+            socket.emit('sendLetterReserve', this.letterBankService.getLettersInReserve(game));
+        });
     }
 
     private async createGameAndPlayer(
         gameMode: string,
         timeTurn: number,
-        isBonusRandom: boolean,
         playerName: string,
         socket: io.Socket,
         roomName: string,
-        vpLevel: string,
         isGamePrivate: boolean,
         passwd: string,
+        activatedPowers: boolean[],
     ) {
         // We create the game and add it to the rooms map
-        const newGame: GameServer = new GameServer(timeTurn, isBonusRandom, gameMode, vpLevel, roomName, isGamePrivate, passwd);
+        const newGame: GameServer = new GameServer(timeTurn, gameMode, roomName, isGamePrivate, passwd);
         const newPlayer = new Player(playerName, true);
-        newPlayer.idPlayer = socket.id;
+        newPlayer.id = socket.id;
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(playerName));
         this.boardService.initBoardArray(newGame);
 
         // fill the remaining players with bots
-        for (let i = 0; i < GlobalConstants.MAX_PERSON_PLAYING - 1; i++) {
+        for (let i = 0; i < Constants.MAX_PERSON_PLAYING - 1; i++) {
             const virtualPlayerId = 'virtualPlayer';
             const newOpponent = new Player(this.databaseService.namesVP[i].firstName + ' ' + this.databaseService.namesVP[i].lastName, false);
             newOpponent.avatarUri = await this.avatarService.getRandomAvatar();
-            newOpponent.idPlayer = virtualPlayerId;
+            newOpponent.id = virtualPlayerId;
             newGame.mapPlayers.set(newOpponent.name, newOpponent);
         }
 
@@ -451,36 +485,39 @@ export class SocketManager {
         // Joining the room
         socket.join(roomName);
 
+        // activate of desactivate the power cards depending on the settings
+        // set by the creator of the game
+        if (gameMode === Constants.POWER_CARDS_MODE) {
+            this.powerCardsService.initPowerCards(newGame, activatedPowers);
+
+            this.powerCardsService.givePowerToPlayers(newGame);
+        }
+
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
         this.putLogicService.initSioPutLogic(this.sio);
         this.mouseEventService.initSioMouseEvent(this.sio);
         this.playAreaService.initSioPlayArea(this.sio);
 
-        const timeForClientToInitialize = 1000;
-        // launches the game automatically if the mode is solo
-        if (gameMode === GlobalConstants.MODE_SOLO) {
-            setTimeout(() => {
-                socket.emit('setTimeoutTimerStart');
-                this.playAreaService.playGame(newGame);
-            }, timeForClientToInitialize);
-        } else {
-            // if the mode is multiplayer
-            // create button for creator to start the game if enough reel player are in the game
-            this.shouldCreatorBeAbleToStartGame(newGame);
-        }
+        // create button for creator to start the game if enough reel player are in the game
+        this.shouldCreatorBeAbleToStartGame(newGame);
     }
 
     private shouldCreatorBeAbleToStartGame(game: GameServer) {
-        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
         let creatorCanStart = true;
-        if (nbRealPlayer < GlobalConstants.MIN_PERSON_PLAYING) {
+        if (game.gameStarted || game.gameFinished) {
             creatorCanStart = false;
+        } else {
+            const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.id !== 'virtualPlayer').length;
+            if (nbRealPlayer < Constants.MIN_PERSON_PLAYING) {
+                creatorCanStart = false;
+            }
         }
+
         for (const player of game.mapPlayers.values()) {
             if (!player.isCreatorOfGame) {
                 continue;
             }
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('creatorShouldBeAbleToStartGame', creatorCanStart);
+            this.sio.sockets.sockets.get(player.id)?.emit('creatorShouldBeAbleToStartGame', creatorCanStart);
             break;
         }
     }
@@ -489,7 +526,7 @@ export class SocketManager {
         // we add the new player to the map of players
         const newPlayer = new Player(userData.name, false);
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
-        newPlayer.idPlayer = socket.id;
+        newPlayer.id = socket.id;
         game?.mapPlayers.set(socket.id, newPlayer);
 
         this.playAreaService.sendMsgToAllInRoom(game, userData?.name + ' a rejoint la partie.');
@@ -514,7 +551,7 @@ export class SocketManager {
             this.users.set(socket.id, { name, roomName: '' });
         });
 
-        socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, isBonusRandom, gameMode, vpLevel, isGamePrivate, passwd }) => {
+        socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, gameMode, isGamePrivate, passwd, activatedPowers }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {
                 socket.emit('messageServer', 'Une salle avec ce nom existe déjà.');
@@ -525,7 +562,7 @@ export class SocketManager {
             if (user) {
                 user.roomName = roomName;
             }
-            await this.createGameAndPlayer(gameMode, timeTurn, isBonusRandom, playerName, socket, roomName, vpLevel, isGamePrivate, passwd);
+            await this.createGameAndPlayer(gameMode, timeTurn, playerName, socket, roomName, isGamePrivate, passwd, activatedPowers);
             const createdGame = this.rooms.get(roomName);
             if (!createdGame) {
                 return;
@@ -535,8 +572,8 @@ export class SocketManager {
             const spectators = Array.from(createdGame.mapSpectators.values());
             this.sio.sockets.emit('addElementListRoom', {
                 roomName,
+                gameMode,
                 timeTurn,
-                isBonusRandom,
                 passwd,
                 players,
                 spectators,
@@ -569,7 +606,7 @@ export class SocketManager {
                 userData.roomName = game.roomName;
                 for (const creatorOfGame of game.mapPlayers.values()) {
                     if (creatorOfGame.isCreatorOfGame) {
-                        this.sio.sockets.sockets.get(creatorOfGame.idPlayer)?.emit('askForEntrance', userData.name, playerId);
+                        this.sio.sockets.sockets.get(creatorOfGame.id)?.emit('askForEntrance', userData.name, playerId);
                         return;
                     }
                 }
@@ -625,7 +662,7 @@ export class SocketManager {
             let oldVirtualPlayer;
             // take the first virtualPlayer that the server founds
             for (const player of game.mapPlayers.values()) {
-                if (player.idPlayer === 'virtualPlayer') {
+                if (player.id === 'virtualPlayer') {
                     oldVirtualPlayer = player;
                     break;
                 }
@@ -640,7 +677,7 @@ export class SocketManager {
             game.mapPlayers.delete(oldVirtualPlayer.name);
 
             // set the new player attribute and add it to the map
-            oldVirtualPlayer.idPlayer = socket.id;
+            oldVirtualPlayer.id = socket.id;
             oldVirtualPlayer.name = user.name;
             oldVirtualPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(user.name));
             game.mapPlayers.set(oldVirtualPlayer.name, oldVirtualPlayer);
@@ -649,7 +686,7 @@ export class SocketManager {
 
             for (const player of game.mapPlayers.values()) {
                 player.chatHistory.push({
-                    message: user.name + GlobalConstants.REPLACEMENT_BY_PLAYER + oldVPName + '.',
+                    message: user.name + Constants.REPLACEMENT_BY_PLAYER + oldVPName + '.',
                     isCommand: false,
                     sender: 'S',
                 });
@@ -659,8 +696,8 @@ export class SocketManager {
             // in the room
             this.sio.sockets.emit('addElementListRoom', {
                 roomName,
+                gameMode: game.gameMode,
                 timeTurn: game.minutesByTurn,
-                isBonusRandom: game.randomBonusesOn,
                 passwd: game.passwd,
                 players: Array.from(game.mapPlayers.values()),
                 spectators: Array.from(game.mapSpectators.values()),
@@ -678,7 +715,7 @@ export class SocketManager {
                 return;
             }
 
-            if (game.mapPlayers.size >= GlobalConstants.MIN_PERSON_PLAYING && !game.gameStarted) {
+            if (game.mapPlayers.size >= Constants.MIN_PERSON_PLAYING && !game.gameStarted) {
                 // we give the server bc we can't include socketManager in those childs
                 // but it sucks so... TODO: find a better way to do this
                 this.putLogicService.initSioPutLogic(this.sio);
@@ -727,7 +764,7 @@ export class SocketManager {
 
         // if condition respected it means the new user is a player and not a spectator
         // else it is a spectator
-        if (game.mapPlayers.size < GlobalConstants.MAX_PERSON_PLAYING) {
+        if (game.mapPlayers.size < Constants.MAX_PERSON_PLAYING) {
             this.joinGameAsPlayer(socket, game, userData);
         } else {
             this.joinGameAsSpectator(socket, game, userData);
@@ -748,8 +785,8 @@ export class SocketManager {
 
         this.sio.sockets.emit('addElementListRoom', {
             roomName: game.roomName,
+            gameMode: game.gameMode,
             timeTurn: game.minutesByTurn,
-            isBonusRandom: game.randomBonusesOn,
             passwd: game.passwd,
             players,
             spectators,
@@ -770,7 +807,7 @@ export class SocketManager {
 
         // we send an update of the player object for each respective client
         for (const player of game.mapPlayers.values()) {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
+            this.sio.sockets.sockets.get(player.id)?.emit('playerAndStandUpdate', player);
         }
     }
 
@@ -805,7 +842,7 @@ export class SocketManager {
         if (playerThatLeaves) {
             // if there are only virtualPlayers in the game we delete the game
             const nbRealPlayer = Array.from(game.mapPlayers.values()).filter(
-                (player) => player.idPlayer !== 'virtualPlayer' && player.idPlayer !== playerThatLeaves?.idPlayer,
+                (player) => player.id !== 'virtualPlayer' && player.id !== playerThatLeaves?.id,
             ).length;
             const nbSpectators = game.mapSpectators.size;
 
@@ -853,10 +890,10 @@ export class SocketManager {
         this.gameUpdateClients(game);
     }
     private gameFinishedAction(game: GameServer) {
-        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.idPlayer !== 'virtualPlayer').length;
+        const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.id !== 'virtualPlayer').length;
         const nbSpectators = game?.mapSpectators.size;
         // if this is the last player to leave the room we delete it
-        if (nbRealPlayer + nbSpectators <= 1) {
+        if (nbRealPlayer + nbSpectators < 1) {
             this.rooms.delete(game.roomName);
             this.sio.sockets.emit('removeElementListRoom', game.roomName);
         }
@@ -871,8 +908,8 @@ export class SocketManager {
 
             socket.emit('addElementListRoom', {
                 roomName,
+                gameMode: game.gameMode,
                 timeTurn: game.minutesByTurn,
-                isBonusRandom: game.randomBonusesOn,
                 passwd: game.passwd,
                 players: Array.from(game.mapPlayers.values()),
                 spectators: Array.from(game.mapSpectators.values()),
@@ -892,7 +929,7 @@ export class SocketManager {
 
     private triggerStopTimer(roomName: string) {
         this.sio.to(roomName).emit('stopTimer');
-        this.sio.to(roomName).emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
+        this.sio.to(roomName).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
     }
 
     private adminHandler(socket: io.Socket) {
@@ -969,6 +1006,22 @@ export class SocketManager {
             await this.databaseService.expertVPNamesCollection.editNameVP(vpName, formerVPName);
             await this.databaseService.updateDBNames();
             socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
+        });
+    }
+
+    private searchHandler(socket: io.Socket) {
+        const MAX_USERS = 5;
+        socket.on('getPlayerNames', async (data) => {
+            const usersFound = await this.userService.users
+                .find({
+                    name: {
+                        $regex: data,
+                        $options: 'i',
+                    },
+                })
+                .select('name')
+                .limit(MAX_USERS);
+            socket.emit('getPlayerNames', usersFound);
         });
     }
 }

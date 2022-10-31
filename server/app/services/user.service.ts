@@ -122,7 +122,7 @@ class UserService {
     }
 
     async updateStatsAtEndOfGame(gameLength: number, player: Player): Promise<void> {
-        if (player.idPlayer === 'virtualPlayer') return;
+        if (player.id === 'virtualPlayer') return;
         const findUser: User = (await this.users.findOne({ name: player.name })) as User;
 
         const currentAverageTime = findUser.averageTimePerGame as number;
@@ -138,7 +138,7 @@ class UserService {
     }
 
     async updateWinHistory(player: Player): Promise<void> {
-        if (player.idPlayer === 'virtualPlayer') return;
+        if (player.id === 'virtualPlayer') return;
 
         const findUser: User = (await this.users.findOne({ name: player.name })) as User;
         const newGamesWon = (findUser.gamesWon as number) + 1;
@@ -146,7 +146,7 @@ class UserService {
     }
 
     async updateGameHistory(player: Player, didPlayerWin: boolean, gameStart: number): Promise<void> {
-        if (player.idPlayer === 'virtualPlayer') return;
+        if (player.id === 'virtualPlayer') return;
 
         const start = new Date(gameStart);
         if (didPlayerWin)
@@ -162,7 +162,7 @@ class UserService {
     }
 
     async populateAvatarField(user: User): Promise<string> {
-        return await this.avatarService.findAvatarByPath(user.avatarPath as string);
+        return await this.avatarService.findAvatarByPath(user.avatarPath as string, user.id as string);
     }
 
     getAvatar(user: User): string {

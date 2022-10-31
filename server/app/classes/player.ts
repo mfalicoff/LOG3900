@@ -1,9 +1,10 @@
 import * as GlobalConstants from '@app/classes/global-constants';
 import { Command } from './command';
+import { PowerCard } from './power-card';
 import { Tile } from './tile';
 
 export class Player {
-    idPlayer: string;
+    id: string;
     name: string;
     stand: Tile[];
 
@@ -30,12 +31,16 @@ export class Player {
     allLetterSwapped: boolean;
     isMoveBingo: boolean;
 
+    // POWERS
+    powerCards: PowerCard[];
+    nbValidWordPlaced: number;
+
     avatarUri: string;
 
     constructor(namePlayer: string, isCreatorOfGame: boolean) {
         this.name = namePlayer;
         this.isCreatorOfGame = isCreatorOfGame;
-        this.idPlayer = '';
+        this.id = '';
         this.stand = [];
         this.mapLetterOnStand = new Map();
         this.score = 0;
@@ -48,5 +53,7 @@ export class Player {
         this.tileIndexManipulation = GlobalConstants.DEFAULT_VALUE_NUMBER;
         this.allLetterSwapped = false;
         this.isMoveBingo = false;
+        this.powerCards = [];
+        this.nbValidWordPlaced = 0;
     }
 }

@@ -1,7 +1,6 @@
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { BoardStandComponent } from '@app/components/board-stand/board-stand.component';
@@ -17,7 +16,6 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { MultiplayerInitPageComponent } from '@app/pages/multiplayer-init-page/multiplayer-init-page.component';
 import { ParametresSelectionPageComponent } from '@app/pages/parametres-selection-page/parametres-selection-page.component';
-import { ModalVpLevelsComponent } from './components/modal-vp-levels/modal-vp-levels.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { GameModeOptionsPageComponent } from './pages/game-mode-options-page/game-mode-options-page.component';
 import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
@@ -57,7 +55,6 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         LeaderboardPageComponent,
         AdminPageComponent,
         ModalComponent,
-        ModalVpLevelsComponent,
         ChatComponent,
         LoginPageComponent,
         GameModeOptionsPageComponent,
@@ -72,7 +69,6 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         AppMaterialModule,
         AppRoutingModule,
         BrowserAnimationsModule,
-        BrowserModule,
         FormsModule,
         HttpClientModule,
         ReactiveFormsModule,

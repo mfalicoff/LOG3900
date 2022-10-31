@@ -3,6 +3,7 @@ import { AfterViewInit, Component } from '@angular/core';
 import { RoomData } from '@app/classes/room-data';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
+import * as Constants from '@app/classes/global-constants';
 
 @Component({
     selector: 'app-multiplayer-init-page',
@@ -71,7 +72,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         let nbRealPlayer = 0;
         let nbVirtualPlayer = 0;
         this.infoClientService.rooms[idxExistingRoom].players.forEach((player) => {
-            if (player.idPlayer === 'virtualPlayer') {
+            if (player.id === 'virtualPlayer') {
                 nbVirtualPlayer++;
             } else {
                 nbRealPlayer++;
@@ -98,7 +99,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
             const li = document.createElement('li');
             li.classList.add('elementList');
             li.appendChild(document.createTextNode(player.name));
-            if (player.idPlayer === 'virtualPlayer') {
+            if (player.id === 'virtualPlayer') {
                 listVP?.appendChild(li);
             } else {
                 listPlayer?.appendChild(li);
@@ -121,6 +122,26 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         } else {
             alert("Il n'y a pas de salle disponible.");
         }
+    }
+
+    chooseRooms(): RoomData[] {
+        if (this.infoClientService.gameMode === Constants.CLASSIC_MODE) {
+            return this.infoClientService.rooms.filter((room) => room.gameMode === Constants.CLASSIC_MODE);
+        } else if (this.infoClientService.gameMode === Constants.POWER_CARDS_MODE) {
+            return this.infoClientService.rooms.filter((room) => room.gameMode === Constants.POWER_CARDS_MODE);
+        } else {
+            // eslint-disable-next-line no-console
+            console.log('Error in MultiplayerComponent:chooseRooms()');
+            return [];
+        }
+    }
+
+    getReelPlayersLength(room: RoomData): number {
+        return room.players.filter((player) => player.id !== 'virtualPlayer').length;
+    }
+
+    getVirtualPlayersLength(room: RoomData): number {
+        return room.players.filter((player) => player.id === 'virtualPlayer').length;
     }
 
     private joinRoom(roomName: string) {

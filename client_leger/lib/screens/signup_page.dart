@@ -184,9 +184,7 @@ class _SignUpFormState extends State<SignUpForm> {
       _formKey.currentState?.save();
       try {
         await controller.signUp(username: username, email: email, password: password);
-        print("worked!");
-        Navigator.of(context)
-            .pop();
+        Navigator.pop(context);
       } on Exception {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: const Text("Impossible de créer un compte"),

@@ -85,7 +85,7 @@ export class DatabaseService {
     async addScoreClassicToDb(player: Player) {
         let variable = true;
         const bdClassicScore: Score[] = this.bestScoreClassicCollection.scoreClassicFromDatabase;
-        if (player.idPlayer !== 'virtualPlayer') {
+        if (player.id !== 'virtualPlayer') {
             for (const line of bdClassicScore) {
                 if (String(player.score) === line.score) {
                     this.bestScoreClassicCollection.collection.updateOne({ score: line.score }, { $push: { name: player.name } });
@@ -102,7 +102,7 @@ export class DatabaseService {
     async addScoreLog2990ToDb(player: Player) {
         let variable = true;
         const bdLog2990Score: Score[] = this.bestScoreLOG2990Collection.scoreLOG2990FromDatabase;
-        if (player.idPlayer !== 'virtualPlayer') {
+        if (player.id !== 'virtualPlayer') {
             for (const line of bdLog2990Score) {
                 if (String(player.score) === line.score) {
                     this.bestScoreLOG2990Collection.collection.updateOne({ score: line.score }, { $push: { name: player.name } });

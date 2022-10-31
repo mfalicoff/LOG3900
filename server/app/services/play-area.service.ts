@@ -6,10 +6,9 @@ import { Service } from 'typedi';
 import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
 import { DatabaseService } from './database.service';
-import { ExpertVP } from './expert-virtual-player.service';
 import { LetterBankService } from './letter-bank.service';
 import { StandService } from './stand.service';
-// import { VirtualPlayerService } from './virtual-player.service';
+import { VirtualPlayerService } from './virtual-player.service';
 import AvatarService from '@app/services/avatar.service';
 
 @Service()
@@ -19,9 +18,8 @@ export class PlayAreaService {
     constructor(
         private standService: StandService,
         private letterBankService: LetterBankService,
-        // private virtualPService: VirtualPlayerService,
+        private virtualPService: VirtualPlayerService,
         private chatService: ChatService,
-        private expertVPService: ExpertVP,
         private databaseService: DatabaseService,
         private boardService: BoardService,
     ) {
@@ -46,6 +44,21 @@ export class PlayAreaService {
             this.updateStandAndReserveView(game, playerThatJustPlayed);
             // add a turn to the player that just played
             playerThatJustPlayed.turn += 1;
+
+            if (game.jmpNextEnnemyTurn) {
+                game.jmpNextEnnemyTurn = false;
+                // we go to the next player that was supposed to play
+                game.idxPlayerPlaying = (game.idxPlayerPlaying + 1) % game.mapPlayers.size;
+                // we send a message to everyone in the room to tell that someone used a powerCard
+                this.sendMsgToAllInRoom(
+                    game,
+                    'Le joueur ' +
+                        playerThatJustPlayed.name +
+                        ' a utilisé une carte pouvoir et le tour de ' +
+                        Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name +
+                        ' a été sauté.',
+                );
+            }
         }
         // is the game is finished we stop the game
         if (game.gameFinished && playerThatJustPlayed) {
@@ -57,15 +70,15 @@ export class PlayAreaService {
         // changes the current player
         game.idxPlayerPlaying = (game.idxPlayerPlaying + 1) % game.mapPlayers.size;
         const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-        if (playerPlaying.idPlayer === 'virtualPlayer') {
+        if (playerPlaying.id === 'virtualPlayer') {
             this.virtualPlayerAction(game, playerPlaying);
         }
 
-        // Updates the game of all players
-        this.sendGameToAllClientInRoom(game);
-
         // reset le timer pour les deux clients
         this.triggerTimer(game);
+
+        // Updates the game of all players
+        this.sendGameToAllClientInRoom(game);
     }
 
     playGame(game: GameServer) {
@@ -93,7 +106,7 @@ export class PlayAreaService {
 
         const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
         // make the virtual player play
-        if (playerPlaying && playerPlaying.idPlayer === 'virtualPlayer') {
+        if (playerPlaying && playerPlaying.id === 'virtualPlayer') {
             this.virtualPlayerAction(game, playerPlaying);
         }
         // update board tiles to old
@@ -128,14 +141,14 @@ export class PlayAreaService {
         this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
 
         // we keep the old id to determine later to change the old player's turn or not
-        const oldIdPlayer = playerThatLeaves.idPlayer;
+        const oldIdPlayer = playerThatLeaves.id;
 
         let isChangeTurnNeccesary = false;
         // we check if we will have to change the turn of the player that just left
         if (game.gameStarted) {
             // we change the player turn if it was the player that left's turn
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-            if (playerPlaying.idPlayer === oldIdPlayer) {
+            if (playerPlaying.id === oldIdPlayer) {
                 isChangeTurnNeccesary = true;
             }
         }
@@ -143,7 +156,7 @@ export class PlayAreaService {
         game.mapPlayers.delete(playerThatLeaves.name);
 
         // we replace him with the virtual player
-        playerThatLeaves.idPlayer = 'virtualPlayer';
+        playerThatLeaves.id = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
         playerThatLeaves.avatarUri = await this.avatarService.getRandomAvatar();
         this.insertInMapIndex(game.idxPlayerPlaying, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
@@ -164,6 +177,10 @@ export class PlayAreaService {
         }
     }
 
+    addSecsToTimePlayer(game: GameServer, timeToAdd: number) {
+        this.sio.to(game.roomName)?.emit('addSecsToTimer', timeToAdd);
+    }
+
     // function used to keep the order of elements in the map
     // we need to keep the ordre because otherwise the change of turn would be wrong
     // since it is based on this order
@@ -174,36 +191,10 @@ export class PlayAreaService {
         arr.forEach(([k, v]) => map.set(k, v));
     }
 
-    private randomActionExpertVP(game: GameServer, player: Player): string {
-        let resultCommand = '';
-
-        const choosedMoved = this.expertVPService.generateMoves(game, player);
-        if (!choosedMoved) {
-            if (game.letterBank.size > GlobalConstants.DEFAULT_NB_LETTER_STAND) {
-                const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank, game.vpLevel);
-                this.chatService.pushMsgToAllPlayers(game, player.name, '!échanger' + lettersExchanged, true, 'O');
-                this.chatService.pushMsgToAllPlayers(game, player.name, GlobalConstants.EXCHANGE_OPPONENT_CMD, false, 'O');
-                resultCommand = '!échanger ' + lettersExchanged;
-            } else {
-                this.chatService.passCommand('!passer', game, player);
-                resultCommand = '!passer';
-            }
-        } else {
-            resultCommand = '!placer ' + choosedMoved.command + ' ' + choosedMoved.word;
-        }
-
-        return resultCommand;
-    }
-
     private virtualPlayerAction(game: GameServer, player: Player) {
         const fourSecondsWait = 4000;
         const intervalId = setInterval(() => {
-            if (game.vpLevel === 'expert') {
-                this.randomActionExpertVP(game, player);
-            } else {
-                this.randomActionVP(game, player);
-            }
-
+            this.randomActionVP(game, player);
             this.changePlayer(game);
             clearInterval(intervalId);
         }, fourSecondsWait);
@@ -215,18 +206,18 @@ export class PlayAreaService {
     }
 
     private randomActionVP(game: GameServer, player: Player): string {
-        // const neinyPercent = 0.9;
-        // const tenPercent = 0.1;
-        // const probaMove: number = this.giveProbaMove();
+        const neinyPercent = 0.9;
+        const tenPercent = 0.1;
+        const probaMove: number = this.giveProbaMove();
         let resultCommand = '!passer';
 
-        /* if (probaMove < tenPercent) {
+        if (probaMove < tenPercent) {
             // 10% change to change letters
             if (this.letterBankService.getNbLettersInLetterBank(game.letterBank) < GlobalConstants.DEFAULT_NB_LETTER_STAND) {
                 this.chatService.passCommand('!passer', game, player);
                 resultCommand = '!passer';
             } else {
-                const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank, game.vpLevel);
+                const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank);
                 this.chatService.pushMsgToAllPlayers(game, player.name, '!échanger ' + lettersExchanged, true, 'O');
                 resultCommand = '!échanger ' + lettersExchanged;
             }
@@ -236,18 +227,18 @@ export class PlayAreaService {
             if (choosedMoved) {
                 resultCommand = '!placer ' + choosedMoved.command + ' ' + choosedMoved.word;
             }
-        } else {*/
-        this.chatService.passCommand('!passer', game, player);
-        resultCommand = '!passer';
-        // }
+        } else {
+            this.chatService.passCommand('!passer', game, player);
+            resultCommand = '!passer';
+        }
 
         return resultCommand;
     }
 
-    /* private giveProbaMove(): number {
+    private giveProbaMove(): number {
         const returnValue: number = Math.random();
         return returnValue;
-    }*/
+    }
 
     private updateOldTiles(game: GameServer) {
         const board = game.board;
@@ -263,10 +254,21 @@ export class PlayAreaService {
     }
 
     private triggerTimer(game: GameServer) {
-        this.sio.to(game.roomName).emit('startClearTimer', {
-            minutesByTurn: game.minutesByTurn,
-            currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
-        });
+        if (game.reduceEnnemyNbTurn > 0) {
+            this.sio.to(game.roomName).emit('startClearTimer', {
+                minutesByTurn: game.minutesByTurn / 2,
+                currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
+            });
+            game.reduceEnnemyNbTurn--;
+
+            // we send a message to everyone in the room to tell that someone used a powerCard
+            this.sendMsgToAllInRoom(game, "Le temps est divisé par deux due à l'utilisation d'une carte de pouvoir !");
+        } else {
+            this.sio.to(game.roomName).emit('startClearTimer', {
+                minutesByTurn: game.minutesByTurn,
+                currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
+            });
+        }
     }
 
     private sendGameToAllClientInRoom(game: GameServer) {
@@ -282,7 +284,7 @@ export class PlayAreaService {
 
         // we send an update of the player object for each respective client
         for (const player of game.mapPlayers.values()) {
-            this.sio.sockets.sockets.get(player.idPlayer)?.emit('playerAndStandUpdate', player);
+            this.sio.sockets.sockets.get(player.id)?.emit('playerAndStandUpdate', player);
         }
     }
 
