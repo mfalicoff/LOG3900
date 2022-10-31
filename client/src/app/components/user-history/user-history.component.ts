@@ -26,7 +26,9 @@ export class UserHistoryComponent implements AfterViewInit {
     actionHistory: string[] = this.data.data as string[];
     private scrollContainer: Element;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: Data | Games, private dialog: MatDialog) {}
+    constructor(@Inject(MAT_DIALOG_DATA) public data: Data | Games, private dialog: MatDialog) {
+        console.log(data);
+    }
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;

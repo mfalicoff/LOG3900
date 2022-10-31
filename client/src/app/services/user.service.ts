@@ -89,8 +89,8 @@ export class UserService {
             });
     }
 
-    async getFavouriteGames() {
-        return this.http.get<GameSaved>(environment.serverUrl + 'games/favourites', {});
+    getFavouriteGames() {
+        return this.http.get<GameSaved[]>(environment.serverUrl + 'users/games/' + this.user._id, { observe: 'body' });
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {
