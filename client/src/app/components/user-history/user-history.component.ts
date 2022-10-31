@@ -24,11 +24,11 @@ export class UserHistoryComponent implements AfterViewInit {
 
     // eslint-disable-next-line no-invalid-this
     actionHistory: string[] = this.data.data as string[];
+    // eslint-disable-next-line no-invalid-this
+    favouriteGames: GameSaved[] = this.data.data as GameSaved[];
     private scrollContainer: Element;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: Data | Games, private dialog: MatDialog) {
-        console.log(data);
-    }
+    constructor(@Inject(MAT_DIALOG_DATA) public data: Data | Games, private dialog: MatDialog) {}
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;

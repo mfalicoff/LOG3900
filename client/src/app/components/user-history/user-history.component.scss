@@ -28,6 +28,22 @@
     padding: 10px;
 }
 
+.title-box {
+    max-width: 100%;
+    background-color: #0c483f;
+    margin-bottom: 10px;
+}
+
+.closeButton {
+    color: #0c483f;
+    right: 10%;
+    background-color: transparent;
+    position: fixed;
+    top: 11%;
+    right: 11%;
+    margin-bottom: 0%;
+}
+
 ::-webkit-scrollbar {
     width: 8px;
     // Height of horizontal scroll bar

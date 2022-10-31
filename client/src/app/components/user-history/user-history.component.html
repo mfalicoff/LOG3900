@@ -10,5 +10,31 @@
     <button (click)="closeDialog()">Fermer</button>
 </div>
 <div *ngIf="data.isFavouriteGames" >
+    <div><button mat-icon-button (click)="closeDialog()" class="closeButton"> <mat-icon> close </mat-icon></button></div>
+    <div class="title-box">
+        <h1 mat-dialog-title class="title"> PARTIES FAVORITES </h1>
+    </div>
+    <div *ngFor="let game of this.favouriteGames">
+        <ul>
+            <li> Nom de la salle: {{game.roomName}}</li>
+            <div *ngIf="game.spectators.length !== 0">
+                <li>Spectateurs de la partie:</li>
+                <div *ngFor="let spect of game.spectators" class="two-grid-row">
+                    <div class="two-grid-col" style="margin-right: -85%">
+                        <span> Nom: </span>
+                    </div>
+                    <div class="two-grid-col">
+                        <span> {{spect}} </span>
+                    </div>
+                </div>
+            </div>
+            <li> Joueurs de la partie :</li>
+            <div *ngFor="let player of game.players" class="two-grid-row">
+                <div class="two-grid-col" style="margin-right: -60%">
+                    <span> Nom: {{player}} </span>
+                </div>
+            </div>
 
+        </ul>
+    </div>
 </div>
