@@ -264,19 +264,12 @@ class TapService with ChangeNotifier{
     num posStartWordY  = startLettersPlacedPosY;
     posStartWordY += ASCII_CODE_SHIFT;
     String placerCmd = '!placer ${String.fromCharCode(posStartWordY.toInt())}$posStartWordX';
-    // if (this.drawingBoardService.isArrowPlaced) {
-    //   if (this.drawingBoardService.isArrowVertical) {
-    //   placerCmd += 'v ' + this.drawingBoardService.lettersDrawn;
-    //   } else {
-    //   placerCmd += 'h ' + this.drawingBoardService.lettersDrawn;
-    //   }
-    //   } else {
-    //   if (this.isWordVertical(this.drawingBoardService.coordsLettersDrawn)) {
-    //   placerCmd += 'v ' + this.drawingBoardService.lettersDrawn;
-    //   } else {
-    //   placerCmd += 'h ' + this.drawingBoardService.lettersDrawn;
-    //   }
-    // }
+
+    if (isWordVertical(coordsLettersDrawn)) {
+      placerCmd += 'v $lettersDrawn';
+    } else {
+      placerCmd += 'h $lettersDrawn';
+    }
 
     return placerCmd;
   }
