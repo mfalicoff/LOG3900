@@ -227,10 +227,8 @@ class SocketService with ChangeNotifier{
     socket.on('tileDraggedOnCanvas', (data) {
       Tile clickedTile = Tile.fromJson(data[0]);
       Vec2 mouseCoords = Vec2.fromJson(data[1]);
-      print('original: ${mouseCoords.toJson()}');
       mouseCoords.x = crossProductGlobal(mouseCoords.x.toDouble());
       mouseCoords.y = crossProductGlobal(mouseCoords.y.toDouble());
-      print('modified: ${mouseCoords.toJson()}');
       tapService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
     });
 

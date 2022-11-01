@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
@@ -16,7 +13,7 @@ class TapService with ChangeNotifier{
   bool isDragging = false;
   late double xPos;
   late double yPos;
-  late Tile? draggedTile = null;
+  late Tile? draggedTile;
   late String lettersDrawn = '';
   List<Vec2> coordsLettersDrawn = [];
   late num startLettersPlacedPosX;
@@ -94,8 +91,6 @@ class TapService with ChangeNotifier{
 
   void drawTileDraggedOnCanvas(Tile clickedTile, Vec2 mouseCoords) {
     isDragging = true;
-    Vec2 boardIndexs = getIndexOnBoardLogicFromClick(mouseCoords);
-
     draggedTile = clickedTile;
     xPos = (mouseCoords.x - WIDTH_EACH_SQUARE_CORRECTED/2);
     yPos = (mouseCoords.y - WIDTH_EACH_SQUARE_CORRECTED /2);
@@ -103,14 +98,11 @@ class TapService with ChangeNotifier{
   }
 
   void onStandToBoardDrop(Vec2 coordsTapped, Tile tileDropped, IO.Socket socket) {
-    print('dropping on baord');
     Vec2 posDropBoardIdxs = getIndexOnBoardLogicFromClick(coordsTapped);
-    print(posDropBoardIdxs.toJson());
 
     if (infoClientService.game.board[posDropBoardIdxs.y as int][posDropBoardIdxs.x as int].letter.value != '') {
       return;
     }
-    print('dropping on baord 1');
 
     if (lettersDrawn == '') {
       startLettersPlacedPosX = posDropBoardIdxs.x;
@@ -129,9 +121,8 @@ class TapService with ChangeNotifier{
 
   }
 
-  void onBoardToBoardDrop(Vec2 coordsTapped, Tile tileDropped, Vec2 test, Vec2 nextTest, IO.Socket socket) {
+  void onBoardToBoardDrop(Vec2 coordsTapped, Tile tileDropped, Vec2 initialTap, IO.Socket socket) {
     // indexs of the tile where the "tileDropped" has been dropped
-    print('board drop');
     Vec2 posDropBoardIdxs = getIndexOnBoardLogicFromClick(coordsTapped);
     // if the tile on which we drop the new one is an old one (from a precedent turn)
     // we do nothing
@@ -140,37 +131,27 @@ class TapService with ChangeNotifier{
     }
 
     // indexs of the "tileDropped" variable on the board
-    Vec2 posClickedTileIdxs = getIndexOnBoardLogicFromClick(Vec2.withParams(crossProductGlobal1(tileDropped.position.x1), crossProductGlobal1(tileDropped.position.y1)));
-    print(posClickedTileIdxs.toJson());
+    Vec2 posClickedTileIdxs = getIndexOnBoardLogicFromClick(initialTap);
 
     // if the tile on which we drop the new one is the same tile we do nothing
     if (posClickedTileIdxs.x == posDropBoardIdxs.x && posClickedTileIdxs.y == posDropBoardIdxs.y) {
     return;
     }
 
-    print('emitting');
-    print(posClickedTileIdxs.toJson());
-    print(posDropBoardIdxs.toJson());
-    print(getIndexOnBoardLogicFromClick(test).toJson());
-    print(getIndexOnBoardLogicFromClick(nextTest).toJson());
     // ask for update board logic for a move of temporary tile
-    socket.emit('onBoardToBoardDrop', [getIndexOnBoardLogicFromClick(test).toJson(), getIndexOnBoardLogicFromClick(nextTest).toJson()]);
+    socket.emit('onBoardToBoardDrop', [posClickedTileIdxs.toJson(), posDropBoardIdxs.toJson()]);
     socket.emit('clearTmpTileCanvas');
   }
 
   void onBoardToStandDrop(Vec2 coordsTapped, Tile tileDropped, Vec2 originalClickTileIndexs, IO.Socket socket) {
     // if the letter taken from the board isn't one taken from the stand
     // we do nothing
-    print(lettersDrawn);
-    print(tileDropped.toJson());
     if (!lettersDrawn.contains(tileDropped.letter.value)) {
-      print("jkasikdjs");
       return;
     }
 
     // gets the index of the letterDrawn array to remove
     num idxToRm = checkIdxToRm(originalClickTileIndexs);
-    print(lettersDrawn);
     // remove the letter from the lettersDrawn array
     if(lettersDrawn.length > 1) {
       lettersDrawn = lettersDrawn.substring(0, idxToRm as int) + lettersDrawn.substring(idxToRm + 1, lettersDrawn.length);
@@ -178,7 +159,6 @@ class TapService with ChangeNotifier{
       lettersDrawn = '';
     }
     int standIdx = getIndexOnStandLogicFromClick(coordsTapped.x as double);
-    print(standIdx);
     socket.emit('clearTmpTileCanvas');
     socket.emit('onBoardToStandDrop', [tileDropped, standIdx]);
   }
