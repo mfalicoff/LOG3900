@@ -53,6 +53,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        this.socketService.gameFinished.next(false);
         this.routerSubscription.unsubscribe();
         this.socketSubscription.unsubscribe();
     }
