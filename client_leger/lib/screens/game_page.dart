@@ -84,7 +84,7 @@ class _GamePageState extends State<GamePage> {
                         ),
                       ),
                     ),
-                    onPressed: _giveUpGame(context),
+                    onPressed: () => _giveUpGame(context),
                     child: Text(
                       "Abandonner",
                       style: TextStyle(
@@ -230,31 +230,32 @@ class _GamePageState extends State<GamePage> {
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
   }
 
-  _giveUpGame(context) {
-    showAlertDialog(context);
-  }
 
-  showAlertDialog(BuildContext context) {
-    showDialog(
+  Future<void> _giveUpGame(BuildContext context) {
+    return showDialog<void>(
       context: context,
-      barrierDismissible: false,
-
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('You clicked on'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const [
-                Text('Do you want to give up the game?'),
-              ],
-            ),
-          ),
-          actions: [
-            ElevatedButton(
-              child: const Text('Give Up'),
+          title: const Text('Abandonner la partie?'),
+          content: const Text('Êtes-vous sûr de vouloir abandonner la partie?'),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Abandonner'),
               onPressed: () {
                 socketService.socket.emit('giveUpGame');
                 Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
               },
             ),
           ],
