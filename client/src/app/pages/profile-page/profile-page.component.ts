@@ -54,7 +54,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
 
     openFavouriteGamesComponent(): void {
         this.dialog.open(UserHistoryComponent, {
-            height: '70%',
+            height: '75%',
             width: '60%',
             data: {
                 title: 'Parties favorites',

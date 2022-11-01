@@ -17,7 +17,7 @@
         <h1 mat-dialog-title class="title"> PARTIES FAVORITES </h1>
     </div>
 
-    <div mat-dialog-content id="favouriteGames">
+    <div id="favouriteGames">
         <div *ngFor="let game of this.favouriteGames">
             <ul>
                 <li> NOM DE LA SALLE : {{game.roomName}}</li>
@@ -55,6 +55,7 @@
                 <li> Nombre de tours totoal: {{game.numberOfTurns}}</li>
                 <li> Durée de la partie (en minutes) : {{game.playingTime}}</li>
                 <li> Date du début de la partie (timestamp) : {{game.gameStartDate}}</li>
+                <li> ------------------------------------------------------------------------------------------------------------------------------------------------------------------ </li>
             </ul>
         </div>
     </div>
