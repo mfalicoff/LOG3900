@@ -148,4 +148,14 @@ class InfoClientService extends ChangeNotifier{
     notifyListeners();
   }
 
+  void addRoom(room){
+    rooms.add(room);
+    notifyListeners();
+  }
+
+  void removeRoom(roomNameToDelete){
+    rooms.removeWhere((element) => element.name == roomNameToDelete);
+    notifyListeners();
+  }
+
 }
