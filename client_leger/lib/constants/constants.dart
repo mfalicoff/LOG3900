@@ -74,17 +74,7 @@ double crossProductGlobal(double valueToConvert){
   return (valueToConvert * 692)/originalSizeCanvas;
 }
 
-double crossProductGlobal1(num valueToConvert){
-  const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
-  return (valueToConvert * 692)/originalSizeCanvas;
-}
-
-double crossProductTest(double valueToConvert){
-  const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
-  return (valueToConvert * originalSizeCanvas)/692;
-}
-
-num crossProductTest1(num valueToConvert){
+double crossProductGlobalToLargeCanvas(double valueToConvert){
   const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
   return (valueToConvert * originalSizeCanvas)/692;
 }

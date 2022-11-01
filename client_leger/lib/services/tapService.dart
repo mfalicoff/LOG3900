@@ -111,9 +111,8 @@ class TapService with ChangeNotifier{
 
     lettersDrawn += tileDropped.letter.value;
     coordsLettersDrawn.add(posDropBoardIdxs);
+
     // remove the tile from the stand logically and visually
-    // Tile tileFormServer = tileDropped;
-    // tileFormServer.position.x1 = crossProductTest(tileDropped.position.x1.toDouble());
     socket.emit('rmTileFromStand', tileDropped);
     // ask for update board logic for a temporary tile
     socket.emit('addTempLetterBoard', [tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y]);

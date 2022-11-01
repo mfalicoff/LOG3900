@@ -60,7 +60,6 @@ class _GameBoardState extends State<GameBoard> {
                   child: GestureDetector(
                     onPanStart: (details) {
                       touching = true;
-                      print("starting");
                       coordsClick = Vec2.withParams(
                           details.localPosition.dx, details.localPosition.dy);
                       if (areCoordsOnStand(coordsClick)) {
@@ -75,14 +74,14 @@ class _GameBoardState extends State<GameBoard> {
                       }
                     },
                     onPanUpdate: (details) {
-                      // if (touching ||
-                      //     (clickedTile == null) ||
-                      //     clickedTile?.letter.value == '' ||
-                      //     infoClientService.isTurnOurs) {
-                      //   return;
-                      // }
+                      if (!touching ||
+                          (clickedTile == null) ||
+                          clickedTile?.letter.value == '' ||
+                          !infoClientService.isTurnOurs) {
+                        return;
+                      }
                       Vec2 coords = Vec2.withParams(
-                          crossProductTest(details.localPosition.dx), crossProductTest(details.localPosition.dy));
+                          crossProductGlobalToLargeCanvas(details.localPosition.dx), crossProductGlobalToLargeCanvas(details.localPosition.dy));
                       lastPosition = Vec2.withParams(details.localPosition.dx, details.localPosition.dy);
                       socketService.socket
                           .emit('tileDraggedOnCanvas', [clickedTile!.toJson(), coords.toJson()]);
