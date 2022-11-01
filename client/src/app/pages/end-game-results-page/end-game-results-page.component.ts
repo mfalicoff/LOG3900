@@ -48,6 +48,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.findNumberOfTurns();
         this.getGameStartDate();
         this.displayPlayingTime();
+        this.orderPlayerByScore();
         this.saveGame();
         this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
         this.changeEloOfPlayersDB();
