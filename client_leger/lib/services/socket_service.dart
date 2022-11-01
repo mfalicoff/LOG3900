@@ -1,7 +1,6 @@
 import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 import '../constants/constants.dart';
@@ -19,7 +18,7 @@ import 'info_client_service.dart';
 
 
 
-class SocketService with ChangeNotifier{
+class SocketService{
 
   static final SocketService _socketService = SocketService._internal();
 
@@ -61,14 +60,12 @@ class SocketService with ChangeNotifier{
       RoomData room = RoomData.fromJson(data);
       var exist = infoClientService.rooms.where((element) => element.name == room.name);
       if(exist.isEmpty){
-        infoClientService.rooms.add(room);
-        notifyListeners();
+        infoClientService.addRoom(room);
       }
     });
 
     socket.on('removeElementListRoom', (roomNameToDelete) {
-      infoClientService.rooms.removeWhere((element) => element.name == roomNameToDelete);
-      notifyListeners();
+      infoClientService.removeRoom(roomNameToDelete);
     });
 
     // socket.on('roomChangeAccepted', (page) {

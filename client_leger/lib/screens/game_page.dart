@@ -44,27 +44,57 @@ class _GamePageState extends State<GamePage> {
                 const SizedBox(
                   height: 30,
                 ),
-                ElevatedButton(
-                  style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(
-                          vertical: 6.0, horizontal: 3.0),
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                  ),
-                  onPressed: _leaveGame,
-                  child: Text(
-                    "Quitter partie",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
+                Container(
+                  child: shouldBeAbleToLeaveGame()
+                      ? ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 6.0, horizontal: 3.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: _leaveGame,
+                          child: Text(
+                            "Quitter partie",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        )
+                      : null,
                 ),
-                if(infoClientService.gameMode == CLASSIC_MODE)...[
+                Container(
+                  child: shouldBeAbleToGiveUpGame()
+                      ? ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 6.0, horizontal: 3.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () => _giveUpGame(context),
+                          child: Text(
+                            "Abandonner",
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        )
+                      : null,
+                ),
+                if (infoClientService.gameMode == CLASSIC_MODE) ...[
                   PowerListDialog(
                     notifyParent: refresh,
                   ),
@@ -89,11 +119,34 @@ class _GamePageState extends State<GamePage> {
                   //   ),
                   // ),
                 ],
+                const SizedBox(
+                  height: 5,
+                ),
                 Container(
-                    child:
-                        infoClientService.creatorShouldBeAbleToStartGame == true
-                            ? const Text('Start Game')
-                            : Container()),
+                    child: infoClientService.creatorShouldBeAbleToStartGame ==
+                            true
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                              padding: MaterialStateProperty.all(
+                                const EdgeInsets.symmetric(
+                                    vertical: 6.0, horizontal: 3.0),
+                              ),
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                              ),
+                            ),
+                            onPressed: _startGame,
+                            child: Text(
+                              "Demarrer partie",
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          )
+                        : null),
                 Container(
                     child: shouldSpecBeAbleToBePlayer() == true
                         ? ElevatedButton(
@@ -141,6 +194,24 @@ class _GamePageState extends State<GamePage> {
     );
   }
 
+  bool shouldBeAbleToLeaveGame() {
+    if (infoClientService.isSpectator ||
+        !infoClientService.game.gameStarted ||
+        infoClientService.game.gameFinished) {
+      return true;
+    }
+    return false;
+  }
+
+  bool shouldBeAbleToGiveUpGame() {
+    if (!infoClientService.isSpectator &&
+        infoClientService.game.gameStarted &&
+        !infoClientService.game.gameFinished) {
+      return true;
+    }
+    return false;
+  }
+
   bool shouldSpecBeAbleToBePlayer() {
     if (infoClientService.game.gameFinished || !infoClientService.isSpectator) {
       return false;
@@ -156,9 +227,47 @@ class _GamePageState extends State<GamePage> {
     socketService.socket.emit('spectWantsToBePlayer');
   }
 
+  void _startGame() {
+    socketService.socket.emit('startGame', infoClientService.game.roomName);
+    infoClientService.creatorShouldBeAbleToStartGame = false;
+  }
+
   void _leaveGame() {
     socketService.socket.emit('leaveGame');
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+  }
+
+  Future<void> _giveUpGame(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Abandonner la partie?'),
+          content: const Text('Êtes-vous sûr de vouloir abandonner la partie?'),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Abandonner'),
+              onPressed: () {
+                socketService.socket.emit('giveUpGame');
+                Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: const Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -173,7 +282,6 @@ class PowerListDialog extends StatefulWidget {
 
 class _PowerListDialog extends State<PowerListDialog> {
   InfoClientService infoClientService = InfoClientService();
-  final _formKey = GlobalKey<FormState>();
   late String? newName = "";
 
   @override
@@ -182,8 +290,16 @@ class _PowerListDialog extends State<PowerListDialog> {
       onPressed: () => showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: (infoClientService.player.powerCards.isNotEmpty) ? const Text('Cartes disponibles') : const Text(''),
-          content: (infoClientService.player.powerCards.isEmpty) ? Text("Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer " + (3 - infoClientService.player.nbValidWordPlaced).toString() + " mot(s) valide(s) sur le plateau.") : const Text(''),
+          title: (infoClientService.player.powerCards.isNotEmpty)
+              ? const Text('Cartes disponibles')
+              : const Text(''),
+          content: (infoClientService.player.powerCards.isEmpty)
+              ? Text(
+                  "Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer " +
+                      (3 - infoClientService.player.nbValidWordPlaced)
+                          .toString() +
+                      " mot(s) valide(s) sur le plateau.")
+              : const Text(''),
           backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: <Widget>[
             Container(
@@ -194,13 +310,13 @@ class _PowerListDialog extends State<PowerListDialog> {
                   shrinkWrap: true,
                   itemCount: infoClientService.player.powerCards.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Text('\u2022 ${infoClientService.player.powerCards[index].name}',
+                    return Text(
+                        '\u2022 ${infoClientService.player.powerCards[index].name}',
                         style: const TextStyle(
                             color: Colors.black,
                             fontSize: 11,
                             decoration: TextDecoration.none));
-                  }
-              ),
+                  }),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, 'Cancel'),
@@ -210,10 +326,10 @@ class _PowerListDialog extends State<PowerListDialog> {
         ),
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.primary),
+        backgroundColor: MaterialStatePropertyAll<Color>(
+            Theme.of(context).colorScheme.primary),
         padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(
-              vertical: 6.0, horizontal: 3.0),
+          const EdgeInsets.symmetric(vertical: 6.0, horizontal: 3.0),
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
