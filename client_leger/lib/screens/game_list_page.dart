@@ -281,8 +281,8 @@ class _gameListState extends State<gameList> {
                 onSelectChanged: (bool? selected) {
                   if (selected!) {
                     socketService.socket.emit("joinRoom",
-                      [widget.rooms[index].name,
-                      socketService.socket.id,]
+                        [widget.rooms[index].name,
+                        socketService.socket.id,]
                     );
                   }
                 },
