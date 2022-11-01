@@ -151,8 +151,10 @@ class UserService {
 
     async updateWinHistory(player: Player): Promise<void> {
         if (player.id === 'virtualPlayer') return;
+        console.log(player.name + ":   the player's name");
 
         const findUser: User = (await this.users.findOne({ name: player.name })) as User;
+        if (findUser === null) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
         const newGamesWon = (findUser.gamesWon as number) + 1;
         await this.users.updateOne({ name: player.name }, { gamesWon: newGamesWon });
     }
