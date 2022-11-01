@@ -18,7 +18,6 @@ export class GameSavedController {
         }
     };
 
-
     saveGame = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const gameData = req.body;
