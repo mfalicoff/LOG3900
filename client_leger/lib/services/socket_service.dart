@@ -185,6 +185,7 @@ class SocketService with ChangeNotifier{
       // this.drawingBoardService.lettersDrawn = '';
       num minutesByTurn = data["minutesByTurn"];
       String currentNamePlayerPlaying = data["currentNamePlayerPlaying"];
+      tapService.lettersDrawn = '';
 
       if(currentNamePlayerPlaying == infoClientService.playerName) {
         infoClientService.displayTurn = "C'est votre tour !";
@@ -203,12 +204,12 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('setTimeoutTimerStart', (_) {
-      // this.drawingBoardService.lettersDrawn = '';
+      tapService.lettersDrawn = '';
       setTimeoutForTimer();
     });
 
     socket.on('stopTimer', (_) {
-      // this.drawingBoardService.lettersDrawn = '';
+      tapService.lettersDrawn = '';
       timerService.clearTimer();
     });
 
@@ -262,7 +263,7 @@ class SocketService with ChangeNotifier{
         socket.emit('turnFinished');
       }
       if (infoClientService.game.gameFinished) {
-        // this.drawingBoardService.lettersDrawn = '';
+        tapService.lettersDrawn = '';
         timer.cancel();
       }
     });

@@ -120,21 +120,19 @@ class TapService with ChangeNotifier{
     lettersDrawn += tileDropped.letter.value;
     coordsLettersDrawn.add(posDropBoardIdxs);
     // remove the tile from the stand logically and visually
+    // Tile tileFormServer = tileDropped;
+    // tileFormServer.position.x1 = crossProductTest(tileDropped.position.x1.toDouble());
     socket.emit('rmTileFromStand', tileDropped);
     // ask for update board logic for a temporary tile
-    // posDropBoardIdxs.x = crossProductTest1(posDropBoardIdxs.x).floor();
-    // posDropBoardIdxs.y = crossProductTest1(posDropBoardIdxs.y).floor();
-    // print(pos)
     socket.emit('addTempLetterBoard', [tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y]);
     socket.emit('clearTmpTileCanvas');
 
   }
 
-  void onBoardToBoardDrop(Vec2 coordsTapped, Tile tileDropped, IO.Socket socket) {
+  void onBoardToBoardDrop(Vec2 coordsTapped, Tile tileDropped, Vec2 test, Vec2 nextTest, IO.Socket socket) {
     // indexs of the tile where the "tileDropped" has been dropped
     print('board drop');
     Vec2 posDropBoardIdxs = getIndexOnBoardLogicFromClick(coordsTapped);
-    print(posDropBoardIdxs.toJson());
     // if the tile on which we drop the new one is an old one (from a precedent turn)
     // we do nothing
     if (infoClientService.game.board[posDropBoardIdxs.y as int][posDropBoardIdxs.x as int].letter.value != '') {
@@ -142,30 +140,45 @@ class TapService with ChangeNotifier{
     }
 
     // indexs of the "tileDropped" variable on the board
-    Vec2 posClickedTileIdxs = getIndexOnBoardLogicFromClick(Vec2.withParams(tileDropped.position.x1, tileDropped.position.y1));
+    Vec2 posClickedTileIdxs = getIndexOnBoardLogicFromClick(Vec2.withParams(crossProductGlobal1(tileDropped.position.x1), crossProductGlobal1(tileDropped.position.y1)));
     print(posClickedTileIdxs.toJson());
 
     // if the tile on which we drop the new one is the same tile we do nothing
     if (posClickedTileIdxs.x == posDropBoardIdxs.x && posClickedTileIdxs.y == posDropBoardIdxs.y) {
     return;
     }
+
+    print('emitting');
+    print(posClickedTileIdxs.toJson());
+    print(posDropBoardIdxs.toJson());
+    print(getIndexOnBoardLogicFromClick(test).toJson());
+    print(getIndexOnBoardLogicFromClick(nextTest).toJson());
     // ask for update board logic for a move of temporary tile
-    socket.emit('onBoardToBoardDrop', [posClickedTileIdxs.toJson(), posDropBoardIdxs.toJson()]);
+    socket.emit('onBoardToBoardDrop', [getIndexOnBoardLogicFromClick(test).toJson(), getIndexOnBoardLogicFromClick(nextTest).toJson()]);
     socket.emit('clearTmpTileCanvas');
   }
 
   void onBoardToStandDrop(Vec2 coordsTapped, Tile tileDropped, Vec2 originalClickTileIndexs, IO.Socket socket) {
     // if the letter taken from the board isn't one taken from the stand
     // we do nothing
-    if (lettersDrawn.contains(tileDropped.letter.value)) {
+    print(lettersDrawn);
+    print(tileDropped.toJson());
+    if (!lettersDrawn.contains(tileDropped.letter.value)) {
+      print("jkasikdjs");
       return;
     }
 
     // gets the index of the letterDrawn array to remove
     num idxToRm = checkIdxToRm(originalClickTileIndexs);
+    print(lettersDrawn);
     // remove the letter from the lettersDrawn array
-    lettersDrawn = lettersDrawn.substring(0, idxToRm as int) + lettersDrawn.substring(idxToRm + 1, lettersDrawn.length);
+    if(lettersDrawn.length > 1) {
+      lettersDrawn = lettersDrawn.substring(0, idxToRm as int) + lettersDrawn.substring(idxToRm + 1, lettersDrawn.length);
+    } else {
+      lettersDrawn = '';
+    }
     int standIdx = getIndexOnStandLogicFromClick(coordsTapped.x as double);
+    print(standIdx);
     socket.emit('clearTmpTileCanvas');
     socket.emit('onBoardToStandDrop', [tileDropped, standIdx]);
   }

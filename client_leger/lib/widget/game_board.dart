@@ -27,11 +27,16 @@ class _GameBoardState extends State<GameBoard> {
   late Tile? draggedTile;
   late Vec2 lastPosition;
 
+  // These are needed for some bizarre reason the values are not updated correctly when passing them to the dragging methods so we copy them manually
+  late Vec2 test;
+  late Vec2 nextTest;
+
   @override
   void initState() {
     super.initState();
 
     infoClientService.addListener(refresh);
+    infoClientService.player.addListener(refresh);
     tapService.addListener(refresh);
   }
 
@@ -96,21 +101,30 @@ class _GameBoardState extends State<GameBoard> {
                     onPanEnd: (details) {
                       print("end");
                       touching = false;
+                      print(tapService.tileClickedFromStand);
                       Vec2 coordsTapped = lastPosition;
+                      nextTest = lastPosition;
                       print(coordsTapped.toJson());
-                      clickedTile?.position.x1 = crossProductGlobal1(clickedTile!.position.x1);
-                      clickedTile?.position.y1 = crossProductGlobal1(clickedTile!.position.y1);
+                      // clickedTile?.position.x1 = crossProductGlobal1(clickedTile!.position.x1);
+                      // clickedTile?.position.y1 = crossProductGlobal1(clickedTile!.position.y1);
 
                       if(areCoordsOnBoard(coordsTapped) && infoClientService.isTurnOurs) {
                         if(clickedTile != null && clickedTile?.letter.value != '') {
                           if(tapService.tileClickedFromStand) {
                             tapService.onStandToBoardDrop(coordsTapped, clickedTile!, socketService.socket);
+                            test = coordsTapped;
                           } else {
-                            tapService.onBoardToBoardDrop(coordsTapped, clickedTile!, socketService.socket);
+                            tapService.onBoardToBoardDrop(coordsTapped, clickedTile!, test, nextTest, socketService.socket);
+                            test = coordsTapped;
                           }
                         }
                       } else if(areCoordsOnStand(coordsTapped)) {
+                        print("dropping on stand");
+                        print(clickedTile?.toJson());
+                        print(!tapService.tileClickedFromStand);
+                        print(infoClientService.isTurnOurs);
                         if(clickedTile != null && clickedTile?.letter.value != '' && !tapService.tileClickedFromStand && infoClientService.isTurnOurs) {
+                          print("goig to stand");
                           tapService.onBoardToStandDrop(coordsTapped, clickedTile!, clickedTileIndex, socketService.socket);
                         } else {
                           tapService.onTapStand(coordsTapped, socketService.socket);
