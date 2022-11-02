@@ -32,6 +32,11 @@ export class EmailValidator {
     email: string;
 }
 
+/* export class CreateGameSavedValidator {
+    @IsString()
+    savedGameId: string;
+}*/
+
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 export const validationMiddleware = (
     type: any,

@@ -10,11 +10,14 @@ import { isEmpty } from '@app/utils/utils';
 import { CreateUserValidator } from '@app/utils/validators';
 import { hash } from 'bcrypt';
 import { Service } from 'typedi';
+import GameSavedService from './game-saved.service';
+import { GameSaved } from '@app/classes/game-saved';
 
 @Service()
 class UserService {
     users = userModel;
     avatarService = new AvatarService();
+    gamesSavedService = new GameSavedService();
 
     async findAllUser(): Promise<User[]> {
         return this.users.find();
@@ -24,7 +27,6 @@ class UserService {
         if (isEmpty(userId)) {
             throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no id sent');
         }
-
         const findUser: User = (await this.users.findOne({ _id: userId })) as User;
         if (!findUser) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
         findUser.avatarUri = await this.populateAvatarField(findUser);
@@ -40,6 +42,15 @@ class UserService {
         if (!findUser || username === 'DefaultPlayerName') throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
         findUser.avatarUri = await this.populateAvatarField(findUser);
         return findUser;
+    }
+
+    async findFavouriteGames(userId: string): Promise<GameSaved[]> {
+        if (isEmpty(userId)) {
+            throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no id sent');
+        }
+        const findUser: User = (await this.users.findOne({ _id: userId })) as User;
+        if (!findUser) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+        return this.gamesSavedService.findGamesById(findUser.favouriteGames);
     }
 
     async createUser(userData: CreateUserValidator): Promise<User> {
@@ -63,6 +74,7 @@ class UserService {
             gameHistory: [],
             avatarPath: userData.avatarPath,
             avatarUri: '',
+            favouriteGames: [],
         });
     }
 
@@ -87,6 +99,19 @@ class UserService {
             return updateUserById;
         }
         throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
+    }
+
+    async updateFavouriteGames(userId: string, gameId: string): Promise<User> {
+        if (userId === '' || userId === undefined) throw new HttpException(HTTPStatusCode.BadRequest, 'No user id sent');
+        let updateUserById: User;
+
+        if (gameId === '' || gameId === undefined) throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
+        // eslint-disable-next-line prefer-const
+        updateUserById = (await this.users.findByIdAndUpdate(userId, { $addToSet: { favouriteGames: gameId } }, { new: true })) as User;
+        if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
+
+        updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
+        return updateUserById;
     }
 
     async deleteUser(userId: string): Promise<User> {
@@ -127,6 +152,7 @@ class UserService {
         if (player.id === 'virtualPlayer') return;
 
         const findUser: User = (await this.users.findOne({ name: player.name })) as User;
+        if (findUser === null) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
         const newGamesWon = (findUser.gamesWon as number) + 1;
         await this.users.updateOne({ name: player.name }, { gamesWon: newGamesWon });
     }

@@ -15,13 +15,18 @@
                 </mat-grid-list>
 
             </div>
-            <div id="historyContainer">
-                <h2>Historique des actions</h2>
-                <div>
+            <div class="title-box">
+                <h1 mat-dialog-title class="title"> Historique des actions </h1>
+            </div>
+            <div class="button-grid-row">
+                <div class="button-grid-col">
                     <button mat-flat-button (click)="openActionHistoryComponent()" class="history">Historique des connections</button>
                 </div>
-                <div>
+                <div class="button-grid-col">
                     <button mat-flat-button (click)="openGameHistoryComponent()" class="history">Historique des parties</button>
+                </div>
+                <div class="button-grid-col">
+                    <button mat-flat-button (click)="openFavouriteGamesComponent()" class="history">Parties favorites</button>
                 </div>
             </div>
         </div>

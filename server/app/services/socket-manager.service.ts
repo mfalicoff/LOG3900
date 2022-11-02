@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 import { ChatMessage } from '@app/classes/chat-message.interface';
 import { DictJSON } from '@app/classes/dict-json';
+import { GameSaved } from '@app/classes/game-saved';
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
@@ -20,6 +21,7 @@ import { ChatService } from './chat.service';
 import { CommunicationBoxService } from './communication-box.service';
 import { DatabaseService } from './database.service';
 import { DictionaryService } from './dictionary.service';
+import GameSavedService from './game-saved.service';
 import { LetterBankService } from './letter-bank.service';
 import { MatchmakingService } from './matchmaking.service';
 import { MouseEventService } from './mouse-event.service';
@@ -40,6 +42,7 @@ export class SocketManager {
     chatHistory: ChatMessage[] = [];
     private userService = new UserService();
     private avatarService = new avatarService();
+    private gameSavedService = new GameSavedService();
 
     constructor(
         server: http.Server,
@@ -71,7 +74,7 @@ export class SocketManager {
             this.commBoxInputHandler(socket);
             // handling disconnection and abandonnement
             this.disconnectAbandonHandler(socket);
-            // handling dictionnaries, VP names and highscores
+            // handling dictionaries, VP names and high scores
             this.adminHandler(socket);
             // handling the ranked/matchmaking events
             this.rankedHandler(socket);
@@ -310,7 +313,7 @@ export class SocketManager {
             this.gameUpdateClients(game);
         });
 
-        socket.on('onBoardToStandDrop', (tileDropped, standIdx) => {
+        socket.on('onBoardToStandDrop', (tileDroppedIdxs, letterDropped, standIdx) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -323,7 +326,7 @@ export class SocketManager {
             if (!player) {
                 return;
             }
-            this.mouseEventService.onBoardToStandDrop(tileDropped, standIdx, player, game);
+            this.mouseEventService.onBoardToStandDrop(tileDroppedIdxs, letterDropped, standIdx, player, game);
             this.gameUpdateClients(game);
         });
 
@@ -455,6 +458,11 @@ export class SocketManager {
                 return;
             }
             socket.emit('sendLetterReserve', this.letterBankService.getLettersInReserve(game));
+        });
+
+        socket.on('saveGame', async (game: GameSaved) => {
+            const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
+            this.sio.to(savedGame.roomName).emit('savedGameId', savedGame._id);
         });
     }
 
