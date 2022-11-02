@@ -101,8 +101,13 @@ export class MouseKeyboardEventHandlerService {
             this.drawingBoardService.lettersDrawn.slice(0, idxToRm) +
             this.drawingBoardService.lettersDrawn.slice(idxToRm + 1, this.drawingBoardService.lettersDrawn.length);
         const standIdx: number = this.drawingService.getIndexOnStandLogicFromClick(coordsClick.x);
+        // indexs of the "tileDropped" variable on the board
+        const tileDroppedIdxs: Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick({
+            x: tileDropped.position.x1,
+            y: tileDropped.position.y1,
+        });
         this.socketService.socket.emit('clearTmpTileCanvas');
-        this.socketService.socket.emit('onBoardToStandDrop', tileDropped, standIdx);
+        this.socketService.socket.emit('onBoardToStandDrop', tileDroppedIdxs, tileDropped.letter.value, standIdx);
     }
 
     onLeftClickStand(event: MouseEvent) {
@@ -174,7 +179,12 @@ export class MouseKeyboardEventHandlerService {
             return;
         }
         if (this.drawingBoardService.isArrowPlaced || this.drawingBoardService.lettersDrawn) {
-            this.placeGraphicService.manageKeyboardEvent(this.infoClientService.game, this.infoClientService.player, event.key);
+            this.placeGraphicService.manageKeyboardEvent(
+                this.infoClientService.game,
+                this.infoClientService.player,
+                event.key,
+                this.socketService.socket,
+            );
             return;
         }
         const eventString: string = event.key.toString();
