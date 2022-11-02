@@ -167,13 +167,17 @@ export class MouseEventService {
         this.standService.putLettersOnStand(game, letterToAdd, player);
     }
 
-    onBoardToStandDrop(tileDropped: Tile, standIdx: number, player: Player, game: GameServer) {
+    onBoardToStandDrop(tileDroppedIdxs: Vec2, letterDropped: string, standIdx: number, player: Player, game: GameServer) {
+        // REMOVES LETTER FROM THE BOARD
+        this.rmTempLetterBoard(game, tileDroppedIdxs);
+
+        // PUTS LETTER ON THE STAND
         // if the tile on which we drop is empty we can drop the tile directly on it
         if (player.stand[standIdx].letter.value === '') {
-            this.standService.writeLetterStandLogic(standIdx, tileDropped.letter.value, game.letterBank, player);
+            this.standService.writeLetterStandLogic(standIdx, letterDropped, game.letterBank, player);
         } else {
             // else we put the letter on any empty tile
-            this.standService.putLettersOnStand(game, tileDropped.letter.value, player);
+            this.standService.putLettersOnStand(game, letterDropped, player);
         }
     }
 

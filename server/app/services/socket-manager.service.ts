@@ -313,7 +313,7 @@ export class SocketManager {
             this.gameUpdateClients(game);
         });
 
-        socket.on('onBoardToStandDrop', (tileDropped, standIdx) => {
+        socket.on('onBoardToStandDrop', (tileDroppedIdxs, letterDropped, standIdx) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -326,7 +326,7 @@ export class SocketManager {
             if (!player) {
                 return;
             }
-            this.mouseEventService.onBoardToStandDrop(tileDropped, standIdx, player, game);
+            this.mouseEventService.onBoardToStandDrop(tileDroppedIdxs, letterDropped, standIdx, player, game);
             this.gameUpdateClients(game);
         });
 
