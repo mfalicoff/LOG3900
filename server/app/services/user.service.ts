@@ -84,8 +84,7 @@ class UserService {
         let updateUserById: User;
         if (userData.name) {
             const findUser: User = (await this.users.findOne({ name: userData.name })) as User;
-            if (findUser && findUser._id !== userId)
-                throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
+            if (findUser && findUser.id !== userId) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
 
             updateUserById = (await this.users.findByIdAndUpdate(userId, { name: userData.name }, { new: true })) as User;
             if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
@@ -179,7 +178,7 @@ class UserService {
     }
 
     async populateAvatarField(user: User): Promise<string> {
-        return await this.avatarService.findAvatarByPath(user.avatarPath as string, user._id as string);
+        return await this.avatarService.findAvatarByPath(user.avatarPath as string, user.id as string);
     }
 
     getAvatar(user: User): string {
