@@ -88,30 +88,13 @@ export class DatabaseService {
         if (player.id !== 'virtualPlayer') {
             for (const line of bdClassicScore) {
                 if (String(player.score) === line.score) {
-                    this.bestScoreClassicCollection.collection.updateOne({ score: line.score }, { $push: { name: player.name } });
+                    await this.bestScoreClassicCollection.collection.updateOne({ score: line.score }, { $push: { name: player.name } });
                     variable = false;
                 }
             }
             if (variable) {
                 const newLine: Score = { name: [player.name], score: String(player.score) };
                 await this.bestScoreClassicCollection.collection.insertOne(newLine);
-            }
-        }
-    }
-
-    async addScoreLog2990ToDb(player: Player) {
-        let variable = true;
-        const bdLog2990Score: Score[] = this.bestScoreLOG2990Collection.scoreLOG2990FromDatabase;
-        if (player.id !== 'virtualPlayer') {
-            for (const line of bdLog2990Score) {
-                if (String(player.score) === line.score) {
-                    this.bestScoreLOG2990Collection.collection.updateOne({ score: line.score }, { $push: { name: player.name } });
-                    variable = false;
-                }
-            }
-            if (variable) {
-                const newLine: Score = { name: [player.name], score: String(player.score) };
-                await this.bestScoreLOG2990Collection.collection.insertOne(newLine);
             }
         }
     }
@@ -177,15 +160,15 @@ export class DatabaseService {
         await this.bestScoreLOG2990Collection.getScoreLOG2990();
     }
     private async resetClassicDb() {
-        this.bestScoreClassicCollection.collection.deleteMany({});
+        await this.bestScoreClassicCollection.collection.deleteMany({});
         for (const score of this.scoreClassicMock) {
             await this.bestScoreClassicCollection.collection.insertOne(score);
         }
     }
 
     private async resetAllVPNames() {
-        this.beginnerVPNamesCollections.collection.deleteMany({});
-        this.expertVPNamesCollection.collection.deleteMany({});
+        await this.beginnerVPNamesCollections.collection.deleteMany({});
+        await this.expertVPNamesCollection.collection.deleteMany({});
         for (const expertName of this.defaultExpertVPNames) {
             await this.expertVPNamesCollection.collection.insertOne(expertName);
         }
@@ -195,7 +178,7 @@ export class DatabaseService {
     }
 
     private async resetLOG2990Db() {
-        this.bestScoreLOG2990Collection.collection.deleteMany({});
+        await this.bestScoreLOG2990Collection.collection.deleteMany({});
         for (const score of this.scoreLOG2990Mock) {
             await this.bestScoreLOG2990Collection.collection.insertOne(score);
         }

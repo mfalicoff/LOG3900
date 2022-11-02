@@ -41,6 +41,10 @@ const userSchema: Schema = new Schema({
         type: String,
         required: false,
     },
+    favouriteGames: {
+        type: [String],
+        required: true,
+    },
     actionHistory: {
         type: [String],
         required: true,
