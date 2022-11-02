@@ -4,6 +4,7 @@ import { User } from '@app/classes/user.interface';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { UserResponseInterface } from '@app/classes/response.interface';
+import { GameSaved } from '@app/classes/game-saved';
 
 @Injectable({
     providedIn: 'root',
@@ -67,6 +68,29 @@ export class UserService {
                     this.handleErrorPOST(error);
                 },
             });
+    }
+
+    async updateFavourites(idOfGame: string) {
+        return this.http
+            .patch<UserResponseInterface>(
+                environment.serverUrl + 'users/' + this.user._id,
+                { gameId: idOfGame },
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    this.updateUserInstance(res.data);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
+    getFavouriteGames() {
+        return this.http.get<GameSaved[]>(environment.serverUrl + 'users/games/' + this.user._id, { observe: 'body' });
     }
 
     private handleErrorPOST(error: HttpErrorResponse) {

@@ -83,7 +83,7 @@ export class ChatService {
 
         if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
             this.showEndGameStats(game, player);
-            // this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
+            this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             game.gameFinished = true;
         }
     }

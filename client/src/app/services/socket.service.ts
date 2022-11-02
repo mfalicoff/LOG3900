@@ -22,6 +22,7 @@ import { TimerService } from './timer.service';
 export class SocketService {
     socket: Socket;
     gameFinished: BehaviorSubject<boolean>;
+    gameId: string;
     private urlString = environment.serverUrl;
 
     constructor(
@@ -92,6 +93,10 @@ export class SocketService {
             } else {
                 this.gameFinished.next(true);
             }
+        });
+
+        this.socket.on('savedGameId', (id: string) => {
+            this.gameId = id;
         });
 
         // updates the players and spectators list for each rooms
