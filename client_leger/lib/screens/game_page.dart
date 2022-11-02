@@ -34,164 +34,216 @@ class _GamePageState extends State<GamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Row(
+      body: Stack(
         children: [
-          Container(
-            color: Theme.of(context).colorScheme.secondary,
-            width: 100,
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 30,
-                ),
-                Container(
-                  child: shouldBeAbleToLeaveGame()
-                      ? ElevatedButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                  vertical: 6.0, horizontal: 3.0),
-                            ),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                          ),
-                          onPressed: _leaveGame,
-                          child: Text(
-                            "Quitter partie",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                        )
-                      : null,
-                ),
-                Container(
-                  child: shouldBeAbleToGiveUpGame()
-                      ? ElevatedButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                              const EdgeInsets.symmetric(
-                                  vertical: 6.0, horizontal: 3.0),
-                            ),
-                            shape: MaterialStateProperty.all<
-                                RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                            ),
-                          ),
-                          onPressed: () => _giveUpGame(context),
-                          child: Text(
-                            "Abandonner",
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                        )
-                      : null,
-                ),
-                if (infoClientService.gameMode == CLASSIC_MODE) ...[
-                  PowerListDialog(
-                    notifyParent: refresh,
-                  ),
-                  // ElevatedButton(
-                  //   style: ButtonStyle(
-                  //     padding: MaterialStateProperty.all(
-                  //       const EdgeInsets.symmetric(
-                  //           vertical: 6.0, horizontal: 3.0),
-                  //     ),
-                  //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  //       RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(10.0),
-                  //       ),
-                  //     ),
-                  //   ),
-                  //   onPressed: _leaveGame,
-                  //   child: Text(
-                  //     "Liste pouvoirs",
-                  //     style: TextStyle(
-                  //       color: Theme.of(context).colorScheme.secondary,
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-                const SizedBox(
-                  height: 5,
-                ),
-                Container(
-                    child: infoClientService.creatorShouldBeAbleToStartGame ==
-                            true
-                        ? ElevatedButton(
-                            style: ButtonStyle(
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                    vertical: 6.0, horizontal: 3.0),
-                              ),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
+          Row(
+            children: [
+              Container(
+                color: Theme.of(context).colorScheme.secondary,
+                width: 100,
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Container(
+                      child: shouldBeAbleToLeaveGame()
+                          ? ElevatedButton(
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 3.0),
+                                ),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
                                 ),
                               ),
-                            ),
-                            onPressed: _startGame,
-                            child: Text(
-                              "Demarrer partie",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                            ),
-                          )
-                        : null),
-                Container(
-                    child: shouldSpecBeAbleToBePlayer() == true
-                        ? ElevatedButton(
-                            style: ButtonStyle(
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                    vertical: 6.0, horizontal: 3.0),
-                              ),
-                              shape: MaterialStateProperty.all<
-                                  RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
+                              onPressed: _leaveGame,
+                              child: Text(
+                                "Quitter partie",
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ),
-                            ),
-                            onPressed: spectWantsToBePlayer,
-                            child: Text(
-                              "Remplacer joueur virtuel",
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
+                            )
+                          : null,
+                    ),
+                    Container(
+                      child: shouldBeAbleToGiveUpGame()
+                          ? ElevatedButton(
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all(
+                                  const EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 3.0),
+                                ),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
                               ),
-                            ),
-                          )
-                        : Container())
-              ],
-            ),
-          ),
-          Container(
-            color: Theme.of(context).colorScheme.primary,
-            padding:
-                const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-            child: const GameBoard(),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(0, 100, 50, 100),
-              color: Theme.of(context).colorScheme.primary,
-              child: Column(
-                children: const [InfoPanel()],
+                              onPressed: () => _giveUpGame(context),
+                              child: Text(
+                                "Abandonner",
+                                style: TextStyle(
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
+                                ),
+                              ),
+                            )
+                          : null,
+                    ),
+                    if (infoClientService.gameMode == CLASSIC_MODE) ...[
+                      PowerListDialog(
+                        notifyParent: refresh,
+                      ),
+                      // ElevatedButton(
+                      //   style: ButtonStyle(
+                      //     padding: MaterialStateProperty.all(
+                      //       const EdgeInsets.symmetric(
+                      //           vertical: 6.0, horizontal: 3.0),
+                      //     ),
+                      //     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      //       RoundedRectangleBorder(
+                      //         borderRadius: BorderRadius.circular(10.0),
+                      //       ),
+                      //     ),
+                      //   ),
+                      //   onPressed: _leaveGame,
+                      //   child: Text(
+                      //     "Liste pouvoirs",
+                      //     style: TextStyle(
+                      //       color: Theme.of(context).colorScheme.secondary,
+                      //     ),
+                      //   ),
+                      // ),
+                    ],
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    Container(
+                        child: infoClientService
+                                    .creatorShouldBeAbleToStartGame ==
+                                true
+                            ? ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                    const EdgeInsets.symmetric(
+                                        vertical: 6.0, horizontal: 3.0),
+                                  ),
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: _startGame,
+                                child: Text(
+                                  "Demarrer partie",
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                              )
+                            : null),
+                    Container(
+                        child: shouldSpecBeAbleToBePlayer() == true
+                            ? ElevatedButton(
+                                style: ButtonStyle(
+                                  padding: MaterialStateProperty.all(
+                                    const EdgeInsets.symmetric(
+                                        vertical: 6.0, horizontal: 3.0),
+                                  ),
+                                  shape: MaterialStateProperty.all<
+                                      RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                ),
+                                onPressed: spectWantsToBePlayer,
+                                child: Text(
+                                  "Remplacer joueur virtuel",
+                                  style: TextStyle(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                  ),
+                                ),
+                              )
+                            : Container())
+                  ],
+                ),
               ),
-            ),
+              Container(
+                color: Theme.of(context).colorScheme.primary,
+                padding: const EdgeInsets.symmetric(
+                    vertical: 20.0, horizontal: 20.0),
+                child: const GameBoard(),
+              ),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(0, 100, 50, 100),
+                  color: Theme.of(context).colorScheme.primary,
+                  child: Column(
+                    children: const [InfoPanel()],
+                  ),
+                ),
+              ),
+            ],
           ),
+          if(infoClientService.incomingPlayer != "")
+            AlertDialog(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              title: Text(
+                'Le joueur ${infoClientService.incomingPlayer} essaye de se connecter.\nVoulez vous l\'accepter dans la partie ?',
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              ),
+              actions: <Widget>[
+                ElevatedButton(
+                  child: Text(
+                    'Refuser',
+                    style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  ),
+                  onPressed: () {
+                    acceptPlayer(false);
+                    Navigator.pop(context);
+                  },
+                ),
+                ElevatedButton(
+                  child: Text(
+                    'Accepter',
+                    style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+                  ),
+                  onPressed: () {
+                    acceptPlayer(true);
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            )
+          else Container(),
         ],
       ),
     );
+  }
+
+  void acceptPlayer(bool isPlayerAccepted) {
+    if (isPlayerAccepted) {
+      socketService.socket.emit('acceptPlayer', [true, infoClientService.incomingPlayerId]);
+    } else {
+      socketService.socket.emit('acceptPlayer', [false, infoClientService.incomingPlayerId]);
+    }
+    infoClientService.incomingPlayer = '';
+    infoClientService.incomingPlayerId = '';
   }
 
   bool shouldBeAbleToLeaveGame() {
