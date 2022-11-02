@@ -33,7 +33,7 @@ class Controller {
   }
 
   Future<User> signUp(
-      {username = String, email = String, password = String}) async {
+      {username = String, email = String, password = String, avatarPath = String}) async {
     final response = await http.post(
       Uri.parse("$serverAddress/users"),
       headers: <String, String>{
@@ -43,6 +43,7 @@ class Controller {
         "email": email,
         "name": username,
         "password": password,
+        "avatarPath": avatarPath
       }),
     );
 
