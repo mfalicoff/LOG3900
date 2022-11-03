@@ -871,10 +871,6 @@ export class SocketManager {
         if (!game) {
             return;
         }
-        if (game.gameFinished) {
-            this.sio.sockets.emit('gameOver');
-            return;
-        }
 
         const playerThatLeaves = game.mapPlayers.get(user.name);
         const specThatLeaves = game.mapSpectators.get(socket.id);
@@ -888,7 +884,7 @@ export class SocketManager {
 
             if (nbRealPlayer >= 1 || nbSpectators >= 1) {
                 // we send to the opponent a update of the game
-                const waitBeforeAbandonment = 3000;
+                const waitBeforeAbandonment = 1000;
                 setTimeout(async () => {
                     await this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
                     if (socket.id === game.masterTimer) {
@@ -905,25 +901,29 @@ export class SocketManager {
                         this.shouldCreatorBeAbleToStartGame(game);
                     }
 
-                    // check if we should delete the room game or not
+                    // we check if we should delete the game or not
                     this.gameFinishedAction(game);
                 }, waitBeforeAbandonment);
             } else {
                 // we remove the player leaving in the map
                 game.mapPlayers.delete(playerThatLeaves.name);
-                // we decide if we delete the room or not
-                this.gameFinishedAction(game);
             }
         } else if (specThatLeaves) {
             // if it is a spectator that leaves
             game.mapSpectators.delete(socket.id);
-            // we check if we should delete the game or not
-            this.gameFinishedAction(game);
+
+            // if spectator was master timer we appoint a new one
+            if (socket.id === game.masterTimer) {
+                game.setMasterTimer();
+            }
         } else {
             // should never go there
             // eslint-disable-next-line no-console
             console.log('Game is broken in socketManager::leaveGame. Good luck to u who got this error :)');
         }
+
+        // we check if we should delete the game or not
+        this.gameFinishedAction(game);
 
         socket.leave(user.roomName);
         user.roomName = '';

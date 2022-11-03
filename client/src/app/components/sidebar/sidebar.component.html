@@ -1,10 +1,13 @@
 <div class="container">
     <h1>CONTRÔLES</h1>
-    <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
+    <div class="buttonContainer">
         <button
             mat-raised-button
             matTooltip="Abandonner"
-            *ngIf="!infoClientService.game.gameFinished && infoClientService.game.gameStarted"
+            *ngIf="
+                !infoClientService.game.gameFinished && 
+                infoClientService.game.gameStarted &&
+                !infoClientService.isSpectator"
             (click)="onClickGiveUpButton()"
             class="optionButton"
         >
@@ -15,7 +18,6 @@
     <div *ngIf="shouldLeaveGameBe()" class="buttonContainer">
         <button
             mat-raised-button
-
             id="cancelGame"
             class="optionButton"
             (click)="leaveGame()"
