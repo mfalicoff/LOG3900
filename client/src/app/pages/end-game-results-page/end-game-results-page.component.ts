@@ -1,6 +1,8 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '@app/../environments/environment';
+import { GameSaved } from '@app/classes/game-saved';
 import { Player } from '@app/classes/player';
 import { UserResponseInterface } from '@app/classes/response.interface';
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
@@ -8,10 +10,8 @@ import { EloChangeService } from '@app/services/elo-change.service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import { TimerService } from '@app/services/timer.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, Subscription } from 'rxjs';
-import { GameSaved } from '@app/classes/game-saved';
 import { UserService } from '@app/services/user.service';
+import { Observable, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-end-game-results-page',
@@ -77,8 +77,9 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
                         message: 'userFound',
                         userInfo: res.data,
                     },
-                    height: '40%',
-                    width: '40%',
+                    height: '60%',
+                    width: '45%',
+                    panelClass: 'customDialog',
                 });
             },
             error: (error: HttpErrorResponse) => {
