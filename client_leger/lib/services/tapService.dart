@@ -157,9 +157,10 @@ class TapService with ChangeNotifier{
     } else {
       lettersDrawn = '';
     }
+    coordsLettersDrawn.removeRange(idxToRm.toInt(), idxToRm.toInt() + 1);
     int standIdx = getIndexOnStandLogicFromClick(coordsTapped.x as double);
     socket.emit('clearTmpTileCanvas');
-    socket.emit('onBoardToStandDrop', [tileDropped, standIdx]);
+    socket.emit('onBoardToStandDrop', [originalClickTileIndexs, tileDropped.letter.value, standIdx]);
   }
 
   void onTapStand(Vec2 coordsTapped, IO.Socket socket) {
@@ -184,6 +185,7 @@ class TapService with ChangeNotifier{
       return;
     }
 
+    placeDrawnLettersInGoodOrder();
     // reconstruct the word if it is using a letter
     // already on the board
     lettersDrawn = constructWord();
@@ -197,6 +199,47 @@ class TapService with ChangeNotifier{
     socket.emit('newMessageClient', placeMsg);
     resetVariablePlacement();
     return;
+  }
+
+  void placeDrawnLettersInGoodOrder() {
+    // deep copies
+    String lettersDrawnCpy = lettersDrawn;
+    List<Vec2> coordsLettersDrawnCpy = coordsLettersDrawn;
+
+    lettersDrawn = '';
+    coordsLettersDrawn = [];
+
+    if (isWordVertical(coordsLettersDrawnCpy)) {
+      for (int i = 0; i < lettersDrawnCpy.length; i++) {
+        int minIndex = 0;
+        for (int j = 0; j < lettersDrawnCpy.length; j++) {
+          if (coordsLettersDrawnCpy[j].y < coordsLettersDrawnCpy[minIndex].y) {
+            minIndex = j;
+          }
+        }
+        lettersDrawn += lettersDrawnCpy[minIndex];
+        coordsLettersDrawn.add(coordsLettersDrawnCpy[minIndex]);
+
+        coordsLettersDrawnCpy.removeRange(minIndex, minIndex+1);
+        lettersDrawnCpy = lettersDrawnCpy.substring(0, minIndex) + lettersDrawnCpy.substring(minIndex + 1, lettersDrawnCpy.length);
+        i--;
+      }
+    } else {
+      for (int i = 0; i < lettersDrawnCpy.length; i++) {
+        int minIndex = 0;
+        for (int j = 0; j < lettersDrawnCpy.length; j++) {
+          if (coordsLettersDrawnCpy[j].x < coordsLettersDrawnCpy[minIndex].x) {
+            minIndex = j;
+          }
+        }
+        lettersDrawn += lettersDrawnCpy[minIndex];
+        coordsLettersDrawn.add(coordsLettersDrawnCpy[minIndex]);
+
+        coordsLettersDrawnCpy.removeRange(minIndex, minIndex+1);
+        lettersDrawnCpy = lettersDrawnCpy.substring(0, minIndex) + lettersDrawnCpy.substring(minIndex + 1, lettersDrawnCpy.length);
+        i--;
+      }
+    }
   }
 
   String constructWord() {

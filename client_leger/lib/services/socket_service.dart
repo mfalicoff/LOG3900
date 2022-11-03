@@ -182,7 +182,7 @@ class SocketService{
       // this.drawingBoardService.lettersDrawn = '';
       num minutesByTurn = data["minutesByTurn"];
       String currentNamePlayerPlaying = data["currentNamePlayerPlaying"];
-      tapService.lettersDrawn = '';
+      tapService.resetVariablePlacement();
 
       if(currentNamePlayerPlaying == infoClientService.playerName) {
         infoClientService.displayTurn = "C'est votre tour !";
