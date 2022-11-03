@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:client_leger/env/environment.dart';
-import 'package:client_leger/services/socket_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -9,9 +8,8 @@ import 'package:client_leger/models/user.dart';
 
 class Controller {
   final String? serverAddress = Environment().config?.serverURL;
-  final SocketService socketService = SocketService();
 
-  Future<User> login({email = String, password = String}) async {
+  Future<User> login({email = String, password = String, socket = Socket}) async {
     final response = await http.post(
       Uri.parse("$serverAddress/login"),
       headers: <String, String>{
@@ -25,10 +23,39 @@ class Controller {
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
-      socketService.socket.emit("new-user", user.username);
+      socket.emit("new-user", user.username);
       return user;
     } else {
-      throw Exception('Failed to login');
+      if(response.statusCode == 409) {
+        throw Exception('Already Logged In');
+      } else {
+        throw Exception('Failed to login');
+      }
+    }
+  }
+
+  Future<User> forceLogin({email = String, password = String, socket = Socket}) async {
+    final response = await http.post(
+      Uri.parse("$serverAddress/forceLogin"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{
+        "email": email,
+        "password": password,
+      }),
+    );
+    if (response.statusCode == 200) {
+      User user = User.fromJson(json.decode(response.body));
+      user.cookie = json.decode(response.body)["token"];
+      socket.emit("new-user", user.username);
+      return user;
+    } else {
+      if(response.statusCode == 409) {
+        throw Exception('Already Logged In');
+      } else {
+        throw Exception('Failed to login');
+      }
     }
   }
 

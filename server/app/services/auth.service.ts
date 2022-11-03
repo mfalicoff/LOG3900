@@ -28,7 +28,7 @@ class AuthService {
         const findUser = await this.userService.findUserByEmail(userData.email);
 
         const isPasswordMatching: boolean = await compare(userData.password, findUser.password as string);
-        if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.Conflict, "You're password not matching");
+        if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.NotFound, "You're password not matching");
 
         if (this.loggedInIds.indexOf(findUser.id as string) !== DEFAULT_VALUE_NUMBER)
             throw new HttpException(HTTPStatusCode.Conflict, 'Already logged in, log out of device and try again');
@@ -47,7 +47,7 @@ class AuthService {
         const findUser = await this.userService.findUserByEmail(userData.email);
 
         const isPasswordMatching: boolean = await compare(userData.password, findUser.password as string);
-        if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.Conflict, "You're password not matching");
+        if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.NotFound, "You're password not matching");
 
         this.loggedInIds.push(findUser.id as string);
         findUser.avatarUri = await this.userService.populateAvatarField(findUser);

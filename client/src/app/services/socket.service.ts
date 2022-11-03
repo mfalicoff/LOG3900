@@ -15,7 +15,6 @@ import { InfoClientService } from './info-client.service';
 import { PlaceGraphicService } from './place-graphic.service';
 import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
-import { UserService } from '@app/services/user.service';
 
 @Injectable({
     providedIn: 'root',
@@ -34,7 +33,6 @@ export class SocketService {
         private rankedService: RankedService,
         private drawingService: DrawingService,
         private placeGraphicService: PlaceGraphicService,
-        private userService: UserService,
     ) {
         this.socket = io(this.urlString);
         this.gameFinished = new BehaviorSubject(this.infoClientService.game.gameFinished);
@@ -217,7 +215,8 @@ export class SocketService {
         });
 
         this.socket.on('forceLogout', async () => {
-            await this.userService.logout(this.socket);
+            this.infoClientService.playerName = '';
+            await this.router.navigate(['/login']);
         });
 
         this.socket.on('createRankedGame', async (name) => {
