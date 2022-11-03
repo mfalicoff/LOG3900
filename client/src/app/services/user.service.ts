@@ -82,7 +82,7 @@ export class UserService {
             });
     }
 
-    async logout(socket: Socket) {
+    async logout() {
         this.http
             .post<unknown>(
                 environment.serverUrl + 'logout',
