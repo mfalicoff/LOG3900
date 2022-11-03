@@ -85,8 +85,8 @@ export class SocketService {
         });
 
         this.socket.on('gameBoardUpdate', (game) => {
+            this.infoClientService.game = game;
             if (!game.gameFinished) {
-                this.infoClientService.game = game;
                 setTimeout(() => {
                     this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
                 }, GlobalConstants.WAIT_FOR_CANVAS_INI);
@@ -280,9 +280,6 @@ export class SocketService {
             this.infoClientService.incommingPlayer = newPlayerName;
             this.infoClientService.incommingPlayerId = newPlayerId;
         });
-        this.socket.on('gameOver', () => {
-            this.infoClientService.game.gameFinished = true;
-        });
 
         this.socket.on('sendLetterReserve', (letterReserveArr) => {
             this.infoClientService.letterReserve = letterReserveArr;
@@ -296,7 +293,7 @@ export class SocketService {
                 this.socket.emit('turnFinished');
             }
             if (this.infoClientService.game.gameFinished) {
-                this.drawingBoardService.lettersDrawn = '';
+                this.placeGraphicService.resetVariablePlacement();
                 clearInterval(timerInterval);
             }
         }, oneSecond);

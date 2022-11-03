@@ -49,7 +49,7 @@ export class MouseKeyboardEventHandlerService {
             return;
         }
 
-        if (!this.drawingBoardService.lettersDrawn) {
+        if (this.drawingBoardService.lettersDrawn === '') {
             this.drawingBoardService.isArrowPlaced = false;
             this.placeGraphicService.placeMethodIsDragDrop = true;
             this.placeGraphicService.startLettersPlacedPosX = posDropBoardIdxs.x;

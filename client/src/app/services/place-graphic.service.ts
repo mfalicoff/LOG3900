@@ -80,7 +80,7 @@ export class PlaceGraphicService {
         ) {
             return;
         }
-        if (!this.drawingBoardService.lettersDrawn) {
+        if (this.drawingBoardService.lettersDrawn === '') {
             this.startLettersPlacedPosX = this.drawingBoardService.arrowPosX;
             this.startLettersPlacedPosY = this.drawingBoardService.arrowPosY;
         }
@@ -296,7 +296,6 @@ export class PlaceGraphicService {
         if (this.drawingBoardService.lettersDrawn === '') {
             return;
         }
-        this.checkIfThereAreLettersBefore(game, false);
         if (this.drawingBoardService.isArrowVertical) {
             if (this.drawingBoardService.arrowPosY <= Constants.NUMBER_SQUARE_H_AND_W) {
                 // delete the arrow
@@ -335,6 +334,7 @@ export class PlaceGraphicService {
         socket.emit('addTileToStand', letterTofind);
 
         this.drawingBoardService.lettersDrawn = this.drawingBoardService.lettersDrawn.substr(0, this.drawingBoardService.lettersDrawn.length - 1);
+        this.drawingBoardService.coordsLettersDrawn.pop();
         if (this.drawingBoardService.isArrowVertical) {
             if (this.drawingBoardService.arrowPosY - 1 === this.startLettersPlacedPosY || this.areAllLettersBeforeOld(game)) {
                 this.drawingBoardService.isArrowVertical = true;
@@ -363,24 +363,16 @@ export class PlaceGraphicService {
     }
 
     private drawContinuousArrow(game: GameServer, keyEntered: string, socket: Socket) {
-        if (!this.drawingBoardService.lettersDrawn) {
-            this.checkIfThereAreLettersBefore(game, true);
-        }
-
         this.drawingBoardService.lettersDrawn += keyEntered;
         this.drawingBoardService.coordsLettersDrawn.push({ x: this.drawingBoardService.arrowPosX, y: this.drawingBoardService.arrowPosY });
         if (this.drawingBoardService.isArrowVertical) {
             this.drawingBoardService.arrowPosY += 1;
             while (game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX].old) {
-                this.drawingBoardService.lettersDrawn +=
-                    game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX].letter.value;
                 this.drawingBoardService.arrowPosY += 1;
             }
         } else {
             this.drawingBoardService.arrowPosX += 1;
             while (game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX].old) {
-                this.drawingBoardService.lettersDrawn +=
-                    game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX].letter.value;
                 this.drawingBoardService.arrowPosX += 1;
             }
         }
@@ -401,47 +393,6 @@ export class PlaceGraphicService {
                 x: this.drawingBoardService.arrowPosX,
                 y: this.drawingBoardService.arrowPosY,
             });
-        }
-    }
-
-    private checkIfThereAreLettersBefore(game: GameServer, addToLetterDrawn: boolean) {
-        let tmpArrowPosY: number = this.drawingBoardService.arrowPosY;
-        let tmpArrowPosX: number = this.drawingBoardService.arrowPosX;
-        let tmpLettersFoundBefore = '';
-        if (this.drawingBoardService.isArrowVertical) {
-            while (game.board[tmpArrowPosY - 1][tmpArrowPosX].old) {
-                if (addToLetterDrawn) {
-                    tmpLettersFoundBefore += game.board[tmpArrowPosY - 1][tmpArrowPosX].letter.value;
-                } else {
-                    this.drawingBoardService.lettersDrawn = this.drawingBoardService.lettersDrawn.substr(
-                        0,
-                        this.drawingBoardService.lettersDrawn.length - 1,
-                    );
-                }
-                tmpArrowPosY -= 1;
-                this.startLettersPlacedPosX = tmpArrowPosX;
-                this.startLettersPlacedPosY = tmpArrowPosY;
-            }
-        } else {
-            while (game.board[tmpArrowPosY][tmpArrowPosX - 1].old) {
-                if (addToLetterDrawn) {
-                    tmpLettersFoundBefore += game.board[tmpArrowPosY][tmpArrowPosX - 1].letter.value;
-                } else {
-                    this.drawingBoardService.lettersDrawn = this.drawingBoardService.lettersDrawn.substr(
-                        0,
-                        this.drawingBoardService.lettersDrawn.length - 1,
-                    );
-                }
-                tmpArrowPosX -= 1;
-                this.startLettersPlacedPosX = tmpArrowPosX;
-                this.startLettersPlacedPosY = tmpArrowPosY;
-            }
-        }
-        if (addToLetterDrawn && tmpLettersFoundBefore) {
-            for (let i = 0; i < tmpLettersFoundBefore.length; i++) {
-                this.drawingBoardService.lettersDrawn += tmpLettersFoundBefore[tmpLettersFoundBefore.length - 1 - i];
-                this.drawingBoardService.coordsLettersDrawn.push({ x: this.drawingBoardService.arrowPosX, y: this.drawingBoardService.arrowPosY });
-            }
         }
     }
 
