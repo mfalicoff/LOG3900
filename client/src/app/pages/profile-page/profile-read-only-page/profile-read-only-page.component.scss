@@ -1,10 +1,3 @@
-.closeButton {
-    color: #0c483f;
-    background-color: transparent;
-    justify-content: right;
-    display: flex;
-    margin-bottom: 0;
-}
 
 .container {
     min-height: 100vh;
@@ -13,21 +6,6 @@
     background-position: center;
     background-attachment: fixed;
 }
-
-#profileWrapper::-webkit-scrollbar {
-    width: 8px;
-    // Height of horizontal scroll bar
-    height: 10px;
-}
-#profileWrapper::-webkit-scrollbar-track {
-    background: wheat;
-    border-color: #0C483F;
-}
-#profileWrapper::-webkit-scrollbar-thumb {
-    background: #0C483F;
-    border-radius: 8px;
-}
-
 .justified {
     display: flex;
     flex-direction: column;
@@ -42,11 +20,9 @@
 }
 
 #profileWrapper {
-    background-color: wheat;
-    width: 70%;
-    height: 90%;
+    width: 50%;
+    height: 50%;
     position: absolute;
-    border-top-left-radius: 20px;
     top: 50%;
     left: 50%;
     -ms-transform: translate(-50%, -50%);
@@ -63,7 +39,8 @@
 }
 
 .statsElement {
-    overflow: visible;
+    color: wheat;
+    background-color: #0C483F;
     font-size: 20px;
     justify-content: left;
 }
