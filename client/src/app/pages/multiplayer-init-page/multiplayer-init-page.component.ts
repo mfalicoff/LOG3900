@@ -19,6 +19,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
 
     ngAfterViewInit() {
+        this.infoClientService.rooms = [];
         this.socketService.socket.emit('listRoom');
     }
 
