@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:client_leger/screens/home_page.dart';
 import 'package:client_leger/services/controller.dart';
+import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
 
@@ -62,6 +63,7 @@ class _LoginFormState extends State<LoginForm> {
   String? password = "";
   Controller controller = Controller();
   final InfoClientService infoClientService = InfoClientService();
+  final SocketService socketService = SocketService();
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +114,12 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
             ),
-            onPressed: _submit,
+            onPressed: () async {
+              bool response = await _submit();
+              if (!response) {
+                showAlertDialog(context);
+              }
+            },
             child: Text(
               "Submit",
               style: TextStyle(
@@ -156,22 +163,78 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  Future<void> _submit() async {
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text("Annuler"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Continuer"),
+      onPressed: () async {
+        try {
+          globals.userLoggedIn = await controller.forceLogin(
+              email: email, password: password, socket: socketService.socket);
+          infoClientService.playerName = globals.userLoggedIn.username;
+          socketService.socket.emit('forceLogout', globals.userLoggedIn.username);
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const MyHomePage()));
+        } on Exception {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text("Impossible de se connecter"),
+            backgroundColor: Colors.red.shade300,
+          ));
+        }
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(
+          "Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?"),
+      content: Text(
+          "Si vous ete actuellement en match vous abandonnerez votre match"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  Future<bool> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try {
-        globals.userLoggedIn =
-            await controller.login(email: email, password: password);
+        globals.userLoggedIn = await controller.login(
+            email: email, password: password, socket: socketService.socket);
         infoClientService.playerName = globals.userLoggedIn.username;
         Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => const MyHomePage()));
-      } on Exception {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text("Impossible de se connecter"),
-          backgroundColor: Colors.red.shade300,
-        ));
+        return true;
+      } on Exception catch (e) {
+        print(e.toString());
+        if (e.toString().contains("Already Logged In")) {
+          return false;
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text("Impossible de se connecter"),
+            backgroundColor: Colors.red.shade300,
+          ));
+          return true;
+        }
       }
     }
+    return true;
   }
 
   void _toGamePageState() {

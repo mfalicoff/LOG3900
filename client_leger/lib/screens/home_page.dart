@@ -147,6 +147,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _logout() {
     controller.logout(globals.userLoggedIn);
-    Navigator.of(context).pop();
+    Navigator.popUntil(context, ModalRoute.withName("login"));
   }
 }

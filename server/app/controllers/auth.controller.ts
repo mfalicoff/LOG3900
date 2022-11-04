@@ -30,6 +30,17 @@ class AuthController {
         }
     };
 
+    forceLogin = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userData: CreateUserValidator = req.body;
+            const { cookie, findUser } = await this.authService.forceLogin(userData);
+
+            res.status(HTTPStatusCode.OK).json({ data: findUser, token: cookie, message: 'forcedLogin' });
+        } catch (error) {
+            next(error);
+        }
+    };
+
     logOut = async (req: Request, res: Response, next: NextFunction) => {
         try {
             // @ts-ignore
