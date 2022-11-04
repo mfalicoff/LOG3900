@@ -129,14 +129,18 @@ body {
     font-weight: bold;
 }
 
-#mat-dialog-container{
-    background-color: wheat ;
-
-    /* Other CSS Styles */
+#mat-dialog-container {
+    background-color: wheat;
 }
+
+.customDialog .mat-dialog-container {
+    overflow-y: hidden!important;
+    background-color: wheat ;
+  }
 
 .matDialogWheat .mat-dialog-container{
     background-color: wheat ;
+
 }
 
 .ngx-gallery {

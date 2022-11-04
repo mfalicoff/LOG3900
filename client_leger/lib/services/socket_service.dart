@@ -1,6 +1,7 @@
 import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 import '../constants/constants.dart';
@@ -14,6 +15,7 @@ import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/tile.dart';
 import '../models/vec2.dart';
+import 'controller.dart';
 import 'info_client_service.dart';
 
 
@@ -25,6 +27,7 @@ class SocketService{
   InfoClientService infoClientService = InfoClientService();
   TimerService timerService = TimerService();
   TapService tapService = TapService();
+  Controller controller = Controller();
 
 
   late IO.Socket socket;
@@ -78,6 +81,11 @@ class SocketService{
 
     socket.on('messageServer', (message) {
 
+    });
+
+    socket.on('forceLogout', (_) async {
+      globals.userLoggedIn.clear();
+      Restart.restartApp();
     });
 
     socket.on('SendDictionariesToClient', (dictionaries) {
