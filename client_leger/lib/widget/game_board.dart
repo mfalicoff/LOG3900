@@ -142,6 +142,8 @@ class _GameBoardState extends State<GameBoard> {
                               coordsTapped, socketService.socket);
                         }
                       }
+                      clickedTile = null;
+                      clickedTileIndex = Vec2();
                     },
                     child: CustomPaint(
                       painter: boardPainter,
