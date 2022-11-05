@@ -89,7 +89,7 @@ class SocketService{
     });
 
     socket.on('SendDictionariesToClient', (dictionaries) {
-
+      infoClientService.updateDictionaries(dictionaries);
     });
 
     socket.on('DictionaryDeletedMessage', (message) {
@@ -110,6 +110,7 @@ class SocketService{
     });
 
     socket.on('askForEntrance', (data) {
+      infoClientService.askForEntrance(data);
     });
 
     socket.on('gameOver', (data) {
