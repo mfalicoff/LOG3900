@@ -190,6 +190,7 @@ class SocketService{
       // this.drawingBoardService.lettersDrawn = '';
       num minutesByTurn = data["minutesByTurn"];
       String currentNamePlayerPlaying = data["currentNamePlayerPlaying"];
+      tapService.resetVariablePlacement();
 
       if(currentNamePlayerPlaying == infoClientService.playerName) {
         infoClientService.displayTurn = "C'est votre tour !";
@@ -208,12 +209,12 @@ class SocketService{
     });
 
     socket.on('setTimeoutTimerStart', (_) {
-      // this.drawingBoardService.lettersDrawn = '';
+      tapService.lettersDrawn = '';
       setTimeoutForTimer();
     });
 
     socket.on('stopTimer', (_) {
-      // this.drawingBoardService.lettersDrawn = '';
+      tapService.lettersDrawn = '';
       timerService.clearTimer();
     });
 
@@ -231,10 +232,8 @@ class SocketService{
     socket.on('tileDraggedOnCanvas', (data) {
       Tile clickedTile = Tile.fromJson(data[0]);
       Vec2 mouseCoords = Vec2.fromJson(data[1]);
-      print('original: ${mouseCoords.toJson()}');
       mouseCoords.x = crossProductGlobal(mouseCoords.x.toDouble());
       mouseCoords.y = crossProductGlobal(mouseCoords.y.toDouble());
-      print('modified: ${mouseCoords.toJson()}');
       tapService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
     });
 
@@ -267,7 +266,7 @@ class SocketService{
         socket.emit('turnFinished');
       }
       if (infoClientService.game.gameFinished) {
-        // this.drawingBoardService.lettersDrawn = '';
+        tapService.lettersDrawn = '';
         timer.cancel();
       }
     });

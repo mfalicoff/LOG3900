@@ -39,9 +39,6 @@ class BoardPainter extends CustomPainter {
     drawStands(canvas, size);
     drawBoard(canvas, size);
     if(tapService.draggedTile != null) {
-      // print('dragging');
-      // print(tapService.xPos);
-      // print(tapService.yPos);
       drawTile(tapService.xPos, tapService.yPos, tapService.draggedTile!, canvas, size);
     }
   }
