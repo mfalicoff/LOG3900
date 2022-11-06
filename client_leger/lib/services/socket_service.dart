@@ -117,6 +117,9 @@ class SocketService{
       infoClientService.game.gameFinished = true;
     });
 
+    socket.on("sendLetterReserve", (letterReserveArr){
+      infoClientService.letterReserve = letterReserveArr.map<String>((e)=>e.toString()).toList();
+    });
   }
 
   gameUpdateHandler() {
@@ -189,8 +192,8 @@ class SocketService{
       // this.drawingBoardService.lettersDrawn = '';
       num minutesByTurn = data["minutesByTurn"];
       String currentNamePlayerPlaying = data["currentNamePlayerPlaying"];
+      infoClientService.powerUsedForTurn = false;
       tapService.resetVariablePlacement();
-
       if(currentNamePlayerPlaying == infoClientService.playerName) {
         infoClientService.displayTurn = "C'est votre tour !";
         infoClientService.isTurnOurs = true;

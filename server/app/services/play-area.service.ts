@@ -1,5 +1,5 @@
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
 import * as io from 'socket.io';
 import { Service } from 'typedi';
@@ -10,6 +10,7 @@ import { LetterBankService } from './letter-bank.service';
 import { StandService } from './stand.service';
 import { VirtualPlayerService } from './virtual-player.service';
 import AvatarService from '@app/services/avatar.service';
+import { PowerCardsService } from './power-cards.service';
 
 @Service()
 export class PlayAreaService {
@@ -22,6 +23,7 @@ export class PlayAreaService {
         private chatService: ChatService,
         private databaseService: DatabaseService,
         private boardService: BoardService,
+        private powerCardService: PowerCardsService,
     ) {
         this.sio = new io.Server();
     }
@@ -138,7 +140,7 @@ export class PlayAreaService {
     async replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
         // we send to everyone that the player has left and has been replaced by a bot
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
-        this.sendMsgToAllInRoom(game, GlobalConstants.REPLACEMENT_BY_BOT);
+        this.sendMsgToAllInRoom(game, Constants.REPLACEMENT_BY_BOT);
 
         // we keep the old id to determine later to change the old player's turn or not
         const oldIdPlayer = playerThatLeaves.id;
@@ -177,10 +179,6 @@ export class PlayAreaService {
         }
     }
 
-    addSecsToTimePlayer(game: GameServer, timeToAdd: number) {
-        this.sio.to(game.roomName)?.emit('addSecsToTimer', timeToAdd);
-    }
-
     // function used to keep the order of elements in the map
     // we need to keep the ordre because otherwise the change of turn would be wrong
     // since it is based on this order
@@ -195,6 +193,9 @@ export class PlayAreaService {
         const fourSecondsWait = 1000;
         const intervalId = setInterval(() => {
             this.randomActionVP(game, player);
+            if (game.gameMode === Constants.POWER_CARDS_MODE) {
+                this.powerCardService.randomPowerCardVP(game, player);
+            }
             this.changePlayer(game);
             clearInterval(intervalId);
         }, fourSecondsWait);
@@ -205,39 +206,29 @@ export class PlayAreaService {
         game.nbLetterReserve = this.letterBankService.getNbLettersInLetterBank(game.letterBank);
     }
 
-    private randomActionVP(game: GameServer, player: Player): string {
+    private randomActionVP(game: GameServer, virtualPlayer: Player) {
         const neinyPercent = 0.9;
         const tenPercent = 0.1;
         const probaMove: number = this.giveProbaMove();
-        let resultCommand = '!passer';
 
         if (probaMove < tenPercent) {
             // 10% change to change letters
-            if (this.letterBankService.getNbLettersInLetterBank(game.letterBank) < GlobalConstants.DEFAULT_NB_LETTER_STAND) {
-                this.chatService.passCommand('!passer', game, player);
-                resultCommand = '!passer';
+            if (this.letterBankService.getNbLettersInLetterBank(game.letterBank) < Constants.DEFAULT_NB_LETTER_STAND) {
+                this.chatService.passCommand('!passer', game, virtualPlayer);
             } else {
-                const lettersExchanged = this.standService.randomExchangeVP(player, game.letters, game.letterBank);
-                this.chatService.pushMsgToAllPlayers(game, player.name, '!échanger ' + lettersExchanged, true, 'O');
-                resultCommand = '!échanger ' + lettersExchanged;
+                const lettersExchanged = this.standService.randomExchangeVP(virtualPlayer, game.letters, game.letterBank);
+                this.chatService.pushMsgToAllPlayers(game, virtualPlayer.name, '!échanger ' + lettersExchanged, true, 'O');
             }
         } else if (probaMove < neinyPercent) {
             // 80% chances to place a letter
-            const choosedMoved = this.virtualPService.generateMoves(game, player);
-            if (choosedMoved) {
-                resultCommand = '!placer ' + choosedMoved.command + ' ' + choosedMoved.word;
-            }
+            this.virtualPService.generateMoves(game, virtualPlayer);
         } else {
-            this.chatService.passCommand('!passer', game, player);
-            resultCommand = '!passer';
+            this.chatService.passCommand('!passer', game, virtualPlayer);
         }
-
-        return resultCommand;
     }
 
     private giveProbaMove(): number {
-        const returnValue: number = Math.random();
-        return returnValue;
+        return Math.random();
     }
 
     private updateOldTiles(game: GameServer) {
@@ -290,7 +281,7 @@ export class PlayAreaService {
 
     private triggerStopTimer(roomName: string) {
         this.sio.to(roomName).emit('stopTimer');
-        this.sio.to(roomName).emit('displayChangeEndGame', GlobalConstants.END_GAME_DISPLAY_MSG);
+        this.sio.to(roomName).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
     }
 
     private giveRandomNbOpponent(sizeArrayVPOptions: number): number {

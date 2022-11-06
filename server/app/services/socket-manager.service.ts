@@ -63,6 +63,7 @@ export class SocketManager {
         this.users = new Map<string, User>();
         this.rooms = new Map<string, GameServer>();
         this.matchmakingService.initSioMatchmaking(this.sio);
+        this.powerCardsService.initSioPowerCard(this.sio);
     }
 
     handleSockets(): void {
@@ -503,6 +504,7 @@ export class SocketManager {
         if (gameMode === Constants.POWER_CARDS_MODE) {
             this.powerCardsService.initPowerCards(newGame, activatedPowers);
 
+            // TODO VERY IMPORTANT REMOVE THAT LATER THIS IS ONLY FOR TESTING PURPOSES
             this.powerCardsService.givePowerToPlayers(newGame);
         }
 

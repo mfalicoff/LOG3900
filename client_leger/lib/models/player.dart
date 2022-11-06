@@ -1,10 +1,12 @@
 import 'package:client_leger/models/power-cards.dart';
 import 'package:client_leger/constants/constants.dart';
+import 'package:client_leger/models/vec4.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:client_leger/models/tile.dart';
 
 import 'command.dart';
+import 'letter.dart';
 
 // class PlayerOld {
 //   late String name;
@@ -52,8 +54,13 @@ class Player with ChangeNotifier {
   late num nbValidWordPlaced;
 
   Player(this.name, this.isCreatorOfGame){
-    powerCards = [PowerCard(name: JUMP_NEXT_ENNEMY_TURN, isActivated: true), PowerCard(name: REMOVE_POINTS_FROM_MAX, isActivated: true)];
+    powerCards = [
+      PowerCard(name: JUMP_NEXT_ENNEMY_TURN, isActivated: true),
+      PowerCard(name: REMOVE_POINTS_FROM_MAX, isActivated: true),
+      PowerCard(name: EXCHANGE_LETTER_JOKER, isActivated: true),
+    ];
     nbValidWordPlaced = 0;
+    initStand();
   }
 
   Player.fromJson(Map parsed) {
@@ -101,5 +108,53 @@ class Player with ChangeNotifier {
     }
     return newPlayers;
 
+  }
+  //tmp function to initialize the stand
+  //DO NOT REUSE IT
+  void initStand(){
+    const letterInit = 'abcdefg';
+    const nbOccupiedSquare = 7;
+    for (
+    double i = 0, j = SIZE_OUTER_BORDER_STAND;
+    i < NUMBER_SLOT_STAND;
+    i++, j += WIDTH_EACH_SQUARE + WIDTH_LINE_BLOCKS
+    ) {
+      Vec4 newPosition = Vec4();
+      Tile newTile = Tile();
+      Letter newLetter = Letter();
+
+      // Initialising the position
+      newPosition.x1 = j + PADDING_BOARD_FOR_STANDS + WIDTH_HEIGHT_BOARD / 2 -
+          WIDTH_STAND / 2;
+      newPosition.y1 =
+          PADDING_BET_BOARD_AND_STAND +
+              SIZE_OUTER_BORDER_STAND +
+              PADDING_BOARD_FOR_STANDS +
+              WIDTH_HEIGHT_BOARD;
+      newPosition.width = WIDTH_EACH_SQUARE;
+      newPosition.height = WIDTH_EACH_SQUARE;
+      newTile.position = newPosition;
+
+      // Fills the occupiedSquare
+      if (i < nbOccupiedSquare) {
+        newLetter.weight = 1;
+        newLetter.value = letterInit[i.toInt()];
+
+        newTile.letter = newLetter;
+        newTile.bonus = '0';
+
+        stand.add(newTile);
+      }
+      // Fills the rest
+      else {
+        newLetter.weight = 0;
+        newLetter.value = '';
+
+        newTile.letter = newLetter;
+        newTile.bonus = '0';
+
+        stand.add(newTile);
+      }
+    }
   }
 }
