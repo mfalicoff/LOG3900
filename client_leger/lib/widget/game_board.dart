@@ -27,6 +27,7 @@ class _GameBoardState extends State<GameBoard> {
   late Tile? draggedTile;
   late Vec2 lastPosition = Vec2();
   late Vec2 coordsClick = Vec2();
+  String letterChoice = '';
 
   @override
   void initState() {
@@ -117,8 +118,12 @@ class _GameBoardState extends State<GameBoard> {
                         if (clickedTile != null &&
                             clickedTile?.letter.value != '') {
                           if (tapService.tileClickedFromStand) {
+                            if (clickedTile?.letter.value == '*') {
+                              starChoiceDialog(context, coordsTapped);
+                              return;
+                            }
                             tapService.onStandToBoardDrop(coordsTapped,
-                                clickedTile!, socketService.socket);
+                                clickedTile!, socketService.socket, letterChoice);
                           } else {
                             tapService.onBoardToBoardDrop(
                                 coordsTapped,
@@ -213,5 +218,69 @@ class _GameBoardState extends State<GameBoard> {
     } else {
       return false;
     }
+  }
+
+  Future<void> starChoiceDialog(BuildContext context, Vec2 coordsTapped) {
+    return showDialog<void>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          actions: <Widget>[
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    child: Column(children: [
+                      Text(
+                        "Cliquez sur la lettre que vous voulez:",
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 17,
+                            decoration: TextDecoration.none),
+                      ),
+                      Container(
+                          margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                          height: 150,
+                          width: 450,
+                          child: GridView.count(
+                            crossAxisCount: 10,
+                            shrinkWrap: true,
+                            children: List.generate(
+                              26,
+                              (index) {
+                                String letter = String.fromCharCode(index + 65);
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(0, 0, 10, 10),
+                                  child: TextButton(
+                                    onPressed: () {
+                                      letterChoice = letter;
+                                      tapService.onStandToBoardDrop(coordsTapped,
+                                          clickedTile!, socketService.socket, letterChoice);
+                                      letterChoice = '';
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      letter,
+                                      style: const TextStyle(
+                                        fontSize: 17,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ))
+                    ]))
+              ],
+            )
+          ],
+        );
+      },
+    );
   }
 }
