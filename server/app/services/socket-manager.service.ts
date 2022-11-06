@@ -841,6 +841,7 @@ export class SocketManager {
         });
 
         socket.on('startMatchmaking', ({ eloDisparity, user }) => {
+            console.log('lets gooooo');
             this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
             // socket.emit('matchFound', player);
         });

@@ -21,7 +21,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
   final InfoClientService infoClientService = InfoClientService();
 
   @override
-  void initState() {
+  void initState() { // constructor of the state
     socketService.socket.on("roomChangeAccepted", (data) {
       if(mounted){
         FocusScope.of(context).unfocus();
@@ -32,10 +32,10 @@ class _CreateGamePageState extends State<CreateGamePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) { // html-css of the widget
+    return Scaffold( //scaffold is needed
       resizeToAvoidBottomInset: false,
-      body: Stack(
+      body: Stack( // permet de mettre plein de children
         children: [
           Container(
             decoration: const BoxDecoration(
@@ -61,9 +61,9 @@ class _CreateGamePageState extends State<CreateGamePage> {
                 padding: const EdgeInsets.symmetric(
                     vertical: 25.0, horizontal: 25.0),
                 child: Center(
-                  child: Column(
+                  child: Column( // posiiton in the page
                     children: [
-                      Row(
+                      Row( // position in the page
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           IconButton(

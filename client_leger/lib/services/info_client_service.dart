@@ -32,6 +32,7 @@ class InfoClientService extends ChangeNotifier{
   bool isTurnOurs = false;
 
   String gameMode = CLASSIC_MODE;
+  double eloDisparity  =  60;
 
   factory InfoClientService(){
     return _gameService;

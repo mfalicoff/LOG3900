@@ -10,12 +10,12 @@
             <div id="container-content">
                 <div class="container-1">
                     <div class="box-1">
-                        <label>maximum rating difference</label>
+                        <label>Écart d'elo maximal</label>
                         <br />
                         <p>{{ this.eloDisparity }}</p>
-                        <mat-slider min="20" max="100" step="1" value="60" (change)="onEloDisparityChange($event)"></mat-slider>
+                        <mat-slider min="20" max="100" step="5" value="60" (change)="onEloDisparityChange($event)"></mat-slider>
                         <br />
-                        <button mat-flat-button class="startButton" (click)="onConfirm()" routerLink="/ranked-matchmaking">Confirm</button>
+                        <button mat-flat-button class="startButton" (click)="onConfirm()" routerLink="/ranked-matchmaking">Confirmer</button>
                     </div>
                 </div>
             </div>

@@ -115,6 +115,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
                 child: const Text("Mode Carte De Pouvoir Configurable"),
               ),
+              ElevatedButton(
+                onPressed: (){
+                  infoClientService.gameMode = MODE_RANKED;
+                  _toRankedInitPage();
+                },
+                child: const Text("Mode De Jeu Classé"),
+              ),
             ],
           ),
         ),
@@ -142,8 +149,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toGameListPage() {
     print("GameModeIs: " + infoClientService.gameMode);
-    Navigator.pushNamed(context, "/game-list");
-  }
+    Navigator.pushNamed(context, "/game-list"); // best way to change page
+  } // context is the information of the widget
+
+  void _toRankedInitPage() {
+    print("GameModeIs: " + infoClientService.gameMode);
+    Navigator.pushNamed(context, "/ranked-init"); // best way to change page
+  } // context is the information of the widget
 
   void _logout() {
     controller.logout(globals.userLoggedIn);

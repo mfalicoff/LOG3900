@@ -95,3 +95,4 @@ const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une cart
 // GAME MODE CONSTANTS
 const POWER_CARDS_MODE = 'power-cards';
 const CLASSIC_MODE = 'classic';
+const MODE_RANKED = 'Ranked';
