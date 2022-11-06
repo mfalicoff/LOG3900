@@ -34,8 +34,6 @@ const Map<int, String> indexToLetter = {
   15 : "O",
 };
 
-const int ASCII_CODE_SHIFT = 96;
-
 const num DEFAULT_VALUE_NUMBER = -1;
 
 const double WIDTH_HEIGHT_BOARD = 750;
@@ -99,3 +97,10 @@ const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une cart
 // GAME MODE CONSTANTS
 const POWER_CARDS_MODE = 'power-cards';
 const CLASSIC_MODE = 'classic';
+
+///////////////////////////////////////////////////////////////////////////
+// CONSTANTS FOR ISOLATION OF POSITION
+///////////////////////////////////////////////////////////////////////////
+const ASCII_CODE_SHIFT = 96;
+const POSITION_LAST_LETTER = -1;
+const END_POSITION_INDEX_LINE = 1;

@@ -3,12 +3,20 @@ import { GameServer } from '@app/classes/game-server';
 import { Player } from '@app/classes/player';
 import { PowerCard } from '@app/classes/power-card';
 import { Service } from 'typedi';
-import { PlayAreaService } from './play-area.service';
 import { StandService } from './stand.service';
+
+import * as io from 'socket.io';
 
 @Service()
 export class PowerCardsService {
-    constructor(private playAreaService: PlayAreaService, private standService: StandService) {}
+    sio: io.Server;
+    constructor(private standService: StandService) {
+        this.sio = new io.Server();
+    }
+
+    initSioPowerCard(sio: io.Server) {
+        this.sio = sio;
+    }
 
     initPowerCards(game: GameServer, activationState: boolean[]) {
         for (let i = 0; i < game.powerCards.length; i++) {
@@ -59,7 +67,7 @@ export class PowerCardsService {
                 break;
             }
             case Constants.REMOVE_POINTS_FROM_MAX: {
-                this.removePointsFromMax(game);
+                this.removePointsFromMax(game, player.name);
                 break;
             }
             case Constants.ADD_1_MIN: {
@@ -75,9 +83,87 @@ export class PowerCardsService {
         }
     }
 
+    // the virtual player have a 50% chance to use a power card
+    randomPowerCardVP(game: GameServer, virtualPlayer: Player) {
+        const neinyPercent = 0.5;
+        const probaMove: number = this.giveProbaMove();
+
+        if (probaMove > neinyPercent && virtualPlayer.powerCards.length > 0) {
+            const choosedPowerCard = virtualPlayer.powerCards[0];
+            switch (choosedPowerCard.name) {
+                case Constants.TRANFORM_EMPTY_TILE: {
+                    const maxTryToFindEmptyTile = 20;
+                    let counter = 0;
+                    let idxLine: number = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
+                    let idxColumn: number = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
+                    while (game.board[idxLine][idxColumn].letter.value !== '' || game.board[idxLine][idxColumn].bonus !== 'xx') {
+                        idxLine = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
+                        idxColumn = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
+                        counter++;
+                        if (counter > maxTryToFindEmptyTile) {
+                            return;
+                        }
+                    }
+                    const additionnalParams = idxLine.toString() + '-' + idxColumn.toString();
+                    this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
+                    break;
+                }
+                case Constants.EXCHANGE_LETTER_JOKER: {
+                    // Choose a letter on the stand
+                    let idxLetterStand = 0;
+                    let didEnter = false;
+                    for (let i = 0; i < virtualPlayer.stand.length; i++) {
+                        if (virtualPlayer.stand[i].letter.value === '') {
+                            continue;
+                        }
+                        idxLetterStand = i;
+                        didEnter = true;
+                        break;
+                    }
+                    if (!didEnter) {
+                        return;
+                    }
+                    // choose a letter in the letter bank
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const letterReserve: string[] = Array.from(game.letterBank.keys()).filter((letter) => game.letterBank.get(letter)!.quantity > 0);
+                    if (letterReserve.length <= 0) {
+                        return;
+                    }
+                    const rdmLetter: string = letterReserve[this.randomIntFromInterval(0, letterReserve.length - 1)];
+
+                    const additionnalParams: string = rdmLetter + idxLetterStand.toString();
+                    this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
+                    break;
+                }
+                case Constants.EXCHANGE_STAND: {
+                    const otherPlayersName: string[] = Array.from(game.mapPlayers.keys()).filter((name) => name !== virtualPlayer.name);
+                    if (otherPlayersName.length <= 0) {
+                        return;
+                    }
+                    const additionnalParams: string = otherPlayersName[this.randomIntFromInterval(0, otherPlayersName.length - 1)];
+                    this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
+                    break;
+                }
+                default: {
+                    this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, '');
+                    break;
+                }
+            }
+        }
+    }
+
+    private randomIntFromInterval(min: number, max: number) {
+        // min and max included
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
+
+    private giveProbaMove(): number {
+        return Math.random();
+    }
+
     private jmpNextEnnemyTurn(game: GameServer, playerName: string) {
         game.jmpNextEnnemyTurn = true;
-        this.playAreaService.sendMsgToAllInRoom(
+        this.sendMsgToAllInRoom(
             game,
             'Le joueur ' + playerName + ' a utilisé une carte de pouvoir pour diviser par passer le tour du prochain joueur !',
         );
@@ -92,7 +178,7 @@ export class PowerCardsService {
         game.board[idxLine][idxColumn].bonus = rdmBonus;
         game.bonusBoard[idxLine][idxColumn] = rdmBonus;
 
-        this.playAreaService.sendMsgToAllInRoom(
+        this.sendMsgToAllInRoom(
             game,
             'Le joueur ' +
                 playerName +
@@ -114,7 +200,7 @@ export class PowerCardsService {
 
     private reduceEnnemyTime(game: GameServer, playerName: string) {
         game.reduceEnnemyNbTurn = 3;
-        this.playAreaService.sendMsgToAllInRoom(
+        this.sendMsgToAllInRoom(
             game,
             'Le joueur ' + playerName + ' a utilisé une carte de pouvoir pour diviser par deux le temps de tous les joueurs pendant 1 tour !',
         );
@@ -140,9 +226,9 @@ export class PowerCardsService {
         this.standService.deleteLetterStandLogic(tileToTakeFromStand.letter.value, parseInt(infoOnAction[1], 10), player);
         this.standService.writeLetterStandLogic(parseInt(infoOnAction[1], 10), letterToTakeFromReserve.toLowerCase(), game.letterBank, player);
 
-        this.playAreaService.sendMsgToAllInRoom(
+        this.sendMsgToAllInRoom(
             game,
-            'Le joueur ' + player.name + ' a utilisé une carte de pouvoir échanger une de ses lettres avec une lettre de la réserve !',
+            'Le joueur ' + player.name + ' a utilisé une carte de pouvoir pour échanger une de ses lettres avec une lettre de la réserve !',
         );
     }
 
@@ -161,33 +247,44 @@ export class PowerCardsService {
         player.mapLetterOnStand = playerTarget.mapLetterOnStand;
         playerTarget.mapLetterOnStand = playerLetterMap;
 
-        this.playAreaService.sendMsgToAllInRoom(
+        this.sendMsgToAllInRoom(
             game,
             'Le joueur ' + player.name + ' a utilisé une carte de pouvoir pour échanger son stand avec ' + playerTargetName + '!',
         );
     }
 
-    private removePointsFromMax(game: GameServer) {
+    private removePointsFromMax(game: GameServer, playerName: string) {
         const pointsToRm = 20;
         const playerWithMaxScore = this.findPlayerWithMaxScore(game);
         playerWithMaxScore.score -= pointsToRm;
         for (const player of game.mapPlayers.values()) {
             player.score += pointsToRm / game.mapPlayers.size;
         }
-        this.playAreaService.sendMsgToAllInRoom(
+        this.sendMsgToAllInRoom(
             game,
-            'Le joueur ' + playerWithMaxScore.name + ' a perdu ' + pointsToRm + ' points.' + 'Ces points ont été répartis entre tout les joueurs.',
+            'Le joueur ' +
+                playerName +
+                ' a utilisé une carte de pouvoir pour retirer des points au joueur avec le plus de points !' +
+                'Le joueur ' +
+                playerWithMaxScore.name +
+                ' a donc perdu ' +
+                pointsToRm +
+                ' points.' +
+                'Ces points ont été répartis entre tout les joueurs.',
         );
     }
 
     private add1MinToPlayerTime(game: GameServer, playerName: string) {
         const timeToAdd = 60;
-        this.playAreaService.addSecsToTimePlayer(game, timeToAdd);
-
-        this.playAreaService.sendMsgToAllInRoom(
+        this.addSecsToTimePlayer(game, timeToAdd);
+        this.sendMsgToAllInRoom(
             game,
             'Le joueur ' + playerName + ' a utilisé une carte de pouvoir pour rajouter 1 minutes à son temps de reflexion !',
         );
+    }
+
+    private addSecsToTimePlayer(game: GameServer, timeToAdd: number) {
+        this.sio.to(game.roomName)?.emit('addSecsToTimer', timeToAdd);
     }
 
     private remove1PowerCardForEveryone(game: GameServer, playerNameUsingCard: string) {
@@ -226,5 +323,14 @@ export class PowerCardsService {
         const availablePowerCards = game.powerCards.filter((powerCard) => powerCard.isActivated);
         const randomCard = availablePowerCards[Math.floor(Math.random() * availablePowerCards.length)];
         return randomCard;
+    }
+
+    private sendMsgToAllInRoom(game: GameServer, message: string) {
+        for (const player of game.mapPlayers.values()) {
+            player.chatHistory.push({ message, isCommand: false, sender: 'S' });
+        }
+        for (const spectator of game.mapSpectators.values()) {
+            spectator.chatHistory.push({ message, isCommand: false, sender: 'S' });
+        }
     }
 }
