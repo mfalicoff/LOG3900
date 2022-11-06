@@ -221,7 +221,10 @@ export class ChatService {
     }
 
     private async sendWinnerMessage(game: GameServer, player: Player) {
-        const winners = this.endGameService.chooseWinner(game);
+        let playersCpy: Player[] = Array.from(game.mapPlayers.values());
+        playersCpy.push(player);
+        playersCpy = [...new Set(playersCpy)];
+        const winners = this.endGameService.chooseWinner(game, playersCpy);
         if (winners.length === 1) {
             this.pushMsgToAllPlayers(
                 game,
