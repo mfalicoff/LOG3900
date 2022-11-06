@@ -11,8 +11,7 @@ export class EndGameService {
     }
 
     // returns the player who won the game
-    chooseWinner(game: GameServer): Player[] {
-        const players = Array.from(game.mapPlayers.values());
+    chooseWinner(game: GameServer, players: Player[]): Player[] {
         if (players.length <= 0) {
             return [];
         }

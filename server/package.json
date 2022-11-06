@@ -5,7 +5,7 @@
     "private": true,
     "scripts": {
         "start": "nodemon",
-        "build": "rimraf out && tsc --project tsconfig.app.json && node copy-assets.ts",
+        "build": "rimraf out && tsc --project tsconfig.app.json",
         "format": "prettier --config ../.prettierrc.yaml --write \"app/**/*\"",
         "lint": "eslint -c .eslintrc.json \"./app/**/*.ts\" --format stylish",
         "lint:fix": "npm run lint -- --fix",
