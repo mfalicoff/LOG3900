@@ -122,10 +122,8 @@ class SocketService{
   gameUpdateHandler() {
     socket.on('playerAndStandUpdate', (player) {
       infoClientService.updatePlayer(player);
-      // TODO
+      infoClientService.notifyListeners();
       // setTimeout(() => {
-      // this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
-      // }, GlobalConstants.WAIT_FOR_CANVAS_INI);
     });
 
     socket.on('gameBoardUpdate', (game) {

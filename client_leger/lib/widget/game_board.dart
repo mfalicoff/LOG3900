@@ -58,7 +58,25 @@ class _GameBoardState extends State<GameBoard> {
               child: Padding(
                   padding: const EdgeInsets.all(10),
                   child: GestureDetector(
+                    onTapUp: (details) {
+                      if (!infoClientService.isTurnOurs) {
+                        return;
+                      }
+                      if (!infoClientService.game.gameStarted) {
+                        return;
+                      }
+                      if (tapService.lettersDrawn != '') {
+                        return;
+                      }
+                      socketService.socket.emit(
+                          'rightClickExchange',
+                          crossProductGlobalToLargeCanvas(
+                              details.localPosition.dx));
+                    },
                     onPanStart: (details) {
+                      if (!infoClientService.isTurnOurs) {
+                        return;
+                      }
                       touching = true;
                       coordsClick = Vec2.withParams(
                           details.localPosition.dx, details.localPosition.dy);
@@ -81,31 +99,51 @@ class _GameBoardState extends State<GameBoard> {
                         return;
                       }
                       Vec2 coords = Vec2.withParams(
-                          crossProductGlobalToLargeCanvas(details.localPosition.dx), crossProductGlobalToLargeCanvas(details.localPosition.dy));
-                      lastPosition = Vec2.withParams(details.localPosition.dx, details.localPosition.dy);
-                      socketService.socket
-                          .emit('tileDraggedOnCanvas', [clickedTile!.toJson(), coords.toJson()]);
+                          crossProductGlobalToLargeCanvas(
+                              details.localPosition.dx),
+                          crossProductGlobalToLargeCanvas(
+                              details.localPosition.dy));
+                      lastPosition = Vec2.withParams(
+                          details.localPosition.dx, details.localPosition.dy);
+                      socketService.socket.emit('tileDraggedOnCanvas',
+                          [clickedTile!.toJson(), coords.toJson()]);
                     },
                     onPanEnd: (details) {
                       touching = false;
                       Vec2 coordsTapped = lastPosition;
 
-                      if(areCoordsOnBoard(coordsTapped) && infoClientService.isTurnOurs) {
-                        if(clickedTile != null && clickedTile?.letter.value != '') {
-                          if(tapService.tileClickedFromStand) {
-                            tapService.onStandToBoardDrop(coordsTapped, clickedTile!, socketService.socket);
+                      if (areCoordsOnBoard(coordsTapped) &&
+                          infoClientService.isTurnOurs) {
+                        if (clickedTile != null &&
+                            clickedTile?.letter.value != '') {
+                          if (tapService.tileClickedFromStand) {
+                            tapService.onStandToBoardDrop(coordsTapped,
+                                clickedTile!, socketService.socket);
                           } else {
-                            tapService.onBoardToBoardDrop(coordsTapped, clickedTile!, coordsClick, socketService.socket);
+                            tapService.onBoardToBoardDrop(
+                                coordsTapped,
+                                clickedTile!,
+                                coordsClick,
+                                socketService.socket);
                           }
                         }
-                      } else if(areCoordsOnStand(coordsTapped)) {
-                        if(clickedTile != null && clickedTile?.letter.value != '' && !tapService.tileClickedFromStand && infoClientService.isTurnOurs) {
-                          tapService.onBoardToStandDrop(coordsTapped, clickedTile!, clickedTileIndex, socketService.socket);
+                      } else if (areCoordsOnStand(coordsTapped)) {
+                        if (clickedTile != null &&
+                            clickedTile?.letter.value != '' &&
+                            !tapService.tileClickedFromStand &&
+                            infoClientService.isTurnOurs) {
+                          tapService.onBoardToStandDrop(
+                              coordsTapped,
+                              clickedTile!,
+                              clickedTileIndex,
+                              socketService.socket);
                         } else {
-                          tapService.onTapStand(coordsTapped, socketService.socket);
+                          tapService.onTapStand(
+                              coordsTapped, socketService.socket);
                         }
                       }
-
+                      clickedTile = null;
+                      clickedTileIndex = Vec2();
                     },
                     child: CustomPaint(
                       painter: boardPainter,
@@ -135,17 +173,26 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   bool areCoordsOnStand(Vec2 coords) {
-    num paddingForStands = HEIGHT_STAND_CORRECTED + PADDING_BET_BOARD_AND_STAND_CORRECTED;
-    num posXForStands =
-        paddingForStands + SIZE_OUTER_BORDER_STAND_CORECTED + WIDTH_HEIGHT_BOARD_CORRECTED / 2 - WIDTH_STAND_CORRECTED / 2;
-    num posYForStands =
-        WIDTH_HEIGHT_BOARD_CORRECTED + paddingForStands + SIZE_OUTER_BORDER_STAND_CORECTED + PADDING_BET_BOARD_AND_STAND_CORRECTED;
-    if (
-    coords.x > posXForStands &&
-        coords.x < posXForStands + WIDTH_STAND_CORRECTED - SIZE_OUTER_BORDER_STAND_CORECTED * 2 &&
+    num paddingForStands =
+        HEIGHT_STAND_CORRECTED + PADDING_BET_BOARD_AND_STAND_CORRECTED;
+    num posXForStands = paddingForStands +
+        SIZE_OUTER_BORDER_STAND_CORECTED +
+        WIDTH_HEIGHT_BOARD_CORRECTED / 2 -
+        WIDTH_STAND_CORRECTED / 2;
+    num posYForStands = WIDTH_HEIGHT_BOARD_CORRECTED +
+        paddingForStands +
+        SIZE_OUTER_BORDER_STAND_CORECTED +
+        PADDING_BET_BOARD_AND_STAND_CORRECTED;
+    if (coords.x > posXForStands &&
+        coords.x <
+            posXForStands +
+                WIDTH_STAND_CORRECTED -
+                SIZE_OUTER_BORDER_STAND_CORECTED * 2 &&
         coords.y > posYForStands &&
-        coords.y < posYForStands + HEIGHT_STAND_CORRECTED - SIZE_OUTER_BORDER_STAND_CORECTED * 2
-    ) {
+        coords.y <
+            posYForStands +
+                HEIGHT_STAND_CORRECTED -
+                SIZE_OUTER_BORDER_STAND_CORECTED * 2) {
       return true;
     } else {
       return false;
@@ -153,13 +200,18 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   bool areCoordsOnBoard(Vec2 coords) {
-    num posXYStartForBoard = PADDING_BOARD_FOR_STANDS_CORRECTED + SIZE_OUTER_BORDER_BOARD_CORRECTED;
-    num posXYEndForBoard = posXYStartForBoard + WIDTH_HEIGHT_BOARD_CORRECTED - 2 * SIZE_OUTER_BORDER_BOARD_CORRECTED;
-    if (coords.x > posXYStartForBoard && coords.x < posXYEndForBoard && coords.y > posXYStartForBoard && coords.y < posXYEndForBoard) {
+    num posXYStartForBoard =
+        PADDING_BOARD_FOR_STANDS_CORRECTED + SIZE_OUTER_BORDER_BOARD_CORRECTED;
+    num posXYEndForBoard = posXYStartForBoard +
+        WIDTH_HEIGHT_BOARD_CORRECTED -
+        2 * SIZE_OUTER_BORDER_BOARD_CORRECTED;
+    if (coords.x > posXYStartForBoard &&
+        coords.x < posXYEndForBoard &&
+        coords.y > posXYStartForBoard &&
+        coords.y < posXYEndForBoard) {
       return true;
     } else {
       return false;
     }
   }
-
 }

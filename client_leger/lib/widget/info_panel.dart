@@ -144,9 +144,13 @@ class _InfoPanelState extends State<InfoPanel> {
     }
   }
 
-  void _trade() {}
+  void _trade() {
+    socketService.socket.emit('onExchangeClick');
+  }
 
-  void _cancel() {}
+  void _cancel() {
+    socketService.socket.emit('onAnnulerClick');
+  }
 
   void _play() {
     tapService.play(socketService.socket);

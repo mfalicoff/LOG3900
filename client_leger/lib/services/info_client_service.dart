@@ -9,7 +9,7 @@ import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/vec4.dart';
 
-class InfoClientService extends ChangeNotifier{
+class InfoClientService with ChangeNotifier{
 
   static final InfoClientService _gameService = InfoClientService._internal();
 
@@ -147,8 +147,7 @@ class InfoClientService extends ChangeNotifier{
   }
 
   void updatePlayer(player){
-    player = Player.fromJson(player);
-    notifyListeners();
+    this.player = Player.fromJson(player);
   }
 
   void updateGame(data){
