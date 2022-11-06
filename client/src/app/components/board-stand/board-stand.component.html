@@ -20,3 +20,29 @@
     ></canvas>
 </div>
 
+
+<!-- the modal to choose the target player in case the player uses the card "EXCHANGE_STAND" -->
+<div class="modal" [style.display]="displayLetterChoiceModal">
+    <div class="modal-content" >
+        <span>Rentrez la lettre que vous voulez placer dans le champ suivant :</span>
+        <br>
+        <mat-form-field id="letterToChooseField">
+            <mat-label>Lettre</mat-label>
+            <input 
+                matInput 
+                placeholder="Ex. a" 
+                name ="letterChoice"
+                [(ngModel)]='letterChoice'
+                required
+                maxlength="1"
+            >
+        </mat-form-field>
+        <button
+            mat-raised-button
+            class="validateBtn"
+            (click)="continueProcessingDrop()"
+        >
+            Valider
+        </button>
+    </div>
+</div>

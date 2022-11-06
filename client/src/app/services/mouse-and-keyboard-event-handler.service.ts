@@ -40,7 +40,7 @@ export class MouseKeyboardEventHandlerService {
 
     // function that get the index of a pixel position mouse up
     // and send ask the server to place the tile as a temporary one
-    onStandToBoardDrop(coordsClick: Vec2, tileDropped: Tile) {
+    onStandToBoardDrop(coordsClick: Vec2, tileDropped: Tile, letterChoice: string) {
         // indexs of the tile where the "tileDropped" has been dropped
         const posDropBoardIdxs: Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
         // if the tile on which we drop the new one is an old one (from a precedent turn)
@@ -55,12 +55,19 @@ export class MouseKeyboardEventHandlerService {
             this.placeGraphicService.startLettersPlacedPosX = posDropBoardIdxs.x;
             this.placeGraphicService.startLettersPlacedPosY = posDropBoardIdxs.y;
         }
-        this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
-        this.drawingBoardService.coordsLettersDrawn.push(posDropBoardIdxs);
+
         // remove the tile from the stand logically and visually
         this.socketService.socket.emit('rmTileFromStand', tileDropped);
-        // ask for update board logic for a temporary tile
-        this.socketService.socket.emit('addTempLetterBoard', tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y);
+
+        // check if the tile is a special tile (star or not)
+        if (letterChoice !== '') {
+            this.drawingBoardService.lettersDrawn += letterChoice.toLowerCase();
+            this.socketService.socket.emit('addTempLetterBoard', letterChoice.toLowerCase(), posDropBoardIdxs.x, posDropBoardIdxs.y);
+        } else {
+            this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
+            this.socketService.socket.emit('addTempLetterBoard', tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y);
+        }
+        this.drawingBoardService.coordsLettersDrawn.push(posDropBoardIdxs);
     }
 
     onBoardToBoardDrop(coordsClick: Vec2, tileDropped: Tile) {

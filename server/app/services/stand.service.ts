@@ -218,6 +218,12 @@ export class StandService {
     }
 
     private deleteLetterInStandMap(letterToRemove: string, player: Player) {
+        const letter = player.mapLetterOnStand.get(letterToRemove);
+        if (!letter) {
+            // eslint-disable-next-line no-console
+            console.log('StandService:deleteLetterInStandMap letter undefined');
+            return;
+        }
         if (player.mapLetterOnStand.get(letterToRemove).value === 1) {
             player.mapLetterOnStand.delete(letterToRemove);
         } else {

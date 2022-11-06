@@ -63,7 +63,7 @@ export class Player {
     }
 
     initStand(): void {
-        const letterInit = 'abcdefg';
+        const letterInit = '*abcdef';
         const nbOccupiedSquare = 7;
         for (
             let i = 0, j = Constants.SIZE_OUTER_BORDER_STAND;
