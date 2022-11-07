@@ -71,6 +71,26 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                       ),
                       CircularProgressIndicator(
                       ),
+                      ElevatedButton(
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: Text('Partie trouve'),
+                                actions: [
+                                  TextButton(
+                                      child: Text('Accepter'),
+                                      onPressed: () => Navigator.pop(context)
+                                  ),
+                                  TextButton(
+                                      child: Text('Refuser'),
+                                      onPressed: () => Navigator.pop(context)
+                                  ),
+                                ]
+                              ));
+                        },
+                        child: const Text("Modal"),
+                      ),
                     ],
                   ),
                 ),

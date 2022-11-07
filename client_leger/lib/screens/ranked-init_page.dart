@@ -59,6 +59,12 @@ class _RankedInitPageState extends State<RankedInitPage> {
                             fontSize: 25,
                             color: Theme.of(context).colorScheme.primary),
                       ),
+                      Text(
+                        eloDisparity.toString(),
+                        style: TextStyle(
+                            fontSize: 25,
+                            color: Theme.of(context).colorScheme.primary),
+                      ),
                       Slider(
                         value: eloDisparity,
                         onChanged: (newEloDisparity) {
