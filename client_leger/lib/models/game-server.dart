@@ -226,6 +226,7 @@ class GameServer {
   // need the powers locally in the game to be able to deactivate/activate them for each game
   // by defaut they all are activated
   initPowerCards() {
+    powerCards = [];
     powerCards.add(PowerCard(name: JUMP_NEXT_ENNEMY_TURN, isActivated: true));
     powerCards.add(PowerCard(name:TRANFORM_EMPTY_TILE, isActivated:true));
     powerCards.add(PowerCard(name:REDUCE_ENNEMY_TIME, isActivated:true));

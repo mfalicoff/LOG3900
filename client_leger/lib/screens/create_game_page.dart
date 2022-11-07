@@ -420,6 +420,7 @@ class _PowerListDialog extends State<PowerListDialog> {
 
   @override
   Widget build(BuildContext context) {
+    infoClientService.game.initPowerCards();
     return TextButton(
       onPressed: () =>
           showDialog<String>(
