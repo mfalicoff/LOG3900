@@ -1,7 +1,7 @@
 import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:restart_app/restart_app.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 import '../constants/constants.dart';
@@ -15,17 +15,19 @@ import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/tile.dart';
 import '../models/vec2.dart';
+import 'controller.dart';
 import 'info_client_service.dart';
 
 
 
-class SocketService with ChangeNotifier{
+class SocketService{
 
   static final SocketService _socketService = SocketService._internal();
 
   InfoClientService infoClientService = InfoClientService();
   TimerService timerService = TimerService();
   TapService tapService = TapService();
+  Controller controller = Controller();
 
 
   late IO.Socket socket;
@@ -61,14 +63,12 @@ class SocketService with ChangeNotifier{
       RoomData room = RoomData.fromJson(data);
       var exist = infoClientService.rooms.where((element) => element.name == room.name);
       if(exist.isEmpty){
-        infoClientService.rooms.add(room);
-        notifyListeners();
+        infoClientService.addRoom(room);
       }
     });
 
     socket.on('removeElementListRoom', (roomNameToDelete) {
-      infoClientService.rooms.removeWhere((element) => element.name == roomNameToDelete);
-      notifyListeners();
+      infoClientService.removeRoom(roomNameToDelete);
     });
 
     // socket.on('roomChangeAccepted', (page) {
@@ -83,8 +83,13 @@ class SocketService with ChangeNotifier{
 
     });
 
-    socket.on('SendDictionariesToClient', (dictionaries) {
+    socket.on('forceLogout', (_) async {
+      globals.userLoggedIn.clear();
+      Restart.restartApp();
+    });
 
+    socket.on('SendDictionariesToClient', (dictionaries) {
+      infoClientService.updateDictionaries(dictionaries);
     });
 
     socket.on('DictionaryDeletedMessage', (message) {
@@ -105,6 +110,7 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('askForEntrance', (data) {
+      infoClientService.askForEntrance(data);
     });
 
     socket.on('gameOver', (data) {
@@ -116,10 +122,8 @@ class SocketService with ChangeNotifier{
   gameUpdateHandler() {
     socket.on('playerAndStandUpdate', (player) {
       infoClientService.updatePlayer(player);
-      // TODO
+      infoClientService.notifyListeners();
       // setTimeout(() => {
-      // this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
-      // }, GlobalConstants.WAIT_FOR_CANVAS_INI);
     });
 
     socket.on('gameBoardUpdate', (game) {
@@ -185,6 +189,7 @@ class SocketService with ChangeNotifier{
       // this.drawingBoardService.lettersDrawn = '';
       num minutesByTurn = data["minutesByTurn"];
       String currentNamePlayerPlaying = data["currentNamePlayerPlaying"];
+      tapService.resetVariablePlacement();
 
       if(currentNamePlayerPlaying == infoClientService.playerName) {
         infoClientService.displayTurn = "C'est votre tour !";
@@ -203,12 +208,12 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('setTimeoutTimerStart', (_) {
-      // this.drawingBoardService.lettersDrawn = '';
+      tapService.lettersDrawn = '';
       setTimeoutForTimer();
     });
 
     socket.on('stopTimer', (_) {
-      // this.drawingBoardService.lettersDrawn = '';
+      tapService.lettersDrawn = '';
       timerService.clearTimer();
     });
 
@@ -226,10 +231,8 @@ class SocketService with ChangeNotifier{
     socket.on('tileDraggedOnCanvas', (data) {
       Tile clickedTile = Tile.fromJson(data[0]);
       Vec2 mouseCoords = Vec2.fromJson(data[1]);
-      print('original: ${mouseCoords.toJson()}');
       mouseCoords.x = crossProductGlobal(mouseCoords.x.toDouble());
       mouseCoords.y = crossProductGlobal(mouseCoords.y.toDouble());
-      print('modified: ${mouseCoords.toJson()}');
       tapService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
     });
 
@@ -262,7 +265,7 @@ class SocketService with ChangeNotifier{
         socket.emit('turnFinished');
       }
       if (infoClientService.game.gameFinished) {
-        // this.drawingBoardService.lettersDrawn = '';
+        tapService.lettersDrawn = '';
         timer.cancel();
       }
     });

@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
+import { PlaceGraphicService } from './place-graphic.service';
 import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
 
@@ -21,6 +22,7 @@ import { TimerService } from './timer.service';
 export class SocketService {
     socket: Socket;
     gameFinished: BehaviorSubject<boolean>;
+    gameId: string;
     private urlString = environment.serverUrl;
 
     constructor(
@@ -30,6 +32,7 @@ export class SocketService {
         private timerService: TimerService,
         private rankedService: RankedService,
         private drawingService: DrawingService,
+        private placeGraphicService: PlaceGraphicService,
     ) {
         this.socket = io(this.urlString);
         this.gameFinished = new BehaviorSubject(this.infoClientService.game.gameFinished);
@@ -82,14 +85,18 @@ export class SocketService {
         });
 
         this.socket.on('gameBoardUpdate', (game) => {
+            this.infoClientService.game = game;
             if (!game.gameFinished) {
-                this.infoClientService.game = game;
                 setTimeout(() => {
                     this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
                 }, GlobalConstants.WAIT_FOR_CANVAS_INI);
             } else {
                 this.gameFinished.next(true);
             }
+        });
+
+        this.socket.on('savedGameId', (id: string) => {
+            this.gameId = id;
         });
 
         // updates the players and spectators list for each rooms
@@ -160,6 +167,7 @@ export class SocketService {
                 const playerPlaying = this.infoClientService.actualRoom.players.find((player) => player.name === currentNamePlayerPlaying);
                 this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + ' de jouer !';
                 this.infoClientService.isTurnOurs = false;
+                this.placeGraphicService.resetVariablePlacement();
             }
             this.timerService.clearTimer();
             this.timerService.startTimer(minutesByTurn);
@@ -204,6 +212,11 @@ export class SocketService {
         this.socket.on('matchFound', () => {
             // this.infoClientService.player = player;
             this.rankedService.matchHasBeenFound();
+        });
+
+        this.socket.on('forceLogout', async () => {
+            this.infoClientService.playerName = '';
+            await this.router.navigate(['/login']);
         });
 
         this.socket.on('createRankedGame', async (name) => {
@@ -272,9 +285,6 @@ export class SocketService {
             this.infoClientService.incommingPlayer = newPlayerName;
             this.infoClientService.incommingPlayerId = newPlayerId;
         });
-        this.socket.on('gameOver', () => {
-            this.infoClientService.game.gameFinished = true;
-        });
 
         this.socket.on('sendLetterReserve', (letterReserveArr) => {
             this.infoClientService.letterReserve = letterReserveArr;
@@ -288,7 +298,7 @@ export class SocketService {
                 this.socket.emit('turnFinished');
             }
             if (this.infoClientService.game.gameFinished) {
-                this.drawingBoardService.lettersDrawn = '';
+                this.placeGraphicService.resetVariablePlacement();
                 clearInterval(timerInterval);
             }
         }, oneSecond);

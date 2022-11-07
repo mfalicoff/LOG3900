@@ -5,7 +5,6 @@ import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
-import '../models/room.dart';
 
 class GameListPage extends StatefulWidget {
   const GameListPage({Key? key}) : super(key: key);
@@ -27,36 +26,14 @@ class _GameListPageState extends State<GameListPage> {
   }
 
   void refresh() {
-    if(mounted){
-      setState(() {
-      });
+    if (mounted) {
+      setState(() {});
     }
   }
 
   void initSockets() {
-    // TODO NEEDS TO UPDATE INFO CLIENT SERVICE[ROOMS]
-    // socketService.socket.on('addElementListRoom', (data) {
-    //   if (mounted) {
-    //     setState(() {
-    //       // Room room = Room.fromJson(data);
-    //       RoomData room = RoomData.fromJson(data);
-    //       var exist = gameService.rooms.where((element) => element.name == room.name);
-    //       if(exist.isEmpty){
-    //         // rooms.add(Room.fromJson(data));
-    //         gameService.rooms.add(room);
-    //       }
-    //     });
-    //   }
-    // });
-    // socketService.socket.on('removeElementListRoom', (data) {
-    //   if (mounted) {
-    //     setState(() {
-    //       gameService.rooms.removeWhere((element) => element.name == data);
-    //     });
-    //   }
-    // });
     socketService.socket.on("roomChangeAccepted", (data) {
-      if(mounted){
+      if (mounted) {
         Navigator.pushNamed(context, "/game");
       }
     });
@@ -66,6 +43,7 @@ class _GameListPageState extends State<GameListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           Container(
@@ -154,7 +132,10 @@ class _GameListPageState extends State<GameListPage> {
                           //   borderRadius: BorderRadius.circular(10),
                           // ),
                           child: gameList(
-                            rooms: infoClientService.rooms.where((room) => room.gameMode == infoClientService.gameMode).toList(),
+                            rooms: infoClientService.rooms
+                                .where((room) =>
+                                    room.gameMode == infoClientService.gameMode)
+                                .toList(),
                           ),
                         ),
                       )
@@ -188,8 +169,8 @@ class gameList extends StatefulWidget {
 }
 
 class _gameListState extends State<gameList> {
-
   SocketService socketService = SocketService();
+  String password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -278,42 +259,102 @@ class _gameListState extends State<gameList> {
         rows: List<DataRow>.generate(
             widget.rooms.length,
             (int index) => DataRow(
-                onSelectChanged: (bool? selected) {
-                  if (selected!) {
-                    socketService.socket.emit("joinRoom",
-                        [widget.rooms[index].name,
-                        socketService.socket.id,]
-                    );
-                  }
-                },
-                cells: [
-                  DataCell(Text(
-                    widget.rooms[index].name,
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                  )),
-                  DataCell(Text(
-                    widget.rooms[index].roomCreator,
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                  )),
-                  DataCell(Text(
-                    widget.rooms[index].numberRealPlayer.toString(),
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                  )),
-                  DataCell(Text(
-                    widget.rooms[index].numberVirtualPlayer.toString(),
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                  )),
-                  DataCell(Text(
-                    widget.rooms[index].numberSpectators.toString(),
-                    style:
-                        TextStyle(color: Theme.of(context).colorScheme.primary),
-                  )),
-                ])),
+                    onSelectChanged: (bool? selected) {
+                      if (selected!) {
+                        joinGame(widget.rooms[index]);
+                      }
+                    },
+                    cells: [
+                      DataCell(Text(
+                        widget.rooms[index].name,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      )),
+                      DataCell(Text(
+                        widget.rooms[index].roomCreator,
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      )),
+                      DataCell(Text(
+                        widget.rooms[index].numberRealPlayer.toString(),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      )),
+                      DataCell(Text(
+                        widget.rooms[index].numberVirtualPlayer.toString(),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      )),
+                      DataCell(Text(
+                        widget.rooms[index].numberSpectators.toString(),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary),
+                      )),
+                    ])),
       ),
     );
+  }
+
+  void joinGame(room) {
+    if (room.passwd != '') {
+      askForPassword(context, room);
+    }
+    else{
+      socketService.socket.emit("joinRoom",
+          [room.name, socketService.socket.id]
+      );
+    }
+  }
+
+  Future<void> askForPassword(BuildContext context, RoomData room) async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            title: Text(
+              'Mot de passe',
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+            content: TextField(
+              onChanged: (value) {
+                setState(() {
+                  password = value;
+                });
+              },
+              decoration: InputDecoration(hintText: "Mot de passe"),
+            ),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text('CANCEL', style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                ),
+                onPressed: () {
+                  setState(() {
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+              ElevatedButton(
+                child: Text('OK', style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
+                onPressed: () {
+                  setState(() {
+                    if (password == room.passwd) {
+                      socketService.socket.emit("joinRoom",
+                          [room.name, socketService.socket.id]
+                      );
+                    }
+                    else{
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: const Text("Mauvais mot de passe"),
+                        backgroundColor: Colors.red.shade300,
+                      ));
+                    }
+                    Navigator.pop(context);
+                  });
+                },
+              ),
+            ],
+          );
+        });
   }
 }

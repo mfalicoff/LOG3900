@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 import { ChatMessage } from '@app/classes/chat-message.interface';
 import { DictJSON } from '@app/classes/dict-json';
+import { GameSaved } from '@app/classes/game-saved';
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
@@ -20,6 +21,7 @@ import { ChatService } from './chat.service';
 import { CommunicationBoxService } from './communication-box.service';
 import { DatabaseService } from './database.service';
 import { DictionaryService } from './dictionary.service';
+import GameSavedService from './game-saved.service';
 import { LetterBankService } from './letter-bank.service';
 import { MatchmakingService } from './matchmaking.service';
 import { MouseEventService } from './mouse-event.service';
@@ -40,6 +42,7 @@ export class SocketManager {
     chatHistory: ChatMessage[] = [];
     private userService = new UserService();
     private avatarService = new avatarService();
+    private gameSavedService = new GameSavedService();
 
     constructor(
         server: http.Server,
@@ -71,7 +74,7 @@ export class SocketManager {
             this.commBoxInputHandler(socket);
             // handling disconnection and abandonnement
             this.disconnectAbandonHandler(socket);
-            // handling dictionnaries, VP names and highscores
+            // handling dictionaries, VP names and high scores
             this.adminHandler(socket);
             // handling the ranked/matchmaking events
             this.rankedHandler(socket);
@@ -310,7 +313,7 @@ export class SocketManager {
             this.gameUpdateClients(game);
         });
 
-        socket.on('onBoardToStandDrop', (tileDropped, standIdx) => {
+        socket.on('onBoardToStandDrop', (tileDroppedIdxs, letterDropped, standIdx) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -323,7 +326,7 @@ export class SocketManager {
             if (!player) {
                 return;
             }
-            this.mouseEventService.onBoardToStandDrop(tileDropped, standIdx, player, game);
+            this.mouseEventService.onBoardToStandDrop(tileDroppedIdxs, letterDropped, standIdx, player, game);
             this.gameUpdateClients(game);
         });
 
@@ -456,6 +459,11 @@ export class SocketManager {
             }
             socket.emit('sendLetterReserve', this.letterBankService.getLettersInReserve(game));
         });
+
+        socket.on('saveGame', async (game: GameSaved) => {
+            const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
+            this.sio.to(savedGame.roomName).emit('savedGameId', savedGame._id);
+        });
     }
 
     private async createGameAndPlayer(
@@ -555,6 +563,14 @@ export class SocketManager {
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', (name) => {
             this.users.set(socket.id, { name, roomName: '', elo: 2000 });
+        });
+
+        socket.on('forceLogout', (name) => {
+            for (const user of this.users) {
+                if (user[1].name === name) {
+                    this.sio.sockets.sockets.get(user[0])?.emit('forceLogout');
+                }
+            }
         });
 
         socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, gameMode, isGamePrivate, passwd, activatedPowers }) => {
@@ -864,10 +880,6 @@ export class SocketManager {
         if (!game) {
             return;
         }
-        if (game.gameFinished) {
-            this.sio.sockets.emit('gameOver');
-            return;
-        }
 
         const playerThatLeaves = game.mapPlayers.get(user.name);
         const specThatLeaves = game.mapSpectators.get(socket.id);
@@ -881,7 +893,7 @@ export class SocketManager {
 
             if (nbRealPlayer >= 1 || nbSpectators >= 1) {
                 // we send to the opponent a update of the game
-                const waitBeforeAbandonment = 3000;
+                const waitBeforeAbandonment = 1000;
                 setTimeout(async () => {
                     await this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
                     if (socket.id === game.masterTimer) {
@@ -898,25 +910,29 @@ export class SocketManager {
                         this.shouldCreatorBeAbleToStartGame(game);
                     }
 
-                    // check if we should delete the room game or not
+                    // we check if we should delete the game or not
                     this.gameFinishedAction(game);
                 }, waitBeforeAbandonment);
             } else {
                 // we remove the player leaving in the map
                 game.mapPlayers.delete(playerThatLeaves.name);
-                // we decide if we delete the room or not
-                this.gameFinishedAction(game);
             }
         } else if (specThatLeaves) {
             // if it is a spectator that leaves
             game.mapSpectators.delete(socket.id);
-            // we check if we should delete the game or not
-            this.gameFinishedAction(game);
+
+            // if spectator was master timer we appoint a new one
+            if (socket.id === game.masterTimer) {
+                game.setMasterTimer();
+            }
         } else {
             // should never go there
             // eslint-disable-next-line no-console
             console.log('Game is broken in socketManager::leaveGame. Good luck to u who got this error :)');
         }
+
+        // we check if we should delete the game or not
+        this.gameFinishedAction(game);
 
         socket.leave(user.roomName);
         user.roomName = '';

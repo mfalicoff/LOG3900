@@ -3,6 +3,7 @@ import { CreateUserValidator } from '@app/utils/validators';
 import { User } from '@app/classes/users.interface';
 import UserService from '@app/services/user.service';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
+import { GameSaved } from '@app/classes/game-saved';
 
 /* eslint-disable no-invalid-this */
 
@@ -19,9 +20,20 @@ class UsersController {
         }
     };
 
+    getFavouriteGames = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId: string = req.params.id;
+            const findGamesData: GameSaved[] = await this.userService.findFavouriteGames(userId);
+
+            res.status(HTTPStatusCode.OK).send(findGamesData);
+        } catch (error) {
+            next(error);
+        }
+    };
+
     getUserByName = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const userName: string = req.query.name as string;
+            const userName: string = req.params.name;
             const findOneUserData: User = await this.userService.findUserByName(userName);
 
             res.status(HTTPStatusCode.OK).json({ data: findOneUserData, message: 'findOne' });
@@ -57,6 +69,18 @@ class UsersController {
             const userId: string = req.params.id;
             const userData: CreateUserValidator = req.body;
             const updateUserData: User = await this.userService.updateUser(userId, userData);
+
+            res.status(HTTPStatusCode.OK).json({ data: updateUserData, message: 'updated' });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    updateFavouriteGames = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId: string = req.params.id;
+            const gameId: string = req.body.gameId;
+            const updateUserData: User = await this.userService.updateFavouriteGames(userId, gameId);
 
             res.status(HTTPStatusCode.OK).json({ data: updateUserData, message: 'updated' });
         } catch (error) {

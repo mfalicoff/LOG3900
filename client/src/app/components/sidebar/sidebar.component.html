@@ -1,21 +1,23 @@
 <div class="container">
     <h1>CONTRÔLES</h1>
-    <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
-        <button 
-            mat-raised-button 
+    <div class="buttonContainer">
+        <button
+            mat-raised-button
             matTooltip="Abandonner"
-            *ngIf="!infoClientService.game.gameFinished && infoClientService.game.gameStarted"
-            (click)="onClickGiveUpButton()" 
+            *ngIf="
+                !infoClientService.game.gameFinished && 
+                infoClientService.game.gameStarted &&
+                !infoClientService.isSpectator"
+            (click)="onClickGiveUpButton()"
             class="optionButton"
         >
         Abandonner
         </button>
     </div>
-    
-    <div class="buttonContainer">
+
+    <div *ngIf="shouldLeaveGameBe()" class="buttonContainer">
         <button
             mat-raised-button
-            *ngIf="shouldLeaveGameBe()"
             id="cancelGame"
             class="optionButton"
             (click)="leaveGame()"
@@ -26,39 +28,39 @@
     </div>
 
     <div *ngIf="!infoClientService.isSpectator" class="buttonContainer">
-        <button 
-            mat-raised-button 
-            *ngIf="infoClientService.creatorShouldBeAbleToStartGame" 
-            id="startGame" 
-            class="optionButton" 
+        <button
+            mat-raised-button
+            *ngIf="infoClientService.creatorShouldBeAbleToStartGame"
+            id="startGame"
+            class="optionButton"
             (click)="startGame()"
         >
             START GAME
         </button>
     </div>
     <div class="buttonContainer">
-        <button 
-            mat-raised-button 
-            *ngIf="shouldSpecBeAbleToBePlayer()" 
-            id="specBecomePlayer" 
-            class="optionButton" 
+        <button
+            mat-raised-button
+            *ngIf="shouldSpecBeAbleToBePlayer()"
+            id="specBecomePlayer"
+            class="optionButton"
             (click)="spectWantsToBePlayer()"
         >
             Prendre la place d'un joueur virtuel
         </button>
     </div>
     <div class="buttonContainer">
-        <button 
-            mat-raised-button 
+        <button
+            mat-raised-button
             *ngIf="
-                !infoClientService.isSpectator 
-                && infoClientService.game.gameStarted 
+                !infoClientService.isSpectator
+                && infoClientService.game.gameStarted
                 && infoClientService.isTurnOurs
                 && infoClientService.game.gameMode === 'power-cards'
                 && !infoClientService.powerUsedForTurn
-            " 
-            id="playerBecomeSpec" 
-            class="optionButton" 
+            "
+            id="playerBecomeSpec"
+            class="optionButton"
             (click)="showPowerList()"
         >
             Liste pouvoirs
@@ -89,10 +91,10 @@
                       </div>
                     </td>
                     <td>
-                        <button 
+                        <button
                             mat-raised-button
                             class="validateBtn"
-                            id="buttonShowModal" 
+                            id="buttonShowModal"
                             (click)="onPowerCardClick(powerCard.name)"
                         >Utiliser</button>
                     </td>
@@ -113,8 +115,8 @@
                     <tbody>
                         <tr *ngFor="let player of infoClientService.actualRoom.players">
                             <td *ngIf="player.name !== infoClientService.player.name" (click)="onExchangeStandChoice(player.name)">
-                                <img 
-                                    [src]="player.avatarUri" 
+                                <img
+                                    [src]="player.avatarUri"
                                     class="profile"
                                 >
                             </td>
@@ -126,16 +128,16 @@
                 </table>
             </div>
         </div>
-    </div> 
-    
+    </div>
+
     <!-- the modal to choose the target letter on the satnd in case the player uses the card "EXCHANGE_LETTER_JOKER" -->
     <div class="modal" [style.display]="infoClientService.displayExchLetterModal">
         <div class="modal-content" >
             <span style="font-size:16px">Cliquez sur la lettre que vous voulez échanger :</span>
             <br><br>
             <div id="divLetterStand" *ngFor="let tile of infoClientService.player.stand; let indexOfelement=index;">
-                <span 
-                    class="letter" 
+                <span
+                    class="letter"
                     id="{{indexOfelement}}"
                     (click)="onChooseLetterToExchange(indexOfelement)"
                 >
@@ -147,24 +149,24 @@
             <br><br>
             <div id="divLetterStand" *ngFor="let letter of this.infoClientService.letterReserve; let indexOfelement=index;">
                 <!-- +7 necessary to not confond the letter to exchange from the one to take from the reserve-->
-                <span 
-                    class="letter" 
-                    id="{{indexOfelement + 7}}" 
+                <span
+                    class="letter"
+                    id="{{indexOfelement + 7}}"
                     (click)="onChooseLetterToTakeFromReserve(indexOfelement, letter)"
                 >
                     {{letter.toLowerCase()}}
                 </span>
             </div>
             <br><br>
-            <button 
-                mat-raised-button 
-                class="validateBtn" 
+            <button
+                mat-raised-button
+                class="validateBtn"
                 (click)="activateLetterExchange()"
             >
                 Valider
             </button>
         </div>
-    </div> 
+    </div>
 
     <!-- the modal to choose the target letter on the satnd in case the player uses the card "EXCHANGE_LETTER_JOKER" -->
     <div class="modal" [style.display]="infoClientService.displayTransformTileModal">
@@ -175,13 +177,13 @@
                 <mat-label>Coordonnées</mat-label>
                 <input matInput placeholder="Ex. a9" [(ngModel)]='coordsTileToChange'>
             </mat-form-field>
-            <button 
-                mat-raised-button 
-                class="validateBtn" 
+            <button
+                mat-raised-button
+                class="validateBtn"
                 (click)="validateTileChangeCoords()"
             >
                 Valider
             </button>
         </div>
-    </div> 
+    </div>
 </div>

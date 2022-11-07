@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import '../constants/constants.dart';
 import '../models/game-server.dart';
 import '../models/letter.dart';
+import '../models/mock_dict.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/vec4.dart';
 
-class InfoClientService extends ChangeNotifier{
+class InfoClientService with ChangeNotifier{
 
   static final InfoClientService _gameService = InfoClientService._internal();
 
@@ -25,6 +26,7 @@ class InfoClientService extends ChangeNotifier{
 
   late List<RoomData> rooms = [];
   late RoomData actualRoom;
+  late bool? isGamePrivate = false;
 
   String playerName = 'DefaultPlayerName';
 
@@ -34,6 +36,11 @@ class InfoClientService extends ChangeNotifier{
   String gameMode = CLASSIC_MODE;
   double eloDisparity  =  60;
 
+  String incomingPlayer = "";
+  String incomingPlayerId = "";
+
+  List<MockDict> dictionaries = [];
+
   factory InfoClientService(){
     return _gameService;
   }
@@ -41,6 +48,7 @@ class InfoClientService extends ChangeNotifier{
   InfoClientService._internal() {
     actualRoom = RoomData(name: 'default', gameMode: 'classic', timeTurn: '1', passwd: 'fake', players: [], spectators: []);
     game = GameServer(minutesByTurn: 0, gameMode: 'Solo', roomName: 'defaultRoom', isGamePrivate: false, passwd: '' );
+    dictionaries.add(MockDict('Dictionnaire français par défaut', 'Ce dictionnaire contient environ trente mille mots français'));
     initStand();
   }
 
@@ -140,12 +148,42 @@ class InfoClientService extends ChangeNotifier{
   }
 
   void updatePlayer(player){
-    player = Player.fromJson(player);
-    notifyListeners();
+    this.player = Player.fromJson(player);
   }
 
   void updateGame(data){
     game = GameServer.fromJson(data);
+    notifyListeners();
+  }
+
+  void addRoom(room){
+    rooms.add(room);
+    notifyListeners();
+  }
+
+  void removeRoom(roomNameToDelete){
+    rooms.removeWhere((element) => element.name == roomNameToDelete);
+    notifyListeners();
+  }
+
+  void updateDictionaries(dictionaries){
+    List<MockDict> tempDictionaries = [];
+    for(var dictionary in dictionaries){
+      tempDictionaries.add(MockDict.fromJson(dictionary));
+    }
+    dictionaries = tempDictionaries;
+    notifyListeners();
+  }
+
+  void askForEntrance(data){
+    incomingPlayer = data[0];
+    incomingPlayerId = data[1];
+    notifyListeners();
+  }
+
+  void clearIncomingPlayer(){
+    incomingPlayer = "";
+    incomingPlayerId = "";
     notifyListeners();
   }
 

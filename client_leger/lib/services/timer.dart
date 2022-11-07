@@ -4,9 +4,12 @@ import 'package:flutter/cupertino.dart';
 
 class TimerService with ChangeNotifier{
   String displayTimer = '';
+  String matchmakingDisplayTimer = '';
+  num matchmakingSecondsValue = 0;
   num secondsValue = 0;
   num playingTime = 0;
   late Timer timerInterval = Timer(Duration(milliseconds: 1), () {});
+  late Timer matchmakingTimerInterval = Timer(Duration(milliseconds: 1), () {});
 
   static final TimerService _timerService = TimerService._internal();
 
@@ -15,6 +18,24 @@ class TimerService with ChangeNotifier{
   }
 
   TimerService._internal();
+
+  startMatchmakingTimer() {
+    num secondsInMinute = 60;
+
+    num displayZero = 9;
+    int oneSecond = 1000;
+    matchmakingTimerInterval = Timer.periodic(Duration(milliseconds: oneSecond),(timer) {
+      matchmakingSecondsValue++;
+      if (secondsValue % secondsInMinute <= displayZero) {
+          matchmakingDisplayTimer =
+              'Temps écoulé : ${(matchmakingSecondsValue / secondsInMinute).floor()}:0${matchmakingSecondsValue % secondsInMinute}';
+        } else {
+          matchmakingDisplayTimer =
+              'Temps écoulé : ${(matchmakingSecondsValue / secondsInMinute).floor()}:${matchmakingSecondsValue % secondsInMinute}';
+        }
+        notifyListeners();
+    });
+  }
 
   startTimer(num minutesByTurn) {
     if (minutesByTurn < 0) {
@@ -46,5 +67,9 @@ class TimerService with ChangeNotifier{
 
   clearTimer() {
     timerInterval.cancel();
+  }
+
+  clearMatchmakingTimer() {
+    matchmakingTimerInterval.cancel();
   }
 }

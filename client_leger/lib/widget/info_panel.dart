@@ -1,9 +1,9 @@
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
+import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
+import 'package:client_leger/widget/list_players.dart';
 import 'package:flutter/material.dart';
-
-import '../utils/utils.dart';
 
 class InfoPanel extends StatefulWidget {
   const InfoPanel({Key? key}) : super(key: key);
@@ -13,17 +13,17 @@ class InfoPanel extends StatefulWidget {
 }
 
 class _InfoPanelState extends State<InfoPanel> {
-  final InfoClientService gameService = InfoClientService();
+  final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
   final TimerService timerService = TimerService();
+  final TapService tapService = TapService();
 
   @override
   void initState() {
     super.initState();
 
-    gameService.addListener(refresh);
-    gameService.actualRoom.addListener(refresh);
-    socketService.addListener(refresh);
+    infoClientService.addListener(refresh);
+    infoClientService.actualRoom.addListener(refresh);
     timerService.addListener(refresh);
   }
 
@@ -40,21 +40,28 @@ class _InfoPanelState extends State<InfoPanel> {
       color: Theme.of(context).colorScheme.secondary,
       child: Column(
         children: [
-          Text(
-            gameService.displayTurn,
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.primary, fontSize: 20),
-          ),
-          Text(
-            timerService.displayTimer,
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.primary, fontSize: 20),
+          FittedBox(
+            child: Text(
+              infoClientService.displayTurn,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary, fontSize: 20),
+            ),
           ),
           const SizedBox(
             height: 5,
           ),
           Container(
-            child: gameService.isSpectator == true
+            child: infoClientService.game.gameStarted ? Text(
+              timerService.displayTimer,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary, fontSize: 20),
+            ) : null,
+          ),
+          const SizedBox(
+            height: 5,
+          ),
+          Container(
+            child: infoClientService.isSpectator == true
                 ? Container()
                 : Row(
                     children: [
@@ -125,78 +132,27 @@ class _InfoPanelState extends State<InfoPanel> {
           const SizedBox(
             height: 5,
           ),
-          DataTable(
-            columns: [
-              DataColumn(
-                label: Container(),
-              ),
-              DataColumn(
-                label: Expanded(
-                  child: Container(
-                    padding: EdgeInsets.zero,
-                    child: Text(
-                      "Nom Joueur",
-                      overflow: TextOverflow.visible,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                      // textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-              DataColumn(
-                label: Expanded(
-                  child: Container(
-                    padding: EdgeInsets.zero,
-                    child: Text(
-                      "Score",
-                      overflow: TextOverflow.visible,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                      // textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-            rows: List<DataRow>.generate(
-              gameService.actualRoom.players.length,
-              (int index) => DataRow(
-                cells: [
-                  DataCell(getAvatarFromString(
-                      22, gameService.actualRoom.players[index].avatarUri)),
-                  DataCell(
-                    Text(
-                      gameService.actualRoom.players[index].name,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  ),
-                  DataCell(
-                    Text(
-                      gameService.actualRoom.players[index].score.toString(),
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          const ListPlayers(),
         ],
       ),
     );
   }
 
   void _pass() {
-    if(gameService.isTurnOurs && gameService.game.gameStarted) {
-      socketService.socket.emit('onExchangeClick');
+    if(infoClientService.isTurnOurs && infoClientService.game.gameStarted) {
+      socketService.socket.emit('turnFinished');
     }
   }
 
-  void _trade() {}
+  void _trade() {
+    socketService.socket.emit('onExchangeClick');
+  }
 
-  void _cancel() {}
+  void _cancel() {
+    socketService.socket.emit('onAnnulerClick');
+  }
 
-  void _play() {}
+  void _play() {
+    tapService.play(socketService.socket);
+  }
 }
