@@ -19,7 +19,6 @@ enum Commands {
 
 @Service()
 export class ChatService {
-    passInARowGlobal = 12;
     constructor(public validator: ValidationService, private endGameService: EndGameService, private userService: UserService) {}
 
     // verify if a command is entered and redirect to corresponding function
@@ -79,7 +78,6 @@ export class ChatService {
 
     async placeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
-        this.passInARowGlobal = 0;
         if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
             this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             await this.showEndGameStats(game /* , player*/);
@@ -93,14 +91,25 @@ export class ChatService {
     // function to pass turn
     async passCommand(input: string, game: GameServer, player: Player) {
         player.passInARow++;
-        this.passInARowGlobal++;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
+        console.log('passage de tour de :' + player.name);
         player.chatHistory.push({ message: GlobalConstants.PASS_CMD, isCommand: false, sender: 'S' });
-        if (this.passInARowGlobal === 12) {
+        let didEveryonePass3Times = false;
+        for (const playerElem of game.mapPlayers.values()) {
+            if (playerElem.passInARow < 3) {
+                didEveryonePass3Times = false;
+                break;
+            } else {
+                didEveryonePass3Times = true;
+            }
+        }
+
+        if (didEveryonePass3Times) {
+            console.log('Le jeu est finit, on affiche dans la com box, on appel show end game stats et on fait gameFinisged');
             this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             await this.showEndGameStats(game /* , player*/);
+            player.passInARow = 0;
             game.gameFinished = true;
-            return;
         }
     }
 
@@ -157,7 +166,6 @@ export class ChatService {
 
     private exchangeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
-        this.passInARowGlobal = 0;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
         player.chatHistory.push({ message: GlobalConstants.EXCHANGE_PLAYER_CMD, isCommand: false, sender: 'S' });
     }
@@ -199,6 +207,7 @@ export class ChatService {
     }
 
     private async showEndGameStats(game: GameServer /* , player: Player*/) {
+        console.log('Appel a show end game stats');
         game.endTime = new Date().getTime();
         let playersCpy: Player[] = Array.from(game.mapPlayers.values());
         playersCpy = [...new Set(playersCpy)];
