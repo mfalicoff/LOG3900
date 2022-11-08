@@ -39,6 +39,7 @@ export class TimerService {
         const secondsInMinute = 60;
         const displayZero = 9;
         const oneSecond = 1000;
+        this.playingTime++;
         this.timerMatchmaking = setInterval(() => {
             this.matchmakingSecondsValue++;
             if (this.matchmakingSecondsValue % secondsInMinute <= displayZero) {

@@ -15,7 +15,7 @@ import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/tile.dart';
 import '../models/vec2.dart';
-import 'controller.dart';
+import 'users_controller.dart';
 import 'info_client_service.dart';
 
 

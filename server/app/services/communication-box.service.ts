@@ -22,7 +22,7 @@ export class CommunicationBoxService {
     ) {}
 
     // function that shows the content of the input, place it in the array of message then delte the input field
-    onEnterPlayer(game: GameServer, player: Player, input: string): boolean {
+    async onEnterPlayer(game: GameServer, player: Player, input: string): Promise<boolean> {
         const dataSeparated = input.split(' ');
 
         // checking if msg is a command of not
@@ -38,7 +38,7 @@ export class CommunicationBoxService {
 
         switch (dataSeparated[0]) {
             case '!placer': {
-                if (!this.chatService.sendMessage(input, game, player)) {
+                if (!(await this.chatService.sendMessage(input, game, player))) {
                     // if there is a problem with the message we the letters to the stand
                     // and delete them from the board
                     const letterNotWellUsed = this.boardService.rmTempTiles(game);
@@ -113,7 +113,7 @@ export class CommunicationBoxService {
                 break;
             }
             case '!échanger': {
-                if (this.chatService.sendMessage(input, game, player)) {
+                if (await this.chatService.sendMessage(input, game, player)) {
                     this.putLogicService.computeWordToExchange(game, player, dataSeparated[1]);
                     // We change the turn
                     this.playAreaService.changePlayer(game);
@@ -121,25 +121,25 @@ export class CommunicationBoxService {
                 break;
             }
             case '!passer': {
-                if (this.chatService.sendMessage(input, game, player)) {
+                if (await this.chatService.sendMessage(input, game, player)) {
                     // We change the turn
                     this.playAreaService.changePlayer(game);
                 }
                 break;
             }
             case '!reserve': {
-                if (this.chatService.sendMessage(input, game, player) && player.debugOn) {
+                if ((await this.chatService.sendMessage(input, game, player)) && player.debugOn) {
                     this.chatService.printReserveStatus(game, player);
                 }
                 break;
             }
             default: {
-                this.chatService.sendMessage(input, game, player);
+                await this.chatService.sendMessage(input, game, player);
             }
         }
         return true;
     }
-    onEnterSpectator(game: GameServer, spec: Spectator, input: string) {
+    async onEnterSpectator(game: GameServer, spec: Spectator, input: string) {
         if (this.chatService.validator.entryIsTooLong(input)) {
             // verify the length of the command
             spec.chatHistory.push({

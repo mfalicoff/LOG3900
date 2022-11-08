@@ -23,6 +23,7 @@ export class SocketService {
     socket: Socket;
     gameFinished: BehaviorSubject<boolean>;
     gameId: string;
+    count: number;
     private urlString = environment.serverUrl;
 
     constructor(
@@ -37,6 +38,7 @@ export class SocketService {
         this.socket = io(this.urlString);
         this.gameFinished = new BehaviorSubject(this.infoClientService.game.gameFinished);
         this.socketListen();
+        this.count = 1;
     }
 
     private socketListen() {
@@ -84,14 +86,16 @@ export class SocketService {
             }, GlobalConstants.WAIT_FOR_CANVAS_INI);
         });
 
-        this.socket.on('gameBoardUpdate', (game) => {
+        this.socket.on('gameBoardUpdate', async (game) => {
             this.infoClientService.game = game;
             if (!game.gameFinished) {
                 setTimeout(() => {
                     this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
                 }, GlobalConstants.WAIT_FOR_CANVAS_INI);
-            } else {
+            }
+            if (game.gameFinished && this.count === 1) {
                 this.gameFinished.next(true);
+                this.count++;
             }
         });
 
@@ -262,6 +266,10 @@ export class SocketService {
         });
 
         this.socket.on('SendDictionariesToClient', (dictionaries: MockDict[]) => {
+            this.infoClientService.dictionaries = dictionaries;
+        });
+
+        this.socket.on('ReSendDictionariesToClient', (dictionaries: MockDict[]) => {
             this.infoClientService.dictionaries = dictionaries;
         });
 

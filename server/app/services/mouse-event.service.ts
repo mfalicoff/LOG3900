@@ -111,12 +111,14 @@ export class MouseEventService {
         this.doTheManipulation(game, player, indexTileChanged);
     }
 
-    exchangeButtonClicked(game: GameServer, player: Player): void {
+    async exchangeButtonClicked(game: GameServer, player: Player): Promise<void> {
         const exchangeCmd: string = this.createExchangeCmd(player);
-        this.chatService.sendMessage(exchangeCmd, game, player);
-        for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
-            if (player.stand[i].backgroundColor === '#AEB1D9') {
-                this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
+        const response: boolean = (await this.chatService.sendMessage(exchangeCmd, game, player)) as boolean;
+        if (response) {
+            for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
+                if (player.stand[i].backgroundColor === '#AEB1D9') {
+                    this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
+                }
             }
         }
 

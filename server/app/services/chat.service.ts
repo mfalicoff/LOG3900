@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
@@ -18,10 +19,11 @@ enum Commands {
 
 @Service()
 export class ChatService {
+    passInARowGlobal = 12;
     constructor(public validator: ValidationService, private endGameService: EndGameService, private userService: UserService) {}
 
     // verify if a command is entered and redirect to corresponding function
-    sendMessage(input: string, game: GameServer, player: Player): boolean {
+    async sendMessage(input: string, game: GameServer, player: Player): Promise<boolean> {
         const command: string = input.split(' ', 1)[0];
         if (input[0] === '!') {
             if (game.gameFinished) {
@@ -54,7 +56,7 @@ export class ChatService {
                     return false;
                 }
             }
-            this.commandFilter(input, game, player);
+            await this.commandFilter(input, game, player);
             return true;
         }
         if (this.validator.entryIsTooLong(input)) {
@@ -75,38 +77,30 @@ export class ChatService {
         }
     }
 
-    placeCommand(input: string, game: GameServer, player: Player) {
+    async placeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
-
+        this.passInARowGlobal = 0;
+        if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
+            this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
+            await this.showEndGameStats(game /* , player*/);
+            game.gameFinished = true;
+            return;
+        }
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
         player.chatHistory.push({ message: GlobalConstants.PLACE_CMD, isCommand: false, sender: 'S' });
-
-        if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
-            this.showEndGameStats(game, player);
-            this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
-            game.gameFinished = true;
-        }
     }
 
     // function to pass turn
-    passCommand(input: string, game: GameServer, player: Player) {
+    async passCommand(input: string, game: GameServer, player: Player) {
         player.passInARow++;
+        this.passInARowGlobal++;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
         player.chatHistory.push({ message: GlobalConstants.PASS_CMD, isCommand: false, sender: 'S' });
-
-        let didEveryonePass3Times = false;
-        for (const playerElem of game.mapPlayers.values()) {
-            if (playerElem.passInARow < 3) {
-                didEveryonePass3Times = false;
-                break;
-            } else {
-                didEveryonePass3Times = true;
-            }
-        }
-        if (didEveryonePass3Times) {
-            this.showEndGameStats(game, player);
-            // this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
+        if (this.passInARowGlobal === 12) {
+            this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
+            await this.showEndGameStats(game /* , player*/);
             game.gameFinished = true;
+            return;
         }
     }
 
@@ -137,17 +131,17 @@ export class ChatService {
     }
 
     // filter the command to call the correct function
-    private commandFilter(input: string, game: GameServer, player: Player): void {
+    private async commandFilter(input: string, game: GameServer, player: Player): Promise<void> {
         const command = input.split(' ', 1)[0];
         switch (command) {
             case Commands.Place:
-                this.placeCommand(input, game, player);
+                await this.placeCommand(input, game, player);
                 break;
             case Commands.Exchange:
                 this.exchangeCommand(input, game, player);
                 break;
             case Commands.Pass:
-                this.passCommand(input, game, player);
+                await this.passCommand(input, game, player);
                 break;
             case Commands.Debug:
                 this.debugCommand(input, player, game);
@@ -163,6 +157,7 @@ export class ChatService {
 
     private exchangeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
+        this.passInARowGlobal = 0;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
         player.chatHistory.push({ message: GlobalConstants.EXCHANGE_PLAYER_CMD, isCommand: false, sender: 'S' });
     }
@@ -203,10 +198,11 @@ export class ChatService {
         }
     }
 
-    private async showEndGameStats(game: GameServer, player: Player) {
+    private async showEndGameStats(game: GameServer /* , player: Player*/) {
         game.endTime = new Date().getTime();
-        this.pushMsgToAllPlayers(game, player.name, GlobalConstants.END_OF_GAME, false, 'S');
-        for (const playerElem of game.mapPlayers.values()) {
+        let playersCpy: Player[] = Array.from(game.mapPlayers.values());
+        playersCpy = [...new Set(playersCpy)];
+        for (const playerElem of playersCpy) {
             this.pushMsgToAllPlayers(
                 game,
                 playerElem.name,
@@ -217,32 +213,31 @@ export class ChatService {
             const gameLength = game.endTime - game.startTime;
             await this.userService.updateStatsAtEndOfGame(gameLength, playerElem);
         }
-        await this.sendWinnerMessage(game, player);
+        await this.sendWinnerMessage(game, this.endGameService.chooseWinner(game, playersCpy));
     }
 
-    private async sendWinnerMessage(game: GameServer, player: Player) {
+    private async sendWinnerMessage(game: GameServer, winners: Player[]) {
         let playersCpy: Player[] = Array.from(game.mapPlayers.values());
-        playersCpy.push(player);
+        // eslint-disable-next-line no-unused-vars
         playersCpy = [...new Set(playersCpy)];
-        const winners = this.endGameService.chooseWinner(game, playersCpy);
         if (winners.length === 1) {
             this.pushMsgToAllPlayers(
                 game,
-                player.name,
+                winners[0].name,
                 GlobalConstants.WINNER_MSG_PT1 + winners[0].name + GlobalConstants.WINNER_MSG_PT2 + winners[0].score,
                 false,
                 'S',
             );
             await this.userService.updateWinHistory(winners[0]);
         } else if (winners.length > 1) {
-            this.pushMsgToAllPlayers(game, player.name, GlobalConstants.DRAW_MSG, false, 'S');
+            this.pushMsgToAllPlayers(game, '', GlobalConstants.DRAW_MSG, false, 'S');
 
             for (const winner of winners) {
-                this.pushMsgToAllPlayers(game, player.name, 'Score final pour: ' + winner.name + ' est: ' + winner.score, false, 'S');
+                this.pushMsgToAllPlayers(game, '', 'Score final pour: ' + winner.name + ' est: ' + winner.score, false, 'S');
                 await this.userService.updateWinHistory(winner);
             }
         } else {
-            this.pushMsgToAllPlayers(game, player.name, GlobalConstants.GAME_NOT_UNDERSTOOD, false, 'S');
+            this.pushMsgToAllPlayers(game, '', GlobalConstants.GAME_NOT_UNDERSTOOD, false, 'S');
         }
         const winnerNames = winners.map((winner) => winner.name);
         for (const playerElem of game.mapPlayers.values()) {

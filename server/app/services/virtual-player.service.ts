@@ -64,7 +64,7 @@ export class VirtualPlayerService {
         }
     }
 
-    generateMoves(game: GameServer, player: Player) {
+    async generateMoves(game: GameServer, player: Player) {
         const letterStand: string[] = [];
         for (const tile of player.stand) {
             letterStand.push(tile.letter.value);
@@ -92,10 +92,10 @@ export class VirtualPlayerService {
                 }
             }
         }
-        return this.randomPlacement(game, player);
+        return await this.randomPlacement(game, player);
     }
 
-    randomPlacement(game: GameServer, player: Player) {
+    async randomPlacement(game: GameServer, player: Player) {
         const maxProbability = 100;
         const eventA = 0.3;
         const eventB = 0.7;
@@ -117,10 +117,10 @@ export class VirtualPlayerService {
         // if the moveToPlay doesn't exist, VP pass his turn
         if (moveToPlay === undefined) {
             player.chatHistory.push({ message: ' Pas de solution trouvée pour cette plage de pointage', isCommand: false, sender: 'S' });
-            this.chatService.passCommand('!passer', game, player); // check for deduction logic
+            await this.chatService.passCommand('!passer', game, player); // check for deduction logic
         } else {
             this.putLogicService.computeWordVPToDraw(game, player, moveToPlay);
-            this.chatService.placeCommand('!placer ' + moveToPlay.command + ' ' + moveToPlay.word, game, player);
+            await this.chatService.placeCommand('!placer ' + moveToPlay.command + ' ' + moveToPlay.word, game, player);
             this.debugCommandService.debugPrint(player, moveToPlay, game);
         }
         return moveToPlay;

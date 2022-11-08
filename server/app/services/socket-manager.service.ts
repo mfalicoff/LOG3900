@@ -84,7 +84,7 @@ export class SocketManager {
     }
 
     // The virtual player never calls this function
-    private manageNewMessageClient(placeMsg: string, socket: io.Socket) {
+    private async manageNewMessageClient(placeMsg: string, socket: io.Socket): Promise<void> {
         const user = this.users.get(socket.id);
         if (!user) {
             return;
@@ -99,15 +99,15 @@ export class SocketManager {
             return;
         }
         if (player) {
-            this.communicationBoxService.onEnterPlayer(game, player, placeMsg);
+            await this.communicationBoxService.onEnterPlayer(game, player, placeMsg);
         } else if (spectator) {
-            this.communicationBoxService.onEnterSpectator(game, spectator, placeMsg);
+            await this.communicationBoxService.onEnterSpectator(game, spectator, placeMsg);
         }
 
         // We update the chatHistory and the game of each client
-        this.gameUpdateClients(game);
+        await this.gameUpdateClients(game);
         if (game.gameFinished) {
-            this.triggerStopTimer(user.roomName);
+            await this.triggerStopTimer(user.roomName);
         }
     }
 
@@ -137,7 +137,7 @@ export class SocketManager {
             }
         });
 
-        socket.on('onExchangeClick', () => {
+        socket.on('onExchangeClick', async () => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -146,7 +146,7 @@ export class SocketManager {
 
             const game = this.rooms.get(user.roomName);
             if (game && player) {
-                this.mouseEventService.exchangeButtonClicked(game, player);
+                await this.mouseEventService.exchangeButtonClicked(game, player);
             }
         });
 
@@ -252,7 +252,7 @@ export class SocketManager {
             // this.joinGameAsSpectator(socket, gameStub, userStub);
         });
 
-        socket.on('addTempLetterBoard', (keyEntered, xIndex, yIndex) => {
+        socket.on('addTempLetterBoard', async (keyEntered, xIndex, yIndex) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -266,7 +266,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('gameBoardUpdate', game);
         });
 
-        socket.on('rmTempLetterBoard', (idxsTileToRm) => {
+        socket.on('rmTempLetterBoard', async (idxsTileToRm) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -277,10 +277,10 @@ export class SocketManager {
             }
             this.mouseEventService.rmTempLetterBoard(game, idxsTileToRm);
             // We send to all clients a gameState
-            this.gameUpdateClients(game);
+            await this.gameUpdateClients(game);
         });
 
-        socket.on('rmTileFromStand', (tile: Tile) => {
+        socket.on('rmTileFromStand', async (tile: Tile) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -294,10 +294,10 @@ export class SocketManager {
                 return;
             }
             this.mouseEventService.rmTileFromStand(player, tile);
-            this.gameUpdateClients(game);
+            await this.gameUpdateClients(game);
         });
 
-        socket.on('addTileToStand', (letterToAdd) => {
+        socket.on('addTileToStand', async (letterToAdd) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -311,10 +311,10 @@ export class SocketManager {
                 return;
             }
             this.mouseEventService.addTileToStand(game, player, letterToAdd);
-            this.gameUpdateClients(game);
+            await this.gameUpdateClients(game);
         });
 
-        socket.on('onBoardToStandDrop', (tileDroppedIdxs, letterDropped, standIdx) => {
+        socket.on('onBoardToStandDrop', async (tileDroppedIdxs, letterDropped, standIdx) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -328,10 +328,10 @@ export class SocketManager {
                 return;
             }
             this.mouseEventService.onBoardToStandDrop(tileDroppedIdxs, letterDropped, standIdx, player, game);
-            this.gameUpdateClients(game);
+            await this.gameUpdateClients(game);
         });
 
-        socket.on('onBoardToBoardDrop', (posClickedTileIdxs, posDropBoardIdxs) => {
+        socket.on('onBoardToBoardDrop', async (posClickedTileIdxs, posDropBoardIdxs) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -380,7 +380,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('clearTmpTileCanvas');
         });
 
-        socket.on('escapeKeyPressed', (tmpLettersOnBoard) => {
+        socket.on('escapeKeyPressed', async (tmpLettersOnBoard) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -398,7 +398,7 @@ export class SocketManager {
             // we tell all the client to clear the clearTmpTileCanvas
             this.sio.to(game.roomName).emit('clearTmpTileCanvas', game);
             // we update the board state
-            this.gameUpdateClients(game);
+            await this.gameUpdateClients(game);
         });
 
         socket.on('drawVerticalArrow', (arrowCoords) => {
@@ -431,7 +431,7 @@ export class SocketManager {
             this.sio.to(game.roomName).emit('drawHorizontalArrow', arrowCoords);
         });
 
-        socket.on('powerCardClick', (powerCardName, additionnalParams) => {
+        socket.on('powerCardClick', async (powerCardName, additionnalParams) => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -446,7 +446,7 @@ export class SocketManager {
             }
             this.powerCardsService.powerCardsHandler(game, player, powerCardName, additionnalParams);
             // we update the board state
-            this.gameUpdateClients(game);
+            await this.gameUpdateClients(game);
         });
 
         socket.on('requestLetterReserve', () => {
@@ -603,14 +603,14 @@ export class SocketManager {
                 spectators,
             });
 
-            this.gameUpdateClients(createdGame);
+            await this.gameUpdateClients(createdGame);
 
             // emit to change page on client after verification
             createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
 
-        socket.on('joinRoom', (roomName, playerId) => {
+        socket.on('joinRoom', async (roomName, playerId) => {
             const userData = this.users.get(playerId);
             if (!userData) {
                 return;
@@ -636,10 +636,10 @@ export class SocketManager {
                 }
             }
 
-            this.joinRoom(socket, userData, game);
+            await this.joinRoom(socket, userData, game);
         });
 
-        socket.on('acceptPlayer', (isAccepted, newPlayerId) => {
+        socket.on('acceptPlayer', async (isAccepted, newPlayerId) => {
             const userData = this.users.get(newPlayerId);
             if (!userData) {
                 return;
@@ -656,7 +656,7 @@ export class SocketManager {
             }
 
             if (isAccepted) {
-                this.joinRoom(socketNewPlayer, userData, game);
+                await this.joinRoom(socketNewPlayer, userData, game);
             } else {
                 userData.roomName = '';
                 this.sio.sockets.sockets.get(newPlayerId)?.emit('messageServer', "Vous n'avez pas été accepté dans la salle.");
@@ -728,7 +728,7 @@ export class SocketManager {
                 spectators: Array.from(game.mapSpectators.values()),
             });
 
-            this.gameUpdateClients(game);
+            await this.gameUpdateClients(game);
             this.shouldCreatorBeAbleToStartGame(game);
         });
 
@@ -754,12 +754,12 @@ export class SocketManager {
             }
         });
 
-        socket.on('leaveGame', () => {
-            this.leaveGame(socket, '');
+        socket.on('leaveGame', async () => {
+            await this.leaveGame(socket, '');
         });
     }
 
-    private joinRoom(socket: io.Socket, userData: User, game: GameServer): void {
+    private async joinRoom(socket: io.Socket, userData: User, game: GameServer): Promise<void> {
         let isOneNamedSame = false;
         for (const player of game.mapPlayers.values()) {
             if (userData.name === player.name) {
@@ -797,7 +797,7 @@ export class SocketManager {
         }
 
         // we send the game state to all clients in the room
-        this.gameUpdateClients(game);
+        await this.gameUpdateClients(game);
 
         // create button for creator to start the game if enough reel player are in the game
         this.shouldCreatorBeAbleToStartGame(game);
@@ -820,7 +820,7 @@ export class SocketManager {
     }
 
     // update game for all players in the room
-    private gameUpdateClients(game: GameServer) {
+    private async gameUpdateClients(game: GameServer) {
         // We send to all clients a gameState and a scoreBoardState\
         this.sio.to(game.roomName).emit('gameBoardUpdate', game);
 
@@ -838,13 +838,13 @@ export class SocketManager {
     }
 
     private disconnectAbandonHandler(socket: io.Socket) {
-        socket.on('disconnect', () => {
-            this.leaveGame(socket, " s'est déconnecté.");
+        socket.on('disconnect', async () => {
+            await this.leaveGame(socket, " s'est déconnecté.");
             this.users.delete(socket.id);
         });
 
-        socket.on('giveUpGame', () => {
-            this.leaveGame(socket, ' a abandonné la partie.');
+        socket.on('giveUpGame', async () => {
+            await this.leaveGame(socket, ' a abandonné la partie.');
         });
     }
 
@@ -872,7 +872,7 @@ export class SocketManager {
         });
     }
 
-    private leaveGame(socket: io.Socket, leaveMsg: string) {
+    private async leaveGame(socket: io.Socket, leaveMsg: string) {
         const user = this.users.get(socket.id);
         if (!user) {
             return;
@@ -892,7 +892,7 @@ export class SocketManager {
             ).length;
             const nbSpectators = game.mapSpectators.size;
 
-            if (nbRealPlayer >= 1 || nbSpectators >= 1) {
+            if ((nbRealPlayer >= 1 || nbSpectators >= 1) && !game.gameFinished) {
                 // we send to the opponent a update of the game
                 const waitBeforeAbandonment = 1000;
                 setTimeout(async () => {
@@ -904,7 +904,7 @@ export class SocketManager {
                         playerThatLeaves.isCreatorOfGame = !playerThatLeaves.isCreatorOfGame;
                         game.setNewCreatorOfGame();
                     }
-                    this.gameUpdateClients(game);
+                    await this.gameUpdateClients(game);
 
                     // if the game hasn't started we check if the button start game should be present
                     if (!game.gameStarted) {
@@ -937,7 +937,7 @@ export class SocketManager {
 
         socket.leave(user.roomName);
         user.roomName = '';
-        this.gameUpdateClients(game);
+        await this.gameUpdateClients(game);
     }
     private gameFinishedAction(game: GameServer) {
         const nbRealPlayer = Array.from(game.mapPlayers.values()).filter((player) => player.id !== 'virtualPlayer').length;
@@ -967,8 +967,8 @@ export class SocketManager {
         }
     }
     private commBoxInputHandler(socket: io.Socket) {
-        socket.on('newMessageClient', (inputClient) => {
-            this.manageNewMessageClient(inputClient, socket);
+        socket.on('newMessageClient', async (inputClient) => {
+            await this.manageNewMessageClient(inputClient, socket);
         });
 
         socket.on('chat msg', (chat: ChatMessage) => {
@@ -977,7 +977,7 @@ export class SocketManager {
         });
     }
 
-    private triggerStopTimer(roomName: string) {
+    private async triggerStopTimer(roomName: string) {
         this.sio.to(roomName).emit('stopTimer');
         this.sio.to(roomName).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
     }
@@ -986,6 +986,10 @@ export class SocketManager {
         socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
         socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
         socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
+
+        socket.on('ReSendDictionariesToClient', () => {
+            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
+        });
 
         socket.on('DictionaryUploaded', async () => {
             await this.databaseService.updateDBDict();

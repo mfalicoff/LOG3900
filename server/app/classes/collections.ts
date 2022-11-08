@@ -16,7 +16,7 @@ export class Collections {
     scoreClassicFromDatabase: Score[];
     scoreLOG2990FromDatabase: Score[];
     namesVpFromDatabase: NameVP[];
-    sameTitleFound: boolean;
+    sameTitleFound: boolean = false;
 
     constructor(private database: Db, private collectionName: string) {
         this.dictionarySelected = { title: '', description: '', words: [] };

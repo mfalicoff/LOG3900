@@ -191,8 +191,8 @@ export class PlayAreaService {
 
     private virtualPlayerAction(game: GameServer, player: Player) {
         const fourSecondsWait = 1000;
-        const intervalId = setInterval(() => {
-            this.randomActionVP(game, player);
+        const intervalId = setInterval(async () => {
+            await this.randomActionVP(game, player);
             if (game.gameMode === Constants.POWER_CARDS_MODE) {
                 this.powerCardService.randomPowerCardVP(game, player);
             }
@@ -206,7 +206,7 @@ export class PlayAreaService {
         game.nbLetterReserve = this.letterBankService.getNbLettersInLetterBank(game.letterBank);
     }
 
-    private randomActionVP(game: GameServer, virtualPlayer: Player) {
+    private async randomActionVP(game: GameServer, virtualPlayer: Player) {
         const neinyPercent = 0.9;
         const tenPercent = 0.1;
         const probaMove: number = this.giveProbaMove();
@@ -214,16 +214,16 @@ export class PlayAreaService {
         if (probaMove < tenPercent) {
             // 10% change to change letters
             if (this.letterBankService.getNbLettersInLetterBank(game.letterBank) < Constants.DEFAULT_NB_LETTER_STAND) {
-                this.chatService.passCommand('!passer', game, virtualPlayer);
+                await this.chatService.passCommand('!passer', game, virtualPlayer);
             } else {
                 const lettersExchanged = this.standService.randomExchangeVP(virtualPlayer, game.letters, game.letterBank);
                 this.chatService.pushMsgToAllPlayers(game, virtualPlayer.name, '!échanger ' + lettersExchanged, true, 'O');
             }
         } else if (probaMove < neinyPercent) {
             // 80% chances to place a letter
-            this.virtualPService.generateMoves(game, virtualPlayer);
+            await this.virtualPService.generateMoves(game, virtualPlayer);
         } else {
-            this.chatService.passCommand('!passer', game, virtualPlayer);
+            await this.chatService.passCommand('!passer', game, virtualPlayer);
         }
     }
 
