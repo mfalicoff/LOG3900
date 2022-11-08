@@ -179,8 +179,7 @@ class _LoginFormState extends State<LoginForm> {
               email: email, password: password, socket: socketService.socket);
           infoClientService.playerName = globals.userLoggedIn.username;
           socketService.socket.emit('forceLogout', globals.userLoggedIn.username);
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const MyHomePage()));
+          Navigator.pushNamed(context, "/home");
         } on Exception {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: const Text("Impossible de se connecter"),
@@ -218,8 +217,7 @@ class _LoginFormState extends State<LoginForm> {
         globals.userLoggedIn = await controller.login(
             email: email, password: password, socket: socketService.socket);
         infoClientService.playerName = globals.userLoggedIn.username;
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const MyHomePage()));
+        Navigator.pushNamed(context, "/home");
         return true;
       } on Exception catch (e) {
         print(e.toString());

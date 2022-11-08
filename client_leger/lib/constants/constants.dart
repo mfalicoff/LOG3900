@@ -53,6 +53,7 @@ const double HEIGHT_STAND = WIDTH_EACH_SQUARE + SIZE_OUTER_BORDER_STAND * 2;
 const double PADDING_BOARD_FOR_STANDS = HEIGHT_STAND + PADDING_BET_BOARD_AND_STAND;
 
 // CLIENT_LEGER_CONSTANTS
+double CANVAS_SIZE = 692;
 double WIDTH_HEIGHT_BOARD_CORRECTED = crossProductGlobal(WIDTH_HEIGHT_BOARD);
 double WIDTH_PLAY_AREA_CORRECTED = crossProductGlobal(WIDTH_PLAY_AREA);
 double PADDING_BET_BOARD_AND_STAND_CORRECTED = crossProductGlobal(PADDING_BET_BOARD_AND_STAND);
@@ -69,12 +70,12 @@ double SIZE_OUTER_BORDER_STAND_CORECTED = crossProductGlobal(SIZE_OUTER_BORDER_S
 
 double crossProductGlobal(double valueToConvert){
   const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
-  return (valueToConvert * 692)/originalSizeCanvas;
+  return (valueToConvert * CANVAS_SIZE)/originalSizeCanvas;
 }
 
 double crossProductGlobalToLargeCanvas(double valueToConvert){
   const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
-  return (valueToConvert * originalSizeCanvas)/692;
+  return (valueToConvert * originalSizeCanvas)/CANVAS_SIZE;
 }
 
 const num NUMBER_SQUARE_H_AND_W = 15;
