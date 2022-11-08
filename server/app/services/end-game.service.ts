@@ -19,7 +19,6 @@ export class EndGameService {
         game.winners = [];
         for (const player of players) {
             // subtract the score of the letters still on the stand
-            player.score -= this.countDeductedScore(player);
             // storing the id of the player with the highest score
             if (player.score > bestScore) {
                 // emptying the array
@@ -40,15 +39,5 @@ export class EndGameService {
             }
         }
         return listLetterStillOnStand;
-    }
-
-    private countDeductedScore(player: Player): number {
-        let scoreDeducted = 0;
-        for (const tile of player.stand) {
-            if (tile.letter.weight) {
-                scoreDeducted += tile.letter.weight;
-            }
-        }
-        return scoreDeducted;
     }
 }

@@ -1,6 +1,7 @@
+import 'package:client_leger/screens/end-game-results-page.dart';
 import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/screens/search_page.dart';
-import 'package:client_leger/services/controller.dart';
+import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import '../constants/constants.dart';
 
@@ -118,6 +119,25 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ),
         ),
+        Positioned(
+            top: 50.0,
+            right: 30.0,
+            child: ElevatedButton(
+                style: ButtonStyle(
+                    padding: MaterialStateProperty.all(
+                      const EdgeInsets.symmetric(
+                          vertical: 18.0, horizontal: 0.0),
+                    ),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100.0)))),
+                onPressed: () {
+                    showDialog(context: context, builder: (context) => const EndGameResultsPage(),
+                    );
+                },
+                child: const Text('End Game Results'),
+            )
+        ),
       ],
     );
   }
@@ -149,4 +169,5 @@ class _MyHomePageState extends State<MyHomePage> {
     controller.logout(globals.userLoggedIn);
     Navigator.popUntil(context, ModalRoute.withName("login"));
   }
+
 }

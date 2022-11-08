@@ -75,7 +75,7 @@
                 <div class="container-3-box">
                     <mat-form-field appearance="fill" id="dictOptionsMulti" class="multiplayerOptionsMulti">
                         <mat-label>Dictionnaire utilisé :</mat-label>
-                        <mat-select [(value)]="mockDictionary.title">
+                        <mat-select [(value)]="this.mockDictionary.title">
                             <mat-option *ngFor="let dict of infoClientService.dictionaries" [value]="dict.title">
                                 <h2 class="dictionnarySelection" (click)="onClickDict(dict)">{{ dict.title }}</h2>
                             </mat-option>
@@ -88,10 +88,10 @@
                 </div>
             </div>
         </div>
-        <button 
-            id="startButtonMulti" 
-            class="startbutton" 
-            (click)="createRoom()" 
+        <button
+            id="startButtonMulti"
+            class="startbutton"
+            (click)="createRoom()"
             [disabled]="name.invalid || (isChecked && mdp.invalid)"
         >
             Demarrer
@@ -124,8 +124,8 @@
                       </div>
                     </td>
                     <td>
-                        <input 
-                            type="checkbox" 
+                        <input
+                            type="checkbox"
                             id="buttonShowModal"
                             checked
                             (click)="onPowerCardClick(powerCard.name)"
