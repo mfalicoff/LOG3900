@@ -1,9 +1,5 @@
-// import 'package:client_leger/screens/profile-page.dart';
-// import 'package:client_leger/screens/search_page.dart';
-// import 'package:client_leger/services/controller.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
-// import '../constants/constants.dart';
 
 import 'dart:ui';
 
@@ -94,7 +90,7 @@ class _RankedInitPageState extends State<RankedInitPage> {
 
   void onConfirm() {
     infoClientService.eloDisparity = eloDisparity;
-    //socketService.socket.emit("startMatchmaking",{eloDisparity, globals.userLoggedIn});
+    socketService.socket.emit("startMatchmaking",{eloDisparity, (globals.userLoggedIn)});
     _toRankedMatchmakingPage();
   }
 

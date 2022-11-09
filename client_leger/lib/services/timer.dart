@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 
 class TimerService with ChangeNotifier{
@@ -26,7 +26,7 @@ class TimerService with ChangeNotifier{
     int oneSecond = 1000;
     matchmakingTimerInterval = Timer.periodic(Duration(milliseconds: oneSecond),(timer) {
       matchmakingSecondsValue++;
-      if (secondsValue % secondsInMinute <= displayZero) {
+      if (matchmakingSecondsValue % secondsInMinute <= displayZero) {
           matchmakingDisplayTimer =
               'Temps écoulé : ${(matchmakingSecondsValue / secondsInMinute).floor()}:0${matchmakingSecondsValue % secondsInMinute}';
         } else {
@@ -67,9 +67,12 @@ class TimerService with ChangeNotifier{
 
   clearTimer() {
     timerInterval.cancel();
+    secondsValue = 0;
   }
 
   clearMatchmakingTimer() {
+    matchmakingSecondsValue = 0;
     matchmakingTimerInterval.cancel();
+    log('a');
   }
 }

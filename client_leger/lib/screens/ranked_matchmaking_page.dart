@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import '../services/timer.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:client_leger/services/socket_service.dart';
 
 class RankedMatchmakingPage extends StatefulWidget {
   const RankedMatchmakingPage({Key? key}) : super(key: key);
@@ -11,6 +13,8 @@ class RankedMatchmakingPage extends StatefulWidget {
 
 class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
   final TimerService timerService = TimerService();
+  final SocketService socketService = SocketService();
+  late bool matchAccepted = false;
   @override
   void initState() {
     timerService.clearTimer();
@@ -64,33 +68,43 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                             color: Theme.of(context).colorScheme.primary),
                       ),
                       Text(
-                        timerService.matchmakingSecondsValue.toString(),
+                        timerService.matchmakingDisplayTimer,
                         style: TextStyle(
                             fontSize: 35,
                             color: Theme.of(context).colorScheme.primary),
                       ),
                       CircularProgressIndicator(
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text('Partie trouve'),
-                                actions: [
-                                  TextButton(
-                                      child: Text('Accepter'),
-                                      onPressed: () => Navigator.pop(context)
-                                  ),
-                                  TextButton(
-                                      child: Text('Refuser'),
-                                      onPressed: () => Navigator.pop(context)
-                                  ),
-                                ]
-                              ));
-                        },
-                        child: const Text("Modal"),
-                      ),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                    title:
+                                    Center(child: Text('Partie trouvée')),
+                                    actions: [
+                                      Center(
+                                          child: Row (
+                                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                              crossAxisAlignment: CrossAxisAlignment.center,
+                                              children:[
+                                            TextButton(
+                                                child: Text('Accepter'),
+                                                onPressed: () => acceptMatch()
+                                            ),
+                                            TextButton(
+                                                child: Text('Refuser'),
+                                                onPressed: () => refuseMatch()
+                                            ),
+                                          ]),
+                                      ),
+                                    ]
+                                ));
+                          },
+                          child: const Text("Modal"),
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -102,9 +116,12 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     );
   }
   acceptMatch() {
-
+    matchAccepted = true;
+    //socketService.socket.emit("acceptMatch",{globals.userLoggedIn});
   }
   refuseMatch() {
-
+    //socketService.socket.emit("refuseMatch",{globals.userLoggedIn});
+    Navigator.pushNamed(
+        context, "/ranked-init");
   }
 }

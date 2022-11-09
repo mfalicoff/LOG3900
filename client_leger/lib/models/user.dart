@@ -16,6 +16,7 @@ class User {
   late String? id;
   late String username;
   late Io.File avatarImage;
+  // late num? elo;
 
   User(this.username, this.email);
 
@@ -31,7 +32,22 @@ class User {
     gamesPlayed = parsed["data"]["gamesPlayed"] ?? "Failed";
     gamesWon = parsed["data"]["gamesWon"] ?? "Failed";
     id = parsed["data"]["_id"] ?? "Failed";
+    // elo = parsed["data"]["elo"] ?? "Failed";
   }
+
+  Map<String, dynamic> toJson() => {
+    'username': username,
+    'email': email,
+    'actionHistory': actionHistory,
+    'avatarPath': avatarPath,
+    'avatarUri': avatarUri,
+    'averagePointsPerGame': averagePointsPerGame,
+    'averageTimePerGame': averageTimePerGame,
+    'gameHistory': gameHistory,
+    'gamesPlayed': gamesPlayed,
+    'gamesWon': gamesWon,
+    'id': id,
+  };
 
 
 

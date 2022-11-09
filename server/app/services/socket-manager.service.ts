@@ -563,6 +563,7 @@ export class SocketManager {
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', (name) => {
             this.users.set(socket.id, { name, roomName: '', elo: 2000 });
+            console.log('damn');
         });
 
         socket.on('forceLogout', (name) => {
