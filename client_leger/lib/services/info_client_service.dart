@@ -39,6 +39,8 @@ class InfoClientService with ChangeNotifier{
 
   List<MockDict> dictionaries = [];
 
+  bool soundDisabled = false;
+
   factory InfoClientService(){
     return _gameService;
   }

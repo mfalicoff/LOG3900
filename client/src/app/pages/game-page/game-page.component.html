@@ -1,4 +1,18 @@
 <body (click)="onLeftClickGamePage()">
+    <span 
+        *ngIf="infoClientService.soundDisabled" 
+        class="material-symbols-outlined"
+        (click)="infoClientService.soundDisabled = !infoClientService.soundDisabled"
+    >
+        volume_off
+    </span>
+    <span 
+        *ngIf="!infoClientService.soundDisabled" 
+        class="material-symbols-outlined"
+        (click)="infoClientService.soundDisabled = !infoClientService.soundDisabled"
+        >
+        volume_up
+    </span>
     <div class="container">
         <app-sidebar></app-sidebar>
         <section class="play-area-container">

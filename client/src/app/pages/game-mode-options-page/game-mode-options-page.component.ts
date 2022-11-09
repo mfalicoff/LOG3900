@@ -13,7 +13,7 @@ import { UserService } from '@app/services/user.service';
 })
 export class GameModeOptionsPageComponent {
     constructor(
-        private infoClientService: InfoClientService, 
+        public infoClientService: InfoClientService, 
         private http: HttpClient, private router: Router, 
         public userService: UserService
     ) {}

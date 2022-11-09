@@ -43,6 +43,8 @@ dependencies:
   image_picker: ^0.7.2+1
   restart_app: ^1.0.3
   flip_card: ^0.6.0
+  audioplayers: ^1.1.1
+  just_audio: ^0.9.30
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +75,20 @@ flutter:
   assets:
     - assets/background.jpg
     - assets/card.png
+    - assets/volume-off.png
+    - assets/volume-on.png
+    - assets/audios/game-lost.mp3
+    - assets/audios/game-won.mp3
+    - assets/audios/letter-placement.mp3
+    - assets/audios/letter-removal.mp3
+    - assets/audios/word-invalid.mp3
+    - assets/audios/word-valid.mp3
+    - assets/audios/game-lost-small.mp3
+    - assets/audios/game-won-small.mp3
+    - assets/audios/letter-placement-small.mp3
+    - assets/audios/letter-removal-small.mp3
+    - assets/audios/word-invalid-small.mp3
+    - assets/audios/word-valid-small.mp3
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

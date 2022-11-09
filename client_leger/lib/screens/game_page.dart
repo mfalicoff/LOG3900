@@ -214,6 +214,28 @@ class _GamePageState extends State<GamePage> {
               ],
             )
           else Container(),
+          StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Positioned(
+                  top: 20,
+                  right: 30,
+                  child: IconButton(
+                    iconSize: 50,
+                    icon: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      backgroundImage:
+                        infoClientService.soundDisabled ?
+                        const AssetImage('assets/volume-off.png') :
+                        const AssetImage('assets/volume-on.png'),
+                    ),
+                    onPressed: () {
+                      setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
+                    },
+                  ),
+                );
+              }
+          ),
         ],
       ),
     );

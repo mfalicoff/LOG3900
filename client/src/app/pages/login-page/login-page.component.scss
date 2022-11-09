@@ -28,6 +28,10 @@ label {
 }
 
 .card {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   background-color: #f7f7f7;
   margin: 0 auto 15%;
   -moz-border-radius: 2px;
