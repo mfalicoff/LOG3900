@@ -64,6 +64,7 @@ export class SocketManager {
         this.rooms = new Map<string, GameServer>();
         this.matchmakingService.initSioMatchmaking(this.sio);
         this.powerCardsService.initSioPowerCard(this.sio);
+        this.chatService.initSioChat(this.sio);
     }
 
     handleSockets(): void {
@@ -99,7 +100,11 @@ export class SocketManager {
             return;
         }
         if (player) {
-            await this.communicationBoxService.onEnterPlayer(game, player, placeMsg);
+            if (await this.communicationBoxService.onEnterPlayer(game, player, placeMsg)) {
+                this.sio.to(game.roomName).emit('soundPlay', Constants.WORD_VALID_SOUND);
+            } else {
+                this.sio.to(game.roomName).emit('soundPlay', Constants.WORD_INVALID_SOUND);
+            }
         } else if (spectator) {
             await this.communicationBoxService.onEnterSpectator(game, spectator, placeMsg);
         }
@@ -264,6 +269,7 @@ export class SocketManager {
             this.mouseEventService.addTempLetterBoard(game, keyEntered, xIndex, yIndex);
             // We send to all clients a gameState
             this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+            this.sio.to(game.roomName).emit('soundPlay', Constants.LETTER_PLACED_SOUND);
         });
 
         socket.on('rmTempLetterBoard', async (idxsTileToRm) => {
@@ -278,6 +284,7 @@ export class SocketManager {
             this.mouseEventService.rmTempLetterBoard(game, idxsTileToRm);
             // We send to all clients a gameState
             await this.gameUpdateClients(game);
+            this.sio.to(game.roomName).emit('soundPlay', Constants.LETTER_REMOVED_SOUND);
         });
 
         socket.on('rmTileFromStand', async (tile: Tile) => {

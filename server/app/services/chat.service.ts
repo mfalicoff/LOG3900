@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
 import { ValidationService } from '@app/services/validation.service';
 import { Service } from 'typedi';
 import UserService from '@app/services/user.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { DEFAULT_VALUE_NUMBER } from '@app/classes/global-constants';
+import * as io from 'socket.io';
 
 enum Commands {
     Place = '!placer',
@@ -19,39 +20,46 @@ enum Commands {
 
 @Service()
 export class ChatService {
-    constructor(public validator: ValidationService, private endGameService: EndGameService, private userService: UserService) {}
+    sio: io.Server;
+    constructor(public validator: ValidationService, private endGameService: EndGameService, private userService: UserService) {
+        this.sio = new io.Server();
+    }
+
+    initSioChat(sio: io.Server) {
+        this.sio = sio;
+    }
 
     // verify if a command is entered and redirect to corresponding function
     async sendMessage(input: string, game: GameServer, player: Player): Promise<boolean> {
         const command: string = input.split(' ', 1)[0];
         if (input[0] === '!') {
             if (game.gameFinished) {
-                this.pushMsgToAllPlayers(game, player.name, GlobalConstants.GAME_IS_OVER, true, 'S');
+                this.pushMsgToAllPlayers(game, player.name, Constants.GAME_IS_OVER, true, 'S');
                 return false;
             }
             const isActionCommand: boolean = command === Commands.Place || command === Commands.Exchange || command === Commands.Pass;
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
             if (isActionCommand && !(player.id === playerPlaying.id)) {
                 player.chatHistory.push({ message: 'You ' + ' : ' + input, isCommand: true, sender: 'P' });
-                player.chatHistory.push({ message: GlobalConstants.NOT_YOUR_TURN, isCommand: false, sender: 'S' });
+                player.chatHistory.push({ message: Constants.NOT_YOUR_TURN, isCommand: false, sender: 'S' });
                 return false;
             }
             // verify that the command is valid
             if (!this.validator.isCommandValid(input)) {
-                player.chatHistory.push({ message: GlobalConstants.INVALID_ENTRY, isCommand: false, sender: 'S' });
+                player.chatHistory.push({ message: Constants.INVALID_ENTRY, isCommand: false, sender: 'S' });
                 return false;
             }
             // verify the syntax
             const syntaxError = this.validator.syntaxIsValid(input, game, player);
             if (syntaxError !== '') {
-                player.chatHistory.push({ message: GlobalConstants.INVALID_SYNTAX + syntaxError, isCommand: false, sender: 'S' });
+                player.chatHistory.push({ message: Constants.INVALID_SYNTAX + syntaxError, isCommand: false, sender: 'S' });
                 return false;
             }
 
             if (command === Commands.Place) {
                 const graphicsError = this.validator.verifyPlacementOnBoard(input.split(' ', 3), game);
                 if (graphicsError !== '') {
-                    player.chatHistory.push({ message: GlobalConstants.UNABLE_TO_PROCESS_COMMAND + graphicsError, isCommand: true, sender: 'S' });
+                    player.chatHistory.push({ message: Constants.UNABLE_TO_PROCESS_COMMAND + graphicsError, isCommand: true, sender: 'S' });
                     return false;
                 }
             }
@@ -60,7 +68,7 @@ export class ChatService {
         }
         if (this.validator.entryIsTooLong(input)) {
             // verify the length of the command
-            player.chatHistory.push({ message: GlobalConstants.INVALID_LENGTH, isCommand: false, sender: 'S' });
+            player.chatHistory.push({ message: Constants.INVALID_LENGTH, isCommand: false, sender: 'S' });
             return false;
         }
 
@@ -85,15 +93,14 @@ export class ChatService {
             return;
         }
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
-        player.chatHistory.push({ message: GlobalConstants.PLACE_CMD, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.PLACE_CMD, isCommand: false, sender: 'S' });
     }
 
     // function to pass turn
     async passCommand(input: string, game: GameServer, player: Player) {
         player.passInARow++;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
-        console.log('passage de tour de :' + player.name);
-        player.chatHistory.push({ message: GlobalConstants.PASS_CMD, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.PASS_CMD, isCommand: false, sender: 'S' });
         let didEveryonePass3Times = false;
         for (const playerElem of game.mapPlayers.values()) {
             if (playerElem.passInARow < 3) {
@@ -105,7 +112,6 @@ export class ChatService {
         }
 
         if (didEveryonePass3Times) {
-            console.log('Le jeu est finit, on affiche dans la com box, on appel show end game stats et on fait gameFinisged');
             this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             await this.showEndGameStats(game /* , player*/);
             player.passInARow = 0;
@@ -167,28 +173,28 @@ export class ChatService {
     private exchangeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
-        player.chatHistory.push({ message: GlobalConstants.EXCHANGE_PLAYER_CMD, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.EXCHANGE_PLAYER_CMD, isCommand: false, sender: 'S' });
     }
 
     // function that shows the reserve
     private reserveCommand(input: string, player: Player) {
         if (player.debugOn) {
             player.chatHistory.push({ message: input, isCommand: true, sender: 'P' });
-            player.chatHistory.push({ message: GlobalConstants.RESERVE_CMD, isCommand: false, sender: 'S' });
+            player.chatHistory.push({ message: Constants.RESERVE_CMD, isCommand: false, sender: 'S' });
         } else {
-            player.chatHistory.push({ message: GlobalConstants.DEBUG_NOT_ACTIVATED, isCommand: false, sender: 'S' });
+            player.chatHistory.push({ message: Constants.DEBUG_NOT_ACTIVATED, isCommand: false, sender: 'S' });
         }
     }
 
     // function that shows the help command
     private helpCommand(input: string, player: Player) {
         player.chatHistory.push({ message: input, isCommand: true, sender: 'P' });
-        player.chatHistory.push({ message: GlobalConstants.CMD_HELP_TEXT, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: GlobalConstants.CMD_HELP_TEXT_PLACE, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: GlobalConstants.CMD_HELP_TEXT_PASS, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: GlobalConstants.CMD_HELP_TEXT_EXCHANGE, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: GlobalConstants.CMD_HELP_TEXT_RESERVE, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: GlobalConstants.CMD_HELP_TEXT_DEBUG, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_PLACE, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_PASS, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_EXCHANGE, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_RESERVE, isCommand: false, sender: 'S' });
+        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_DEBUG, isCommand: false, sender: 'S' });
     }
 
     private debugCommand(input: string, player: Player, game: GameServer) {
@@ -200,14 +206,13 @@ export class ChatService {
 
         player.chatHistory.push({ message: input, isCommand: true, sender: 'P' });
         if (player.debugOn) {
-            player.chatHistory.push({ message: GlobalConstants.DEBUG_CMD_ON, isCommand: false, sender: 'S' });
+            player.chatHistory.push({ message: Constants.DEBUG_CMD_ON, isCommand: false, sender: 'S' });
         } else {
-            player.chatHistory.push({ message: GlobalConstants.DEBUG_CMD_OFF, isCommand: false, sender: 'S' });
+            player.chatHistory.push({ message: Constants.DEBUG_CMD_OFF, isCommand: false, sender: 'S' });
         }
     }
 
     private async showEndGameStats(game: GameServer /* , player: Player*/) {
-        console.log('Appel a show end game stats');
         game.endTime = new Date().getTime();
         let playersCpy: Player[] = Array.from(game.mapPlayers.values());
         playersCpy = [...new Set(playersCpy)];
@@ -233,26 +238,30 @@ export class ChatService {
             this.pushMsgToAllPlayers(
                 game,
                 winners[0].name,
-                GlobalConstants.WINNER_MSG_PT1 + winners[0].name + GlobalConstants.WINNER_MSG_PT2 + winners[0].score,
+                Constants.WINNER_MSG_PT1 + winners[0].name + Constants.WINNER_MSG_PT2 + winners[0].score,
                 false,
                 'S',
             );
             await this.userService.updateWinHistory(winners[0]);
         } else if (winners.length > 1) {
-            this.pushMsgToAllPlayers(game, '', GlobalConstants.DRAW_MSG, false, 'S');
+            this.pushMsgToAllPlayers(game, '', Constants.DRAW_MSG, false, 'S');
 
             for (const winner of winners) {
                 this.pushMsgToAllPlayers(game, '', 'Score final pour: ' + winner.name + ' est: ' + winner.score, false, 'S');
                 await this.userService.updateWinHistory(winner);
             }
         } else {
-            this.pushMsgToAllPlayers(game, '', GlobalConstants.GAME_NOT_UNDERSTOOD, false, 'S');
+            this.pushMsgToAllPlayers(game, '', Constants.GAME_NOT_UNDERSTOOD, false, 'S');
         }
         const winnerNames = winners.map((winner) => winner.name);
         for (const playerElem of game.mapPlayers.values()) {
-            if (winnerNames.indexOf(playerElem.name) === DEFAULT_VALUE_NUMBER)
+            if (winnerNames.indexOf(playerElem.name) === DEFAULT_VALUE_NUMBER) {
                 await this.userService.updateGameHistory(playerElem, false, game.startTime);
-            else await this.userService.updateGameHistory(playerElem, true, game.startTime);
+                this.sio.sockets.sockets.get(playerElem.id)?.emit('soundPlay', Constants.GAME_WON_SOUND);
+            } else {
+                await this.userService.updateGameHistory(playerElem, true, game.startTime);
+                this.sio.sockets.sockets.get(playerElem.id)?.emit('soundPlay', Constants.GAME_LOST_SOUND);
+            }
         }
     }
 }

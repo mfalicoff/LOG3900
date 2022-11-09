@@ -297,6 +297,13 @@ export class SocketService {
         this.socket.on('sendLetterReserve', (letterReserveArr) => {
             this.infoClientService.letterReserve = letterReserveArr;
         });
+
+        this.socket.on('soundPlay', (soundName) => {
+            if (this.infoClientService.soundDisabled) {
+                return;
+            }
+            new Audio('./assets/audios/' + soundName).play();
+        });
     }
 
     private setTimeoutForTimer() {

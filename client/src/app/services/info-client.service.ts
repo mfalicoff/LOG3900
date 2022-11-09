@@ -57,6 +57,9 @@ export class InfoClientService {
     displayExchLetterModal: string;
     displayTransformTileModal: string;
 
+    // variable to allow/block sound effects
+    soundDisabled: boolean;
+
     constructor() {
         this.gameMode = GlobalConstants.CLASSIC_MODE;
         this.minutesByTurn = 1;
@@ -83,6 +86,7 @@ export class InfoClientService {
         this.displayExchStandModal = 'none';
         this.displayExchLetterModal = 'none';
         this.displayTransformTileModal = 'none';
+        this.soundDisabled = false;
 
         this.letterReserve = ['a', 'b'];
         this.letterBank = new Map([

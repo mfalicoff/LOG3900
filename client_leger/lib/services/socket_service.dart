@@ -7,6 +7,7 @@ import 'package:socket_io_client/socket_io_client.dart';
 import '../constants/constants.dart';
 import '../env/environment.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:just_audio/just_audio.dart';
 import 'package:collection/collection.dart';
 import 'dart:async';
 
@@ -119,6 +120,16 @@ class SocketService{
 
     socket.on("sendLetterReserve", (letterReserveArr){
       infoClientService.letterReserve = letterReserveArr.map<String>((e)=>e.toString()).toList();
+    });
+
+    socket.on('soundPlay', (soundName) async {
+      if(infoClientService.soundDisabled){
+          return;
+      }
+      final player = AudioPlayer();                         // Create a player
+      await player.setUrl("asset:assets/audios/$soundName"); // Schemes: (https: | file: | asset: )
+      await player.play();
+      await player.stop();
     });
   }
 

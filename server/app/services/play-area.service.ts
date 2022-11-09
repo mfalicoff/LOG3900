@@ -222,6 +222,7 @@ export class PlayAreaService {
         } else if (probaMove < neinyPercent) {
             // 80% chances to place a letter
             await this.virtualPService.generateMoves(game, virtualPlayer);
+            this.sio.to(game.roomName).emit('soundPlay', Constants.WORD_VALID_SOUND);
         } else {
             await this.chatService.passCommand('!passer', game, virtualPlayer);
         }
