@@ -1,0 +1,24 @@
+{
+    "LOGIN": "Login",
+    "PROFILE": {
+        "STATS": "Statistics",
+        "LANGUAGE": "Languages",
+        "EDIT": "Edit profile",
+        "HISTORY_ACTIONS": "Actions history",
+        "HISTORY_CONNECTIONS": "Connection history",
+        "HISTORY_GAMES": "Game history",
+        "FAVORITES": "Favorite games",
+        "GAMES_PLAYED": "Games played: ",
+        "GAMES_WON": "Games won: ",
+        "AVERAGE_SCORE": "Average score: ",
+        "AVERAGE_TIMES": "Average time: "
+    },
+    "EDIT_PROFILE": {
+        "ACTUAL_NAME": "Actual name: ",
+        "EDIT_NAME": "Edit name: ",
+        "SAVE": "Save",
+        "EDIT_AVATAR": "Edit avatar",
+        "SAVE_AVATAR": "Save avatar",
+        "CLOSE": "Close"
+    }
+}

@@ -5,6 +5,7 @@ import { UserService } from '@app/services/user.service';
 import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profile-edit.component';
 import { Subscription } from 'rxjs';
 import { GameSaved } from '@app/classes/game-saved';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-profile-page',
@@ -14,12 +15,20 @@ import { GameSaved } from '@app/classes/game-saved';
 export class ProfilePageComponent implements OnInit, OnDestroy {
     favourtieGamesSubscription: Subscription;
     favouriteGames: GameSaved[];
-    constructor(private dialog: MatDialog, public userService: UserService) {}
+    langList: string[];
+
+    langMap = new Map<string, string>([
+        ['Français', 'fr'],
+        ['English', 'en'],
+    ]);
+
+    constructor(private dialog: MatDialog, public userService: UserService, private translate: TranslateService) {}
 
     ngOnInit() {
         this.favourtieGamesSubscription = this.userService.getFavouriteGames().subscribe((res: GameSaved[]) => {
             this.favouriteGames = res.copyWithin(0, 0);
         });
+        this.langList = ['Français', 'English'];
     }
 
     ngOnDestroy() {
@@ -78,5 +87,9 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         const m = date.getMinutes();
         const s = date.getSeconds();
         return `${m}m:${s}s.`;
+    }
+
+    onClickLang(lang: string): void {
+        this.translate.use(this.langMap.get(lang) as string);
     }
 }

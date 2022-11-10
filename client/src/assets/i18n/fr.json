@@ -1,0 +1,24 @@
+{
+    "LOGIN": "Connexion",
+    "PROFILE": {
+        "STATS": "Statistiques",
+        "LANGUAGE": "Langues",
+        "EDIT": "Éditer le profile",
+        "HISTORY_ACTIONS": "Historique des actions",
+        "HISTORY_CONNECTIONS": "Historique des connections",
+        "HISTORY_GAMES": "Historique des parties",
+        "FAVORITES": "Parties favorites",
+        "GAMES_PLAYED": "Parties jouées: ",
+        "GAMES_WON": "Parties gagnés: ",
+        "AVERAGE_SCORE": "Score moyen par partie: ",
+        "AVERAGE_TIMES": "Temps moyen par partie: "
+    },
+    "EDIT_PROFILE": {
+        "ACTUAL_NAME": "Nom actuel: ",
+        "EDIT_NAME": "Éditer le nom: ",
+        "SAVE": "Sauvegarder",
+        "EDIT_AVATAR": "Éditer l'avatar",
+        "SAVE_AVATAR": "Sauvegarder l'avatar",
+        "CLOSE": "Fermer"
+    }
+}
