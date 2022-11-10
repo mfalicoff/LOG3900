@@ -16,10 +16,16 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     favourtieGamesSubscription: Subscription;
     favouriteGames: GameSaved[];
     langList: string[];
+    langSelected: string | undefined;
 
     langMap = new Map<string, string>([
         ['Français', 'fr'],
         ['English', 'en'],
+    ]);
+
+    inverseLangMap = new Map<string, string>([
+        ['fr', 'Français'],
+        ['en', 'English'],
     ]);
 
     constructor(private dialog: MatDialog, public userService: UserService, private translate: TranslateService) {}
@@ -29,6 +35,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
             this.favouriteGames = res.copyWithin(0, 0);
         });
         this.langList = ['Français', 'English'];
+        this.langSelected = this.inverseLangMap.get(this.translate.currentLang);
     }
 
     ngOnDestroy() {

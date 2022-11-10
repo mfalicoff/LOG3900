@@ -20,5 +20,13 @@
         "EDIT_AVATAR": "Éditer l'avatar",
         "SAVE_AVATAR": "Sauvegarder l'avatar",
         "CLOSE": "Fermer"
+    },
+    "GAME_MODE_OPTIONS": {
+        "CLASSIC_MODE": "Mode classique",
+        "RANKED_MODE": "Mode de jeu classé",
+        "POWER_CARD_MODE": "Mode cartes de pouvoir configurables",
+        "LOGOUT": "Se déconnecter",
+        "HIGH_SCORES": "Meilleurs scores"
+
     }
 }

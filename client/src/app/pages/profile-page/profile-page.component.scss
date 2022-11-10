@@ -105,3 +105,14 @@ mat-option {
     background-color: wheat !important;
     margin: 0;
 }
+
+.MPButton {
+    cursor: pointer;
+    top: 10px;
+    left: 10px;
+    position: absolute;
+    transform: scale(1.5);
+    margin-top: 2%;
+    margin-left : 2%;
+    color: #0c483f;
+}

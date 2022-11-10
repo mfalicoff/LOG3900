@@ -20,5 +20,13 @@
         "EDIT_AVATAR": "Edit avatar",
         "SAVE_AVATAR": "Save avatar",
         "CLOSE": "Close"
+    },
+    "GAME_MODE_OPTIONS": {
+        "CLASSIC_MODE": "Classic mode",
+        "RANKED_MODE": "Ranked mode",
+        "POWER_CARD_MODE": "Configurable power cards mode",
+        "LOGOUT": "Logout",
+        "HIGH_SCORES": "High scores"
+
     }
 }

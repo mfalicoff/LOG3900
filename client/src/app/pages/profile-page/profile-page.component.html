@@ -2,6 +2,9 @@
     <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
     <div id="profileWrapper">
         <div class="subcontainer justified">
+            <h6 class="MPButton" routerLink="/game-mode-options">
+                <mat-icon>arrow_back</mat-icon>
+            </h6>
             <img [src]="userService.user.avatarUri" id="profile"/>
             <h1>{{this.userService.user.name}}</h1>
             <button mat-flat-button (click)="openEditProfileComponent()">{{'PROFILE.EDIT' | translate}}</button>
@@ -13,7 +16,6 @@
                     <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_SCORE' | translate}}{{this.userService.user.averagePointsPerGame}}</mat-grid-tile>
                     <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_TIMES' | translate}}{{this.millisToMinutesAndSeconds()}}</mat-grid-tile>
                 </mat-grid-list>
-
             </div>
             <div class="title-box">
                 <h1 mat-dialog-title class="title">{{'PROFILE.HISTORY_ACTIONS' | translate}}</h1>
@@ -32,7 +34,7 @@
             <div class="button-grid-row">
                 <mat-form-field appearance="fill" class="languageSelect">
                     <mat-label>{{'PROFILE.LANGUAGE' | translate}}</mat-label>
-                    <mat-select>
+                    <mat-select [(ngModel)]="langSelected">
                         <mat-option *ngFor="let lang of langList" [value]="lang" (click)="onClickLang(lang)">
                             <h2 >{{ lang }}</h2>
                         </mat-option>
