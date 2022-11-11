@@ -1,17 +1,16 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '@app/../environments/environment';
 import { GameSaved } from '@app/classes/game-saved';
 import { Player } from '@app/classes/player';
-import { UserResponseInterface } from '@app/classes/response.interface';
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { EloChangeService } from '@app/services/elo-change.service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import { TimerService } from '@app/services/timer.service';
 import { UserService } from '@app/services/user.service';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-end-game-results-page',
@@ -35,7 +34,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private userService: UserService,
         private timerService: TimerService,
         private dialog: MatDialog,
-        private httpClient: HttpClient,
         private eloChangeService: EloChangeService,
         private socketService: SocketService,
     ) {}
@@ -62,15 +60,8 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.players = this.players.sort((element1, element2) => element2.score - element1.score);
     }
 
-    getUserByName(playerName: string): Observable<UserResponseInterface> {
-        return this.httpClient.get<UserResponseInterface>(`${this.serverUrl}users/${playerName}`, {
-            observe: 'body',
-            responseType: 'json',
-        });
-    }
-
     openProfilePage(player: Player) {
-        this.openProfileSubscription = this.getUserByName(player.name).subscribe({
+        this.openProfileSubscription = this.userService.getUserByName(player.name).subscribe({
             next: (res) => {
                 this.dialog.open(ProfileReadOnlyPageComponent, {
                     data: {
@@ -128,10 +119,16 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     displayPlayingTime(): void {
         const secondsInMinute = 60;
         const displayZero = 9;
-        if (this.timerService.playingTime % secondsInMinute <= displayZero) {
-            this.playingTime = `${Math.floor(this.timerService.playingTime / secondsInMinute)}:0${this.timerService.playingTime % secondsInMinute}`;
-        } else {
-            this.playingTime = `0${Math.floor(this.timerService.playingTime / secondsInMinute)}:${this.timerService.playingTime % secondsInMinute}`;
+        const minutesToDisplay = this.timerService.playingTime / secondsInMinute;
+        const secondsToDisplay = this.timerService.playingTime % secondsInMinute;
+        if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
+            this.playingTime = `0${Math.floor(minutesToDisplay)}:0${secondsToDisplay}`;
+        } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
+            this.playingTime = `${Math.floor(minutesToDisplay)}:0${secondsToDisplay}`;
+        } else if (secondsToDisplay > displayZero && minutesToDisplay <= displayZero) {
+            this.playingTime = `0${Math.floor(minutesToDisplay)}:${secondsToDisplay}`;
+        } else if (secondsToDisplay > displayZero && minutesToDisplay > displayZero) {
+            this.playingTime = `${Math.floor(minutesToDisplay)}:${secondsToDisplay}`;
         }
     }
 
