@@ -104,15 +104,16 @@ export class SocketManager {
             await this.communicationBoxService.onEnterSpectator(game, spectator, placeMsg);
         }
 
-        // We update the chatHistory and the game of each client
         await this.gameUpdateClients(game);
+
         if (game.gameFinished) {
-            await this.triggerStopTimer(user.roomName);
+            this.triggerStopTimer(user.roomName);
         }
+        // We update the chatHistory and the game of each client
     }
 
     private clientEventHandler(socket: io.Socket) {
-        socket.on('turnFinished', () => {
+        socket.on('turnFinished', async () => {
             const user = this.users.get(socket.id);
             if (!user) {
                 return;
@@ -120,7 +121,7 @@ export class SocketManager {
             const game = this.rooms.get(user.roomName);
             const player = game?.mapPlayers.get(user.name);
             if (game && player) {
-                this.chatService.passCommand('!passer', game, player);
+                await this.chatService.passCommand('!passer', game, player);
                 this.playAreaService.changePlayer(game);
             }
         });
@@ -971,13 +972,13 @@ export class SocketManager {
             await this.manageNewMessageClient(inputClient, socket);
         });
 
-        socket.on('chat msg', (chat: ChatMessage) => {
+        socket.on('chat msg', async (chat: ChatMessage) => {
             this.chatHistory.push(chat);
             socket.broadcast.emit('chat msg', chat);
         });
     }
 
-    private async triggerStopTimer(roomName: string) {
+    private triggerStopTimer(roomName: string) {
         this.sio.to(roomName).emit('stopTimer');
         this.sio.to(roomName).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
     }

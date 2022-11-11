@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { GameServer } from '@app/classes/game-server';
 import * as GlobalConstants from '@app/classes/global-constants';
-import { Player } from '@app/classes/player';
-import { ValidationService } from '@app/services/validation.service';
-import { Service } from 'typedi';
-import UserService from '@app/services/user.service';
-import { EndGameService } from '@app/services/end-game.service';
 import { DEFAULT_VALUE_NUMBER } from '@app/classes/global-constants';
+import { Player } from '@app/classes/player';
+import { EndGameService } from '@app/services/end-game.service';
+import UserService from '@app/services/user.service';
+import { ValidationService } from '@app/services/validation.service';
+import { EventEmitter } from 'stream';
+import { Service } from 'typedi';
 
 enum Commands {
     Place = '!placer',
@@ -19,6 +20,7 @@ enum Commands {
 
 @Service()
 export class ChatService {
+    event: EventEmitter = new EventEmitter();
     constructor(public validator: ValidationService, private endGameService: EndGameService, private userService: UserService) {}
 
     // verify if a command is entered and redirect to corresponding function
@@ -92,7 +94,6 @@ export class ChatService {
     async passCommand(input: string, game: GameServer, player: Player) {
         player.passInARow++;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
-        console.log('passage de tour de :' + player.name);
         player.chatHistory.push({ message: GlobalConstants.PASS_CMD, isCommand: false, sender: 'S' });
         let didEveryonePass3Times = false;
         for (const playerElem of game.mapPlayers.values()) {
@@ -105,10 +106,9 @@ export class ChatService {
         }
 
         if (didEveryonePass3Times) {
-            console.log('Le jeu est finit, on affiche dans la com box, on appel show end game stats et on fait gameFinisged');
+            player.passInARow = 0;
             this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             await this.showEndGameStats(game /* , player*/);
-            player.passInARow = 0;
             game.gameFinished = true;
         }
     }
@@ -207,7 +207,6 @@ export class ChatService {
     }
 
     private async showEndGameStats(game: GameServer /* , player: Player*/) {
-        console.log('Appel a show end game stats');
         game.endTime = new Date().getTime();
         let playersCpy: Player[] = Array.from(game.mapPlayers.values());
         playersCpy = [...new Set(playersCpy)];
