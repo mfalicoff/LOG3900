@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:client_leger/models/game-saved.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -20,9 +21,12 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfileStatePage extends State<ProfilePage> {
   final Controller controller = Controller();
+  late List<GameSaved> favouriteGames = [];
 
-  refresh() {
+
+  refresh() async {
     setState(() {});
+    favouriteGames =  (await controller.getFavouriteGames());
   }
 
   @override

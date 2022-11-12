@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:client_leger/env/environment.dart';
+import 'package:client_leger/models/game-saved.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -163,6 +164,17 @@ class Controller {
       return user;
     } else {
       throw Exception('Failed to get');
+    }
+  }
+
+  Future<List<GameSaved>> getFavouriteGames() async {
+    final user = globals.userLoggedIn;
+    final response = await http.get(Uri.parse("$serverAddress/users/games/$user.id"));
+    if (response.statusCode == 200) {
+      List<GameSaved> favouriteGames = json.decode(response.body) as List<GameSaved>;
+      return favouriteGames;
+    } else {
+        throw Exception('Failed to get favourite games');
     }
   }
 }
