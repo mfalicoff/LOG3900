@@ -4,6 +4,7 @@ import { RoomData } from '@app/classes/room-data';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import * as Constants from '@app/classes/global-constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-multiplayer-init-page',
@@ -16,7 +17,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     passwordText: string;
     actualPassword: string;
     roomNameClicked: string;
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService) {}
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private translate: TranslateService) {}
 
     ngAfterViewInit() {
         this.infoClientService.rooms = [];
@@ -43,7 +44,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     askForPasswd() {
         this.passwdModalStyle = 'none';
         if (this.passwordText !== this.actualPassword) {
-            alert('Mot de passe incorrect');
+            alert(this.translate.instant('WRONG_PASSWORD'));
         } else {
             this.joinRoom(this.roomNameClicked);
         }
@@ -64,7 +65,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
 
         if (nbPlayer <= 0) {
             const titleList = document.createElement('li');
-            titleList.innerHTML = "Il n'y a pas de joueur dans cette salle.";
+            titleList.innerHTML = this.translate.instant('NO_PLAYERS');
             titleList.style.fontWeight = 'bold';
             listPlayer?.appendChild(titleList);
             return;
@@ -81,18 +82,18 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         });
 
         const creatorOfGame = this.infoClientService.rooms[idxExistingRoom].players.find((player) => player.isCreatorOfGame);
-        creatorOfGameUi!.innerHTML = 'Le createur de la partie est : ' + creatorOfGame?.name;
+        creatorOfGameUi!.innerHTML = this.translate.instant('CREATOR_GAME') + creatorOfGame?.name;
         creatorOfGameUi!.style.fontWeight = 'bold';
 
         if (nbRealPlayer > 0) {
             const titleList = document.createElement('li');
-            titleList.innerHTML = 'Il y a ' + nbRealPlayer + ' joueur(s) reel(s) :';
+            titleList.innerHTML = this.translate.instant('THERE_ARE') + nbRealPlayer + this.translate.instant('REAL_PLAYERS2');
             titleList.style.fontWeight = 'bold';
             listPlayer?.appendChild(titleList);
         }
         if (nbVirtualPlayer > 0) {
             const titleList = document.createElement('li');
-            titleList.innerHTML = 'Il y a ' + nbVirtualPlayer + ' joueur(s) virtuel(s) :';
+            titleList.innerHTML = this.translate.instant('THERE_ARE') + nbVirtualPlayer + this.translate.instant('VIRTUAL_PLAYERS2');
             titleList.style.fontWeight = 'bold';
             listVP?.appendChild(titleList);
         }
@@ -121,7 +122,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
             // join room
             this.joinRoom(roomName);
         } else {
-            alert("Il n'y a pas de salle disponible.");
+            alert(this.translate.instant('NO_ROOMS'));
         }
     }
 

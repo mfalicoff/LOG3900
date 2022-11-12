@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import * as Constants from '@app/classes/global-constants';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-sidebar',
@@ -14,7 +15,12 @@ export class SidebarComponent {
     coordsTileToChange: string;
     letterFromReserveChoosed: string;
     idxTileFromStandChoosed: number;
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private router: Router) {
+    constructor(
+        private socketService: SocketService,
+        public infoClientService: InfoClientService,
+        private router: Router,
+        private translate: TranslateService,
+    ) {
         this.coordsTileToChange = '';
     }
 
@@ -24,10 +30,10 @@ export class SidebarComponent {
         }
 
         if (this.infoClientService.game.gameFinished) {
-            alert("La game est finie, plus d'abandon possible.");
+            alert(this.translate.instant('GAME.SIDEBAR.GAME_FINISHED'));
             return;
         }
-        const resultLeave = confirm('Voulez vous vraiment abandonner la partie ?');
+        const resultLeave = confirm(this.translate.instant('GAME.SIDEBAR.GIVE_UP_GAME_QUESTION'));
         if (!resultLeave) {
             return;
         }
@@ -52,8 +58,8 @@ export class SidebarComponent {
         }
 
         let answer = true;
-
-        if (this.infoClientService.displayTurn !== "En attente d'un autre joueur...") {
+        // TODO Will it break game?
+        if (this.infoClientService.displayTurn !== this.translate.instant('GAME.SIDEBAR.WAITING_PLAYERS')) {
             answer = false;
         }
         return answer;
@@ -177,15 +183,15 @@ export class SidebarComponent {
             idxLine > Constants.NUMBER_SQUARE_H_AND_W ||
             idxColumn > Constants.NUMBER_SQUARE_H_AND_W
         ) {
-            alert('Coordonnées invalides. Le format doit être (ligne-colonne). Exemple: e10');
+            alert(this.translate.instant('GAME.SIDEBAR.INVALID_COORDINATES'));
             return;
         }
         if (this.infoClientService.game.board[idxLine][idxColumn].letter.value !== '') {
-            alert("Cette case n'est pas vide. Veuillez choisir une autre case.");
+            alert(this.translate.instant('GAME.SIDEBAR.NOT_EMPTY_TILE'));
             return;
         }
         if (this.infoClientService.game.board[idxLine][idxColumn].bonus !== 'xx') {
-            alert('Cette case possède déjà un bonus. Veuillez choisir une autre case.');
+            alert(this.translate.instant('GAME.SIDEBAR.NOT_EMPTY_BONUS_TILE'));
             return;
         }
         this.socketService.socket.emit('powerCardClick', Constants.TRANFORM_EMPTY_TILE, idxLine.toString() + '-' + idxColumn.toString());

@@ -5,6 +5,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
     selector: 'app-game-mode-options-page',
@@ -13,9 +14,10 @@ import { UserService } from '@app/services/user.service';
 })
 export class GameModeOptionsPageComponent {
     constructor(
-        private infoClientService: InfoClientService, 
-        private http: HttpClient, private router: Router, 
-        public userService: UserService
+        private infoClientService: InfoClientService,
+        private http: HttpClient, private router: Router,
+        public userService: UserService,
+        private translate: TranslateService
     ) {}
 
     setGameMode(gameMode: string) {
@@ -50,9 +52,9 @@ export class GameModeOptionsPageComponent {
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            alert('Erreur: ' + error.status + error.error.message);
+            alert(this.translate.instant('ERROR') + error.status + error.error.message);
         } else {
-            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
+            alert(this.translate.instant('ERROR') + this.translate.instant('MESSAGE_ERROR') + '\n' + error.message);
         }
     }
 }

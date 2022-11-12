@@ -6,6 +6,7 @@ import { SocketService } from '@app/services/socket.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EndGameResultsPageComponent } from '@app/pages/end-game-results-page/end-game-results-page.component';
 import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-game-page',
@@ -21,6 +22,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
         private router: Router,
         public infoClientService: InfoClientService,
         private dialog: MatDialog,
+        private translate: TranslateService,
     ) {}
     ngOnInit() {
         // we weren't able to find an equivalent without using subscribe
@@ -31,7 +33,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
         this.routerSubscription = this.router.events.subscribe((event) => {
             const isAtCorrectPage: boolean = event instanceof NavigationStart && this.router.url === '/game';
             if (isAtCorrectPage && !this.infoClientService.game.gameFinished && !this.infoClientService.isSpectator) {
-                const resultLeave = confirm('Voulez vous vraiment quitter cette page ? \nCela équivaudrait à un abandon de partie !');
+                const resultLeave = confirm(this.translate.instant('GAME.DO_YOU_WANT_QUIT'));
                 if (!resultLeave) {
                     this.router.navigate(['/game']);
                 } else {

@@ -5,11 +5,11 @@
             <div class="container-1">
                 <div class="box-1">
                     <mat-icon>person</mat-icon>
-                    <p>{{ this.infoClientService.playerName }} (Vous)</p>
+                    <p>{{ this.infoClientService.playerName }}{{'PARAMETERS_SELECTION.YOU' | translate}}</p>
                 </div>
             </div>
 
-            <p class="roomName">Nom de la salle:</p>
+            <p class="roomName">{{'PARAMETERS_SELECTION.ROOM_NAME' | translate}}</p>
             <div id="roomNameInputContainer">
                 <input
                     id="roomName"
@@ -20,20 +20,20 @@
                     pattern="^[a-zA-Z0-9]+$"
                     ngModel />
             </div>
-            <p id="instructionRoomName" class="roomName">Min 4 lettres, pas de charactere special.</p>
+            <p id="instructionRoomName" class="roomName">{{'PARAMETERS_SELECTION.ERROR_ROOM_NAME' | translate}}</p>
 
             <div class="radioTypeGame">
-                <p class="roomName">Mode de partie:</p>
+                <p class="roomName">{{'PARAMETERS_SELECTION.GAME_MODE' | translate}}</p>
                 <input type="radio" id="publicGame" name="unique" value="public" [checked]="true"(change)="onTypeGameChange($event)">
-                <label for="publique">publique</label><br>
+                <label for="publique">{{'PARAMETERS_SELECTION.PUBLIC' | translate}}</label><br>
                 <input type="radio" id="privateGame" name="unique" value="private" (change)="onTypeGameChange($event)">
-                <label for="privee">privee</label><br>
+                <label for="privee">{{'PARAMETERS_SELECTION.PRIVATE' | translate}}</label><br>
             </div>
             <div id="passwdDiv">
                 <mat-checkbox
                     id="mdpCheckbox"
                     [(ngModel)]="isChecked">
-                Mot de passe
+                    {{'PARAMETERS_SELECTION.PASSWORD' | translate}}
             </mat-checkbox>
                 <input
                         id="passwdInput"
@@ -48,7 +48,7 @@
                         pattern="^[a-zA-Z0-9]+$"
                         ngModel
                     />
-                <p id="instructionRoomName" class="roomName" [hidden]="!isChecked">Min 1 lettre, pas de charactère special.</p>
+                <p id="instructionRoomName" class="roomName" [hidden]="!isChecked">{{'PARAMETERS_SELECTION.ERROR_PASSWORD' | translate}}</p>
             </div>
             <div class="container-2">
                 <div class="container-2-box">
@@ -56,7 +56,7 @@
                         <mat-icon>arrow_back</mat-icon>
                     </h6>
                     <mat-form-field appearance="fill" class="multiplayerOptionsMulti">
-                        <mat-label>Temps par tour :</mat-label>
+                        <mat-label>{{'PARAMETERS_SELECTION.TURN_TIME' | translate}}</mat-label>
                         <mat-select [(value)]="infoClientService.minutesByTurn">
                             <mat-option *ngFor="let interval of timeIntervals" [value]="interval.value">
                                 <a (click)="onClickTime(interval.viewValue)"> {{ interval.viewValue }} </a>
@@ -64,9 +64,9 @@
                         </mat-select>
                     </mat-form-field>
                     <p *ngIf="infoClientService.gameMode==='power-cards'">
-                        <span>Activer ou désactiver des cartes de pouvoirs: </span>
+                        <span>{{'PARAMETERS_SELECTION.ACTIVATE_CARD_MODE' | translate}}</span>
                         <button id="bonusButtonMulti" (click)="showPowerModal()">
-                            Liste Cartes
+                            {{'PARAMETERS_SELECTION.CARD_LIST' | translate}}
                         </button>
                     </p>
                 </div>
@@ -74,7 +74,7 @@
             <div class="container-3">
                 <div class="container-3-box">
                     <mat-form-field appearance="fill" id="dictOptionsMulti" class="multiplayerOptionsMulti">
-                        <mat-label>Dictionnaire utilisé :</mat-label>
+                        <mat-label>{{'PARAMETERS_SELECTION.USED_DICTIONARY' | translate}}</mat-label>
                         <mat-select [(value)]="mockDictionary.title">
                             <mat-option *ngFor="let dict of infoClientService.dictionaries" [value]="dict.title">
                                 <h2 class="dictionnarySelection" (click)="onClickDict(dict)">{{ dict.title }}</h2>
@@ -82,19 +82,19 @@
                         </mat-select>
                     </mat-form-field>
                     <div id="dictionnaryDescriptionMulti">
-                        Description du dictionaire
+                        {{'PARAMETERS_SELECTION.DICTIONARY_DESCRIPTION' | translate}}
                         <h2>{{ this.mockDictionary.description }}</h2>
                     </div>
                 </div>
             </div>
         </div>
-        <button 
-            id="startButtonMulti" 
-            class="startbutton" 
-            (click)="createRoom()" 
+        <button
+            id="startButtonMulti"
+            class="startbutton"
+            (click)="createRoom()"
             [disabled]="name.invalid || (isChecked && mdp.invalid)"
         >
-            Demarrer
+            {{'PARAMETERS_SELECTION.START' | translate}}
         </button>
     </div>
 
@@ -105,8 +105,8 @@
             <table id="tablePowers">
                 <thead>
                   <tr>
-                    <th>Pouvoir Description</th>
-                    <th>Actif</th>
+                    <th>{{'PARAMETERS_SELECTION.POWER_DESCRIPTION' | translate}}</th>
+                    <th>{{'PARAMETERS_SELECTION.ACTIVE' | translate}}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -124,8 +124,8 @@
                       </div>
                     </td>
                     <td>
-                        <input 
-                            type="checkbox" 
+                        <input
+                            type="checkbox"
                             id="buttonShowModal"
                             checked
                             (click)="onPowerCardClick(powerCard.name)"

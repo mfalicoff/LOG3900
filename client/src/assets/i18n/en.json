@@ -26,7 +26,48 @@
         "RANKED_MODE": "Ranked mode",
         "POWER_CARD_MODE": "Configurable power cards mode",
         "LOGOUT": "Logout",
-        "HIGH_SCORES": "High scores"
-
+        "HIGH_SCORES": "High scores",
+        "ERROR": "Error: ",
+        "MESSAGE_ERROR": " The error message is:"
+    },
+    "MULTIPLAYER_INIT": {
+        "YOU": " (You)",
+        "CREATE_GAME": "Create Game",
+        "RANDOM": "Random",
+        "LIST_ROOM_GAMES": "LIST OF GAME ROOMS",
+        "ROOM_NAME": "Room name",
+        "TIME_TURN": "Time per turn",
+        "REAL_PLAYERS": "Real players",
+        "VIRTUAL_PLAYERS": "Virtual players",
+        "SPECTATORS": "Spectators",
+        "LIST_PLAYERS": "Players list",
+        "PROTECTED_PASSWORD": "Game protected by a password",
+        "ENTER_PASSWORD": "Enter the password: ",
+        "BUTTON_ENTER_PASSWORD": "Ok",
+        "WRONG_PASSWORD": "Incorrect password",
+        "NO_PLAYERS": "There is no player in this room.",
+        "CREATOR_GAME": "The creator of the game is:",
+        "THERE_ARE": "There are",
+        "REAL_PLAYERS2": " joueur(s) reel(s) :",
+        "VIRTUAL_PLAYERS2": " joueur(s) virtuel(s) :",
+        "NO_ROOMS": "Il n'y a pas de salle disponible."
+    },
+    "PARAMETERS_SELECTION": {
+        "YOU": " (You)",
+        "ROOM_NAME": "Room name:",
+        "ERROR_ROOM_NAME": "Min 4 letters, no special characters.",
+        "GAME_MODE": "Party mode:",
+        "PUBLIC": "public",
+        "PRIVATE": "private",
+        "PASSWORD": "Password",
+        "ERROR_PASSWORD": "Min 1 letter, no special character.",
+        "TURN_TIME": "Time per turn:",
+        "ACTIVATE_CARD_MODE": "Activate or deactivate power cards: ",
+        "CARD_LIST": "List Cards",
+        "USED_DICTIONARY": "Dictionary used:",
+        "DICTIONARY_DESCRIPTION": "Dictionary description",
+        "START": "Start",
+        "POWER_DESCRIPTION": "Description of power",
+        "ACTIVE": "Active"
     }
 }
