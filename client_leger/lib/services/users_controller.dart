@@ -115,7 +115,7 @@ class Controller {
       User user = User.fromJson(json.decode(response.body));
       return user;
     } else {
-      throw Exception('Failed to logout');
+      throw Exception('Failed to update name');
     }
   }
 
@@ -135,7 +135,7 @@ class Controller {
     if (response.statusCode == 200) {
       return await updateAvatar('customAvatar');
     } else {
-      throw Exception('Failed to logout');
+      throw Exception('Failed to update avater from camera');
     }
   }
 
@@ -153,7 +153,24 @@ class Controller {
       User user = User.fromJson(json.decode(response.body));
       return user;
     } else {
-      throw Exception('Failed to logout');
+      throw Exception('Failed to update avatar');
+    }
+  }
+
+  updateFavouriteGames(String idOfGame) async {
+    final user = globals.userLoggedIn;
+    final response = await http.patch(Uri.parse("$serverAddress/users/${user.id}"),
+        headers : <String, String> {
+            'Content-Type': 'application/json; charset=UTF-8',
+            'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        },
+        body: jsonEncode(<String, String>{"gameId": idOfGame}),
+    );
+    if (response.statusCode == 200) {
+        User user = User.fromJson(json.decode(response.body));
+        return user;
+    } else {
+        throw Exception('Failed update favourite games');
     }
   }
 
@@ -163,7 +180,7 @@ class Controller {
       User user = User.fromJson(json.decode(response.body));
       return user;
     } else {
-      throw Exception('Failed to get');
+      throw Exception('Failed to get username');
     }
   }
 
