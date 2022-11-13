@@ -9,6 +9,7 @@ import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
 import { Socket } from 'socket.io-client';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root',
@@ -25,6 +26,7 @@ export class PlaceGraphicService {
         private drawingBoardService: DrawingBoardService,
         private drawingService: DrawingService,
         private infoClientService: InfoClientService,
+        private translate: TranslateService,
     ) {
         this.startLettersPlacedPosX = 0;
         this.startLettersPlacedPosY = 0;
@@ -33,7 +35,7 @@ export class PlaceGraphicService {
     }
 
     manageKeyboardEvent(game: GameServer, player: Player, keyEntered: string, socket: Socket) {
-        if (this.infoClientService.displayTurn !== "C'est votre tour !") {
+        if (this.infoClientService.displayTurn !== this.translate.instant('GAME.ITS_YOUR_TURN')) {
             return;
         }
         keyEntered = keyEntered.normalize('NFD').replace(/\p{Diacritic}/gu, '');

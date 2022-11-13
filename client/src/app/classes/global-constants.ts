@@ -38,7 +38,7 @@ export const WAIT_FOR_CANVAS_INI = 10;
 // TODO switch this to 4 when 4 game players will be enabled
 export const MIN_PERSON_PLAYING = 2;
 export const MAX_PERSON_PLAYING = 4;
-export const WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
+export const WAITING_FOR_CREATOR = 'En attente du créateur pour démarrer la partie...';
 export const WAIT_FOR_OTHER_PLAYERS = "En attente d'autres joueurs...";
 
 /// ////////////////////////////////////////////////////////////////////////

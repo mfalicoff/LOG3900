@@ -19,7 +19,7 @@
             id="inputCommBox"
             class="inputField"
             type="text"
-            placeholder="Ecrivez une commande avec ! ou un message"
+            placeholder="{{'GAME.PLACEHOLDER_CHAT' | translate}}"
             [(ngModel)]="inputInComBox"
             (keydown.enter)="onEnterComBox(inputInComBox)"
         />

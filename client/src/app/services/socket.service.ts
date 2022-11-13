@@ -15,6 +15,7 @@ import { InfoClientService } from './info-client.service';
 import { PlaceGraphicService } from './place-graphic.service';
 import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root',
@@ -33,6 +34,7 @@ export class SocketService {
         private rankedService: RankedService,
         private drawingService: DrawingService,
         private placeGraphicService: PlaceGraphicService,
+        private translate: TranslateService,
     ) {
         this.socket = io(this.urlString);
         this.gameFinished = new BehaviorSubject(this.infoClientService.game.gameFinished);
@@ -150,22 +152,23 @@ export class SocketService {
         });
     }
 
-    private displayChangeEndGameCallBack(displayChange: string) {
-        this.infoClientService.displayTurn = displayChange;
+    private displayChangeEndGameCallBack() {
+        this.infoClientService.displayTurn = this.translate.instant('GAME.END_GAME');
     }
 
     private timerHandler() {
-        this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
+        this.socket.on('displayChangeEndGame', () => this.displayChangeEndGameCallBack());
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
             this.infoClientService.powerUsedForTurn = false;
             this.drawingBoardService.lettersDrawn = '';
             if (currentNamePlayerPlaying === this.infoClientService.playerName) {
-                this.infoClientService.displayTurn = "C'est votre tour !";
+                this.infoClientService.displayTurn = this.translate.instant('GAME.ITS_YOUR_TURN');
                 this.infoClientService.isTurnOurs = true;
             } else {
                 const playerPlaying = this.infoClientService.actualRoom.players.find((player) => player.name === currentNamePlayerPlaying);
-                this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + ' de jouer !';
+                this.infoClientService.displayTurn =
+                    this.translate.instant('GAME.ITS_THE_TURN_OF') + playerPlaying?.name + this.translate.instant('GAME.TO_PLAY');
                 this.infoClientService.isTurnOurs = false;
                 this.placeGraphicService.resetVariablePlacement();
             }
@@ -315,15 +318,16 @@ export class SocketService {
         }
 
         const playerPlaying = this.infoClientService.actualRoom.players[game.idxPlayerPlaying];
-        this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + ' de jouer !';
+        this.infoClientService.displayTurn =
+            this.translate.instant('GAME.ITS_THE_TURN_OF') + playerPlaying?.name + this.translate.instant('GAME.TO_PLAY');
     }
 
     private updateUiBeforeStartGame(players: Player[]) {
         const nbRealPlayer = players?.filter((player: Player) => player.id !== 'virtualPlayer').length;
         if (nbRealPlayer >= GlobalConstants.MIN_PERSON_PLAYING) {
-            this.infoClientService.displayTurn = GlobalConstants.WAITING_FOR_CREATOR;
+            this.infoClientService.displayTurn = this.translate.instant('GAME.WAITING_FOR_CREATOR');
         } else {
-            this.infoClientService.displayTurn = GlobalConstants.WAIT_FOR_OTHER_PLAYERS;
+            this.infoClientService.displayTurn = this.translate.instant('GAME.WAIT_FOR_OTHER_PLAYERS');
         }
     }
 }
