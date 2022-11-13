@@ -247,6 +247,8 @@ class TapService with ChangeNotifier{
         i--;
       }
     }
+    startLettersPlacedPosX = coordsLettersDrawn[0].x;
+    startLettersPlacedPosY = coordsLettersDrawn[0].y;
   }
 
   String constructWord() {
