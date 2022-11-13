@@ -1,9 +1,10 @@
 /* eslint-disable max-lines */
-import { ChatMessage } from '@app/classes/chat-message.interface';
+import { ChatMessage } from '@app/classes/chat-message';
 import { DictJSON } from '@app/classes/dict-json';
 import { GameSaved } from '@app/classes/game-saved';
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
+import { ChatRoom } from '@app/classes/interfaces/chatroom.interface';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
@@ -18,6 +19,7 @@ import * as io from 'socket.io';
 import { Service } from 'typedi';
 import { BoardService } from './board.service';
 import { ChatService } from './chat.service';
+import ChatRoomService from './chatroom.service';
 import { CommunicationBoxService } from './communication-box.service';
 import { DatabaseService } from './database.service';
 import { DictionaryService } from './dictionary.service';
@@ -39,7 +41,6 @@ export class SocketManager {
     rooms: Map<string, GameServer>;
     scoreClassic: Score[];
     scoreLOG2990: Score[];
-    chatHistory: ChatMessage[] = [];
     private userService = new UserService();
     private avatarService = new avatarService();
     private gameSavedService = new GameSavedService();
@@ -58,6 +59,7 @@ export class SocketManager {
         private standService: StandService,
         private powerCardsService: PowerCardsService,
         private letterBankService: LetterBankService,
+        private chatRoomService: ChatRoomService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -81,6 +83,10 @@ export class SocketManager {
             // handling the ranked/matchmaking events
             this.rankedHandler(socket);
             this.searchHandler(socket);
+            this.chatRoomsHandler(socket);
+
+            // joins the general chat room
+            socket.join('general' + Constants.CHATROOM_SUFFIX);
         });
     }
 
@@ -100,10 +106,16 @@ export class SocketManager {
             return;
         }
         if (player) {
-            if (await this.communicationBoxService.onEnterPlayer(game, player, placeMsg)) {
-                this.sio.to(game.roomName).emit('soundPlay', Constants.WORD_VALID_SOUND);
-            } else {
-                this.sio.to(game.roomName).emit('soundPlay', Constants.WORD_INVALID_SOUND);
+            const playerMsgSeparated = placeMsg.split(' ');
+            let shouldPlaySound = true;
+            // if the command is not a !placer command then there is no sound
+            if (playerMsgSeparated[0] !== '!placer') {
+                shouldPlaySound = false;
+            }
+            if ((await this.communicationBoxService.onEnterPlayer(game, player, placeMsg)) && shouldPlaySound) {
+                this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('soundPlay', Constants.WORD_VALID_SOUND);
+            } else if (shouldPlaySound) {
+                this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('soundPlay', Constants.WORD_INVALID_SOUND);
             }
         } else if (spectator) {
             await this.communicationBoxService.onEnterSpectator(game, spectator, placeMsg);
@@ -268,8 +280,8 @@ export class SocketManager {
             }
             this.mouseEventService.addTempLetterBoard(game, keyEntered, xIndex, yIndex);
             // We send to all clients a gameState
-            this.sio.to(game.roomName).emit('gameBoardUpdate', game);
-            this.sio.to(game.roomName).emit('soundPlay', Constants.LETTER_PLACED_SOUND);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('gameBoardUpdate', game);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('soundPlay', Constants.LETTER_PLACED_SOUND);
         });
 
         socket.on('rmTempLetterBoard', async (idxsTileToRm) => {
@@ -284,7 +296,7 @@ export class SocketManager {
             this.mouseEventService.rmTempLetterBoard(game, idxsTileToRm);
             // We send to all clients a gameState
             await this.gameUpdateClients(game);
-            this.sio.to(game.roomName).emit('soundPlay', Constants.LETTER_REMOVED_SOUND);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('soundPlay', Constants.LETTER_REMOVED_SOUND);
         });
 
         socket.on('rmTileFromStand', async (tile: Tile) => {
@@ -348,7 +360,7 @@ export class SocketManager {
                 return;
             }
             this.mouseEventService.onBoardToBoardDrop(game, posClickedTileIdxs, posDropBoardIdxs);
-            this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('gameBoardUpdate', game);
         });
 
         socket.on('drawBorderTileForTmpHover', (boardIndexs) => {
@@ -360,7 +372,7 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            this.sio.to(game.roomName).emit('drawBorderTileForTmpHover', boardIndexs);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('drawBorderTileForTmpHover', boardIndexs);
         });
 
         socket.on('tileDraggedOnCanvas', (clickedTile, mouseCoords) => {
@@ -372,7 +384,7 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            this.sio.to(game.roomName).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('tileDraggedOnCanvas', clickedTile, mouseCoords);
         });
 
         socket.on('clearTmpTileCanvas', () => {
@@ -384,7 +396,7 @@ export class SocketManager {
             if (!game) {
                 return;
             }
-            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('clearTmpTileCanvas');
         });
 
         socket.on('escapeKeyPressed', async (tmpLettersOnBoard) => {
@@ -403,7 +415,7 @@ export class SocketManager {
             this.boardService.rmTempTiles(game);
             this.standService.putLettersOnStand(game, tmpLettersOnBoard, player);
             // we tell all the client to clear the clearTmpTileCanvas
-            this.sio.to(game.roomName).emit('clearTmpTileCanvas', game);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('clearTmpTileCanvas', game);
             // we update the board state
             await this.gameUpdateClients(game);
         });
@@ -419,8 +431,8 @@ export class SocketManager {
             }
             // there can never be multiples arrows on the board so we clear
             // the canvas first
-            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
-            this.sio.to(game.roomName).emit('drawVerticalArrow', arrowCoords);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('clearTmpTileCanvas');
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('drawVerticalArrow', arrowCoords);
         });
 
         socket.on('drawHorizontalArrow', (arrowCoords) => {
@@ -434,8 +446,8 @@ export class SocketManager {
             }
             // there can never be multiples arrows on the board so we clear
             // the canvas first
-            this.sio.to(game.roomName).emit('clearTmpTileCanvas');
-            this.sio.to(game.roomName).emit('drawHorizontalArrow', arrowCoords);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('clearTmpTileCanvas');
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('drawHorizontalArrow', arrowCoords);
         });
 
         socket.on('powerCardClick', async (powerCardName, additionnalParams) => {
@@ -470,7 +482,7 @@ export class SocketManager {
 
         socket.on('saveGame', async (game: GameSaved) => {
             const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
-            this.sio.to(savedGame.roomName).emit('savedGameId', savedGame._id);
+            this.sio.to(savedGame.roomName + Constants.GAME_SUFFIX).emit('savedGameId', savedGame._id);
         });
     }
 
@@ -504,7 +516,7 @@ export class SocketManager {
         this.rooms.set(roomName, newGame);
 
         // Joining the room
-        socket.join(roomName);
+        socket.join(roomName + Constants.GAME_SUFFIX);
 
         // activate of desactivate the power cards depending on the settings
         // set by the creator of the game
@@ -717,11 +729,7 @@ export class SocketManager {
             socket.emit('isSpectator', false);
 
             for (const player of game.mapPlayers.values()) {
-                player.chatHistory.push({
-                    message: user.name + Constants.REPLACEMENT_BY_PLAYER + oldVPName + '.',
-                    isCommand: false,
-                    sender: 'S',
-                });
+                player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, user.name + Constants.REPLACEMENT_BY_PLAYER + oldVPName + '.'));
             }
 
             // sending game info to all client to update nbPlayers and nbSpectators
@@ -757,7 +765,7 @@ export class SocketManager {
 
                 // we start the game
                 this.playAreaService.playGame(game);
-                this.sio.to(roomName).emit('setTimeoutTimerStart');
+                this.sio.to(roomName + Constants.GAME_SUFFIX).emit('setTimeoutTimerStart');
             }
         });
 
@@ -793,7 +801,7 @@ export class SocketManager {
         }
 
         // Joining the room
-        socket.join(game.roomName);
+        socket.join(game.roomName + Constants.GAME_SUFFIX);
 
         // if condition respected it means the new user is a player and not a spectator
         // else it is a spectator
@@ -829,10 +837,10 @@ export class SocketManager {
     // update game for all players in the room
     private async gameUpdateClients(game: GameServer) {
         // We send to all clients a gameState and a scoreBoardState\
-        this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('gameBoardUpdate', game);
 
-        // //we send to all clients an update of the players and spectators
-        this.sio.to(game.roomName).emit('playersSpectatorsUpdate', {
+        // we send to all clients an update of the players and spectators
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('playersSpectatorsUpdate', {
             roomName: game.roomName,
             players: Array.from(game.mapPlayers.values()),
             spectators: Array.from(game.mapSpectators.values()),
@@ -942,7 +950,7 @@ export class SocketManager {
         // we check if we should delete the game or not
         this.gameFinishedAction(game);
 
-        socket.leave(user.roomName);
+        socket.leave(user.roomName + Constants.GAME_SUFFIX);
         user.roomName = '';
         await this.gameUpdateClients(game);
     }
@@ -977,16 +985,11 @@ export class SocketManager {
         socket.on('newMessageClient', async (inputClient) => {
             await this.manageNewMessageClient(inputClient, socket);
         });
-
-        socket.on('chat msg', (chat: ChatMessage) => {
-            this.chatHistory.push(chat);
-            socket.broadcast.emit('chat msg', chat);
-        });
     }
 
     private async triggerStopTimer(roomName: string) {
-        this.sio.to(roomName).emit('stopTimer');
-        this.sio.to(roomName).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
+        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('stopTimer');
+        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
     }
 
     private adminHandler(socket: io.Socket) {
@@ -1083,6 +1086,133 @@ export class SocketManager {
                 .select('name')
                 .limit(MAX_USERS);
             socket.emit('getPlayerNames', usersFound);
+        });
+
+        socket.on('getChatRoomsNames', async (data) => {
+            const roomsFound = await this.chatRoomService.chatRooms
+                .find({
+                    name: {
+                        $regex: data,
+                        $options: 'i',
+                    },
+                })
+                .select('name')
+                .limit(MAX_USERS);
+            socket.emit('getChatRoomsNames', roomsFound);
+        });
+    }
+
+    private chatRoomsHandler(socket: io.Socket) {
+        socket.on('createChatRoom', async (chatRoomName: string) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const dbUser = await this.userService.findUserByName(user.name);
+            if (!dbUser || !dbUser.id) {
+                return;
+            }
+            const chatRoom = await this.chatRoomService.createChatRoom(dbUser.id, chatRoomName, socket);
+            socket.emit('setChatRoom', chatRoom);
+        });
+
+        socket.on('deleteChatRoom', async (chatRoomName: string) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const dbUser = await this.userService.findUserByName(user.name);
+            if (!dbUser || !dbUser.id) {
+                return;
+            }
+            await this.chatRoomService.deleteChatRoom(dbUser.id, chatRoomName, socket);
+        });
+
+        socket.on('joinChatRoom', async (chatRoomName: string) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const dbUser = await this.userService.findUserByName(user.name);
+            if (!dbUser || !dbUser.id) {
+                return;
+            }
+            const chatRoom = await this.chatRoomService.joinChatRoom(dbUser.id, chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
+            socket.emit('setChatRoom', chatRoom);
+        });
+
+        socket.on('leaveChatRoom', async (chatRoomName: string) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const dbUser = await this.userService.findUserByName(user.name);
+            if (!dbUser || !dbUser.id) {
+                return;
+            }
+            await this.chatRoomService.leaveChatRoom(dbUser.id, chatRoomName, socket);
+        });
+
+        socket.on('addMsgToChatRoom', async (chatRoomName: string, msg: string) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const dbUser = await this.userService.findUserByName(user.name);
+            if (!dbUser || !dbUser.id) {
+                return;
+            }
+
+            const newMsg = new ChatMessage(user.name, msg);
+            await this.chatRoomService.addMsgToChatRoom(dbUser, chatRoomName, msg, newMsg.timestamp, socket);
+            // send message to all users in the chat room
+            this.sio.to(chatRoomName + Constants.CHATROOM_SUFFIX).emit('addMsgToChatRoom', chatRoomName, newMsg);
+        });
+
+        socket.on('getAllChatRooms', async () => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const dbUser = await this.userService.findUserByName(user.name);
+            if (!dbUser || !dbUser.id) {
+                return;
+            }
+            const chatRooms: ChatRoom[] = await this.chatRoomService.getAllChatRooms(dbUser.id, socket);
+            for (const chatRoom of chatRooms) {
+                socket.emit('setChatRoom', chatRoom);
+            }
+        });
+
+        socket.on('getChatRoom', async (chatRoomName) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const chatRoom: ChatRoom = await this.chatRoomService.getChatRoom(chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
+            socket.emit('setChatRoom', chatRoom);
+        });
+
+        // socket user for the search of rooms
+        socket.on('getTmpChatRoom', async (chatRoomName) => {
+            const user = this.users.get(socket.id);
+            if (!user) {
+                return;
+            }
+            const chatRoom: ChatRoom = await this.chatRoomService.getChatRoom(chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
+            socket.emit('setTmpChatRoom', chatRoom);
         });
     }
 }

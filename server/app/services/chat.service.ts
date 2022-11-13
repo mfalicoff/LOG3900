@@ -7,6 +7,7 @@ import { Service } from 'typedi';
 import UserService from '@app/services/user.service';
 import { EndGameService } from '@app/services/end-game.service';
 import { DEFAULT_VALUE_NUMBER } from '@app/classes/global-constants';
+import { ChatMessage } from '@app/classes/chat-message';
 import * as io from 'socket.io';
 
 enum Commands {
@@ -40,35 +41,35 @@ export class ChatService {
             const isActionCommand: boolean = command === Commands.Place || command === Commands.Exchange || command === Commands.Pass;
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
             if (isActionCommand && !(player.id === playerPlaying.id)) {
-                player.chatHistory.push({ message: 'You ' + ' : ' + input, isCommand: true, sender: 'P' });
-                player.chatHistory.push({ message: Constants.NOT_YOUR_TURN, isCommand: false, sender: 'S' });
+                player.chatHistory.push(new ChatMessage(player.name, 'You ' + ' : ' + input));
+                player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.NOT_YOUR_TURN));
                 return false;
             }
             // verify that the command is valid
             if (!this.validator.isCommandValid(input)) {
-                player.chatHistory.push({ message: Constants.INVALID_ENTRY, isCommand: false, sender: 'S' });
+                player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.INVALID_ENTRY));
                 return false;
             }
             // verify the syntax
             const syntaxError = this.validator.syntaxIsValid(input, game, player);
             if (syntaxError !== '') {
-                player.chatHistory.push({ message: Constants.INVALID_SYNTAX + syntaxError, isCommand: false, sender: 'S' });
+                player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.INVALID_ENTRY + syntaxError));
                 return false;
             }
 
             if (command === Commands.Place) {
                 const graphicsError = this.validator.verifyPlacementOnBoard(input.split(' ', 3), game);
                 if (graphicsError !== '') {
-                    player.chatHistory.push({ message: Constants.UNABLE_TO_PROCESS_COMMAND + graphicsError, isCommand: true, sender: 'S' });
+                    player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.UNABLE_TO_PROCESS_COMMAND + graphicsError));
                     return false;
                 }
             }
             await this.commandFilter(input, game, player);
             return true;
         }
+        // verifies the length of the command
         if (this.validator.entryIsTooLong(input)) {
-            // verify the length of the command
-            player.chatHistory.push({ message: Constants.INVALID_LENGTH, isCommand: false, sender: 'S' });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.INVALID_LENGTH));
             return false;
         }
 
@@ -80,12 +81,13 @@ export class ChatService {
     printReserveStatus(game: GameServer, player: Player) {
         for (const key of game.letterBank.keys()) {
             const letterData = game.letterBank.get(key);
-            player.chatHistory.push({ message: key + ' : ' + letterData?.quantity, isCommand: false, sender: 'S' });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, key + ' : ' + letterData?.quantity));
         }
     }
 
     async placeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
+
         if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
             this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             await this.showEndGameStats(game /* , player*/);
@@ -93,14 +95,15 @@ export class ChatService {
             return;
         }
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
-        player.chatHistory.push({ message: Constants.PLACE_CMD, isCommand: false, sender: 'S' });
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.PLACE_CMD));
     }
 
     // function to pass turn
     async passCommand(input: string, game: GameServer, player: Player) {
         player.passInARow++;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
-        player.chatHistory.push({ message: Constants.PASS_CMD, isCommand: false, sender: 'S' });
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.PASS_CMD));
+
         let didEveryonePass3Times = false;
         for (const playerElem of game.mapPlayers.values()) {
             if (playerElem.passInARow < 3) {
@@ -130,17 +133,17 @@ export class ChatService {
                 } else {
                     messageSender = 'O';
                 }
-                player.chatHistory.push({ message: playerSendingMsg + ': ' + msg, isCommand: command, sender: messageSender });
+                player.chatHistory.push(new ChatMessage(playerSendingMsg, msg));
             } else {
-                player.chatHistory.push({ message: msg, isCommand: command, sender: messageSender });
+                player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, msg));
             }
         });
 
         game.mapSpectators.forEach((spectator) => {
             if (messageSender !== 'S') {
-                spectator.chatHistory.push({ message: playerSendingMsg + ': ' + msg, isCommand: command, sender: 'O' });
+                spectator.chatHistory.push(new ChatMessage(playerSendingMsg, msg));
             } else {
-                spectator.chatHistory.push({ message: msg, isCommand: command, sender: messageSender });
+                spectator.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, msg));
             }
         });
     }
@@ -173,28 +176,28 @@ export class ChatService {
     private exchangeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
         this.pushMsgToAllPlayers(game, player.name, input, true, 'P');
-        player.chatHistory.push({ message: Constants.EXCHANGE_PLAYER_CMD, isCommand: false, sender: 'S' });
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.EXCHANGE_PLAYER_CMD));
     }
 
     // function that shows the reserve
     private reserveCommand(input: string, player: Player) {
         if (player.debugOn) {
-            player.chatHistory.push({ message: input, isCommand: true, sender: 'P' });
-            player.chatHistory.push({ message: Constants.RESERVE_CMD, isCommand: false, sender: 'S' });
+            player.chatHistory.push(new ChatMessage(player.name, input));
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.RESERVE_CMD));
         } else {
-            player.chatHistory.push({ message: Constants.DEBUG_NOT_ACTIVATED, isCommand: false, sender: 'S' });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.DEBUG_NOT_ACTIVATED));
         }
     }
 
     // function that shows the help command
     private helpCommand(input: string, player: Player) {
-        player.chatHistory.push({ message: input, isCommand: true, sender: 'P' });
-        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_PLACE, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_PASS, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_EXCHANGE, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_RESERVE, isCommand: false, sender: 'S' });
-        player.chatHistory.push({ message: Constants.CMD_HELP_TEXT_DEBUG, isCommand: false, sender: 'S' });
+        player.chatHistory.push(new ChatMessage(player.name, input));
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.CMD_HELP_TEXT));
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.CMD_HELP_TEXT_PLACE));
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.CMD_HELP_TEXT_PASS));
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.CMD_HELP_TEXT_EXCHANGE));
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.CMD_HELP_TEXT_RESERVE));
+        player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.CMD_HELP_TEXT_DEBUG));
     }
 
     private debugCommand(input: string, player: Player, game: GameServer) {
@@ -204,11 +207,11 @@ export class ChatService {
             }
         }
 
-        player.chatHistory.push({ message: input, isCommand: true, sender: 'P' });
+        player.chatHistory.push(new ChatMessage(player.name, input));
         if (player.debugOn) {
-            player.chatHistory.push({ message: Constants.DEBUG_CMD_ON, isCommand: false, sender: 'S' });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.DEBUG_CMD_ON));
         } else {
-            player.chatHistory.push({ message: Constants.DEBUG_CMD_OFF, isCommand: false, sender: 'S' });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.DEBUG_CMD_OFF));
         }
     }
 

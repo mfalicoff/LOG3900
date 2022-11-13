@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
-import { ChatComponent } from '@app/pages/chat/chat.component';
 import { GameModeOptionsPageComponent } from '@app/pages/game-mode-options-page/game-mode-options-page.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { LeaderboardPageComponent } from '@app/pages/leaderboard-page/leaderboard-page.component';
@@ -25,7 +24,6 @@ const routes: Routes = [
     { path: 'ranked-matchmaking', component: RankedMatchmakingPageComponent },
     { path: 'leaderboard', component: LeaderboardPageComponent },
     { path: 'admin', component: AdminPageComponent },
-    { path: 'chat', component: ChatComponent },
     { path: 'login', component: LoginPageComponent },
     { path: 'game-mode-options', component: GameModeOptionsPageComponent },
     { path: 'profile', component: ProfilePageComponent },

@@ -14,6 +14,7 @@ import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import AuthRoute from '@app/routes/auth.route';
 import AvatarRoute from '@app/routes/avatar.route';
 import GameSavedRoute from '@app/routes/game-saved.route';
+import ChatroomsModel from '@app/models/chatrooms.model';
 
 @Service()
 export class Application {
@@ -36,7 +37,7 @@ export class Application {
         };
 
         this.config();
-
+        this.setupGeneralChatroom();
         this.bindRoutes([new UsersRoute(), new AuthRoute(), new AvatarRoute(), new GameSavedRoute()]);
     }
 
@@ -86,5 +87,16 @@ export class Application {
                 error: {},
             });
         });
+    }
+
+    private async setupGeneralChatroom() {
+        const generalRoom = await ChatroomsModel.findOne({ name: 'general' });
+        if (!generalRoom) {
+            await ChatroomsModel.create({
+                name: 'general',
+                participants: [],
+                chatHistory: [],
+            });
+        }
     }
 }
