@@ -107,7 +107,7 @@ export const REPLACEMENT_BY_PLAYER = ' a remplacé le joueur virtuel: ';
 export const NB_MIN_LETTER_BANK = 6;
 export const WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
 export const PLAYER_TRIED_A_WORD = ' a placé un mot non valide, son tour passe !';
-
+export const SYSTEM_SENDER = 'SYSTEM';
 /// ////////////////////////////////////////////////////////////////////////
 /// //////////// databaseService constants//////////////////////////////////
 /// //////////////////////////////////////////////////////////////////////
@@ -159,3 +159,7 @@ export const WORD_VALID_SOUND = 'word-valid-small.mp3';
 export const WORD_INVALID_SOUND = 'word-invalid-small.mp3';
 export const GAME_LOST_SOUND = 'game-lost-small.mp3';
 export const GAME_WON_SOUND = 'game-won-small.mp3';
+
+// SOCKET SUFFIX CONSTANTS FOR GAME OR CHATROOM
+export const GAME_SUFFIX = '_game';
+export const CHATROOM_SUFFIX = '_chatroom';

@@ -162,7 +162,8 @@ class Controller {
       User user = User.fromJson(json.decode(response.body));
       return user;
     } else {
-      throw Exception('Failed to get');
+      throw Exception('Failed to get user');
     }
   }
+
 }

@@ -1,5 +1,5 @@
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { Move } from '@app/classes/move';
 import { Player } from '@app/classes/player';
 import * as io from 'socket.io';
@@ -71,17 +71,16 @@ export class PutLogicService {
     }
 
     computeWordToExchange(game: GameServer, player: Player, word: string) {
-        if (word.length === GlobalConstants.DEFAULT_NB_LETTER_STAND) {
+        if (word.length === Constants.DEFAULT_NB_LETTER_STAND) {
             player.allLetterSwapped = true;
         }
         this.standService.updateStandAfterExchange(word, game.letters, game.letterBank, player);
     }
 
     boardLogicUpdate(game: GameServer, position: string, word: string) {
-        const letterWay: string = position.slice(GlobalConstants.POSITION_LAST_LETTER);
-        const indexLine: number =
-            position.slice(0, GlobalConstants.END_POSITION_INDEX_LINE).toLowerCase().charCodeAt(0) - GlobalConstants.ASCII_CODE_SHIFT;
-        const indexColumn = Number(position.slice(GlobalConstants.END_POSITION_INDEX_LINE, position.length + GlobalConstants.POSITION_LAST_LETTER));
+        const letterWay: string = position.slice(Constants.POSITION_LAST_LETTER);
+        const indexLine: number = position.slice(0, Constants.END_POSITION_INDEX_LINE).toLowerCase().charCodeAt(0) - Constants.ASCII_CODE_SHIFT;
+        const indexColumn = Number(position.slice(Constants.END_POSITION_INDEX_LINE, position.length + Constants.POSITION_LAST_LETTER));
         const wordLength = word.length;
 
         if (letterWay === 'h') {
@@ -147,10 +146,10 @@ export class PutLogicService {
 
     sendGameToAllClientInRoom(game: GameServer) {
         // We send to all clients a gameState and a scoreBoardState\
-        this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('gameBoardUpdate', game);
 
         // we send to all clients an update of the players and spectators
-        this.sio.to(game.roomName).emit('playersSpectatorsUpdate', {
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('playersSpectatorsUpdate', {
             roomName: game.roomName,
             players: Array.from(game.mapPlayers.values()),
             spectators: Array.from(game.mapSpectators.values()),
@@ -178,10 +177,9 @@ export class PutLogicService {
     }
 
     private verifyIfTileOnBoardAlready(game: GameServer, letterToCheck: string, indexLetter: number, position: string): boolean {
-        const letterWay: string = position.slice(GlobalConstants.POSITION_LAST_LETTER);
-        let indexLine: number =
-            position.slice(0, GlobalConstants.END_POSITION_INDEX_LINE).toLowerCase().charCodeAt(0) - GlobalConstants.ASCII_CODE_SHIFT;
-        let indexColumn = Number(position.slice(GlobalConstants.END_POSITION_INDEX_LINE, position.length + GlobalConstants.POSITION_LAST_LETTER));
+        const letterWay: string = position.slice(Constants.POSITION_LAST_LETTER);
+        let indexLine: number = position.slice(0, Constants.END_POSITION_INDEX_LINE).toLowerCase().charCodeAt(0) - Constants.ASCII_CODE_SHIFT;
+        let indexColumn = Number(position.slice(Constants.END_POSITION_INDEX_LINE, position.length + Constants.POSITION_LAST_LETTER));
         if (letterWay === 'h') {
             indexColumn += indexLetter;
         } else {
@@ -213,7 +211,7 @@ export class PutLogicService {
     private updateStandOpponent(game: GameServer, player: Player, stand: string[]) {
         player.isMoveBingo = stand.length === 0;
         // We delete the old stand array
-        for (let j = 0; j < GlobalConstants.NUMBER_SLOT_STAND; j++) {
+        for (let j = 0; j < Constants.NUMBER_SLOT_STAND; j++) {
             this.standService.deleteLetterArrayLogic(j, player);
         }
         // We reset the map
@@ -221,7 +219,7 @@ export class PutLogicService {
             player.mapLetterOnStand.delete(key);
         }
         // And then write the new one
-        for (let j = 0; j < GlobalConstants.NUMBER_SLOT_STAND; j++) {
+        for (let j = 0; j < Constants.NUMBER_SLOT_STAND; j++) {
             if (j < stand.length) {
                 this.standService.writeLetterStandLogic(j, stand[j], game.letterBank, player);
             } else {

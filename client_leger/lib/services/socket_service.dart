@@ -1,6 +1,10 @@
+import 'package:client_leger/models/chat.dart';
+import 'package:client_leger/models/chatroom.dart';
 import 'package:client_leger/models/spectator.dart';
+import 'package:client_leger/services/chat-service.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
@@ -21,7 +25,7 @@ import 'info_client_service.dart';
 
 
 
-class SocketService{
+class SocketService with ChangeNotifier{
 
   static final SocketService _socketService = SocketService._internal();
 
@@ -29,6 +33,7 @@ class SocketService{
   TimerService timerService = TimerService();
   TapService tapService = TapService();
   Controller controller = Controller();
+  ChatService chatService = ChatService();
 
 
   late IO.Socket socket;
@@ -47,7 +52,6 @@ class SocketService{
     socket.emit("new-user", globals.userLoggedIn.username);
 
     socketListen();
-
   }
 
   socketListen() {
@@ -56,6 +60,7 @@ class SocketService{
     gameUpdateHandler();
     timerHandler();
     canvasActionsHandler();
+    chatRoomHandler();
   }
 
   roomManipulationHandler() {
@@ -71,17 +76,12 @@ class SocketService{
     socket.on('removeElementListRoom', (roomNameToDelete) {
       infoClientService.removeRoom(roomNameToDelete);
     });
-
-    // socket.on('roomChangeAccepted', (page) {
-    //
-    // });
-
   }
 
   otherSocketOn() {
 
     socket.on('messageServer', (message) {
-
+      print(message);
     });
 
     socket.on('forceLogout', (_) async {
@@ -123,13 +123,12 @@ class SocketService{
     });
 
     socket.on('soundPlay', (soundName) async {
-      if(infoClientService.soundDisabled){
-          return;
+      if(!infoClientService.soundDisabled){
+        final player = AudioPlayer();                         // Create a player
+        await player.setUrl("asset:assets/audios/$soundName"); // Schemes: (https: | file: | asset: )
+        await player.play();
+        await player.stop();
       }
-      final player = AudioPlayer();                         // Create a player
-      await player.setUrl("asset:assets/audios/$soundName"); // Schemes: (https: | file: | asset: )
-      await player.play();
-      await player.stop();
     });
   }
 
@@ -137,32 +136,27 @@ class SocketService{
     socket.on('playerAndStandUpdate', (player) {
       infoClientService.updatePlayer(player);
       infoClientService.notifyListeners();
-      // setTimeout(() => {
+      chatService.notifyListeners();
     });
 
     socket.on('gameBoardUpdate', (game) {
       infoClientService.updateGame(game);
       tapService.draggedTile = null;
       tapService.notifyListeners();
-
-      // TODO
-      // setTimeout(() => {
-      // this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
-      // }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+      infoClientService.notifyListeners();
+      chatService.notifyListeners();
     });
 
     socket.on('playersSpectatorsUpdate', (data) {
       int idxExistingRoom = infoClientService.rooms.indexWhere((element) => element.name == data['roomName']);
+      if(idxExistingRoom == -1){
+        return;
+      }
       infoClientService.actualRoom = infoClientService.rooms[idxExistingRoom];
       List<Player> updatedPlayers = Player.createPLayersFromArray(data);
       infoClientService.rooms[idxExistingRoom].players = updatedPlayers;
-      if (infoClientService.isSpectator) {
-        // TODO
-        // setTimeout(() => {
-        // this.drawingService.drawSpectatorStands(players);
-        // }, GlobalConstants.WAIT_FOR_CANVAS_INI);
-      }
-      infoClientService.rooms[idxExistingRoom].spectators = Spectator.createSpectatorsFromArray(data);
+      List<Spectator> updatedSpecs = Spectator.createSpectatorsFromArray(data);
+      infoClientService.rooms[idxExistingRoom].spectators = updatedSpecs;
 
       Player? tmpPlayer = infoClientService.actualRoom.players.firstWhereOrNull((player) => player.name == infoClientService.playerName);
       if (tmpPlayer != null) {
@@ -178,10 +172,7 @@ class SocketService{
       }
 
       infoClientService.notifyListeners();
-    });
-
-    socket.on('findTileToPlaceArrow', (realPosInBoardPx) {
-        //Est-ce nécessaire pour le mobile? - nope!
+      chatService.notifyListeners();
     });
 
     socket.on('creatorShouldBeAbleToStartGame', (creatorCanStart) {
@@ -194,7 +185,6 @@ class SocketService{
   }
 
   timerHandler() {
-
     socket.on('displayChangeEndGame', (displayChange) {
       displayChangeEndGameCallBack(displayChange);
     });
@@ -235,10 +225,6 @@ class SocketService{
   }
 
   canvasActionsHandler() {
-    socket.on('clearTmpTileCanvas', (_) {
-
-    });
-
     socket.on('drawBorderTileForTmpHover', (boardIndexs) {
 
     });
@@ -250,13 +236,41 @@ class SocketService{
       mouseCoords.y = crossProductGlobal(mouseCoords.y.toDouble());
       tapService.drawTileDraggedOnCanvas(clickedTile, mouseCoords);
     });
+  }
 
-    socket.on('drawVerticalArrow', (arrowCoords) {
+  chatRoomHandler(){
+    socket.on('setChatRoom', (data) {
+      var chatRoom = ChatRoom.fromJson(data);
 
+      //if the room is already present we delete it to set the newer one
+      //it should never happened though
+      if(chatService.rooms.contains(chatRoom)){
+        chatService.rooms.removeWhere((element) => element.name == chatRoom.name);
+        print("Should never go here in SocketService:setChatRoom");
+      }
+      //if the room received is general it means we are getting all the room
+      //and this is the start of the app
+      if(chatRoom.name == "general"){
+        chatService.rooms.clear();
+      }
+      chatService.rooms.add(chatRoom);
+      if(chatRoom.name == "general"){
+        chatService.currentChatRoom = chatService.rooms[0];
+      }
+      chatService.chatRoomWanted = null;
+      chatService.notifyListeners();
     });
-
-    socket.on('drawHorizontalArrow', (arrowCoords) {
-
+    socket.on('addMsgToChatRoom', (data) {
+      var chatRoomName = data[0];
+      var newMsg = data[1];
+      var roomElement = chatService.rooms.firstWhere((element) => element.name == chatRoomName);
+      int indexRoom = chatService.rooms.indexOf(roomElement);
+      if(indexRoom != -1){
+        chatService.rooms[indexRoom].chatHistory.add(ChatMessage.fromJson(newMsg));
+      }else{
+        print("error in SocketService:addMsgToChatRoom");
+      }
+      chatService.notifyListeners();
     });
   }
 

@@ -11,6 +11,7 @@ import { StandService } from './stand.service';
 import { VirtualPlayerService } from './virtual-player.service';
 import AvatarService from '@app/services/avatar.service';
 import { PowerCardsService } from './power-cards.service';
+import { ChatMessage } from '@app/classes/chat-message';
 
 @Service()
 export class PlayAreaService {
@@ -172,10 +173,10 @@ export class PlayAreaService {
 
     sendMsgToAllInRoom(game: GameServer, message: string) {
         for (const player of game.mapPlayers.values()) {
-            player.chatHistory.push({ message, isCommand: false, sender: 'S' });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, message));
         }
         for (const spectator of game.mapSpectators.values()) {
-            spectator.chatHistory.push({ message, isCommand: false, sender: 'S' });
+            spectator.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, message));
         }
     }
 
@@ -222,7 +223,7 @@ export class PlayAreaService {
         } else if (probaMove < neinyPercent) {
             // 80% chances to place a letter
             await this.virtualPService.generateMoves(game, virtualPlayer);
-            this.sio.to(game.roomName).emit('soundPlay', Constants.WORD_VALID_SOUND);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('soundPlay', Constants.WORD_VALID_SOUND);
         } else {
             await this.chatService.passCommand('!passer', game, virtualPlayer);
         }
@@ -247,7 +248,7 @@ export class PlayAreaService {
 
     private triggerTimer(game: GameServer) {
         if (game.reduceEnnemyNbTurn > 0) {
-            this.sio.to(game.roomName).emit('startClearTimer', {
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('startClearTimer', {
                 minutesByTurn: game.minutesByTurn / 2,
                 currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
             });
@@ -256,7 +257,7 @@ export class PlayAreaService {
             // we send a message to everyone in the room to tell that someone used a powerCard
             this.sendMsgToAllInRoom(game, "Le temps est divisé par deux due à l'utilisation d'une carte de pouvoir !");
         } else {
-            this.sio.to(game.roomName).emit('startClearTimer', {
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('startClearTimer', {
                 minutesByTurn: game.minutesByTurn,
                 currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
             });
@@ -265,10 +266,10 @@ export class PlayAreaService {
 
     private sendGameToAllClientInRoom(game: GameServer) {
         // We send to all clients a gameState and a scoreBoardState\
-        this.sio.to(game.roomName).emit('gameBoardUpdate', game);
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('gameBoardUpdate', game);
 
         // we send to all clients an update of the players and spectators
-        this.sio.to(game.roomName).emit('playersSpectatorsUpdate', {
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('playersSpectatorsUpdate', {
             roomName: game.roomName,
             players: Array.from(game.mapPlayers.values()),
             spectators: Array.from(game.mapSpectators.values()),
@@ -281,8 +282,8 @@ export class PlayAreaService {
     }
 
     private triggerStopTimer(roomName: string) {
-        this.sio.to(roomName).emit('stopTimer');
-        this.sio.to(roomName).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
+        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('stopTimer');
+        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
     }
 
     private giveRandomNbOpponent(sizeArrayVPOptions: number): number {

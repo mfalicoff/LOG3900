@@ -84,6 +84,7 @@ export const REMOVE_POINTS_FROM_MAX =
 export const ADD_1_MIN = "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.";
 export const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.';
 
+export const SYSTEM_SENDER = 'SYSTEM';
 // SOUND FILE CONSTANTS
 export const LETTER_PLACED_SOUND = 'letter-placement-small.mp3';
 export const LETTER_REMOVED_SOUND = 'letter-removal-small.mp3';
