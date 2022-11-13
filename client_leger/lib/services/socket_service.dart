@@ -208,6 +208,7 @@ class SocketService{
       if(currentNamePlayerPlaying == infoClientService.playerName) {
         infoClientService.displayTurn = "C'est votre tour !";
         infoClientService.isTurnOurs = true;
+        infoClientService.notifyListeners();
 
       } else {
         Player playerPlaying = infoClientService.actualRoom.players.singleWhere((player) => player.name == currentNamePlayerPlaying);
