@@ -11,8 +11,7 @@ import { UserService } from '@app/services/user.service';
     styleUrls: ['./ranked-matchmaking-page.component.scss'],
 })
 export class RankedMatchmakingPageComponent {
-    matchAccepted: boolean;
-    matchRefuseCss: boolean;
+    //matchAccepted: boolean;
     constructor(
         public userService: UserService,
         public timerService: TimerService,
@@ -20,20 +19,20 @@ export class RankedMatchmakingPageComponent {
         public infoClientService: InfoClientService,
         public rankedService: RankedService,
     ) {
+        //this.matchAccepted = false;
         this.timerService.clearTimer();
         this.timerService.clearMatchmakingTimer();
         this.timerService.startMatchmakingTimer();
     }
 
     acceptMatch() {
-        this.matchAccepted = true;
-        this.socketService.socket.emit('acceptMatch', { user: this.userService.user });
+        this.rankedService.matchAccepted = true;
+        //this.matchAccepted = true;
+        this.socketService.socket.emit('acceptMatch',this.userService.user );
     }
     refuseMatch() {
-        this.matchAccepted = false;
-        this.matchRefuseCss = true;
         this.timerService.clearTimer();
         this.timerService.clearMatchmakingTimer();
-        this.socketService.socket.emit('refuseMatch', { user: this.userService.user });
+        this.socketService.socket.emit('refuseMatch',this.userService.user );
     }
 }

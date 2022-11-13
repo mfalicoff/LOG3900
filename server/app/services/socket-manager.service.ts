@@ -513,7 +513,10 @@ export class SocketManager {
         this.matchmakingService.initSioMatchmaking(this.sio);
 
         // create button for creator to start the game if enough reel player are in the game
-        this.shouldCreatorBeAbleToStartGame(newGame);
+        if(gameMode !== Constants.MODE_RANKED){
+             console.log('why');
+            this.shouldCreatorBeAbleToStartGame(newGame);
+        }
     }
     private shouldCreatorBeAbleToStartGame(game: GameServer) {
         let creatorCanStart = true;
@@ -563,7 +566,6 @@ export class SocketManager {
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', (name) => {
             this.users.set(socket.id, { name, roomName: '', elo: 2000 });
-            console.log('damn');
         });
 
         socket.on('forceLogout', (name) => {
@@ -728,7 +730,9 @@ export class SocketManager {
             });
 
             this.gameUpdateClients(game);
-            this.shouldCreatorBeAbleToStartGame(game);
+            if(game.gameMode !== Constants.MODE_RANKED){
+               this.shouldCreatorBeAbleToStartGame(game);
+            }
         });
 
         // called when the creator of a multiplayer game wants to start the game
@@ -799,7 +803,9 @@ export class SocketManager {
         this.gameUpdateClients(game);
 
         // create button for creator to start the game if enough reel player are in the game
-        this.shouldCreatorBeAbleToStartGame(game);
+        if(game.gameMode !== Constants.MODE_RANKED){
+            this.shouldCreatorBeAbleToStartGame(game);
+         }
 
         // emit to change page on client after verification
         socket.emit('roomChangeAccepted', '/game');
@@ -857,17 +863,16 @@ export class SocketManager {
             this.userService.changeEloUser(player);
         });
 
-        socket.on('startMatchmaking', ({ eloDisparity, user }) => {
-            console.log('lets gooooo');
+        socket.on('startMatchmaking', (eloDisparity, user) => {
             this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
             // socket.emit('matchFound', player);
         });
 
-        socket.on('refuseMatch', ({ user }) => {
+        socket.on('refuseMatch', (user ) => {
             this.matchmakingService.onRefuse(socket, user);
         });
 
-        socket.on('acceptMatch', ({ user }) => {
+        socket.on('acceptMatch', (user) => {
             this.matchmakingService.onAccept(socket, user);
         });
     }
@@ -908,7 +913,9 @@ export class SocketManager {
 
                     // if the game hasn't started we check if the button start game should be present
                     if (!game.gameStarted) {
-                        this.shouldCreatorBeAbleToStartGame(game);
+                        if(game.gameMode !== Constants.MODE_RANKED){
+                            this.shouldCreatorBeAbleToStartGame(game);
+                         }
                     }
 
                     // we check if we should delete the game or not

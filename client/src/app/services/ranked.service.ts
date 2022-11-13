@@ -5,6 +5,7 @@ import { TimerService } from '@app/services/timer.service';
     providedIn: 'root',
 })
 export class RankedService {
+    matchAccepted: boolean;
     isShowModal: boolean;
     constructor(public timerService: TimerService) {
         this.isShowModal = false;
@@ -18,5 +19,6 @@ export class RankedService {
     closeModal() {
         this.timerService.clearTimer();
         this.isShowModal = false;
+        this.matchAccepted = false;
     }
 }

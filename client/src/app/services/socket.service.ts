@@ -210,7 +210,6 @@ export class SocketService {
 
     private otherSocketOn() {
         this.socket.on('matchFound', () => {
-            // this.infoClientService.player = player;
             this.rankedService.matchHasBeenFound();
         });
 
@@ -235,13 +234,14 @@ export class SocketService {
                 isGamePrivate: false,
                 passwd: '',
             });
+            this.infoClientService.creatorShouldBeAbleToStartGame = false;
         });
 
         this.socket.on('startGame', (roomName) => {
             this.socket.emit('startGame', roomName);
         });
 
-        this.socket.on('joinRankedRoom', (gameName, socketId) => {
+        this.socket.on('joinRankedRoom', ({gameName, socketId}) => {
             this.socket.emit('joinRoom', gameName, socketId);
             this.socket.emit('spectWantsToBePlayer', gameName, socketId);
         });

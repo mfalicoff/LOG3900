@@ -1,6 +1,6 @@
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
-
+import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -90,7 +90,7 @@ class _RankedInitPageState extends State<RankedInitPage> {
 
   void onConfirm() {
     infoClientService.eloDisparity = eloDisparity;
-    socketService.socket.emit("startMatchmaking",{eloDisparity, (globals.userLoggedIn)});
+    socketService.socket.emit("startMatchmaking",[eloDisparity, (globals.userLoggedIn).toJson()]);
     _toRankedMatchmakingPage();
   }
 

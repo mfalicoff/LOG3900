@@ -53,7 +53,6 @@ export class MatchmakingService {
         const users: RankedGame = new RankedGame(user.name, rankedUsers);
         this.rooms.set(user.name, users);
         socket.join(user.name);
-        console.log(user);
     }
 
     rankedMatchFound(rankedGame: RankedGame) {
@@ -119,7 +118,7 @@ export class MatchmakingService {
                 if (rankedGame.rankedUsers[i].name !== creatorUser.name) {
                     this.sio.sockets.sockets
                         .get(rankedGame.rankedUsers[i].socketId)
-                        ?.emit('joinRankedRoom', rankedGame.name, rankedGame.rankedUsers[i].socketId);
+                        ?.emit('joinRankedRoom',{ gameName: rankedGame.name, socketId: rankedGame.rankedUsers[i].socketId});
                 }
                 // }
                 if (i !== 0) {

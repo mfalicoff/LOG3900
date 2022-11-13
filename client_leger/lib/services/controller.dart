@@ -1,5 +1,6 @@
 import 'dart:io';
-
+//import 'dart:math';
+import 'dart:developer';
 import 'package:client_leger/env/environment.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -21,6 +22,7 @@ class Controller {
       }),
     );
     if (response.statusCode == 200) {
+      // log(response.body);
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
       socket.emit("new-user", user.username);

@@ -6,17 +6,21 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 import '../constants/constants.dart';
 import '../env/environment.dart';
-import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:client_leger/constants/constants.dart' as constants;
 import 'package:collection/collection.dart';
 import 'dart:async';
+import 'package:client_leger/utils/globals.dart' as globals;
+import 'dart:developer';
 
 
+import '../models/mock_dict.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/tile.dart';
 import '../models/vec2.dart';
 import 'controller.dart';
 import 'info_client_service.dart';
+import 'ranked.dart';
 
 
 
@@ -24,6 +28,7 @@ class SocketService{
 
   static final SocketService _socketService = SocketService._internal();
 
+  RankedService rankedService = RankedService();
   InfoClientService infoClientService = InfoClientService();
   TimerService timerService = TimerService();
   TapService tapService = TapService();
@@ -78,6 +83,42 @@ class SocketService{
   }
 
   otherSocketOn() {
+
+    socket.on('matchFound', (_) {
+    rankedService.matchHasBeenFound();
+    });
+
+    socket.on("createRankedGame", (name) async {
+      MockDict mockDict = MockDict("Dictionnaire français par défaut","Ce dictionnaire contient environ trente mille mots français");
+      socket.emit("dictionarySelected", mockDict);
+      socket.emit("createRoomAndGame", [
+                name,
+                name,
+                1,
+                false,
+                constants.MODE_RANKED,
+                'beginner',
+                false,
+                '',
+            ]);
+    });
+
+    socket.on("joinRankedRoom", (data){
+      //log(data);
+      //log(data[0]);
+      String socketId = data["socketId"];
+      String gameName = data["gameName"];
+      socket.emit("joinRoom",[gameName, socketId]);
+      socket.emit("spectWantsToBePlayer",[gameName, socketId]);
+    });
+
+    socket.on("closeModalOnRefuse", (_) {
+      rankedService.closeModal();
+    });
+
+    socket.on("closeModal", (_) {
+      rankedService.closeModal();
+    });
 
     socket.on('messageServer', (message) {
 
@@ -271,5 +312,5 @@ class SocketService{
     });
   }
 
-
 }
+
