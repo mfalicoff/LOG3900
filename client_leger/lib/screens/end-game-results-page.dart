@@ -110,7 +110,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: List.generate(infoClientService.game.winners.length, (index) {
-                            return Text("Nom: ${winners[index]}   avec un score de: ${infoClientService.game.winners[index].score}",
+                            return Text("Nom: ${infoClientService.game.winners[index].name}   avec un score de: ${infoClientService.game.winners[index].score}",
                                     style: TextStyle(
                                         color: Theme.of(context).colorScheme.primary
                                     ),
@@ -290,7 +290,6 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
 
     void _getGameStartDate() {
         timestamp = infoClientService.game.gameStart.toString();
-        // timestamp = "Hard code parce que ca ne marche pas";
     }
 
     void _displayPlayingTime() {
