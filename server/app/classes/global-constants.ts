@@ -163,3 +163,4 @@ export const GAME_WON_SOUND = 'game-won-small.mp3';
 // SOCKET SUFFIX CONSTANTS FOR GAME OR CHATROOM
 export const GAME_SUFFIX = '_game';
 export const CHATROOM_SUFFIX = '_chatroom';
+export const RANKED_SUFFIX = '_ranked';

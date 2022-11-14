@@ -42,7 +42,7 @@ export class MatchmakingService {
     }
 
     joinRoom(socket: io.Socket, game: RankedGame, user: User, eloDisparity: number) {
-        socket.join(game.name + Constants.GAME_SUFFIX);
+        socket.join(game.name + Constants.RANKED_SUFFIX);
         const rankedUser = new RankedUser(user, eloDisparity);
         this.rooms.get(game.name)?.rankedUsers.push(rankedUser);
     }
@@ -52,12 +52,12 @@ export class MatchmakingService {
         const rankedUsers: RankedUser[] = [rankedUser];
         const users: RankedGame = new RankedGame(user.name, rankedUsers);
         this.rooms.set(user.name, users);
-        socket.join(user.name + Constants.GAME_SUFFIX);
+        socket.join(user.name + Constants.RANKED_SUFFIX);
     }
 
     rankedMatchFound(rankedGame: RankedGame) {
         const twnetyOneSecondDelay = 0.35;
-        this.sio.to(rankedGame.name + Constants.GAME_SUFFIX).emit('matchFound');
+        this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('matchFound');
         rankedGame.startTimer(twnetyOneSecondDelay);
         this.checkForUsersAccept(rankedGame);
     }
@@ -67,7 +67,7 @@ export class MatchmakingService {
                 if (rankedUser.name === user.name) {
                     rankedUser.hasAccepted = false;
                     this.sio.sockets.sockets.get(socket.id)?.emit('closeModalOnRefuse');
-                    socket.leave(users.name + Constants.GAME_SUFFIX);
+                    socket.leave(users.name + Constants.RANKED_SUFFIX);
                 }
             }
         }
@@ -139,6 +139,6 @@ export class MatchmakingService {
                 rankedGame.rankedUsers.splice(i, 1);
             }
         }
-        this.sio.to(rankedGame.name + Constants.GAME_SUFFIX).emit('closeModal');
+        this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('closeModal');
     }
 }
