@@ -183,6 +183,7 @@ export class SocketService {
         this.socket.on('setTimeoutTimerStart', () => {
             this.drawingBoardService.lettersDrawn = '';
             this.setTimeoutForTimer();
+            // call start timer playing time
         });
 
         this.socket.on('stopTimer', () => {

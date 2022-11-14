@@ -24,7 +24,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     late String creator;
     List<Player> players = [];
     List<Player> spectators = [];
-    List<Player> winners = [];
+    List<String> winners = ["GagnantParDefaut"];
     late int numberOfTurns;
     late String playingTime;
     late String timestamp = '';
@@ -109,8 +109,8 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: List.generate(winners.length, (index) {
-                            return Text("Nom: ${infoClientService.game.winners[index]}   avec un score de: ${infoClientService.game.winners[index].score}",
+                    children: List.generate(infoClientService.game.winners.length, (index) {
+                            return Text("Nom: ${winners[index]}   avec un score de: ${infoClientService.game.winners[index].score}",
                                     style: TextStyle(
                                         color: Theme.of(context).colorScheme.primary
                                     ),
@@ -171,7 +171,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     ],
                 ),
                 const SizedBox(
-                    height: 25,
+                    height: 35,
                 ),
                 Container(
                     height: 30,
@@ -195,7 +195,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                 Text("Score: ${players[0].score}",
                                     style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                                Text("Lettres sur le chevalet: ${lettersOnStand(players[0]).toString()}",
+                                Text("Lettres sur le chevalet: ${lettersOnStand(players[0])}",
                                     style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 Text("Nombre de tours joue dans la partie: ${players[0].turn}",
@@ -204,7 +204,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                             ],
                         ),
                         const SizedBox(
-                            width: 15,
+                            width: 35,
                         ),
                         Column(
 
@@ -215,7 +215,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                 Text("Score: ${players[1].score}",
                                     style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                                Text("Lettres sur le chevalet: ${lettersOnStand(players[1]).toString()}",
+                                Text("Lettres sur le chevalet: ${lettersOnStand(players[1])}",
                                     style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 Text("Nombre de tours joue dans la partie: ${players[1].turn}",
@@ -224,7 +224,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                             ],
                         ),
                         const SizedBox(
-                            width: 15,
+                            width: 35,
                         ),
                         Column(
 
@@ -235,7 +235,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                 Text("Score: ${players[2].score}",
                                     style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                                Text("Lettres sur le chevalet: ${lettersOnStand(players[2]).toString()}",
+                                Text("Lettres sur le chevalet: ${lettersOnStand(players[2])}",
                                     style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 Text("Nombre de tours joue dans la partie: ${players[2].turn}",
@@ -244,7 +244,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                             ],
                         ),
                         const SizedBox(
-                            width: 15,
+                            width: 50,
                         ),
                         Column(
 
@@ -255,7 +255,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                 Text("Score: ${players[3].score}",
                                     style: Theme.of(context).textTheme.bodyLarge,
                                 ),
-                                Text("Lettres sur le chevalet: ${lettersOnStand(players[3]).toString()}",
+                                Text("Lettres sur le chevalet: ${lettersOnStand(players[3])}",
                                     style: Theme.of(context).textTheme.bodyLarge,
                                 ),
                                 Text("Nombre de tours joue dans la partie: ${players[3].turn}",
@@ -271,10 +271,10 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     String lettersOnStand(Player player) {
-        final lettersStillOnStand = [];
+        late String lettersStillOnStand = "";
         for (var tile in player.stand) {
             if (tile.letter.value != '') {
-                lettersStillOnStand.add(tile.letter);
+                lettersStillOnStand += tile.letter.value;
             }
         }
         return lettersStillOnStand.toString();
@@ -289,8 +289,8 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     void _getGameStartDate() {
-        // timestamp = infoClientService.game.gameStart.toString();
-        timestamp = "Hard code parce que ca ne marche pas";
+        timestamp = infoClientService.game.gameStart.toString();
+        // timestamp = "Hard code parce que ca ne marche pas";
     }
 
     void _displayPlayingTime() {
@@ -327,7 +327,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ const Text("Il n'y a pas de spectateurs.")],
+            children: const [ Text("Il n'y a pas de spectateurs.")],
         );
     }
 
@@ -339,7 +339,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         if (socketService.socket.id == infoClientService.game.masterTimer) {
             gameSaved = GameSaved(infoClientService.actualRoom.players,
                         infoClientService.actualRoom.name,
-                        10,
+                        numberOfTurns,
                         playingTime,
                         infoClientService.game.nbLetterReserve,
                         timestamp,

@@ -141,6 +141,25 @@ class _GamePageState extends State<GamePage> {
                               )
                             : null),
                     Container(
+                        child: infoClientService.game.gameFinished == true
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                                const EdgeInsets.symmetric(
+                            vertical: 18.0, horizontal: 0.0),
+                            ),
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100.0)))),
+                                onPressed: () {
+                                    showDialog(context: context, builder: (context) => const EndGameResultsPage(),
+                                    );
+                                },
+                        child: const Text('End Game Results'),
+                        )
+
+                    : null),
+                    Container(
                         child: shouldSpecBeAbleToBePlayer() == true
                             ? ElevatedButton(
                                 style: ButtonStyle(
