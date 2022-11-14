@@ -1,4 +1,3 @@
-import 'package:client_leger/models/tile.dart';
 import 'package:flutter/material.dart';
 
 import '../models/chatroom.dart';
@@ -10,10 +9,21 @@ class ChatService with ChangeNotifier{
   ChatRoom currentChatRoom = ChatRoom(name: "bugIfHere", participants: []);
   //chatRoom tmp for the search of rooms
   ChatRoom? chatRoomWanted;
+  late bool isDrawerOpen = false;
+
 
   factory ChatService(){
     return _chatService;
   }
 
   ChatService._internal() {}
+
+  bool isThereAChatUnread() {
+    for(ChatRoom chatRoom in rooms) {
+      if(chatRoom.isUnread == true) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
