@@ -23,5 +23,5 @@ class StagingConfig implements BaseConfig {
 class ProdConfig implements BaseConfig {
 
   @override
-  String get serverURL => "http://ec2-15-222-9-242.ca-central-1.compute.amazonaws.com:3000/";
+  String get serverURL => "http://ec2-15-222-9-242.ca-central-1.compute.amazonaws.com:3000";
 }
