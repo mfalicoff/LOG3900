@@ -3,10 +3,13 @@ import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/screens/search_page.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/services/info_client_service.dart';
+import 'package:client_leger/services/socket_service.dart';
 import '../constants/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+
+import '../widget/chat_panel.dart';
 
 
 class MyHomePage extends StatefulWidget {
@@ -19,131 +22,103 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final Controller controller = Controller();
   final InfoClientService infoClientService = InfoClientService();
+  final SocketService socketService = SocketService();
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/background.jpg"),
-              fit: BoxFit.cover,
+    socketService.socket.emit('getAllChatRooms');
+    return Scaffold(
+      endDrawer: Drawer(width: 600, child: ChatPanel(isInGame: false,)),
+      body: Stack(
+        children: <Widget>[
+          Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/background.jpg"),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-        ),
-        Positioned(
+          const Positioned(
+              top: 10.0,
+              right: 30.0,
+              child: ChatPanelOpenButton()),
+          Positioned(
+              top: 100.0,
+              right: 30.0,
+              child: ElevatedButton(
+                  style: ButtonStyle(
+                      padding: MaterialStateProperty.all(
+                        const EdgeInsets.symmetric(
+                            vertical: 18.0, horizontal: 0.0),
+                      ),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(100.0)))),
+                  onPressed: _toSearchPage,
+                  child: const Icon(Icons.search))),
+          Positioned(
             top: 10.0,
-            right: 30.0,
+            left: 30.0,
             child: ElevatedButton(
-                style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(
-                          vertical: 18.0, horizontal: 0.0),
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100.0)))),
-                onPressed: _toChatPage,
-                child: const Icon(Icons.chat))),
-        Positioned(
-            top: 100.0,
-            right: 30.0,
-            child: ElevatedButton(
-                style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(
-                          vertical: 18.0, horizontal: 0.0),
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100.0)))),
-                onPressed: _toSearchPage,
-                child: const Icon(Icons.search))),
-        Positioned(
-          top: 10.0,
-          left: 30.0,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              padding: MaterialStateProperty.all(
-                const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
-              ),
-              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(
+                  const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
                 ),
               ),
+              onPressed: _logout,
+              child: const Icon(Icons.logout),
             ),
-            onPressed: _logout,
-            child: const Icon(Icons.logout),
           ),
-        ),
-        Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: _toProfilePage,
-                child: CircleAvatar(
-                  radius: 48,
-                  backgroundImage: MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
+          Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                GestureDetector(
+                  onTap: _toProfilePage,
+                  child: CircleAvatar(
+                    radius: 48,
+                    backgroundImage: MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
+                  ),
                 ),
-              ),
 
-              Text(
-                globals.userLoggedIn.username,
-                style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17, decoration: TextDecoration.none)
-              )
-            ],
+                Text(
+                  globals.userLoggedIn.username,
+                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17, decoration: TextDecoration.none)
+                )
+              ],
+            ),
           ),
-        ),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: (){
-                  infoClientService.gameMode = CLASSIC_MODE;
-                  _toGameListPage();
-                },
-                child: const Text("Mode Classique"),
-              ),
-              ElevatedButton(
-                onPressed: (){
-                  infoClientService.gameMode = POWER_CARDS_MODE;
-                  _toGameListPage();
-                },
-                child: const Text("Mode Carte De Pouvoir Configurable"),
-              ),
-            ],
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: (){
+                    infoClientService.gameMode = CLASSIC_MODE;
+                    _toGameListPage();
+                  },
+                  child: const Text("Mode Classique"),
+                ),
+                ElevatedButton(
+                  onPressed: (){
+                    infoClientService.gameMode = POWER_CARDS_MODE;
+                    _toGameListPage();
+                  },
+                  child: const Text("Mode Carte De Pouvoir Configurable"),
+                ),
+              ],
+            ),
           ),
-        ),
-        Positioned(
-            top: 50.0,
-            right: 30.0,
-            child: ElevatedButton(
-                style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(
-                          vertical: 18.0, horizontal: 0.0),
-                    ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100.0)))),
-                onPressed: () {
-                    showDialog(context: context, builder: (context) => const EndGameResultsPage(),
-                    );
-                },
-                child: const Text('End Game Results'),
-            )
-        ),
-      ],
+        ],
+      ),
     );
-  }
-
-  void _toChatPage() {
-    Navigator.of(context).pushNamed('/chat');
   }
 
   void _toSearchPage() {
@@ -161,7 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toGameListPage() {
-    print("GameModeIs: " + infoClientService.gameMode);
     Navigator.pushNamed(context, "/game-list");
   }
 

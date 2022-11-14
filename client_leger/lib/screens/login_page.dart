@@ -66,7 +66,9 @@ class _LoginFormState extends State<LoginForm> {
   final SocketService socketService = SocketService();
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
+    // const alarmAudioPath = "assets/audios/letter-placement.wav";
+    // player.play(DeviceFileSource(alarmAudioPath));
     return Form(
       key: _formKey,
       child: Column(
@@ -191,9 +193,9 @@ class _LoginFormState extends State<LoginForm> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text(
+      title: const Text(
           "Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?"),
-      content: Text(
+      content: const Text(
           "Si vous ete actuellement en match vous abandonnerez votre match"),
       actions: [
         cancelButton,

@@ -1,0 +1,15 @@
+<div class="container justified">
+    <div class="newChatroom">
+        <h2>Recherche de canal de discussion </h2>
+        <mat-form-field>
+            <mat-label style="color:#0C483F">Nom de la salle à trouver</mat-label>
+            <input matInput [(ngModel)]="roomName" (input)="onChangeInput()">
+          </mat-form-field>
+    </div>
+    <div class="newChatroom" *ngFor="let chatRoom of roomsFound">
+        <button mat-button class="btnStyle" (click)="joinChatRoom(chatRoom.name)">{{chatRoom.name}}
+            <mat-icon>add_circle_outline</mat-icon>
+        </button>
+    </div>
+    <button class="saveButtonAvatar saveButton" mat-button (click)="closeDialog()">Fermer</button>
+</div>

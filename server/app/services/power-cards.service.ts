@@ -6,6 +6,7 @@ import { Service } from 'typedi';
 import { StandService } from './stand.service';
 
 import * as io from 'socket.io';
+import { ChatMessage } from '@app/classes/chat-message';
 
 @Service()
 export class PowerCardsService {
@@ -284,7 +285,7 @@ export class PowerCardsService {
     }
 
     private addSecsToTimePlayer(game: GameServer, timeToAdd: number) {
-        this.sio.to(game.roomName)?.emit('addSecsToTimer', timeToAdd);
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX)?.emit('addSecsToTimer', timeToAdd);
     }
 
     private remove1PowerCardForEveryone(game: GameServer, playerNameUsingCard: string) {
@@ -327,10 +328,10 @@ export class PowerCardsService {
 
     private sendMsgToAllInRoom(game: GameServer, message: string) {
         for (const player of game.mapPlayers.values()) {
-            player.chatHistory.push({ message, isCommand: false, sender: 'S' });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, message));
         }
         for (const spectator of game.mapSpectators.values()) {
-            spectator.chatHistory.push({ message, isCommand: false, sender: 'S' });
+            spectator.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, message));
         }
     }
 }

@@ -1,13 +1,10 @@
-import 'package:client_leger/models/tile.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
 import '../models/game-server.dart';
-import '../models/letter.dart';
 import '../models/mock_dict.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
-import '../models/vec4.dart';
 
 class InfoClientService with ChangeNotifier{
 
@@ -39,6 +36,8 @@ class InfoClientService with ChangeNotifier{
 
   List<MockDict> dictionaries = [];
 
+  bool soundDisabled = false;
+
   factory InfoClientService(){
     return _gameService;
   }
@@ -58,6 +57,7 @@ class InfoClientService with ChangeNotifier{
 
   void updatePlayer(player){
     this.player = Player.fromJson(player);
+    notifyListeners();
   }
 
   void updateGame(data){

@@ -5,6 +5,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-game-mode-options-page',
@@ -14,9 +15,13 @@ import { UserService } from '@app/services/user.service';
 export class GameModeOptionsPageComponent {
     constructor(
         private infoClientService: InfoClientService, 
-        private http: HttpClient, private router: Router, 
+        private http: HttpClient, 
+        private router: Router, 
+        private socketService: SocketService,
         public userService: UserService
-    ) {}
+    ) {
+        this.socketService.socket.emit("getAllChatRooms");
+    }
 
     setGameMode(gameMode: string) {
         this.infoClientService.gameMode = gameMode;
@@ -55,4 +60,5 @@ export class GameModeOptionsPageComponent {
             alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
         }
     }
+    
 }

@@ -4,7 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { BoardStandComponent } from '@app/components/board-stand/board-stand.component';
-import { CommunicationBoxComponent } from '@app/components/communication-box/communication-box.component';
+import { CommunicationBoxComponent } from '@app/components/chat/communication-box/communication-box.component';
+import { CommunicationDashboardComponent } from '@app/components/chat/communication-dashboard/communication-dashboard.component';
+import { NewChatroomModalComponent } from '@app/components/chat/communication-dashboard/new-chatroom-modal/new-chatroom-modal.component';
+import { JoinChatRoomModalComponent } from './components/chat/communication-dashboard/join-chatroom-modal.component.ts/join-chatroom-modal.component';
 import { InfoPanelComponent } from '@app/components/info-panel/info-panel.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { TimerComponent } from '@app/components/timer/timer.component';
@@ -22,7 +25,6 @@ import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { UserHistoryComponent } from './components/user-history/user-history.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
-import { ChatComponent } from './pages/chat/chat.component';
 import { GameModeOptionsPageComponent } from './pages/game-mode-options-page/game-mode-options-page.component';
 import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
@@ -58,7 +60,6 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         LeaderboardPageComponent,
         AdminPageComponent,
         ModalComponent,
-        ChatComponent,
         LoginPageComponent,
         GameModeOptionsPageComponent,
         ProfilePageComponent,
@@ -67,6 +68,9 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         GalleryComponent,
         EndGameResultsPageComponent,
         ProfileReadOnlyPageComponent,
+        CommunicationDashboardComponent,
+        NewChatroomModalComponent,
+        JoinChatRoomModalComponent,
     ],
     imports: [
         AppMaterialModule,

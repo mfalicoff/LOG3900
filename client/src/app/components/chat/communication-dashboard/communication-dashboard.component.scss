@@ -1,0 +1,90 @@
+#main {
+  border: 10px solid #0C483F;
+  background-color: wheat;
+  width: 600px;
+  height: 450px;
+  padding: 10px;
+  padding-right: 0;
+  padding-top: 0;
+}
+
+#titleChatDashBoard{
+  padding: 10px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+}
+
+#leftDiv{
+  width: 25%;
+}
+
+.listChatRoom{
+  height: 260px;
+  overflow-y: scroll;
+  border-top: 3px solid #0C483F;
+  padding-top: 10px;
+}
+
+.chatRoomElement{
+  background-color: #0C483F;
+  color: wheat;
+  text-align: center;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.chatRoomElement:hover{
+  cursor: pointer;
+  user-select: none;
+}
+
+.chatRoomElementPressed{
+  background-color: wheat;
+  color: #0C483F;
+  border: 2px solid #0C483F;
+}
+
+
+.leaveIcon{
+  display: inline-block;
+  vertical-align: middle;
+  align-self: center;
+}
+
+.searchChatRoomField {
+  width: 95%;
+  margin-left: 2%;
+}
+
+.chatroom {
+  margin-left: 10px;
+  width: 75%;
+}
+
+.rooms {
+}
+
+.btnStyle{
+  background-color: #0C483F;
+  display: inline;
+  margin-top: 0px;
+  margin-bottom: 5px;
+  font-size: 15px;
+  color: wheat;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  // Height of horizontal scroll bar
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: wheat;
+}
+::-webkit-scrollbar-thumb {
+  background: #0c483f;
+  border-radius: 8px;
+}

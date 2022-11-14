@@ -141,6 +141,7 @@ class GameServer {
       for(var tile in line){
         tempLine.add(Tile.fromJson(tile));
       }
+
       board.add(tempLine);
     }
 

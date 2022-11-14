@@ -5,24 +5,8 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:client_leger/models/tile.dart';
 
-import 'command.dart';
+import 'chat.dart';
 import 'letter.dart';
-
-// class PlayerOld {
-//   late String name;
-//   late String id;
-//   late int score;
-//   late bool isCreatorOfGame;
-//   late String? avatarUri;
-//
-//   PlayerOld(this.name, this.id, this.score, this.isCreatorOfGame);
-//
-//   PlayerOld.fromJSON(data){
-//     name = data["name"];
-//     score = data["score"];
-//     avatarUri = data['avatarUri'];
-//   }
-// }
 
 class Player with ChangeNotifier {
   late String id;
@@ -37,9 +21,9 @@ class Player with ChangeNotifier {
 
   // CHAT SERVICE DATA
   late String lastWordPlaced;
-  late List<Command> chatHistory;
   late bool debugOn;
   late int passInARow;
+  late List<ChatMessage> chatHistory = [];
 
   // MOUSE EVENT SERVICE DATA
   late int tileIndexManipulation;
@@ -89,6 +73,11 @@ class Player with ChangeNotifier {
       powerCards.add(PowerCard.fromJson(powerCard));
     }
     nbValidWordPlaced = parsed["nbValidWordPlaced"];
+
+    var chatH = parsed["chatHistory"];
+    for(var chatMsg in chatH){
+      chatHistory.add(ChatMessage.fromJson(chatMsg));
+    }
 
     notifyListeners();
   }

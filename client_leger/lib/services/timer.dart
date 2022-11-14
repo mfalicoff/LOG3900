@@ -6,7 +6,7 @@ class TimerService with ChangeNotifier{
   String displayTimer = '';
   num secondsValue = 0;
   num playingTime = 0;
-  late Timer timerInterval = Timer(Duration(milliseconds: 1), () {});
+  late Timer timerInterval = Timer(const Duration(milliseconds: 1), () {});
 
   static final TimerService _timerService = TimerService._internal();
 

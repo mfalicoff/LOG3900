@@ -1,13 +1,16 @@
-import { AfterViewInit, Component, ElementRef, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { ChatMessage } from '@app/classes/chat-message';
 import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
-
+import * as Constants from '@app/classes/global-constants';
+import { ChatRoom } from '@app/classes/chatroom.interface';
 @Component({
     selector: 'app-communication-box',
     templateUrl: './communication-box.component.html',
     styleUrls: ['./communication-box.component.scss'],
 })
 export class CommunicationBoxComponent implements AfterViewInit {
+    @Input() actualChatRoom: ChatRoom;
     @ViewChild('scrollFrame', { static: false }) scrollFrame: ElementRef;
     @ViewChildren('commands') itemElements: QueryList<Element>;
 
@@ -30,31 +33,53 @@ export class CommunicationBoxComponent implements AfterViewInit {
 
     // function that shows the content of the input, the place in the message array
     // and delete the input field
-    onEnterComBox(input: string): void {
+    onEnterComBox(): void {
         if (!this.mouseKeyboardEventHandler.isCommunicationBoxFocus) {
             return;
         }
+        this.mouseKeyboardEventHandler.onCommunicationBoxEnter(this.inputInComBox, this.actualChatRoom.name);
         (document.getElementById('inputCommBox') as HTMLInputElement).value = '';
-        this.mouseKeyboardEventHandler.onCommunicationBoxEnter(input);
+    }
+
+    chooseMsgClass(msg: ChatMessage): string {
+        if (msg.senderName === this.infoClientService.playerName) {
+            return 'msgPlayer';
+        } else if (msg.senderName === Constants.SYSTEM_SENDER) {
+            return 'msgSystem';
+        } else {
+            return 'msgOpponent';
+        }
+    }
+
+    convertTimestamp(timestamp: number): string {
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString();
     }
 
     getPlayerHistory() {
-        const chatHistory = this.infoClientService.actualRoom.players.find(
-            (player) => player.name === this.infoClientService.playerName,
-        )?.chatHistory;
-        if (chatHistory) {
-            return chatHistory;
+        if (this.actualChatRoom.name === 'game') {
+            const chatHistory = this.infoClientService.actualRoom.players.find(
+                (player) => player.name === this.infoClientService.playerName,
+            )?.chatHistory;
+            if (chatHistory) {
+                return chatHistory;
+            } else {
+                return [];
+            }
         } else {
-            return [];
+            return this.actualChatRoom.chatHistory;
         }
     }
     getSpecHistory() {
-        const chatHistory = this.infoClientService.actualRoom.spectators.find((spec) => spec.name === this.infoClientService.playerName)?.chatHistory;
-        if (chatHistory) {
-            return chatHistory;
-        } else {
-            return [];
+        if (this.actualChatRoom.name === 'game') {
+            const chatHistory = this.infoClientService.actualRoom.spectators.find(
+                (spec) => spec.name === this.infoClientService.playerName,
+            )?.chatHistory;
+            if (chatHistory) {
+                return chatHistory;
+            }
         }
+        return [];
     }
 
     private scrollToBottom(): void {
