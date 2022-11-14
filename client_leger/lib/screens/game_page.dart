@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:client_leger/constants/constants.dart';
+import 'package:client_leger/screens/end-game-results-page.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
@@ -136,6 +137,25 @@ class _GamePageState extends State<GamePage> {
                             ),
                           )
                         : null),
+                    Container(
+                        child: infoClientService.game.gameFinished == true
+                        ? ElevatedButton(
+                            style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                                const EdgeInsets.symmetric(
+                            vertical: 18.0, horizontal: 0.0),
+                            ),
+                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(100.0)))),
+                                onPressed: () {
+                                    showDialog(context: context, builder: (context) => const EndGameResultsPage(),
+                                    );
+                                },
+                        child: const Text('End Game Results'),
+                        )
+
+                    : null),
                     Container(
                       child: shouldSpecBeAbleToBePlayer() == true
                           ? ElevatedButton(

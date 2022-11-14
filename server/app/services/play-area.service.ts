@@ -8,7 +8,7 @@ import { ChatService } from './chat.service';
 import { DatabaseService } from './database.service';
 import { LetterBankService } from './letter-bank.service';
 import { StandService } from './stand.service';
-import { VirtualPlayerService } from './virtual-player.service';
+// import { VirtualPlayerService } from './virtual-player.service';
 import AvatarService from '@app/services/avatar.service';
 import { PowerCardsService } from './power-cards.service';
 
@@ -19,7 +19,7 @@ export class PlayAreaService {
     constructor(
         private standService: StandService,
         private letterBankService: LetterBankService,
-        private virtualPService: VirtualPlayerService,
+        // private virtualPService: VirtualPlayerService,
         private chatService: ChatService,
         private databaseService: DatabaseService,
         private boardService: BoardService,
@@ -207,7 +207,7 @@ export class PlayAreaService {
     }
 
     private async randomActionVP(game: GameServer, virtualPlayer: Player) {
-        const neinyPercent = 0.9;
+        /* const neinyPercent = 0.9;
         const tenPercent = 0.1;
         const probaMove: number = this.giveProbaMove();
 
@@ -222,14 +222,14 @@ export class PlayAreaService {
         } else if (probaMove < neinyPercent) {
             // 80% chances to place a letter
             await this.virtualPService.generateMoves(game, virtualPlayer);
-        } else {
-            await this.chatService.passCommand('!passer', game, virtualPlayer);
-        }
+        } else {*/
+        await this.chatService.passCommand('!passer', game, virtualPlayer);
+        // }
     }
 
-    private giveProbaMove(): number {
-        return Math.random();
-    }
+    // private giveProbaMove(): number {
+    //     return Math.random();
+    // }
 
     private updateOldTiles(game: GameServer) {
         const board = game.board;

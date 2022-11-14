@@ -28,6 +28,7 @@ class SocketService{
   TimerService timerService = TimerService();
   TapService tapService = TapService();
   Controller controller = Controller();
+  late String gameId;
 
 
   late IO.Socket socket;
@@ -179,6 +180,9 @@ class SocketService{
 
     socket.on('changeIsTurnOursStatus', (isTurnOurs) {
       infoClientService.isTurnOurs = isTurnOurs;
+    });
+    socket.on('savedGameId', (id) {
+      gameId = id;
     });
   }
 

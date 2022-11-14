@@ -42,11 +42,9 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.roomName = this.infoClientService.actualRoom.name;
         this.players = this.infoClientService.actualRoom.players.copyWithin(0, 0, 3);
         this.orderPlayerByScore();
-        this.findWinners(this.players);
         this.findNumberOfTurns();
         this.getGameStartDate();
         this.displayPlayingTime();
-        this.orderPlayerByScore();
         this.saveGame();
         this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
         this.changeEloOfPlayersDB();
@@ -101,19 +99,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
             }
         }
         return listLetterStillOnStand.toString();
-    }
-
-    findWinners(players: Player[]): void {
-        let bestScore = 0;
-        for (const player of players) {
-            if (player.score > bestScore) {
-                this.infoClientService.game.winners = [];
-                this.infoClientService.game.winners.push(player);
-                bestScore = player.score;
-            } else if (player.score === bestScore) {
-                this.infoClientService.game.winners.push(player);
-            }
-        }
     }
 
     displayPlayingTime(): void {

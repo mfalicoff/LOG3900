@@ -18,21 +18,29 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     final InfoClientService infoClientService = InfoClientService();
     final SocketService socketService = SocketService();
     final Controller usersController = Controller();
+    final TimerService timerService = TimerService();
     late GameSaved gameSaved;
-    final String _creator = "Stephane";
-    List<String> spectators = ["Varys", "Illyzio"];
-    List<String> players = ["Petyr", "Robert", "Cersei", "Eddard"];
-    List<String> winners = ["Cersei", "Petyr"];
-    List<int> scores = [56, 32, 45, 60];
-    int nbLettres = 71;
-    String playingTime = "10:52";
-    String timestamp = DateTime.now().toString();
+    late String roomName;
+    late String creator;
+    List<Player> players = [];
+    List<Player> spectators = [];
+    List<Player> winners = [];
+    late int numberOfTurns;
+    late String playingTime;
+    late String timestamp = '';
 
-//       @override
-//   void initState() {
-//     _saveGame;
-//     super.initState();
-//   }
+    @override
+  void initState() {
+    roomName = infoClientService.actualRoom.name;
+    players = infoClientService.actualRoom.players;
+    players.sort((element1, element2) => element2.score - element1.score);
+    _findNumberOfTurns();
+    _findCreatorOfGame();
+    _getGameStartDate();
+    _displayPlayingTime();
+    _saveGame;
+    super.initState();
+  }
 
     @override
     Widget build(BuildContext context) {
@@ -53,89 +61,257 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                     )
                         ),
                 ),
-                Text("Createur de la salle : $_creator",
+                const SizedBox(
+                    height: 10,
+                ),
+                Text("Salle : $roomName",
                     textAlign: TextAlign.left,
                     selectionColor: const Color(0xFF0c483f),
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary
+                    ),
+                ),
+                const SizedBox(
+                    height: 10,
+                ),
+                Text("Createur de la salle : $creator",
+                    textAlign: TextAlign.left,
+                    selectionColor: const Color(0xFF0c483f),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary
+                    ),
+                ),
+                const SizedBox(
+                    height: 10,
                 ),
                 Text("Spectateurs :",
                     textAlign: TextAlign.left,
                     selectionColor: const Color(0xFF0c483f),
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary
+                    ),
                 ),
                 _isThereSpectators()
                 ,
+                const SizedBox(
+                    height: 10,
+                ),
                 Text("Gagnants de la partie :",
                     textAlign: TextAlign.left,
                     selectionColor: const Color(0xFF0c483f),
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary
+                    ),
+                ),
+                const SizedBox(
+                    height: 10,
                 ),
                 Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: List.generate(winners.length, (index) {
-                            return Text("Nom: ${winners[index]}   avec un score de: ${scores[index]}",
-                                    style: const TextStyle(fontSize: 13),
+                            return Text("Nom: ${infoClientService.game.winners[index]}   avec un score de: ${infoClientService.game.winners[index].score}",
+                                    style: TextStyle(
+                                        color: Theme.of(context).colorScheme.primary
+                                    ),
                                     textAlign: TextAlign.left,
                             );
                     }),
                 ),
-                Text("Nombre de lettres restantes dans la reserve : $nbLettres",
-                    textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
-                    style: Theme.of(context).textTheme.bodyLarge,
+                const SizedBox(
+                    height: 10,
                 ),
-                Text("Nombre de tours total: 65",
+                Text("Nombre de lettres restantes dans la reserve : ${infoClientService.game.nbLetterReserve}",
                     textAlign: TextAlign.left,
                     selectionColor: const Color(0xFF0c483f),
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary
+                    ),
                 ),
-                Text("Durée de la partie (en minutes) : $playingTime",
+                const SizedBox(
+                    height: 10,
+                ),
+                Text("Nombre de tours total: $numberOfTurns",
                     textAlign: TextAlign.left,
                     selectionColor: const Color(0xFF0c483f),
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary
+                    ),
+                ),
+                const SizedBox(
+                    height: 10,
+                ),
+                Text("Temps joué (en minutes) : $playingTime",
+                    textAlign: TextAlign.left,
+                    selectionColor: const Color(0xFF0c483f),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary
+                    ),
+                ),
+                const SizedBox(
+                    height: 10,
                 ),
                 Text("Date du début de la partie (timestamp): $timestamp",
                     textAlign: TextAlign.left,
                     selectionColor: const Color(0xFF0c483f),
-                    style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                ElevatedButton(
-                    style: ButtonStyle(
-                    padding: MaterialStateProperty.all(
-                      const EdgeInsets.symmetric(
-                          vertical: 6.0, horizontal: 10.0)
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary
                     ),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50.0)))),
-                    onPressed: _addGameToFavourites,
-                    child: const Icon(Icons.playlist_add_sharp),
+                ),
+                const SizedBox(
+                    height: 10,
+                ),
+                Row(
+                    children: [
+                        const Text("Ajouter la partie dans vos favoris: "),
+                        ElevatedButton(
+                            onPressed: _addGameToFavourites,
+                            child: const Icon(Icons.playlist_add_sharp),
+                        ),
+                    ],
+                ),
+                const SizedBox(
+                    height: 25,
+                ),
+                Container(
+                    height: 30,
+                    color: Theme.of(context).colorScheme.primary,
+                    child: Center(
+                        child: Text("STATISTIQUES DES JOUEURS",
+                                        textAlign: TextAlign.center,
+                                        style: Theme.of(context).textTheme.titleLarge,
+                                    )
+                        ),
+                ),
+                Row(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                        Column(
+                            children: [
+                                Text("JOUEUR: ${players[0].name}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Score: ${players[0].score}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Lettres sur le chevalet: ${lettersOnStand(players[0]).toString()}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Nombre de tours joue dans la partie: ${players[0].turn}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                            ],
+                        ),
+                        const SizedBox(
+                            width: 15,
+                        ),
+                        Column(
+
+                            children: [
+                                Text("JOUEUR: ${players[1].name}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Score: ${players[1].score}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Lettres sur le chevalet: ${lettersOnStand(players[1]).toString()}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Nombre de tours joue dans la partie: ${players[1].turn}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                            ],
+                        ),
+                        const SizedBox(
+                            width: 15,
+                        ),
+                        Column(
+
+                            children: [
+                                Text("JOUEUR: ${players[2].name}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Score: ${players[2].score}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Lettres sur le chevalet: ${lettersOnStand(players[2]).toString()}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Nombre de tours joue dans la partie: ${players[2].turn}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                            ],
+                        ),
+                        const SizedBox(
+                            width: 15,
+                        ),
+                        Column(
+
+                            children: [
+                                Text("JOUEUR: ${players[3].name}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Score: ${players[3].score}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Lettres sur le chevalet: ${lettersOnStand(players[3]).toString()}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                                Text("Nombre de tours joue dans la partie: ${players[3].turn}",
+                                    style: Theme.of(context).textTheme.bodyLarge,
+                                ),
+                            ],
+                        ),
+                    ],
                 ),
             ],
           )
-        //   child: Stack(
-        //     children: [
-        //         Center(
-        //             child: Column(
-        //                 verticalDirection: VerticalDirection.down,
-        //                 crossAxisAlignment: CrossAxisAlignment.center,
-        //                 children: [
-        //                     Text(
-        //                         "RESULTATS DE FIN DE PARTIE",
-        //                         style: Theme.of(context).textTheme.titleLarge,
-
-        //                     )
-        //                 ],
-        //             )
-        //         ),
-        //     ],
-        //   )
-
-
         );
     }
 
+    String lettersOnStand(Player player) {
+        final lettersStillOnStand = [];
+        for (var tile in player.stand) {
+            if (tile.letter.value != '') {
+                lettersStillOnStand.add(tile.letter);
+            }
+        }
+        return lettersStillOnStand.toString();
+
+    }
+
+    void _findNumberOfTurns() {
+        numberOfTurns = infoClientService.actualRoom.players[0].turn
+                        + infoClientService.actualRoom.players[1].turn
+                        + infoClientService.actualRoom.players[2].turn
+                        + infoClientService.actualRoom.players[3].turn;
+    }
+
+    void _getGameStartDate() {
+        // timestamp = infoClientService.game.gameStart.toString();
+        timestamp = "Hard code parce que ca ne marche pas";
+    }
+
+    void _displayPlayingTime() {
+        const secondsInMinute = 60;
+        const displayZero = 9;
+        final minutesToDisplay = timerService.playingTime / secondsInMinute;
+        final secondsToDisplay = timerService.playingTime % secondsInMinute;
+        if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
+            playingTime = "0${minutesToDisplay.floor()}:0$secondsToDisplay";
+        } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
+            playingTime = "${minutesToDisplay.floor()}:0$secondsToDisplay";
+        } else if (secondsToDisplay > displayZero && minutesToDisplay <= displayZero) {
+            playingTime = "0${minutesToDisplay.floor()}:$secondsToDisplay";
+        } else if (secondsToDisplay > displayZero && minutesToDisplay > displayZero) {
+            playingTime = "${minutesToDisplay.floor()}:$secondsToDisplay";
+        }
+    }
+
+    void _findCreatorOfGame() {
+        creator = infoClientService.actualRoom.players.firstWhere((element) => element.isCreatorOfGame).name;
+    }
     Column _isThereSpectators() {
         if (spectators.isNotEmpty) {
             return Column(
@@ -156,21 +332,21 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     Future<void> _addGameToFavourites() async {
-        await usersController.updateFavouriteGames("63601927b755fa866314bfe6");
+        await usersController.updateFavouriteGames(socketService.gameId);
     }
 
-    // void _saveGame() {
-    //     if (socketService.socket.id == infoClientService.game.masterTimer) {
-    //         gameSaved = GameSaved(infoClientService.actualRoom.players,
-    //                     infoClientService.actualRoom.name,
-    //                     10,
-    //                     playingTime,
-    //                     infoClientService.game.nbLetterReserve,
-    //                     timestamp,
-    //                     infoClientService.actualRoom.spectators,
-    //                     infoClientService.game.winners);
-    //         socketService.socket.emit('saveGame', gameSaved);
-    //     }
-    // }
+    void _saveGame() {
+        if (socketService.socket.id == infoClientService.game.masterTimer) {
+            gameSaved = GameSaved(infoClientService.actualRoom.players,
+                        infoClientService.actualRoom.name,
+                        10,
+                        playingTime,
+                        infoClientService.game.nbLetterReserve,
+                        timestamp,
+                        infoClientService.actualRoom.spectators,
+                        infoClientService.game.winners);
+            socketService.socket.emit('saveGame', gameSaved);
+        }
+    }
 
 }
