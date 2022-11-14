@@ -241,7 +241,7 @@ export class SocketService {
             this.socket.emit('startGame', roomName);
         });
 
-        this.socket.on('joinRankedRoom', ({gameName, socketId}) => {
+        this.socket.on('joinRankedRoom', (gameName, socketId) => {
             this.socket.emit('joinRoom', gameName, socketId);
             this.socket.emit('spectWantsToBePlayer', gameName, socketId);
         });

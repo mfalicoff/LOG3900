@@ -118,7 +118,7 @@ export class MatchmakingService {
                 if (rankedGame.rankedUsers[i].name !== creatorUser.name) {
                     this.sio.sockets.sockets
                         .get(rankedGame.rankedUsers[i].socketId)
-                        ?.emit('joinRankedRoom',{ gameName: rankedGame.name, socketId: rankedGame.rankedUsers[i].socketId});
+                        ?.emit('joinRankedRoom',rankedGame.name, rankedGame.rankedUsers[i].socketId);
                 }
                 // }
                 if (i !== 0) {

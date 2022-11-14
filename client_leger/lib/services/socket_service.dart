@@ -104,10 +104,8 @@ class SocketService{
     });
 
     socket.on("joinRankedRoom", (data){
-      //log(data);
-      //log(data[0]);
-      String socketId = data["socketId"];
-      String gameName = data["gameName"];
+      String socketId = data[1];
+      String gameName = data[0];
       socket.emit("joinRoom",[gameName, socketId]);
       socket.emit("spectWantsToBePlayer",[gameName, socketId]);
     });
