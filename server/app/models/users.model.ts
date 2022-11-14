@@ -53,6 +53,14 @@ const userSchema: Schema = new Schema({
         type: [String],
         required: true,
     },
+    language: {
+        type: String,
+        required: true,
+    },
+    theme: {
+        type: String,
+        required: true,
+    },
 });
 
 const userModel = model<User & Document>('User', userSchema);

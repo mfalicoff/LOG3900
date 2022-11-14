@@ -170,5 +170,12 @@
         "REGISTRATION_SUCCESSFUL": "Votre inscription est réussie !",
         "SIGN_IN": "S'identifier",
         "NO_ACCOUNT": "Si vous n'avez pas de compte, cliquez sur le bouton d'inscription:"
+    },
+    "RANKED": {
+        "MAXIMUM_RATING": "Différence de classement maximale",
+        "MATCHMAKING_IN_PROGRESS": "Recherche de parties en cours",
+        "GAME_FOUND": "Partie trouvée",
+        "ACCEPT": "Accepter",
+        "REFUSE": "Refuser"
     }
 }

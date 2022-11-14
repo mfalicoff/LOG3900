@@ -166,5 +166,12 @@
         "REGISTRATION_SUCCESSFUL": "Your registration is successful!",
         "SIGN_IN": "Sign In",
         "NO_ACCOUNT": "If you don't have an account, click the sign-up button:"
+    },
+    "RANKED": {
+        "MAXIMUM_RATING": "Maximum rating difference",
+        "MATCHMAKING_IN_PROGRESS": "Matchmaking in progress",
+        "GAME_FOUND": "Game found",
+        "ACCEPT": "Accept",
+        "REFUSE": "Refuse"
     }
 }

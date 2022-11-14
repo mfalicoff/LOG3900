@@ -10,7 +10,7 @@
             <div id="container-content">
                 <div class="container-1">
                     <div class="box-1">
-                        <label>maximum rating difference</label>
+                        <label>{{'RANKED.MAXIMUM_RATING' | translate}}</label>
                         <br />
                         <p>{{ this.eloDisparity }}</p>
                         <mat-slider min="20" max="100" step="1" value="60" (change)="onEloDisparityChange($event)"></mat-slider>
