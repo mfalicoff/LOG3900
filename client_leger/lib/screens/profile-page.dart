@@ -117,21 +117,21 @@ class _ProfileStatePage extends State<ProfilePage> {
                                       'Temps moyen par partie'),
                                 ],
                               ),
-                              TableRow(
-                                children: [
-                                  returnRowTextElement(globals
-                                      .userLoggedIn.gamesPlayed
-                                      .toString()),
-                                  returnRowTextElement(
-                                      globals.userLoggedIn.gamesWon.toString()),
-                                  returnRowTextElement(globals
-                                      .userLoggedIn.averagePointsPerGame
-                                      .toString()),
-                                  returnRowTextElement(Duration(
-                                          milliseconds: globals
-                                              .userLoggedIn.averageTimePerGame!
-                                              .round())
-                                      .toString()),
+                            TableRow(
+                              children: [
+                                returnRowTextElement(globals
+                                    .userLoggedIn.gamesPlayed
+                                    .toString()),
+                                returnRowTextElement(
+                                    globals.userLoggedIn.gamesWon.toString()),
+                                returnRowTextElement(globals
+                                    .userLoggedIn.averagePointsPerGame!
+                                    .toStringAsFixed(2)),
+                                returnRowTextElement(Duration(
+                                        milliseconds: globals
+                                            .userLoggedIn.averageTimePerGame!
+                                            .round())
+                                    .toString()),
                                 ],
                               ),
                             ],
