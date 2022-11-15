@@ -12,6 +12,7 @@ import { ParametresSelectionPageComponent } from '@app/pages/parametres-selectio
 import { ProfilePageComponent } from '@app/pages/profile-page/profile-page.component';
 import { RankedInitPageComponent } from '@app/pages/ranked-init-page/ranked-init-page.component';
 import { RankedMatchmakingPageComponent } from '@app/pages/ranked-matchmaking-page/ranked-matchmaking-page.component';
+import { CommunicationDashboardComponent } from '@app/components/chat/communication-dashboard/communication-dashboard.component';
 
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
@@ -20,6 +21,7 @@ const routes: Routes = [
     { path: 'material', component: MaterialPageComponent },
     { path: 'param-select', component: ParametresSelectionPageComponent },
     { path: 'multiplayer-init', component: MultiplayerInitPageComponent },
+    { path: 'chat-rooms/:socketId', component: CommunicationDashboardComponent },
     { path: 'ranked-init', component: RankedInitPageComponent },
     { path: 'ranked-matchmaking', component: RankedMatchmakingPageComponent },
     { path: 'leaderboard', component: LeaderboardPageComponent },

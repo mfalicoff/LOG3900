@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoClientService } from '@app/services/info-client.service';
@@ -8,6 +9,7 @@ import { ChatMessage } from '@app/classes/chat-message';
 import { SocketService } from '@app/services/socket.service';
 import { JoinChatRoomModalComponent } from './join-chatroom-modal.component.ts/join-chatroom-modal.component';
 import * as Constants from '@app/classes/global-constants';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-communication-dashboard',
@@ -23,9 +25,22 @@ import * as Constants from '@app/classes/global-constants';
 export class CommunicationDashboardComponent implements AfterViewInit {
     @Input() isInGame: string;
     currSelectedChatroom: ChatRoom;
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private dialog: MatDialog) {
+    hideChatrooms = false;
+    constructor(
+        private socketService: SocketService,
+        public infoClientService: InfoClientService,
+        private dialog: MatDialog,
+        public route: ActivatedRoute,
+    ) {
         this.currSelectedChatroom = { name: 'default', participants: [], creator: '', chatHistory: [new ChatMessage('system', 'defaultMsg')] };
         // initialize the default selected chatroom
+        // this.route.params.subscribe((params) => {
+        //     if (params.socketId !== '0') {
+        //         this.socketService.socket.emit('getAllChatRooms');
+        //         console.log('d3d2d332d' + params.socketId);
+        //         console.log('de23d3d2' + this.socketService.socket.id);
+        //     }
+        // });
         if (this.infoClientService.chatRooms.length > 0) {
             this.currSelectedChatroom = this.infoClientService.chatRooms[0];
         }
@@ -39,15 +54,14 @@ export class CommunicationDashboardComponent implements AfterViewInit {
                 creator: '',
                 chatHistory: [new ChatMessage('SYSTEM', 'Bienvenue sur le channel de discussion de la partie.')],
             });
-            this.currSelectedChatroom = this.infoClientService.chatRooms[0];
         } else {
             // if the user is not in a game there is no game chat
             const idxGameRoom = this.infoClientService.chatRooms.findIndex((chatRoom) => chatRoom.name === 'game');
             if (idxGameRoom !== Constants.DEFAULT_VALUE_NUMBER) {
                 this.infoClientService.chatRooms.splice(idxGameRoom, 1);
-                this.currSelectedChatroom = this.infoClientService.chatRooms[0];
             }
         }
+        this.currSelectedChatroom = this.infoClientService.chatRooms[0];
     }
 
     onChatRoomSelect(selectedChatRoom: ChatRoom) {
@@ -95,5 +109,25 @@ export class CommunicationDashboardComponent implements AfterViewInit {
         dialogRef.afterClosed().subscribe(() => {
             /* does nothing for now*/
         });
+    }
+
+    detachWindow() {
+        this.hideChatrooms = true;
+        const windowFeatures = 'popup,left=100,top=100,width=1000,height=500';
+
+        const popup = window.open(`http://localhost:4200/#/chat-rooms/${this.socketService.socket.id}`, 'Chat Rooms', windowFeatures);
+        (popup as Window).name = 'Fenetre Chat Detachee';
+        (document.getElementById('main') as HTMLElement).style.display = 'none';
+        if (document.getElementById('defaultM') !== null) {
+            (document.getElementById('defaultM') as HTMLElement).style.display = 'block';
+        }
+    }
+
+    attachWindow() {
+        (document.getElementById('main') as HTMLElement).style.display = 'block';
+        this.hideChatrooms = false;
+        if (document.getElementById('defaultM') !== null) {
+            (document.getElementById('defaultM') as HTMLElement).style.display = 'block';
+        }
     }
 }
