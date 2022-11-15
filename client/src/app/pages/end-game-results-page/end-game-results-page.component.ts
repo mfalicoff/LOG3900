@@ -9,7 +9,6 @@ import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-re
 import { EloChangeService } from '@app/services/elo-change.service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
-import { TimerService } from '@app/services/timer.service';
 import { UserService } from '@app/services/user.service';
 import { Observable, Subscription } from 'rxjs';
 
@@ -33,7 +32,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
         public infoClientService: InfoClientService,
         private userService: UserService,
-        private timerService: TimerService,
         private dialog: MatDialog,
         private httpClient: HttpClient,
         private eloChangeService: EloChangeService,
@@ -126,12 +124,20 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     }
 
     displayPlayingTime(): void {
+        const gameLength = this.infoClientService.game.endTime - this.infoClientService.game.startTime;
+        console.log(gameLength);
         const secondsInMinute = 60;
         const displayZero = 9;
-        if (this.timerService.playingTime % secondsInMinute <= displayZero) {
-            this.playingTime = `${Math.floor(this.timerService.playingTime / secondsInMinute)}:0${this.timerService.playingTime % secondsInMinute}`;
-        } else {
-            this.playingTime = `0${Math.floor(this.timerService.playingTime / secondsInMinute)}:${this.timerService.playingTime % secondsInMinute}`;
+        const minutesToDisplay = gameLength / secondsInMinute;
+        const secondsToDisplay = gameLength % secondsInMinute;
+        if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
+            this.playingTime = `0${Math.floor(minutesToDisplay)}:0${secondsToDisplay}`;
+        } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
+            this.playingTime = `${Math.floor(minutesToDisplay)}:0${secondsToDisplay}`;
+        } else if (secondsToDisplay > displayZero && minutesToDisplay <= displayZero) {
+            this.playingTime = `0${Math.floor(minutesToDisplay)}:${secondsToDisplay}`;
+        } else if (secondsToDisplay > displayZero && minutesToDisplay > displayZero) {
+            this.playingTime = `${Math.floor(minutesToDisplay)}:${secondsToDisplay}`;
         }
     }
 
