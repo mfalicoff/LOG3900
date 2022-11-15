@@ -128,11 +128,6 @@ class _LoginFormState extends State<LoginForm> {
                   fontSize: 20, color: Theme.of(context).colorScheme.secondary),
             ),
           ),
-          //TODO REMOVE THIS BUTTON LATER
-          ElevatedButton(
-            onPressed: _toGamePageState,
-            child: const Text("Go to Game Board (tmpButton)"),
-          ),
           GestureDetector(
             onTap: _toSignUpPage,
             child: Text(
@@ -235,10 +230,6 @@ class _LoginFormState extends State<LoginForm> {
       }
     }
     return true;
-  }
-
-  void _toGamePageState() {
-    Navigator.pushNamed(context, "/game");
   }
 
   void _toSignUpPage() {

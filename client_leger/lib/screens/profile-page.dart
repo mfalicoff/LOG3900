@@ -94,8 +94,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                                 returnRowTextElement(
                                     globals.userLoggedIn.gamesWon.toString()),
                                 returnRowTextElement(globals
-                                    .userLoggedIn.averagePointsPerGame
-                                    .toString()),
+                                    .userLoggedIn.averagePointsPerGame!
+                                    .toStringAsFixed(2)),
                                 returnRowTextElement(Duration(
                                         milliseconds: globals
                                             .userLoggedIn.averageTimePerGame!
