@@ -6,6 +6,9 @@ import 'package:client_leger/models/player.dart';
 import 'package:client_leger/models/game-saved.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
+import 'package:image/image.dart';
+
+import '../models/spectator.dart';
 
 
 class EndGameResultsPage extends StatefulWidget {
@@ -23,7 +26,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     late String roomName;
     late String creator;
     List<Player> players = [];
-    List<Player> spectators = [];
+    List<Spectator> spectators = [];
     List<String> winners = ["GagnantParDefaut"];
     late int numberOfTurns;
     late String playingTime;
@@ -33,6 +36,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
   void initState() {
     roomName = infoClientService.actualRoom.name;
     players = infoClientService.actualRoom.players;
+    spectators = infoClientService.actualRoom.spectators;
     players.sort((element1, element2) => element2.score - element1.score);
     _findNumberOfTurns();
     _findCreatorOfGame();
@@ -47,17 +51,26 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         return Dialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
           backgroundColor: Theme.of(context).colorScheme.secondary,
-          insetPadding: const EdgeInsets.all(90.0),
+          insetPadding: const EdgeInsets.all(65.0),
           child: ListView(
             scrollDirection: Axis.vertical,
+            addAutomaticKeepAlives: false,
             children: [
+              const SizedBox(
+                height: 35,
+              ),
                 Container(
                     height: 30,
                     color: Theme.of(context).colorScheme.primary,
-                    child: Center(
+                    child:
+
+                    Center(
                         child: Text("RESULTATS DE FIN DE PARTIE",
                                         textAlign: TextAlign.center,
-                                        style: Theme.of(context).textTheme.titleLarge,
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.secondary,
+                                          fontSize: 25,
+                                        ),
                                     )
                         ),
                 ),
@@ -66,9 +79,11 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 ),
                 Text("Salle : $roomName",
                     textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: "Times New Roman"
                     ),
                 ),
                 const SizedBox(
@@ -76,31 +91,36 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 ),
                 Text("Createur de la salle : $creator",
                     textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                        fontFamily: "Times New Roman"
                     ),
                 ),
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Spectateurs :",
-                    textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary
-                    ),
-                ),
-                _isThereSpectators()
-                ,
+            Text("Spectateurs de la partie:",
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.normal,
+                  fontFamily: "Times New Roman"
+              ),
+            ),
+              _isThereSpectators(),
                 const SizedBox(
                     height: 10,
                 ),
                 Text("Gagnants de la partie :",
                     textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                        fontFamily: "Times New Roman"
                     ),
                 ),
                 const SizedBox(
@@ -110,9 +130,12 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: List.generate(infoClientService.game.winners.length, (index) {
-                            return Text("Nom: ${infoClientService.game.winners[index].name}   avec un score de: ${infoClientService.game.winners[index].score}",
-                                    style: TextStyle(
-                                        color: Theme.of(context).colorScheme.primary
+                            return Text("Nom:  ${infoClientService.game.winners[index].name}  avec un score de ${infoClientService.game.winners[index].score} points",
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: "Times New Roman"
                                     ),
                                     textAlign: TextAlign.left,
                             );
@@ -123,9 +146,11 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 ),
                 Text("Nombre de lettres restantes dans la reserve : ${infoClientService.game.nbLetterReserve}",
                     textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                        fontFamily: "Times New Roman"
                     ),
                 ),
                 const SizedBox(
@@ -133,19 +158,23 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 ),
                 Text("Nombre de tours total: $numberOfTurns",
                     textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                        fontFamily: "Times New Roman"
                     ),
                 ),
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Temps joué (en minutes) : $playingTime",
+                  Text("Durée de la partie (en minutes) : $playingTime",
                     textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        fontFamily: "Times New Roman"
                     ),
                 ),
                 const SizedBox(
@@ -153,9 +182,11 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 ),
                 Text("Date du début de la partie (timestamp): $timestamp",
                     textAlign: TextAlign.left,
-                    selectionColor: const Color(0xFF0c483f),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                        fontFamily: "Times New Roman"
                     ),
                 ),
                 const SizedBox(
@@ -163,7 +194,15 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 ),
                 Row(
                     children: [
-                        const Text("Ajouter la partie dans vos favoris: "),
+                        Text("Ajouter la partie dans vos favoris: ",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 18,
+                            fontWeight: FontWeight.normal,
+                              fontFamily: "Times New Roman"
+                          ),
+                        ),
                         ElevatedButton(
                             onPressed: _addGameToFavourites,
                             child: const Icon(Icons.playlist_add_sharp),
@@ -171,7 +210,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     ],
                 ),
                 const SizedBox(
-                    height: 35,
+                    height: 15,
                 ),
                 Container(
                     height: 30,
@@ -179,91 +218,56 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     child: Center(
                         child: Text("STATISTIQUES DES JOUEURS",
                                         textAlign: TextAlign.center,
-                                        style: Theme.of(context).textTheme.titleLarge,
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.secondary,
+                                          fontSize: 25,
+                                        ),
                                     )
                         ),
+                ),
+                const SizedBox(
+                  height: 20,
                 ),
                 Row(
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: List.generate(players.length, (index) {
+                      return
                         Column(
                             children: [
-                                Text("JOUEUR: ${players[0].name}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
+                                Text("JOUEUR: ${players[index].name}",
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                 ),
-                                Text("Score: ${players[0].score}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
+                                Text("Score: ${players[index].score}",
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                 ),
-                                Text("Lettres sur le chevalet: ${lettersOnStand(players[0])}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
+                                Text("Lettres restantes: ${lettersOnStand(players[index])}",
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                                 ),
-                                Text("Nombre de tours joue dans la partie: ${players[0].turn}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                            ],
-                        ),
-                        const SizedBox(
-                            width: 35,
-                        ),
-                        Column(
+                                Text("Nombre de tours joué: ${players[index].turn}",
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.normal,
 
-                            children: [
-                                Text("JOUEUR: ${players[1].name}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Score: ${players[1].score}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Lettres sur le chevalet: ${lettersOnStand(players[1])}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Nombre de tours joue dans la partie: ${players[1].turn}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
+                                  ),
                                 ),
                             ],
-                        ),
-                        const SizedBox(
-                            width: 35,
-                        ),
-                        Column(
-
-                            children: [
-                                Text("JOUEUR: ${players[2].name}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Score: ${players[2].score}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Lettres sur le chevalet: ${lettersOnStand(players[2])}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Nombre de tours joue dans la partie: ${players[2].turn}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                            ],
-                        ),
-                        const SizedBox(
-                            width: 50,
-                        ),
-                        Column(
-
-                            children: [
-                                Text("JOUEUR: ${players[3].name}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Score: ${players[3].score}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Lettres sur le chevalet: ${lettersOnStand(players[3])}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                                Text("Nombre de tours joue dans la partie: ${players[3].turn}",
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                                ),
-                            ],
-                        ),
-                    ],
+                        );
+                    }),
                 ),
             ],
           )
@@ -271,10 +275,10 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     String lettersOnStand(Player player) {
-        late String lettersStillOnStand = "";
+        List<String> lettersStillOnStand = [];
         for (var tile in player.stand) {
             if (tile.letter.value != '') {
-                lettersStillOnStand += tile.letter.value;
+                lettersStillOnStand.add(tile.letter.value);
             }
         }
         return lettersStillOnStand.toString();
@@ -312,13 +316,18 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         creator = infoClientService.actualRoom.players.firstWhere((element) => element.isCreatorOfGame).name;
     }
     Column _isThereSpectators() {
-        if (spectators.isNotEmpty) {
+        if (infoClientService.actualRoom.spectators.isNotEmpty) {
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: List.generate(spectators.length, (index) {
-                            return Text("Nom: ${spectators[index]}",
-                                    style: const TextStyle(fontSize: 13),
+                children: List.generate(infoClientService.actualRoom.spectators.length, (index) {
+                            return Text("Nom: ${infoClientService.actualRoom.spectators[index].name}",
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                      fontFamily: "Times New Roman"
+                                    ),
                                     textAlign: TextAlign.left,
                             );
                 }),
@@ -326,7 +335,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [ Text("Il n'y a pas de spectateurs.")],
+            children: const [ Text("Il n'y a pas de spectateurs.", style: TextStyle( color: Colors.black, fontSize: 15))],
         );
     }
 
