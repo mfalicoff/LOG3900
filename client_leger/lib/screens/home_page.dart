@@ -26,8 +26,8 @@ class _MyHomePageState extends State<MyHomePage> {
   ChatService chatService = ChatService();
 
   refresh() {
-    if(mounted) {
-      setState(() {
+    if (mounted) {
+      setState(() {});
     }
   }
 
@@ -40,10 +40,9 @@ class _MyHomePageState extends State<MyHomePage> {
           child: ChatPanel(
             isInGame: false,
           )),
-
       onEndDrawerChanged: (isOpen) {
-        print(isOpen);
         chatService.isDrawerOpen = isOpen;
+        chatService.notifyListeners();
       },
       body: Stack(
         children: <Widget>[
@@ -98,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: CircleAvatar(
                     radius: 48,
                     backgroundImage:
-                    MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
+                        MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
                   ),
                 ),
                 Text(globals.userLoggedIn.username,
@@ -139,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toSearchPage() {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const SearchPage()))
+            MaterialPageRoute(builder: (context) => const SearchPage()))
         .then((value) {
       setState(() {});
     });
@@ -147,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toProfilePage() {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const ProfilePage()))
+            MaterialPageRoute(builder: (context) => const ProfilePage()))
         .then((value) {
       setState(() {});
     });

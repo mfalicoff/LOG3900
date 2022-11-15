@@ -250,7 +250,7 @@ class SocketService with ChangeNotifier {
       chatService.chatRoomWanted = null;
       chatService.notifyListeners();
     });
-    socket.on('addMsgToChatRoom', (data) {
+    socket.on('addMsgToChatRoom', (data) async {
       var chatRoomName = data[0];
       var newMsg = data[1];
       var roomElement = chatService.rooms
@@ -259,12 +259,19 @@ class SocketService with ChangeNotifier {
       if (indexRoom != -1) {
         chatService.rooms[indexRoom].chatHistory
             .add(ChatMessage.fromJson(newMsg));
+        if (chatService.currentChatRoom.name !=
+            chatService.rooms[indexRoom].name || !chatService.isDrawerOpen) {
           chatService.rooms[indexRoom].isUnread = true;
         }
       } else {
         print("error in SocketService:addMsgToChatRoom");
       }
       chatService.notifyListeners();
+      final player = AudioPlayer(); // Create a player
+      await player.setUrl(
+          "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+      await player.play();
+      await player.stop();
     });
   }
 
