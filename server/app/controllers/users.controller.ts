@@ -98,6 +98,30 @@ class UsersController {
             next(error);
         }
     };
+
+    updateThemeUser = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId: string = req.params.id;
+            const theme: string = req.body.theme;
+            const updateUserData: User = await this.userService.updateTheme(userId, theme);
+
+            res.status(HTTPStatusCode.OK).json({ data: updateUserData, message: 'updated' });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    updateLanguageUser = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const userId: string = req.params.id;
+            const language: string = req.body.language;
+            const updateUserData: User = await this.userService.updateTheme(userId, language);
+
+            res.status(HTTPStatusCode.OK).json({ data: updateUserData, message: 'updated' });
+        } catch (error) {
+            next(error);
+        }
+    };
 }
 
 export default UsersController;

@@ -97,6 +97,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     }
 
     onClickLang(lang: string): void {
+        this.userService.updateLanguage(this.langMap.get(lang) as string);
         this.translate.use(this.langMap.get(lang) as string);
     }
 }

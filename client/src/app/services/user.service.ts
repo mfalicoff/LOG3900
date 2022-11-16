@@ -171,6 +171,26 @@ export class UserService {
         return this.http.get<GameSaved[]>(environment.serverUrl + 'users/games/' + this.user._id, { observe: 'body' });
     }
 
+    async updateLanguage(languageUpdated: string) {
+        return this.http
+            .patch<UserResponseInterface>(
+                environment.serverUrl + 'users/language/' + this.user._id,
+                { language: languageUpdated },
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    // eslint-disable-next-line no-console
+                    console.log(res);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse, socket?: Socket, email?: string, password?: string) {
         if (error.error instanceof ErrorEvent) {
             alert('Erreur: ' + error.status + error.error.message);
