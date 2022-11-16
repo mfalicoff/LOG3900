@@ -56,7 +56,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                         color: Theme.of(context).colorScheme.primary,
                         width: 3)),
                 padding: const EdgeInsets.symmetric(
-                    vertical: 25.0, horizontal: 150.0),
+                    vertical: 25.0, horizontal: 80.0),
                 child: Center(
                   child: Column(
                     children: [
@@ -116,7 +116,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                         ),
                       ),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                             returnHistoryScrollView('Historique des Connections',
@@ -190,44 +190,50 @@ class _ProfileStatePage extends State<ProfilePage> {
                         Container(
                             decoration: BoxDecoration(border: Border.all()),
                             height: 250,
-                            width: 250,
+                            width: 320,
                             child: ListView.builder(
                                 itemCount: widget.favouriteGames.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                    return Stack(
+                                    return Column(
                                         children: [
-                                          Text('Salle: ${widget.favouriteGames[index].roomName}',
+                                          Text('.Salle: ${widget.favouriteGames[index].roomName}',
                                               style: const TextStyle (
                                               color: Colors.black,
                                               fontSize: 11,
                                               decoration: TextDecoration.none)
                                            ),
-                                          Text('Gagnant de la partie: ${widget.favouriteGames[index].winners[0]}',
+                                          Text('.Gagnant de la partie: ${widget.favouriteGames[index].winners[0]}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 11,
                                                   decoration: TextDecoration.none)
                                           ),
-                                          Text('Nombre de lettres restantes dans la reserve: ${widget.favouriteGames[index].nbLetterReserve}',
+                                          Text('.Nombre de lettres restantes dans la reserve: ${widget.favouriteGames[index].nbLetterReserve}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 11,
                                                   decoration: TextDecoration.none)
                                           ),
-                                          Text('Nombre de tours total: ${widget.favouriteGames[index].numberOfTurns}',
+                                          Text('.Nombre de tours total: ${widget.favouriteGames[index].numberOfTurns}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 11,
                                                   decoration: TextDecoration.none)
                                           ),
-                                          Text('Duree de la partie (en minutes): ${widget.favouriteGames[index].playingTime}',
+                                          Text('.Duree de la partie (en minutes): ${widget.favouriteGames[index].playingTime}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 11,
                                                   decoration: TextDecoration.none)
                                           ),
-                                          Text('Date de creation de la salle: ${widget.favouriteGames[index].gameStartDate}',
+                                          Text('.Date de creation de la salle: ${widget.favouriteGames[index].gameStartDate}',
                                               style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                  decoration: TextDecoration.none)
+                                          ),
+                                          const Text('-------------------------------------------',
+                                              style: TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 11,
                                                   decoration: TextDecoration.none)
