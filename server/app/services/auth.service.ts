@@ -55,22 +55,6 @@ class AuthService {
         return { cookie, findUser };
     }
 
-    async forceLogin(userData: CreateUserValidator): Promise<{ cookie: string; findUser: User }> {
-        if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
-
-        const findUser = await this.userService.findUserByEmail(userData.email);
-
-        const isPasswordMatching: boolean = await compare(userData.password, findUser.password as string);
-        if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.NotFound, "You're password not matching");
-
-        this.loggedInIds.push(findUser.id as string);
-        findUser.avatarUri = await this.userService.populateAvatarField(findUser);
-        const tokenData = this.createToken(findUser);
-        const cookie = this.createCookie(tokenData);
-        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('login') } });
-        return { cookie, findUser };
-    }
-
     async logout(id: string): Promise<void> {
         const filteredIds = this.loggedInIds.filter((_id) => _id !== id);
         const findUser = await this.userService.findUserById(id);

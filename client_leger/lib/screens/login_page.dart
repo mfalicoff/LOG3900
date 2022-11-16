@@ -141,12 +141,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
             ),
-            onPressed: () async {
-              bool response = await _submit();
-              if (!response) {
-                showAlertDialog(context);
-              }
-            },
+            onPressed: _submit,
             child: Text(
               "Submit",
               style: TextStyle(
@@ -185,54 +180,7 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = TextButton(
-      child: Text("Annuler"),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-    Widget continueButton = TextButton(
-      child: Text("Continuer"),
-      onPressed: () async {
-        try {
-          globals.userLoggedIn = await controller.forceLogin(
-              email: email, password: password, socket: socketService.socket);
-          infoClientService.playerName = globals.userLoggedIn.username;
-          socketService.socket.emit('forceLogout', globals.userLoggedIn.username);
-          Navigator.pushNamed(context, "/home");
-        } on Exception {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: const Text("Impossible de se connecter"),
-            backgroundColor: Colors.red.shade300,
-          ));
-        }
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: const Text(
-          "Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?"),
-      content: const Text(
-          "Si vous ete actuellement en match vous abandonnerez votre match"),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  Future<bool> _submit() async {
+  Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try {
@@ -240,21 +188,13 @@ class _LoginFormState extends State<LoginForm> {
             email: email, password: password, socket: socketService.socket);
         infoClientService.playerName = globals.userLoggedIn.username;
         Navigator.pushNamed(context, "/home");
-        return true;
-      } on Exception catch (e) {
-        print(e.toString());
-        if (e.toString().contains("Already Logged In")) {
-          return false;
-        } else {
+      } on Exception {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: const Text("Impossible de se connecter"),
             backgroundColor: Colors.red.shade300,
           ));
-          return true;
-        }
       }
     }
-    return true;
   }
 
   void _toSignUpPage() {

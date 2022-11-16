@@ -17,7 +17,6 @@ class AuthRoute implements Routes {
         this.router.post(`${this.path}signup`, validationMiddleware(CreateUserValidator, 'body'), this.authController.signUp);
         this.router.post(`${this.path}login`, validationMiddleware(LoginUserValidator, 'body'), this.authController.logIn);
         this.router.post(`${this.path}soft-login`, authMiddleware, this.authController.softLogin);
-        this.router.post(`${this.path}forcelogin`, validationMiddleware(LoginUserValidator, 'body'), this.authController.forceLogin);
         this.router.post(`${this.path}logout`, authMiddleware, this.authController.logOut);
     }
 }

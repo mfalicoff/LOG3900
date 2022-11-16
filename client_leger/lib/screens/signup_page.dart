@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
 
 import '../env/environment.dart';
 import '../utils/utils.dart';

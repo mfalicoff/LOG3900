@@ -41,7 +41,6 @@ dependencies:
   intl: ^0.17.0
   image: ^3.2.2
   image_picker: ^0.7.2+1
-  restart_app: ^1.0.3
   flip_card: ^0.6.0
   audioplayers: ^1.1.1
   just_audio: ^0.9.30

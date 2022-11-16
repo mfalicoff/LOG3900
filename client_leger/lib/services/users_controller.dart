@@ -60,31 +60,6 @@ class Controller {
     }
   }
 
-  Future<User> forceLogin({email = String, password = String, socket = Socket}) async {
-    final response = await http.post(
-      Uri.parse("$serverAddress/forceLogin"),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body: jsonEncode(<String, String>{
-        "email": email,
-        "password": password,
-      }),
-    );
-    if (response.statusCode == 200) {
-      User user = User.fromJson(json.decode(response.body));
-      user.cookie = json.decode(response.body)["token"];
-      socket.emit("new-user", user.username);
-      return user;
-    } else {
-      if(response.statusCode == 409) {
-        throw Exception('Already Logged In');
-      } else {
-        throw Exception('Failed to login');
-      }
-    }
-  }
-
   Future<User> signUp(
       {username = String, email = String, password = String, avatarPath = String}) async {
     final response = await http.post(

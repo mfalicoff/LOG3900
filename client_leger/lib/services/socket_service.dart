@@ -84,11 +84,6 @@ class SocketService with ChangeNotifier{
       print(message);
     });
 
-    socket.on('forceLogout', (_) async {
-      globals.userLoggedIn.clear();
-      Restart.restartApp();
-    });
-
     socket.on('SendDictionariesToClient', (dictionaries) {
       infoClientService.updateDictionaries(dictionaries);
     });

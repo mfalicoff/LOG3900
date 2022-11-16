@@ -60,7 +60,7 @@ export class UserService {
                         });
                 },
                 error: (error) => {
-                    this.handleErrorPOST(error, socket);
+                    this.handleErrorPOST(error);
                 },
             });
     }
@@ -77,7 +77,7 @@ export class UserService {
                     this.saveUserInfo(response, socket);
                 },
                 error: (error) => {
-                    this.handleErrorPOST(error, socket, email, password);
+                    this.handleErrorPOST(error);
                 },
             });
     }
@@ -191,35 +191,11 @@ export class UserService {
         return this.http.get<GameSaved[]>(environment.serverUrl + 'users/games/' + this.user._id, { observe: 'body' });
     }
 
-    private handleErrorPOST(error: HttpErrorResponse, socket?: Socket, email?: string, password?: string) {
+    private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
             alert('Erreur: ' + error.status + error.error.message);
         } else {
-            if (error.error.includes('Already logged in')) {
-                if (
-                    confirm(
-                        'Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?\n ' +
-                            'Si vous ete actuellement en match vous abandonnerez votre match',
-                    )
-                ) {
-                    this.http
-                        .post<any>(this.serverUrl + 'forcelogin', {
-                            email,
-                            password,
-                        })
-                        .subscribe({
-                            next: (response) => {
-                                socket?.emit('forceLogout', response.data.name);
-                                this.saveUserInfo(response, socket as Socket);
-                            },
-                            error: (newError) => {
-                                this.handleErrorPOST(newError);
-                            },
-                        });
-                }
-            } else {
-                alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
-            }
+            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
         }
     }
 
