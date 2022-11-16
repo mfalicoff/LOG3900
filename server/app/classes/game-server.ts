@@ -82,7 +82,7 @@ export class GameServer {
         this.powerCards = [];
         this.jmpNextEnnemyTurn = false;
         this.reduceEnnemyNbTurn = 0;
-
+        this.gameStart = '';
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
             ['B', { quantity: 2, weight: 3 }],

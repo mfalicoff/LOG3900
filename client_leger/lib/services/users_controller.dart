@@ -184,11 +184,11 @@ class Controller {
     }
   }
 
-  Future<List<GameSaved>> getFavouriteGames() async {
+  Future<List<dynamic>> getFavouriteGames() async {
     final user = globals.userLoggedIn;
-    final response = await http.get(Uri.parse("$serverAddress/users/games/$user.id"));
+    final response = await http.get(Uri.parse("$serverAddress/users/games/${user.id}"));
     if (response.statusCode == 200) {
-      List<GameSaved> favouriteGames = json.decode(response.body) as List<GameSaved>;
+      List<dynamic> favouriteGames = json.decode(response.body);
       return favouriteGames;
     } else {
         throw Exception('Failed to get favourite games');

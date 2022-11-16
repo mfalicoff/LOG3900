@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:ui';
 
@@ -21,12 +22,29 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfileStatePage extends State<ProfilePage> {
   final Controller controller = Controller();
-  late List<GameSaved> favouriteGames = [];
+  late List<dynamic> favouriteGames = [];
+  final String? serverAddress = Environment().config?.serverURL;
 
 
   refresh() async {
     setState(() {});
-    favouriteGames =  (await controller.getFavouriteGames());
+  }
+
+    @override
+  void initState() {
+    super.initState();
+    final user = globals.userLoggedIn;
+    http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
+        .then((res) => parseGames(res));
+  }
+
+  void parseGames(http.Response res) {
+    var parsed = json.decode(res.body);
+    for (var game in parsed) {
+        favouriteGames.add(game);
+    }
+    print('from parse games');
+    print(favouriteGames);
   }
 
   @override
@@ -41,7 +59,7 @@ class _ProfileStatePage extends State<ProfilePage> {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 200.0),
+                const EdgeInsets.symmetric(vertical: 80.0, horizontal: 100.0),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
@@ -62,20 +80,26 @@ class _ProfileStatePage extends State<ProfilePage> {
                         backgroundImage: MemoryImage(
                             globals.userLoggedIn.getUriFromAvatar()),
                       ),
-                      Text(globals.userLoggedIn.username,
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                              decoration: TextDecoration.none)),
-                      UsernameChangeDialog(
-                        notifyParent: refresh,
-                      ),
-                      AvatarChangeDialog(
-                        notifyParent: refresh,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                            UsernameChangeDialog(
+                                notifyParent: refresh,
+                            ),
+                            Text(globals.userLoggedIn.username,
+                                style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                decoration: TextDecoration.none)),
+                            AvatarChangeDialog(
+                                notifyParent: refresh,
+                            ),
+                        ],
                       ),
                       Container(
-                        padding: const EdgeInsets.only(top: 50, bottom: 50),
+                        padding: const EdgeInsets.only(top: 15, bottom: 30),
                         child: Table(
                           children: [
                             TableRow(
@@ -107,16 +131,14 @@ class _ProfileStatePage extends State<ProfilePage> {
                         ),
                       ),
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.only(right: 50),
-                              child: returnHistoryScrollView(
-                                  'Historique des Connections',
-                                  globals.userLoggedIn.actionHistory!)),
-                          returnHistoryScrollView('Historique des Parties',
-                              globals.userLoggedIn.gameHistory!),
+                            returnHistoryScrollView('Historique des Connections',
+                                    globals.userLoggedIn.actionHistory!),
+                            returnHistoryScrollView('Historique des Parties',
+                                    globals.userLoggedIn.gameHistory!),
+                            returnFavouriteGamesScrollView('Parties favorites'),
                         ],
                       )
                     ],
@@ -149,8 +171,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                       decoration: TextDecoration.none)),
               Container(
                 decoration: BoxDecoration(border: Border.all()),
-                height: 100,
-                width: 200,
+                height: 250,
+                width: 250,
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: history.length,
@@ -166,6 +188,45 @@ class _ProfileStatePage extends State<ProfilePage> {
           ),
         ),
       ],
+    );
+  }
+
+  Column returnFavouriteGamesScrollView(String title) {
+    print('Dans la fonction return view favourites');
+    print(favouriteGames);
+    return Column(
+        children: [
+            SingleChildScrollView(
+                child: Column(
+                    children: [
+                        Text(title,
+                            style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 11,
+                            decoration: TextDecoration.none)),
+                        Container(
+                            decoration: BoxDecoration(border: Border.all()),
+                            height: 250,
+                            width: 250,
+                            child: ListView.builder(
+                                itemCount: favouriteGames.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                    return ListView(
+                                        scrollDirection: Axis.vertical,
+                                        children: [
+                                            Text('Salle: ${favouriteGames[index].roomName}',
+                                                style: const TextStyle (
+                                                color: Colors.black,
+                                                fontSize: 11,
+                                                decoration: TextDecoration.none)),
+                                        ],
+                                    );
+                                }),
+                        ),
+                    ],
+                ),
+            )
+        ],
     );
   }
 }

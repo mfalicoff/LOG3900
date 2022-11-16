@@ -161,9 +161,9 @@ class GameServer {
     noTileOnBoard = game["noTileOnBoard"];
     winners = [];
     var wins = game["winners"];
-      for (var player in wins) {
+    for (var player in wins) {
         winners.add(Player.fromJson(player));
-      }
+    }
 
 
     //TODO letterBank
