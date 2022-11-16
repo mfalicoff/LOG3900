@@ -24,13 +24,13 @@ export class UserService {
     }
 
     updateUserInstance(user: User) {
-        localStorage.removeItem(`user-${user._id}`);
-        localStorage.setItem(`user-${user._id}`, JSON.stringify(user));
+        localStorage.removeItem('user');
+        localStorage.setItem('user', JSON.stringify(user));
         this.user = user;
     }
 
     getCookieHeader(): HttpHeaders {
-        return new HttpHeaders().set('Authorization', localStorage.getItem(`cookie-${this.user._id}`)?.split('=')[1].split(';')[0] as string);
+        return new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
     }
 
     async signUp(name: string, email: string, password: string, avatarPath: string, socket: Socket) {
@@ -82,6 +82,26 @@ export class UserService {
             });
     }
 
+    async softLogin(socket: Socket) {
+        this.http
+            .post<unknown>(
+                environment.serverUrl + 'soft-login',
+                {},
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            // eslint-disable-next-line deprecation/deprecation
+            .subscribe({
+                next: (response) => {
+                    this.saveUserInfo(response, socket);
+                },
+                error: (error) => {
+                    console.error(error);
+                },
+            });
+    }
+
     async logout() {
         this.http
             .post<unknown>(
@@ -95,8 +115,8 @@ export class UserService {
             .subscribe({
                 next: () => {
                     // @ts-ignore
-                    localStorage.removeItem(`cookie-${this.user._id}`);
-                    localStorage.removeItem(`user-${this.user._id}`);
+                    localStorage.removeItem('cookie');
+                    localStorage.removeItem('user');
                     this.infoClientService.playerName = '';
                     this.router.navigate(['/login']);
                 },
@@ -204,7 +224,7 @@ export class UserService {
     }
 
     private saveUserInfo(response: any, socket: Socket) {
-        localStorage.setItem(`cookie-${response.data._id}`, response.token);
+        localStorage.setItem('cookie', response.token);
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
         this.infoClientService.playerName = response.data.name;
