@@ -115,7 +115,7 @@ class UsersController {
         try {
             const userId: string = req.params.id;
             const language: string = req.body.language;
-            const updateUserData: User = await this.userService.updateTheme(userId, language);
+            const updateUserData: User = await this.userService.updateLanguage(userId, language);
 
             res.status(HTTPStatusCode.OK).json({ data: updateUserData, message: 'updated' });
         } catch (error) {

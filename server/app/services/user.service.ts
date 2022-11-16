@@ -203,7 +203,7 @@ class UserService {
     async updateLanguage(userId: string, languageUpdated: string): Promise<User> {
         if (userId === '' || userId === undefined) throw new HttpException(HTTPStatusCode.BadRequest, 'No user id sent');
 
-        if ((languageUpdated !== 'light' && languageUpdated !== 'dark') || languageUpdated === undefined)
+        if ((languageUpdated !== 'fr' && languageUpdated !== 'en') || languageUpdated === undefined)
             throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
 
         const updateUserById: User = (await this.users.findByIdAndUpdate(userId, { language: languageUpdated }, { new: true })) as User;

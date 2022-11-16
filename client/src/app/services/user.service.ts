@@ -9,6 +9,7 @@ import { GameSaved } from '@app/classes/game-saved';
 import { InfoClientService } from '@app/services/info-client.service';
 import { Router } from '@angular/router';
 import { Socket } from 'socket.io-client';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +18,12 @@ export class UserService {
     user: User;
     serverUrl = environment.serverUrl;
 
-    constructor(private http: HttpClient, private infoClientService: InfoClientService, private router: Router) {}
+    constructor(
+        private http: HttpClient,
+        private infoClientService: InfoClientService,
+        private router: Router,
+        private translate: TranslateService,
+    ) {}
 
     getUser(user: User): Observable<UserResponseInterface> {
         return this.http.get<UserResponseInterface>(`${environment.serverUrl}users/${user._id}`);
@@ -173,7 +179,7 @@ export class UserService {
 
     async updateLanguage(languageUpdated: string) {
         return this.http
-            .patch<UserResponseInterface>(
+            .put<UserResponseInterface>(
                 environment.serverUrl + 'users/language/' + this.user._id,
                 { language: languageUpdated },
                 {
@@ -227,6 +233,7 @@ export class UserService {
         localStorage.setItem(`cookie-${response.data._id}`, response.token);
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
+        this.translate.use(response.data.language);
         this.infoClientService.playerName = response.data.name;
         this.router.navigate(['/game-mode-options']);
     }
