@@ -1,4 +1,6 @@
-import 'package:client_leger/screens/end-game-results-page.dart';
+import 'dart:convert';
+
+import 'package:client_leger/models/game-saved.dart';
 import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/screens/search_page.dart';
 import 'package:client_leger/services/users_controller.dart';
@@ -8,7 +10,9 @@ import '../constants/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:http/http.dart' as http;
 
+import '../env/environment.dart';
 import '../widget/chat_panel.dart';
 
 
@@ -23,6 +27,23 @@ class _MyHomePageState extends State<MyHomePage> {
   final Controller controller = Controller();
   final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
+  late List<GameSaved> games = [];
+  final String? serverAddress = Environment().config?.serverURL;
+
+    @override
+  void initState() {
+    super.initState();
+    final user = globals.userLoggedIn;
+    http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
+        .then((res) => parseGames(res));
+  }
+
+  void parseGames(http.Response res) {
+    var parsed = json.decode(res.body);
+    for (var game in parsed) {
+      games.add(GameSaved.fromJson(game));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,10 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toProfilePage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage())).then((value) {
-      setState(() {
-      });
-    });
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(favouriteGames: games)));
   }
 
   void _toGameListPage() {

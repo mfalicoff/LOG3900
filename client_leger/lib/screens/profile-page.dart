@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'dart:io';
 import 'dart:ui';
 
@@ -14,7 +13,12 @@ import 'package:client_leger/utils/utils.dart';
 import '../env/environment.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  final List<GameSaved> favouriteGames;
+
+  const ProfilePage({
+      Key? key,
+      required this.favouriteGames,
+      }) : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfileStatePage();
@@ -22,29 +26,10 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfileStatePage extends State<ProfilePage> {
   final Controller controller = Controller();
-  late List<dynamic> favouriteGames = [];
   final String? serverAddress = Environment().config?.serverURL;
-
 
   refresh() async {
     setState(() {});
-  }
-
-    @override
-  void initState() {
-    super.initState();
-    final user = globals.userLoggedIn;
-    http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
-        .then((res) => parseGames(res));
-  }
-
-  void parseGames(http.Response res) {
-    var parsed = json.decode(res.body);
-    for (var game in parsed) {
-        favouriteGames.add(game);
-    }
-    print('from parse games');
-    print(favouriteGames);
   }
 
   @override
@@ -192,8 +177,6 @@ class _ProfileStatePage extends State<ProfilePage> {
   }
 
   Column returnFavouriteGamesScrollView(String title) {
-    print('Dans la fonction return view favourites');
-    print(favouriteGames);
     return Column(
         children: [
             SingleChildScrollView(
@@ -209,16 +192,47 @@ class _ProfileStatePage extends State<ProfilePage> {
                             height: 250,
                             width: 250,
                             child: ListView.builder(
-                                itemCount: favouriteGames.length,
+                                itemCount: widget.favouriteGames.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                    return ListView(
-                                        scrollDirection: Axis.vertical,
+                                    return Stack(
                                         children: [
-                                            Text('Salle: ${favouriteGames[index].roomName}',
-                                                style: const TextStyle (
-                                                color: Colors.black,
-                                                fontSize: 11,
-                                                decoration: TextDecoration.none)),
+                                          Text('Salle: ${widget.favouriteGames[index].roomName}',
+                                              style: const TextStyle (
+                                              color: Colors.black,
+                                              fontSize: 11,
+                                              decoration: TextDecoration.none)
+                                           ),
+                                          Text('Gagnant de la partie: ${widget.favouriteGames[index].winners[0]}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                  decoration: TextDecoration.none)
+                                          ),
+                                          Text('Nombre de lettres restantes dans la reserve: ${widget.favouriteGames[index].nbLetterReserve}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                  decoration: TextDecoration.none)
+                                          ),
+                                          Text('Nombre de tours total: ${widget.favouriteGames[index].numberOfTurns}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                  decoration: TextDecoration.none)
+                                          ),
+                                          Text('Duree de la partie (en minutes): ${widget.favouriteGames[index].playingTime}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                  decoration: TextDecoration.none)
+                                          ),
+                                          Text('Date de creation de la salle: ${widget.favouriteGames[index].gameStartDate}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 11,
+                                                  decoration: TextDecoration.none)
+                                          ),
+
                                         ],
                                     );
                                 }),
