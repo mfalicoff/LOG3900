@@ -56,7 +56,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                         color: Theme.of(context).colorScheme.primary,
                         width: 3)),
                 padding: const EdgeInsets.symmetric(
-                    vertical: 25.0, horizontal: 80.0),
+                    vertical: 25.0, horizontal: 40.0),
                 child: Center(
                   child: Column(
                     children: [
@@ -157,7 +157,7 @@ class _ProfileStatePage extends State<ProfilePage> {
               Container(
                 decoration: BoxDecoration(border: Border.all()),
                 height: 250,
-                width: 250,
+                width: 300,
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: history.length,
@@ -190,7 +190,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                         Container(
                             decoration: BoxDecoration(border: Border.all()),
                             height: 250,
-                            width: 320,
+                            width: 325,
                             child: ListView.builder(
                                 itemCount: widget.favouriteGames.length,
                                 itemBuilder: (BuildContext context, int index) {
