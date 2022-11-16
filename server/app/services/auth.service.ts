@@ -2,7 +2,7 @@ import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { CreateUserValidator } from '@app/utils/validators';
 import { HttpException } from '@app/classes/http.exception';
-import { DataStoredInToken, TokenData } from '@app/classes/auth.interface';
+import { DataStoredInToken, RequestWithUser, TokenData } from '@app/classes/auth.interface';
 import { User } from '@app/classes/users.interface';
 import userModel from '@app/models/users.model';
 import { isEmpty } from '@app/utils/utils';
@@ -34,6 +34,20 @@ class AuthService {
             throw new HttpException(HTTPStatusCode.Conflict, 'Already logged in, log out of device and try again');
 
         this.loggedInIds.push(findUser.id as string);
+        findUser.avatarUri = await this.userService.populateAvatarField(findUser);
+        const tokenData = this.createToken(findUser);
+        const cookie = this.createCookie(tokenData);
+        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('login') } });
+        return { cookie, findUser };
+    }
+
+    async softLogin(req: RequestWithUser) {
+        const requestUser = req.user;
+
+        if (isEmpty(requestUser)) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
+
+        const findUser = await this.userService.findUserByEmail(requestUser.email as string);
+
         findUser.avatarUri = await this.userService.populateAvatarField(findUser);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);

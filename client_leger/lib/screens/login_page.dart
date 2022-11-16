@@ -1,6 +1,6 @@
 import 'dart:ui';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import 'package:client_leger/screens/home_page.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -64,6 +64,31 @@ class _LoginFormState extends State<LoginForm> {
   Controller controller = Controller();
   final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
+  final storage = const FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    getTokenFromStorage();
+  }
+
+  getTokenFromStorage() async {
+    String? value = await storage.read(key: 'token');
+    if(value != null) {
+      try {
+        globals.userLoggedIn = await controller.softLogin(
+            token: value, socket: socketService.socket);
+        infoClientService.playerName = globals.userLoggedIn.username;
+        Navigator.pushNamed(context, "/home");
+        return true;
+      } on Exception {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text("Impossible de se connecter"),
+          backgroundColor: Colors.red.shade300,
+        ));
+        }
+      }
+    }
 
   @override
     Widget build(BuildContext context) {

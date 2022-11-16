@@ -3,6 +3,7 @@ import { CreateUserValidator } from '@app/utils/validators';
 import { User } from '@app/classes/users.interface';
 import AuthService from '@app/services/auth.service';
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
+import { RequestWithUser } from '@app/classes/auth.interface';
 
 /* eslint-disable no-invalid-this */
 
@@ -24,6 +25,15 @@ class AuthController {
         try {
             const userData: CreateUserValidator = req.body;
             const { cookie, findUser } = await this.authService.login(userData);
+            res.status(HTTPStatusCode.OK).json({ data: findUser, token: cookie, message: 'logged in' });
+        } catch (error) {
+            next(error);
+        }
+    };
+
+    softLogin = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+        try {
+            const { cookie, findUser } = await this.authService.softLogin(req);
             res.status(HTTPStatusCode.OK).json({ data: findUser, token: cookie, message: 'logged in' });
         } catch (error) {
             next(error);

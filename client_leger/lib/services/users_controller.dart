@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:client_leger/env/environment.dart';
 import 'package:http/http.dart' as http;
@@ -8,6 +9,7 @@ import 'package:client_leger/models/user.dart';
 
 class Controller {
   final String? serverAddress = Environment().config?.serverURL;
+  final storage = const FlutterSecureStorage();
 
   Future<User> login({email = String, password = String, socket = Socket}) async {
     final response = await http.post(
@@ -23,6 +25,30 @@ class Controller {
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
+      await storage.write(key: 'token', value: user.cookie);
+      socket.emit("new-user", user.username);
+      return user;
+    } else {
+      if(response.statusCode == 409) {
+        throw Exception('Already Logged In');
+      } else {
+        throw Exception('Failed to login');
+      }
+    }
+  }
+
+  Future<User> softLogin({token = String, socket = Socket}) async {
+    final response = await http.post(
+      Uri.parse("$serverAddress/soft-login"),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': splitCookie(token),
+      },
+    );
+    if (response.statusCode == 200) {
+      User user = User.fromJson(json.decode(response.body));
+      user.cookie = json.decode(response.body)["token"];
+      await storage.write(key: 'token', value: user.cookie);
       socket.emit("new-user", user.username);
       return user;
     } else {
@@ -87,12 +113,13 @@ class Controller {
       Uri.parse("$serverAddress/logout"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{}),
     );
 
     if (response.statusCode == 200) {
+      await storage.delete(key: 'token');
       return user.clear();
     } else {
       throw Exception('Failed to logout');
@@ -105,7 +132,7 @@ class Controller {
       Uri.parse("$serverAddress/users/${user.id}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{"name": newName}),
     );
@@ -144,7 +171,7 @@ class Controller {
       Uri.parse("$serverAddress/users/${user.id}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{"avatarPath": avatarPath}),
     );
@@ -164,6 +191,10 @@ class Controller {
     } else {
       throw Exception('Failed to get user');
     }
+  }
+
+  String splitCookie (String fullCookie) {
+    return fullCookie.split("=")[1].split(";")[0];
   }
 
 }
