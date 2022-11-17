@@ -2,25 +2,25 @@
   <div style="display: flex; flex-direction: row;">
     <div id="leftDiv">
       <div>
-        <h2 id="titleChatDashBoard">Canaux de discussion</h2>
+        <h2 id="titleChatDashBoard">{{'GAME.CHAT_ROOM' | translate}}</h2>
         <button mat-button class="btnStyle" (click)="openNewChatroomModal()">
-          Créer un canal
+            {{'GAME.CREATE_CHAT_ROOM' | translate}}
         </button>
       </div>
       <div class="rooms">
         <button mat-button class="btnStyle" (click)="openJoinChatRoomModal()">
-          Joindre un canal
+            {{'GAME.JOIN_CHAT_ROOM' | translate}}
         </button>
         <div class="listChatRoom">
           <div *ngFor="let chatroom of infoClientService.chatRooms">
-            <h3 
+            <h3
               [ngClass]="classChatRoomElement(chatroom.name)"
-              class="chatRoomElement" 
+              class="chatRoomElement"
               (click)="onChatRoomSelect(chatroom)"
-            >{{chatroom.name}} 
-              <mat-icon 
+            >{{chatroom.name}}
+              <mat-icon
                 *ngIf="chatroom.name !== 'game' && chatroom.name !== 'general'"
-                class="leaveIcon" 
+                class="leaveIcon"
                 (click)="onLeaveChatRoomClick(chatroom.name)"
                 >exit_to_app
               </mat-icon>

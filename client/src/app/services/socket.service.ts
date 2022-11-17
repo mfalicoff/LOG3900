@@ -1,7 +1,8 @@
+/* eslint-disable max-lines*/
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
@@ -16,6 +17,7 @@ import { PlaceGraphicService } from './place-graphic.service';
 import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ChatMessage } from '@app/classes/chat-message';
 
 @Injectable({
     providedIn: 'root',
@@ -198,7 +200,7 @@ export class SocketService {
     private roomManipulationHandler() {
         this.socket.on('addElementListRoom', ({ roomName, gameMode, timeTurn, passwd, players, spectators }) => {
             const idxExistingRoom = this.infoClientService.rooms.findIndex((element) => element.name === roomName);
-            if (idxExistingRoom === GlobalConstants.DEFAULT_VALUE_NUMBER) {
+            if (idxExistingRoom === Constants.DEFAULT_VALUE_NUMBER) {
                 this.infoClientService.rooms.push(new RoomData(roomName, gameMode, timeTurn, passwd, players, spectators));
             } else {
                 this.infoClientService.rooms[idxExistingRoom].players = players;
@@ -237,7 +239,7 @@ export class SocketService {
                 playerName: name,
                 timeTurn: 1,
                 isBonusRandom: false,
-                gameMode: GlobalConstants.MODE_RANKED,
+                gameMode: Constants.MODE_RANKED,
                 vpLevel: 'beginner',
                 isGamePrivate: false,
                 passwd: '',

@@ -5,7 +5,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';
-import {TranslateService} from "@ngx-translate/core";
+import { TranslateService } from "@ngx-translate/core";
 import { SocketService } from '@app/services/socket.service';
 
 @Component({
@@ -57,9 +57,9 @@ export class GameModeOptionsPageComponent {
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            alert('Erreur: ' + error.status + error.error.message);
+            alert(this.translate.instant('ERROR') + error.status + error.error.message);
         } else {
-            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
+            alert(this.translate.instant('ERROR') + this.translate.instant('MESSAGE_ERROR') + '\n' + error.message);
         }
     }
 

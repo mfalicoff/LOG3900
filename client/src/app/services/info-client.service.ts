@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { RoomData } from '@app/classes/room-data';
+import { TranslateService } from '@ngx-translate/core';
+import { ChatRoom } from '@app/classes/chatroom.interface';
 
 @Injectable({
     providedIn: 'root',
