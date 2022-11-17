@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:client_leger/services/controller.dart';
+import 'package:client_leger/services/users_controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -90,8 +90,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                                 returnRowTextElement(
                                     globals.userLoggedIn.gamesWon.toString()),
                                 returnRowTextElement(globals
-                                    .userLoggedIn.averagePointsPerGame
-                                    .toString()),
+                                    .userLoggedIn.averagePointsPerGame!
+                                    .toStringAsFixed(2)),
                                 returnRowTextElement(Duration(
                                         milliseconds: globals
                                             .userLoggedIn.averageTimePerGame!

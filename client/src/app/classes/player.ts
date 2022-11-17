@@ -1,5 +1,5 @@
 import * as Constants from '@app/classes/global-constants';
-import { Command } from './command';
+import { ChatMessage } from './chat-message';
 import { Letter } from './letter';
 import { PowerCard } from './power-card';
 import { Tile } from './tile';
@@ -23,7 +23,7 @@ export class Player {
 
     // CHAT SERVICE DATA
     lastWordPlaced: string;
-    chatHistory: Command[];
+    chatHistory: ChatMessage[];
     debugOn: boolean;
     passInARow: number;
 
@@ -59,11 +59,14 @@ export class Player {
         this.powerCards = [new PowerCard(Constants.JUMP_NEXT_ENNEMY_TURN, true), new PowerCard(Constants.REMOVE_POINTS_FROM_MAX, true)];
         this.nbValidWordPlaced = 0;
 
+        // TODO remove this next line later
+        this.chatHistory.push(new ChatMessage(this.name, 'Bienvenue sur le chat'));
+
         this.initStand();
     }
 
     initStand(): void {
-        const letterInit = 'abcdefg';
+        const letterInit = '*abcdef';
         const nbOccupiedSquare = 7;
         for (
             let i = 0, j = Constants.SIZE_OUTER_BORDER_STAND;

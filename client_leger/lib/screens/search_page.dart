@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:client_leger/services/controller.dart';
+import 'package:client_leger/services/users_controller.dart';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/socket_service.dart';
@@ -165,9 +165,12 @@ class _SearchPage extends State<SearchPage> {
                                             user!.gamesPlayed.toString()),
                                         returnRowTextElement(
                                             user!.gamesWon.toString()),
+                                        // returnRowTextElement(user!
+                                        //     .averagePointsPerGame
+                                        //     .toString()),
                                         returnRowTextElement(user!
-                                            .averagePointsPerGame
-                                            .toString()),
+                                                .averagePointsPerGame!
+                                                .toStringAsFixed(2)),
                                         returnRowTextElement(Duration(
                                                 milliseconds: user!
                                                     .averageTimePerGame!
@@ -218,8 +221,8 @@ class _SearchPage extends State<SearchPage> {
                       decoration: TextDecoration.none)),
               Container(
                 decoration: BoxDecoration(border: Border.all()),
-                height: 100,
-                width: 200,
+                height: 300,
+                width: 400,
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: history.length,

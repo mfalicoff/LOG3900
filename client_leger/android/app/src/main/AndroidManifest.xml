@@ -2,9 +2,9 @@
     package="com.example.client_leger">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="client_leger"
+        android:label="polyScrabble"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"

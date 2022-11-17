@@ -24,6 +24,7 @@ export class SocketService {
     socket: Socket;
     gameFinished: BehaviorSubject<boolean>;
     gameId: string;
+    count: number;
     private urlString = environment.serverUrl;
 
     constructor(
@@ -39,6 +40,7 @@ export class SocketService {
         this.socket = io(this.urlString);
         this.gameFinished = new BehaviorSubject(this.infoClientService.game.gameFinished);
         this.socketListen();
+        this.count = 1;
     }
 
     private socketListen() {
@@ -47,6 +49,7 @@ export class SocketService {
         this.gameUpdateHandler();
         this.timerHandler();
         this.canvasActionsHandler();
+        this.chatRoomsHandler();
     }
 
     private canvasActionsHandler() {
@@ -83,17 +86,19 @@ export class SocketService {
             this.infoClientService.player = player;
             setTimeout(() => {
                 this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
-            }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+            }, Constants.WAIT_FOR_CANVAS_INI);
         });
 
-        this.socket.on('gameBoardUpdate', (game) => {
+        this.socket.on('gameBoardUpdate', async (game) => {
             this.infoClientService.game = game;
             if (!game.gameFinished) {
                 setTimeout(() => {
                     this.drawingBoardService.reDrawBoard(this.socket, game.bonusBoard, game.board, this.infoClientService.letterBank);
-                }, GlobalConstants.WAIT_FOR_CANVAS_INI);
-            } else {
+                }, Constants.WAIT_FOR_CANVAS_INI);
+            }
+            if (game.gameFinished && this.count === 1) {
                 this.gameFinished.next(true);
+                this.count++;
             }
         });
 
@@ -111,7 +116,7 @@ export class SocketService {
             if (this.infoClientService.isSpectator) {
                 setTimeout(() => {
                     this.drawingService.drawSpectatorStands(players);
-                }, GlobalConstants.WAIT_FOR_CANVAS_INI);
+                }, Constants.WAIT_FOR_CANVAS_INI);
             }
             this.infoClientService.rooms[idxExistingRoom].spectators = spectators;
 
@@ -152,23 +157,22 @@ export class SocketService {
         });
     }
 
-    private displayChangeEndGameCallBack() {
-        this.infoClientService.displayTurn = this.translate.instant('GAME.END_GAME');
+    private displayChangeEndGameCallBack(displayChange: string) {
+        this.infoClientService.displayTurn = displayChange;
     }
 
     private timerHandler() {
-        this.socket.on('displayChangeEndGame', () => this.displayChangeEndGameCallBack());
+        this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
             this.infoClientService.powerUsedForTurn = false;
             this.drawingBoardService.lettersDrawn = '';
             if (currentNamePlayerPlaying === this.infoClientService.playerName) {
-                this.infoClientService.displayTurn = this.translate.instant('GAME.ITS_YOUR_TURN');
+                this.infoClientService.displayTurn = "C'est votre tour !";
                 this.infoClientService.isTurnOurs = true;
             } else {
                 const playerPlaying = this.infoClientService.actualRoom.players.find((player) => player.name === currentNamePlayerPlaying);
-                this.infoClientService.displayTurn =
-                    this.translate.instant('GAME.ITS_THE_TURN_OF') + playerPlaying?.name + this.translate.instant('GAME.TO_PLAY');
+                this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + ' de jouer !';
                 this.infoClientService.isTurnOurs = false;
                 this.placeGraphicService.resetVariablePlacement();
             }
@@ -268,6 +272,10 @@ export class SocketService {
             this.infoClientService.dictionaries = dictionaries;
         });
 
+        this.socket.on('ReSendDictionariesToClient', (dictionaries: MockDict[]) => {
+            this.infoClientService.dictionaries = dictionaries;
+        });
+
         this.socket.on('DictionaryDeletedMessage', (message: string) => {
             alert(message);
         });
@@ -291,6 +299,41 @@ export class SocketService {
 
         this.socket.on('sendLetterReserve', (letterReserveArr) => {
             this.infoClientService.letterReserve = letterReserveArr;
+        });
+
+        this.socket.on('soundPlay', (soundName) => {
+            if (this.infoClientService.soundDisabled) {
+                return;
+            }
+            new Audio('./assets/audios/' + soundName).play();
+        });
+    }
+
+    private chatRoomsHandler() {
+        this.socket.on('setChatRoom', (chatRoom) => {
+            const idxChatRoom = this.infoClientService.chatRooms.findIndex((room) => room.name === chatRoom.name);
+            // if the room is already present we delete it to set the newer one
+            // it should never happened though
+            if (idxChatRoom !== Constants.DEFAULT_VALUE_NUMBER) {
+                this.infoClientService.chatRooms.splice(idxChatRoom, 1);
+                // eslint-disable-next-line no-console
+                console.log('Should never go here in SocketService:setChatRoom');
+            }
+            // if the room received is general it means we are getting all the room
+            // and this is the start of the app
+            if (chatRoom.name === 'general') {
+                this.infoClientService.chatRooms = [];
+            }
+            this.infoClientService.chatRooms.push(chatRoom);
+        });
+        this.socket.on('addMsgToChatRoom', (chatRoomName: string, msg: ChatMessage) => {
+            const idxChatRoom = this.infoClientService.chatRooms.findIndex((room) => room.name === chatRoomName);
+            if (idxChatRoom === Constants.DEFAULT_VALUE_NUMBER) {
+                // eslint-disable-next-line no-console
+                console.log('error in SocketService:addMsgToChatRoom');
+                return;
+            }
+            this.infoClientService.chatRooms[idxChatRoom].chatHistory.push(msg);
         });
     }
 
@@ -324,7 +367,7 @@ export class SocketService {
 
     private updateUiBeforeStartGame(players: Player[]) {
         const nbRealPlayer = players?.filter((player: Player) => player.id !== 'virtualPlayer').length;
-        if (nbRealPlayer >= GlobalConstants.MIN_PERSON_PLAYING) {
+        if (nbRealPlayer >= Constants.MIN_PERSON_PLAYING) {
             this.infoClientService.displayTurn = this.translate.instant('GAME.WAITING_FOR_CREATOR');
         } else {
             this.infoClientService.displayTurn = this.translate.instant('GAME.WAIT_FOR_OTHER_PLAYERS');

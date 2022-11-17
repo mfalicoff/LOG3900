@@ -1,0 +1,11 @@
+<div class="container justified">
+    <div class="newChatroom">
+        <h2>Nom de la nouvelle salle: </h2>
+        <mat-form-field>
+            <mat-label style="color:#0C483F">Nom de la salle</mat-label>
+            <input matInput [(ngModel)]="name">
+          </mat-form-field>
+        <button mat-button (click)="newChatroom(name)" class="saveButton">Confirmer</button>
+    </div>
+    <button class="saveButtonAvatar saveButton" mat-button (click)="closeDialog()">Fermer</button>
+</div>

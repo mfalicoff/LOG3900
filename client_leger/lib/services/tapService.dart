@@ -97,7 +97,7 @@ class TapService with ChangeNotifier{
     notifyListeners();
   }
 
-  void onStandToBoardDrop(Vec2 coordsTapped, Tile tileDropped, IO.Socket socket) {
+  void onStandToBoardDrop(Vec2 coordsTapped, Tile tileDropped, IO.Socket socket, String letterChoice) {
     Vec2 posDropBoardIdxs = getIndexOnBoardLogicFromClick(coordsTapped);
 
     if (infoClientService.game.board[posDropBoardIdxs.y as int][posDropBoardIdxs.x as int].letter.value != '') {
@@ -109,13 +109,20 @@ class TapService with ChangeNotifier{
       startLettersPlacedPosY = posDropBoardIdxs.y;
     }
 
-    lettersDrawn += tileDropped.letter.value;
-    coordsLettersDrawn.add(posDropBoardIdxs);
 
     // remove the tile from the stand logically and visually
     socket.emit('rmTileFromStand', tileDropped);
+
+    if(letterChoice != '') {
+      lettersDrawn += letterChoice.toLowerCase();
+      socket.emit('addTempLetterBoard', [letterChoice.toLowerCase(), posDropBoardIdxs.x, posDropBoardIdxs.y]);
+    } else {
+      lettersDrawn += tileDropped.letter.value;
+      socket.emit('addTempLetterBoard', [tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y]);
+    }
+    coordsLettersDrawn.add(posDropBoardIdxs);
+
     // ask for update board logic for a temporary tile
-    socket.emit('addTempLetterBoard', [tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y]);
     socket.emit('clearTmpTileCanvas');
 
   }
@@ -240,6 +247,8 @@ class TapService with ChangeNotifier{
         i--;
       }
     }
+    startLettersPlacedPosX = coordsLettersDrawn[0].x;
+    startLettersPlacedPosY = coordsLettersDrawn[0].y;
   }
 
   String constructWord() {

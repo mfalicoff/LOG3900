@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';
 import {TranslateService} from "@ngx-translate/core";
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-game-mode-options-page',
@@ -15,10 +16,14 @@ import {TranslateService} from "@ngx-translate/core";
 export class GameModeOptionsPageComponent {
     constructor(
         private infoClientService: InfoClientService,
-        private http: HttpClient, private router: Router,
+        private http: HttpClient,
+        private router: Router,
+        private socketService: SocketService,
         public userService: UserService,
-        private translate: TranslateService
-    ) {}
+        private translate: TranslateService,
+    ) {
+        this.socketService.socket.emit("getAllChatRooms");
+    }
 
     setGameMode(gameMode: string) {
         this.infoClientService.gameMode = gameMode;
@@ -52,9 +57,10 @@ export class GameModeOptionsPageComponent {
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            alert(this.translate.instant('ERROR') + error.status + error.error.message);
+            alert('Erreur: ' + error.status + error.error.message);
         } else {
-            alert(this.translate.instant('ERROR') + this.translate.instant('MESSAGE_ERROR') + '\n' + error.message);
+            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
         }
     }
+
 }

@@ -4,7 +4,6 @@ import { PlaceGraphicService } from '@app/services/place-graphic.service';
 import { SocketService } from '@app/services/socket.service';
 import { DrawingBoardService } from './drawing-board-service';
 import { InfoClientService } from './info-client.service';
-import { ChatMessage } from '@app/classes/chat-message.interface';
 import { Tile } from '@app/classes/tile';
 import { DrawingService } from './drawing.service';
 
@@ -40,7 +39,7 @@ export class MouseKeyboardEventHandlerService {
 
     // function that get the index of a pixel position mouse up
     // and send ask the server to place the tile as a temporary one
-    onStandToBoardDrop(coordsClick: Vec2, tileDropped: Tile) {
+    onStandToBoardDrop(coordsClick: Vec2, tileDropped: Tile, letterChoice: string) {
         // indexs of the tile where the "tileDropped" has been dropped
         const posDropBoardIdxs: Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
         // if the tile on which we drop the new one is an old one (from a precedent turn)
@@ -55,12 +54,19 @@ export class MouseKeyboardEventHandlerService {
             this.placeGraphicService.startLettersPlacedPosX = posDropBoardIdxs.x;
             this.placeGraphicService.startLettersPlacedPosY = posDropBoardIdxs.y;
         }
-        this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
-        this.drawingBoardService.coordsLettersDrawn.push(posDropBoardIdxs);
+
         // remove the tile from the stand logically and visually
         this.socketService.socket.emit('rmTileFromStand', tileDropped);
-        // ask for update board logic for a temporary tile
-        this.socketService.socket.emit('addTempLetterBoard', tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y);
+
+        // check if the tile is a special tile (star or not)
+        if (letterChoice !== '') {
+            this.drawingBoardService.lettersDrawn += letterChoice.toLowerCase();
+            this.socketService.socket.emit('addTempLetterBoard', letterChoice.toLowerCase(), posDropBoardIdxs.x, posDropBoardIdxs.y);
+        } else {
+            this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
+            this.socketService.socket.emit('addTempLetterBoard', tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y);
+        }
+        this.drawingBoardService.coordsLettersDrawn.push(posDropBoardIdxs);
     }
 
     onBoardToBoardDrop(coordsClick: Vec2, tileDropped: Tile) {
@@ -158,20 +164,14 @@ export class MouseKeyboardEventHandlerService {
         }
     }
 
-    onCommunicationBoxEnter(input: string) {
-        this.socketService.socket.emit('newMessageClient', input);
+    onCommunicationBoxEnter(msg: string, actualChatRoomName: string) {
+        if (actualChatRoomName === 'game') {
+            this.socketService.socket.emit('newMessageClient', msg);
+        } else {
+            this.socketService.socket.emit('addMsgToChatRoom', actualChatRoomName, msg);
+        }
         this.isCommBoxJustBeenClicked = false;
         this.isCommunicationBoxFocus = true;
-    }
-
-    onCommunicationBoxEnterChat(chat: ChatMessage) {
-        if (this.socketService.socket.connected) {
-            this.socketService.socket.emit('chat msg', chat);
-            this.isCommBoxJustBeenClicked = false;
-            this.isCommunicationBoxFocus = true;
-        } else {
-            throw new Error('not connected to server');
-        }
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {
