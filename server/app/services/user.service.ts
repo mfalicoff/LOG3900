@@ -160,7 +160,7 @@ class UserService {
     async updateGameHistory(player: Player, didPlayerWin: boolean, gameStart: number): Promise<void> {
         if (player.id === 'virtualPlayer') return;
 
-        let display = 'Le ';
+        let display = '';
         const timestamp = new Date(gameStart);
         const date = timestamp.toDateString();
         const time = timestamp.toLocaleTimeString();
