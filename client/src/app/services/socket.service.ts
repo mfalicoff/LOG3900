@@ -97,6 +97,7 @@ export class SocketService {
                 }, Constants.WAIT_FOR_CANVAS_INI);
             }
             if (game.gameFinished && this.count === 1) {
+                this.timerService.clearGameTimer();
                 this.gameFinished.next(true);
                 this.count++;
             }
@@ -183,7 +184,7 @@ export class SocketService {
         this.socket.on('setTimeoutTimerStart', () => {
             this.drawingBoardService.lettersDrawn = '';
             this.setTimeoutForTimer();
-            // call start timer playing time
+            this.timerService.startGameTimer();
         });
 
         this.socket.on('stopTimer', () => {

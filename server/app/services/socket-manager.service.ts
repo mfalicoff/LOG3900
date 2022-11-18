@@ -988,7 +988,7 @@ export class SocketManager {
         });
     }
 
-    private async triggerStopTimer(roomName: string) {
+    private triggerStopTimer(roomName: string) {
         this.sio.to(roomName + Constants.GAME_SUFFIX).emit('stopTimer');
         this.sio.to(roomName + Constants.GAME_SUFFIX).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
     }

@@ -28,11 +28,17 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
     infoClientService.addListener(refresh);
+    infoClientService.addListener(_checkEndGame);
   }
 
   void refresh() {
     if (mounted) {
       setState(() {});
+    }
+  }
+  _checkEndGame() {
+    if (infoClientService.game.gameFinished) {
+        showDialog(context: context, builder: (context) => const EndGameResultsPage());
     }
   }
 
@@ -140,25 +146,6 @@ class _GamePageState extends State<GamePage> {
                                 ),
                               )
                             : null),
-                    Container(
-                        child: infoClientService.game.gameFinished == true
-                        ? ElevatedButton(
-                            style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                            vertical: 18.0, horizontal: 0.0),
-                            ),
-                            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(100.0)))),
-                                onPressed: () {
-                                    showDialog(context: context, builder: (context) => const EndGameResultsPage(),
-                                    );
-                                },
-                        child: const Text('End Game Results'),
-                        )
-
-                    : null),
                     Container(
                         child: shouldSpecBeAbleToBePlayer() == true
                             ? ElevatedButton(
@@ -317,6 +304,7 @@ class _GamePageState extends State<GamePage> {
   }
 
   void _leaveGame() {
+    socketService.count = 1;
     socketService.socket.emit('leaveGame');
     Navigator.popUntil(context, ModalRoute.withName("/game-list"));
   }
@@ -335,6 +323,7 @@ class _GamePageState extends State<GamePage> {
               ),
               child: const Text('Abandonner'),
               onPressed: () {
+                socketService.count = 1;
                 socketService.socket.emit('giveUpGame');
                 Navigator.popUntil(context, ModalRoute.withName("/game-list"));
               },
