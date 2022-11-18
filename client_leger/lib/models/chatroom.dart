@@ -1,9 +1,12 @@
+import 'package:flutter/cupertino.dart';
+
 import 'chat.dart';
 
 class ChatRoom{
   late String name;
   late List<String> participants;
   List<ChatMessage> chatHistory = [];
+  late bool isUnread = false;
 
   ChatRoom({required this.name, required this.participants});
 
