@@ -5,7 +5,6 @@ import 'package:client_leger/services/chat-service.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:restart_app/restart_app.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 import '../constants/constants.dart';
