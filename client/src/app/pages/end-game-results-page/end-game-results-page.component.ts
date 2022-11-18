@@ -9,6 +9,7 @@ import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-re
 import { EloChangeService } from '@app/services/elo-change.service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
+import { TimerService } from '@app/services/timer.service';
 import { UserService } from '@app/services/user.service';
 import { Observable, Subscription } from 'rxjs';
 
@@ -36,6 +37,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private httpClient: HttpClient,
         private eloChangeService: EloChangeService,
         private socketService: SocketService,
+        private timerService: TimerService,
     ) {}
 
     ngOnInit() {
@@ -124,12 +126,10 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     }
 
     displayPlayingTime(): void {
-        const gameLength = this.infoClientService.game.endTime - this.infoClientService.game.startTime;
-        console.log(gameLength);
         const secondsInMinute = 60;
         const displayZero = 9;
-        const minutesToDisplay = gameLength / secondsInMinute;
-        const secondsToDisplay = gameLength % secondsInMinute;
+        const minutesToDisplay = this.timerService.playingTime / secondsInMinute;
+        const secondsToDisplay = this.timerService.playingTime % secondsInMinute;
         if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
             this.playingTime = `0${Math.floor(minutesToDisplay)}:0${secondsToDisplay}`;
         } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
