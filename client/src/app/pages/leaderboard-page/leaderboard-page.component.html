@@ -1,5 +1,4 @@
 <div class = "container justified" *ngIf="leaderBoardService.scoreClassic !== undefined && leaderBoardService.scoreLOG2990 !== undefined">
-    <h6 class="MPButton" routerLink="/game-mode-options"><mat-icon>arrow_back</mat-icon></h6>
 <h1 class = "titleLeaderboard">MEILLEURS SCORES</h1>
     <h2 class = "scoreClassique"><div style = "margin-left: 160px">MODE CLASSIQUE</div>ㅤ
         <div id = "boxBestClassique">
@@ -72,7 +71,6 @@
 </div>
 
 <div class = "container justified" *ngIf='leaderBoardService.scoreClassic === undefined || leaderBoardService.scoreLOG2990 === undefined'>
-    <h6 class="MPButton" routerLink="/main-page"><mat-icon>arrow_back</mat-icon></h6>
 <h1 class = "titleLeaderboard">MEILLEURS SCORES</h1>
     <div id = "boxError">
         <mat-icon id = "iconError">warning</mat-icon>

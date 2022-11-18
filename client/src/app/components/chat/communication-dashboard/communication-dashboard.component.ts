@@ -33,14 +33,6 @@ export class CommunicationDashboardComponent implements AfterViewInit {
         public route: ActivatedRoute,
     ) {
         this.currSelectedChatroom = { name: 'default', participants: [], creator: '', chatHistory: [new ChatMessage('system', 'defaultMsg')] };
-        // initialize the default selected chatroom
-        // this.route.params.subscribe((params) => {
-        //     if (params.socketId !== '0') {
-        //         this.socketService.socket.emit('getAllChatRooms');
-        //         console.log('d3d2d332d' + params.socketId);
-        //         console.log('de23d3d2' + this.socketService.socket.id);
-        //     }
-        // });
         if (this.infoClientService.chatRooms.length > 0) {
             this.currSelectedChatroom = this.infoClientService.chatRooms[0];
         }
@@ -109,25 +101,5 @@ export class CommunicationDashboardComponent implements AfterViewInit {
         dialogRef.afterClosed().subscribe(() => {
             /* does nothing for now*/
         });
-    }
-
-    detachWindow() {
-        this.hideChatrooms = true;
-        const windowFeatures = 'popup,left=100,top=100,width=1000,height=500';
-
-        const popup = window.open(`http://localhost:4200/#/chat-rooms/${this.socketService.socket.id}`, 'Chat Rooms', windowFeatures);
-        (popup as Window).name = 'Fenetre Chat Detachee';
-        (document.getElementById('main') as HTMLElement).style.display = 'none';
-        if (document.getElementById('defaultM') !== null) {
-            (document.getElementById('defaultM') as HTMLElement).style.display = 'block';
-        }
-    }
-
-    attachWindow() {
-        (document.getElementById('main') as HTMLElement).style.display = 'block';
-        this.hideChatrooms = false;
-        if (document.getElementById('defaultM') !== null) {
-            (document.getElementById('defaultM') as HTMLElement).style.display = 'block';
-        }
     }
 }

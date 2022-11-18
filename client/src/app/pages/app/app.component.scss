@@ -1,0 +1,33 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto;
+  }
+  
+.grid-item {
+    // border: 1px solid rgba(0, 0, 0, 0.8);
+    text-align: center;
+    min-height: 100vh;
+}
+
+#playersInfoNoLog{
+    margin-top: 3%;
+    margin-right: 6%;
+    margin-bottom: 0px;
+}
+
+#communicationBoxNoLog{
+    margin-top: 5%;
+    margin-right: 50px;
+    margin-bottom: 0px;
+}
+
+.MPButton {
+    cursor: pointer;
+    top: 10px;
+    left: 10px;
+    position: absolute;
+    transform: scale(2);
+    margin-top: 2%;
+    margin-left: 2%;
+    color: #0c483f;
+  }

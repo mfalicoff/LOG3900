@@ -130,17 +130,6 @@ html {
     border-radius: 8px;
 }
 
-.MPButton {
-    cursor: pointer;
-    top: 10px;
-    left: 10px;
-    position: absolute;
-    transform: scale(1.5);
-    margin-top: 2%;
-    margin-left: 2%;
-    color: wheat;
-}
-
 #tableRoom {
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     border-collapse: collapse;
@@ -180,17 +169,6 @@ html {
 
 #buttonShowModal:hover {
     background-color: #0c483f;
-    color: wheat;
-}
-
-.MPButton {
-    cursor: pointer;
-    top: 10px;
-    left: 10px;
-    position: absolute;
-    transform: scale(1.5);
-    margin-top: 2%;
-    margin-left : 2%;
     color: wheat;
 }
 

@@ -97,7 +97,7 @@ export class UserService {
                     // @ts-ignore
                     localStorage.removeItem(`cookie-${this.user._id}`);
                     localStorage.removeItem(`user-${this.user._id}`);
-                    this.infoClientService.playerName = '';
+                    this.infoClientService.playerName = 'DefaultPlayerName';
                     this.router.navigate(['/login']);
                 },
                 error: (error) => {

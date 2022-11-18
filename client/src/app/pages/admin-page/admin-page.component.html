@@ -7,9 +7,6 @@
                     <button class="createButton" mat-button (click)="refreshBestScoreDbs()">Réinitialiser</button>
                 </div>
             </div>
-            <h6 class="MPButton" routerLink="/main-page">
-                <mat-icon>arrow_back</mat-icon>
-            </h6>
             <div class="adminContainer">
                 <div class="tableDict">
                     <div>
@@ -158,7 +155,6 @@
         </div>
     </div>
     <div class = "container-error" *ngIf='this.infoClientService.dictionaries[0] === undefined || this.infoClientService.nameVPBeginner[0] === undefined || this.infoClientService.nameVPExpert[0] === undefined'>
-        <h6 class="MPButton" routerLink="/main-page"><mat-icon>arrow_back</mat-icon></h6>
     <h1 class = "titleLeaderboard">Mode Admin</h1>
         <div id = "boxError">
             <mat-icon id = "iconError">warning</mat-icon>

@@ -1,50 +1,14 @@
 <div class="inGame" *ngIf="this.infoClientService.game.roomName !== 'defaultRoom'">
-  <div id="main">
-    <div style="display: flex; flex-direction: row;">
-      <div id="leftDiv">
-        <div>
-          <h2 id="titleChatDashBoard">Canaux de discussion</h2>
-          <button mat-button class="btnStyle" (click)="openNewChatroomModal()">
-            Créer un canal
-          </button>
-        </div>
-        <div class="rooms">
-          <button mat-button class="btnStyle" (click)="openJoinChatRoomModal()">
-            Joindre un canal
-          </button>
-          <div class="listChatRoom">
-            <div *ngFor="let chatroom of infoClientService.chatRooms">
-              <h3 
-                [ngClass]="classChatRoomElement(chatroom.name)"
-                class="chatRoomElement" 
-                (click)="onChatRoomSelect(chatroom)"
-              >{{chatroom.name}} 
-                <mat-icon 
-                  *ngIf="chatroom.name !== 'game' && chatroom.name !== 'general'"
-                  class="leaveIcon" 
-                  (click)="onLeaveChatRoomClick(chatroom.name)"
-                  >exit_to_app
-                </mat-icon>
-              </h3>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="chatroom">
-        <h6 class="MPButton" style="margin-left: 95%;margin-top: 70%;" (click)="detachWindow()"><mat-icon>keyboard_capslock</mat-icon></h6>
-        <app-communication-box [actualChatRoom]="currSelectedChatroom"></app-communication-box>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="container" *ngIf="this.infoClientService.game.roomName === 'defaultRoom'">
-  <h6 class="MPButton" routerLink="/game-mode-options"><mat-icon>arrow_back</mat-icon></h6>
   <popout-window #popoutWindow1>
     <div id="main">
       <div style="display: flex; flex-direction: row;">
         <div id="leftDiv">
           <div>
-            <h2 id="titleChatDashBoard">Canaux de discussion</h2>
+            <button class="btnStyle" (click)="popoutWindow1.popOut();">Detacher<mat-icon>keyboard_capslock</mat-icon></button>
+              <div id="titleChatDashBoard"> 
+                <h3>Canaux de discussion
+                </h3>
+              </div>
             <button mat-button class="btnStyle" (click)="openNewChatroomModal()">
               Créer un canal
             </button>
@@ -72,7 +36,50 @@
           </div>
         </div>
         <div class="chatroom">
-          <h6 class="MPButton" style="margin-left: 90%;" (click)="popoutWindow1.popOut()"><mat-icon>keyboard_capslock</mat-icon></h6>
+          <app-communication-box [actualChatRoom]="currSelectedChatroom"></app-communication-box>
+        </div>
+      </div>
+    </div>
+  </popout-window>
+</div>
+<div class="container" *ngIf="this.infoClientService.game.roomName === 'defaultRoom'">
+  <popout-window #popoutWindow1>
+    <div id="main">
+      <div style="display: flex; flex-direction: row;">
+        <div id="leftDiv">
+          <div>
+            <button class="detachButton" (click)="popoutWindow1.popOut();">Detacher<mat-icon>keyboard_capslock</mat-icon></button>
+            <div id="titleChatDashBoard"> 
+              <h3>Canaux de discussion
+              </h3>
+            </div>
+            <button mat-button class="btnStyle" (click)="openNewChatroomModal()">
+              Créer un canal
+            </button>
+          </div>
+          <div class="rooms">
+            <button mat-button class="btnStyle" (click)="openJoinChatRoomModal()">
+              Joindre un canal
+            </button>
+            <div class="listChatRoom">
+              <div *ngFor="let chatroom of infoClientService.chatRooms">
+                <h3 
+                  [ngClass]="classChatRoomElement(chatroom.name)"
+                  class="chatRoomElement" 
+                  (click)="onChatRoomSelect(chatroom)"
+                >{{chatroom.name}} 
+                  <mat-icon 
+                    *ngIf="chatroom.name !== 'game' && chatroom.name !== 'general'"
+                    class="leaveIcon" 
+                    (click)="onLeaveChatRoomClick(chatroom.name)"
+                    >exit_to_app
+                  </mat-icon>
+                </h3>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chatroom">
           <app-communication-box [actualChatRoom]="currSelectedChatroom"></app-communication-box>
         </div>
       </div>
@@ -80,6 +87,6 @@
   </popout-window>
   <div *ngIf="hideChatrooms" class="defaultMode" id="defaultM">
     <h1>Les Chatrooms sont dans le mode Fenêtre détaché!</h1>
-    <button mat-flat-button class="button" (click)="popoutWindow1.popIn()">Revenir au mode Encastré</button>
+    <button mat-flat-button class="button" (click)="popoutWindow1.popIn();">Revenir au mode Encastré</button>
   </div>
 </div>

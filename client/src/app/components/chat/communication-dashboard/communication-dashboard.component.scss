@@ -2,9 +2,10 @@
   background-image: url('https://www.printablee.com/postpic/2011/03/blank-scrabble-board-template-printable_326282.jpg');
   background-position: center;
   background-attachment: fixed;
-  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   align-self: center;
-  padding-left: 35%;
 }
 
 .inGame {
@@ -12,7 +13,7 @@
 }
 
 #main {
-  border: 10px solid #0C483F;
+  border: 5px solid #0C483F;
   background-color: wheat;
   width: 600px;
   height: 450px;
@@ -22,7 +23,7 @@
 }
 
 #titleChatDashBoard{
-  padding: 10px;
+  padding: 5px;
   padding-bottom: 0px;
   margin-bottom: 0px;
 }
@@ -44,7 +45,7 @@
   text-align: center;
   margin-bottom: 10px;
   border-radius: 5px;
-  padding: 5px;
+  padding: 2px;
 }
 
 .chatRoomElement:hover{
@@ -89,17 +90,6 @@
   box-shadow: none;
 }
 
-.MPButton {
-  cursor: pointer;
-  top: 10px;
-  left: 10px;
-  position: absolute;
-  transform: scale(2);
-  margin-top: 2%;
-  margin-left: 2%;
-  color: #0c483f;
-}
-
 .defaultMode{
   position: fixed;
   top: 50%;
@@ -116,11 +106,38 @@
   color: wheat;
 }
 
+.detachButton{
+  background-color: #0C483F;
+  display: inline;
+  margin-top: 0px;
+  align-self: center;
+  line-height: 12px;
+  margin-bottom: -5%;
+  top:0;
+  right:0;
+  font-size: 15px;
+  color: wheat;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.MPButton {
+  cursor: pointer;
+  top: 10px;
+  left: 10px;
+  position: absolute;
+  transform: scale(2);
+  margin-top: 2%;
+  margin-left: 2%;
+  color: #0c483f;
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   // Height of horizontal scroll bar
-  height: 10px;
+  height: 6px;
 }
+
 ::-webkit-scrollbar-track {
   background: wheat;
 }
