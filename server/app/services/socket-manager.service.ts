@@ -611,6 +611,7 @@ export class SocketManager {
             if (!createdGame) {
                 return;
             }
+            createdGame.gameStart = '';
 
             const players = Array.from(createdGame.mapPlayers.values());
             const spectators = Array.from(createdGame.mapSpectators.values());
@@ -626,7 +627,6 @@ export class SocketManager {
             await this.gameUpdateClients(createdGame);
 
             // emit to change page on client after verification
-            createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
 
@@ -755,6 +755,14 @@ export class SocketManager {
             if (!game) {
                 return;
             }
+            let display = 'Le ';
+            const timestamp = new Date();
+            const date = timestamp.toDateString();
+            const time = timestamp.toLocaleTimeString();
+            display += date;
+            display += ' à ';
+            display += time;
+            game.gameStart = display;
 
             if (game.mapPlayers.size >= Constants.MIN_PERSON_PLAYING && !game.gameStarted) {
                 // we give the server bc we can't include socketManager in those childs
@@ -988,7 +996,7 @@ export class SocketManager {
         });
     }
 
-    private async triggerStopTimer(roomName: string) {
+    private triggerStopTimer(roomName: string) {
         this.sio.to(roomName + Constants.GAME_SUFFIX).emit('stopTimer');
         this.sio.to(roomName + Constants.GAME_SUFFIX).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
     }

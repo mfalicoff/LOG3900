@@ -160,17 +160,15 @@ class UserService {
     async updateGameHistory(player: Player, didPlayerWin: boolean, gameStart: number): Promise<void> {
         if (player.id === 'virtualPlayer') return;
 
-        const start = new Date(gameStart);
-        if (didPlayerWin)
-            await this.users.updateOne(
-                { name: player.name },
-                { $push: { gameHistory: `Partie Gagne le ${start.toLocaleString()}:${start.toDateString()}` } },
-            );
-        else
-            await this.users.updateOne(
-                { name: player.name },
-                { $push: { gameHistory: `Partie Perdu le ${start.toLocaleString()}:${start.toDateString()}` } },
-            );
+        let display = 'Le ';
+        const timestamp = new Date(gameStart);
+        const date = timestamp.toDateString();
+        const time = timestamp.toLocaleTimeString();
+        display += date;
+        display += ' à ';
+        display += time;
+        if (didPlayerWin) await this.users.updateOne({ name: player.name }, { $push: { gameHistory: `Partie Gagne le ${display}` } });
+        else await this.users.updateOne({ name: player.name }, { $push: { gameHistory: `Partie Perdu le ${display}` } });
     }
 
     async changeEloUser(player: Player) {

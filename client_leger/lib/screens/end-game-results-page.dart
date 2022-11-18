@@ -27,13 +27,14 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     late String creator;
     List<Player> players = [];
     List<Spectator> spectators = [];
-    List<String> winners = ["GagnantParDefaut"];
+    List<String> winners = [];
     late int numberOfTurns;
     late String playingTime;
     late String timestamp = '';
 
     @override
   void initState() {
+    super.initState();
     roomName = infoClientService.actualRoom.name;
     players = infoClientService.actualRoom.players;
     spectators = infoClientService.actualRoom.spectators;
@@ -43,7 +44,6 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     _getGameStartDate();
     _displayPlayingTime();
     _saveGame;
-    super.initState();
   }
 
     @override
@@ -284,7 +284,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     void _getGameStartDate() {
-        timestamp = infoClientService.game.gameStart.toString();
+        timestamp = infoClientService.game.gameStart;
     }
 
     void _displayPlayingTime() {

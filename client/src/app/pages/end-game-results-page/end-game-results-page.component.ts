@@ -32,10 +32,10 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
         public infoClientService: InfoClientService,
         private userService: UserService,
-        private timerService: TimerService,
         private dialog: MatDialog,
         private eloChangeService: EloChangeService,
         private socketService: SocketService,
+        private timerService: TimerService,
     ) {}
 
     ngOnInit() {
@@ -126,7 +126,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     }
 
     getGameStartDate(): void {
-        this.gameStartDate = this.infoClientService.game.gameStart.toString();
+        this.gameStartDate = this.infoClientService.game.gameStart;
     }
 
     findCreatorOfGame(): string | undefined {
