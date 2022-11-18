@@ -96,9 +96,6 @@ export class UserService {
                 next: (response) => {
                     this.saveUserInfo(response, socket);
                 },
-                error: (error) => {
-                    console.error(error);
-                },
             });
     }
 
