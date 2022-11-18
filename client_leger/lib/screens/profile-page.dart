@@ -44,7 +44,7 @@ class _ProfileStatePage extends State<ProfilePage> {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(vertical: 80.0, horizontal: 100.0),
+                const EdgeInsets.symmetric(vertical: 70.0, horizontal: 100.0),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
@@ -56,7 +56,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                         color: Theme.of(context).colorScheme.primary,
                         width: 3)),
                 padding: const EdgeInsets.symmetric(
-                    vertical: 25.0, horizontal: 40.0),
+                    vertical: 20.0, horizontal: 30.0),
                 child: Center(
                   child: Column(
                     children: [
@@ -156,7 +156,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                       decoration: TextDecoration.none)),
               Container(
                 decoration: BoxDecoration(border: Border.all()),
-                height: 250,
+                height: 280,
                 width: 300,
                 child: ListView.builder(
                     shrinkWrap: true,
@@ -189,8 +189,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                             decoration: TextDecoration.none)),
                         Container(
                             decoration: BoxDecoration(border: Border.all()),
-                            height: 250,
-                            width: 325,
+                            height: 280,
+                            width: 350,
                             child: ListView.builder(
                                 itemCount: widget.favouriteGames.length,
                                 itemBuilder: (BuildContext context, int index) {
@@ -202,6 +202,30 @@ class _ProfileStatePage extends State<ProfilePage> {
                                               fontSize: 11,
                                               decoration: TextDecoration.none)
                                            ),
+                                           _isThereSpectators(index),
+                                            Column(
+                                                children: List.generate(widget.favouriteGames[index].players.length, (idx) {
+                                                    return Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                    Text("Joueur : ${widget.favouriteGames[index].players[idx]}",
+                                                        style: const TextStyle (
+                                                        color: Colors.black,
+                                                        fontSize: 11,
+                                                        decoration: TextDecoration.none),
+                                                        textAlign: TextAlign.left,
+                                                    ),
+                                                    Text("Score: ${widget.favouriteGames[index].scores[idx]}",
+                                                        style: const TextStyle (
+                                                        color: Colors.black,
+                                                        fontSize: 11,
+                                                        decoration: TextDecoration.none),
+                                                        textAlign: TextAlign.left,
+                                                    ),
+                                                        ],
+                                                    );
+                                                })
+                                            ),
                                           Text('.Gagnant de la partie: ${widget.favouriteGames[index].winners[0]}',
                                               style: const TextStyle (
                                                   color: Colors.black,
@@ -249,6 +273,39 @@ class _ProfileStatePage extends State<ProfilePage> {
         ],
     );
   }
+    Column _isThereSpectators(int index) {
+        if (widget.favouriteGames[index].spectators.isNotEmpty) {
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: List.generate(widget.favouriteGames[index].spectators.length, (idx) {
+                            return Column(
+                                children: [
+                                            const Text('.Spectateurs de la partie: ',
+                                              style: TextStyle (
+                                              color: Colors.black,
+                                              fontSize: 11,
+                                              decoration: TextDecoration.none)
+                                           ),
+                                    Text("Nom: ${widget.favouriteGames[index].spectators[idx]}",
+                                style: const TextStyle (
+                                    color: Colors.black,
+                                    fontSize: 11,
+                                    decoration: TextDecoration.none),
+                                    ),
+                                ],
+                            );
+                                    // textAlign: TextAlign.left,
+
+                }),
+            );
+        }
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [ Text("Il n'y a pas de spectateurs.", style: TextStyle (color: Colors.black, fontSize: 11, decoration: TextDecoration.none))],
+        );
+    }
+
 }
 
 class UsernameChangeDialog extends StatefulWidget {
