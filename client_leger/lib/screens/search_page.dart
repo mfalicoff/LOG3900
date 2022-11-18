@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
+import '../services/chat-service.dart';
 import '../services/socket_service.dart';
+import '../widget/chat_panel.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -15,6 +17,7 @@ class SearchPage extends StatefulWidget {
 class _SearchPage extends State<SearchPage> {
   final Controller controller = Controller();
   SocketService socketService = SocketService();
+  ChatService chatService = ChatService();
   late List<dynamic> usersFound = [];
   User? user;
 
@@ -35,6 +38,15 @@ class _SearchPage extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Drawer(
+          width: 600,
+          child: ChatPanel(
+            isInGame: false,
+          )),
+      onEndDrawerChanged: (isOpen) {
+        chatService.isDrawerOpen = isOpen;
+        chatService.notifyListeners();
+      },
       resizeToAvoidBottomInset: false,
       body: Container(
           decoration: const BoxDecoration(
@@ -133,10 +145,29 @@ class _SearchPage extends State<SearchPage> {
                           width: 200,
                           child: Column(
                             children: [
-                              CircleAvatar(
-                                radius: 48,
-                                backgroundImage:
-                                    MemoryImage(user!.getUriFromAvatar()),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  IconButton(
+                                    onPressed: _goBackHomePage,
+                                    icon: Icon(
+                                      Icons.arrow_back,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 175.0,
+                                  ),
+                                  CircleAvatar(
+                                    radius: 48,
+                                    backgroundImage:
+                                        MemoryImage(user!.getUriFromAvatar()),
+                                  ),
+                                  const SizedBox(
+                                    width: 100.0,
+                                  ),
+                                  const ChatPanelOpenButton(),
+                                ],
                               ),
                               Text(user!.username,
                                   style: const TextStyle(
@@ -198,6 +229,10 @@ class _SearchPage extends State<SearchPage> {
             ),
           )),
     );
+  }
+
+  void _goBackHomePage() {
+    Navigator.pop(context);
   }
 
   Text returnRowTextElement(String textData) {

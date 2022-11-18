@@ -9,8 +9,8 @@ import '../constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 
+import '../services/chat-service.dart';
 import '../widget/chat_panel.dart';
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -23,12 +23,27 @@ class _MyHomePageState extends State<MyHomePage> {
   final Controller controller = Controller();
   final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
+  ChatService chatService = ChatService();
+
+  refresh() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     socketService.socket.emit('getAllChatRooms');
     return Scaffold(
-      endDrawer: Drawer(width: 600, child: ChatPanel(isInGame: false,)),
+      endDrawer: Drawer(
+          width: 600,
+          child: ChatPanel(
+            isInGame: false,
+          )),
+      onEndDrawerChanged: (isOpen) {
+        chatService.isDrawerOpen = isOpen;
+        chatService.notifyListeners();
+      },
       body: Stack(
         children: <Widget>[
           Container(
@@ -40,9 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           const Positioned(
-              top: 10.0,
-              right: 30.0,
-              child: ChatPanelOpenButton()),
+              top: 10.0, right: 30.0, child: ChatPanelOpenButton()),
           Positioned(
               top: 100.0,
               right: 30.0,
@@ -83,14 +96,16 @@ class _MyHomePageState extends State<MyHomePage> {
                   onTap: _toProfilePage,
                   child: CircleAvatar(
                     radius: 48,
-                    backgroundImage: MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
+                    backgroundImage:
+                        MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
                   ),
                 ),
-
-                Text(
-                  globals.userLoggedIn.username,
-                  style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 17, decoration: TextDecoration.none)
-                )
+                Text(globals.userLoggedIn.username,
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                        decoration: TextDecoration.none))
               ],
             ),
           ),
@@ -100,14 +115,14 @@ class _MyHomePageState extends State<MyHomePage> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 ElevatedButton(
-                  onPressed: (){
+                  onPressed: () {
                     infoClientService.gameMode = CLASSIC_MODE;
                     _toGameListPage();
                   },
                   child: const Text("Mode Classique"),
                 ),
                 ElevatedButton(
-                  onPressed: (){
+                  onPressed: () {
                     infoClientService.gameMode = POWER_CARDS_MODE;
                     _toGameListPage();
                   },
@@ -122,16 +137,18 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toSearchPage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const SearchPage())).then((value) {
-      setState(() {
-      });
+    Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const SearchPage()))
+        .then((value) {
+      setState(() {});
     });
   }
 
   void _toProfilePage() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfilePage())).then((value) {
-      setState(() {
-      });
+    Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ProfilePage()))
+        .then((value) {
+      setState(() {});
     });
   }
 
@@ -143,5 +160,4 @@ class _MyHomePageState extends State<MyHomePage> {
     controller.logout(globals.userLoggedIn);
     Navigator.pop(context);
   }
-
 }
