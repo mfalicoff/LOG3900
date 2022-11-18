@@ -206,21 +206,21 @@ class _ProfileStatePage extends State<ProfilePage> {
                                             Column(
                                                 children: List.generate(widget.favouriteGames[index].players.length, (idx) {
                                                     return Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                         children: [
                                                     Text("Joueur : ${widget.favouriteGames[index].players[idx]}",
                                                         style: const TextStyle (
                                                         color: Colors.black,
                                                         fontSize: 11,
                                                         decoration: TextDecoration.none),
-                                                        textAlign: TextAlign.left,
+                                                        textAlign: TextAlign.center,
                                                     ),
                                                     Text("Score: ${widget.favouriteGames[index].scores[idx]}",
                                                         style: const TextStyle (
                                                         color: Colors.black,
                                                         fontSize: 11,
                                                         decoration: TextDecoration.none),
-                                                        textAlign: TextAlign.left,
+                                                        textAlign: TextAlign.center,
                                                     ),
                                                         ],
                                                     );
@@ -254,7 +254,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 11,
-                                                  decoration: TextDecoration.none)
+                                                  decoration: TextDecoration.none),
+                                              textAlign: TextAlign.center
                                           ),
                                           const Text('-------------------------------------------',
                                               style: TextStyle (

@@ -28,7 +28,7 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
     infoClientService.addListener(refresh);
-    infoClientService.addListener(_checkEndGame);
+    // infoClientService.addListener(checkEndGame);
   }
 
   void refresh() {
@@ -36,11 +36,13 @@ class _GamePageState extends State<GamePage> {
       setState(() {});
     }
   }
-  _checkEndGame() {
-    if (infoClientService.game.gameFinished) {
-        showDialog(context: context, builder: (context) => const EndGameResultsPage());
-    }
-  }
+  // void checkEndGame(BuildContext context) {
+  //   if (mounted && infoClientService.game.gameFinished) {
+  //     setState(() {
+  //       showDialog(context: context, builder: (context) => const EndGameResultsPage());
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -116,6 +118,7 @@ class _GamePageState extends State<GamePage> {
                         notifyParent: refresh,
                       ),
                     ],
+
                     const SizedBox(
                       height: 5,
                     ),
@@ -145,6 +148,25 @@ class _GamePageState extends State<GamePage> {
                                   ),
                                 ),
                               )
+                            : null),
+                    Container(
+                        child: infoClientService.game.gameFinished == true
+                            ? ElevatedButton(
+                          style: ButtonStyle(
+                              padding: MaterialStateProperty.all(
+                                const EdgeInsets.symmetric(
+                                    vertical: 18.0, horizontal: 0.0),
+                              ),
+                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(100.0)))),
+                          onPressed: () {
+                            showDialog(context: context, builder: (context) => const EndGameResultsPage(),
+                            );
+                          },
+                          child: const Text('End Game Results'),
+                        )
+
                             : null),
                     Container(
                         child: shouldSpecBeAbleToBePlayer() == true
