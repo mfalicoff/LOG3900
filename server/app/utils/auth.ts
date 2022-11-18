@@ -34,8 +34,14 @@ export const authMiddleware = async (req: RequestWithUser, res: Response, next: 
 };
 
 export const addActionHistory = (type: string) => {
-    const date = new Date();
-    const formattedDate = `${date.toLocaleString()}:${date.toDateString()}`;
+    let display = 'Le ';
+    const timestamp = new Date();
+    const date = timestamp.toDateString();
+    const time = timestamp.toLocaleTimeString();
+    display += date;
+    display += ' à ';
+    display += time;
+    const formattedDate = display;
     switch (type) {
         case 'creation':
             return `Creation de compte: ${formattedDate}`;

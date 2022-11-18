@@ -83,11 +83,6 @@ export class ParametresSelectionPageComponent implements OnInit {
             activatedPowers: this.activatedPowers,
         });
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
-        this.mockDictionary = {
-            title: 'Dictionnaire français par défaut',
-            description: 'Ce dictionnaire contient environ trente mille mots français',
-        };
-        this.infoClientService.dictionaries[0] = this.mockDictionary;
     }
 
     showPowerModal() {
