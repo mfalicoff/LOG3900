@@ -59,7 +59,6 @@ export class TimerService {
         const oneSecond = 1000;
         this.timerGame = setInterval(() => {
             this.playingTime++;
-            console.log(this.playingTime);
         }, oneSecond);
     }
 
@@ -71,7 +70,6 @@ export class TimerService {
     }
     clearGameTimer() {
         clearInterval(this.timerGame);
-        console.log(this.playingTime);
     }
     addSecsToTimer(secs: number) {
         this.secondsValue += secs;
