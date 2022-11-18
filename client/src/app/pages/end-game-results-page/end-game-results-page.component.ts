@@ -1,17 +1,16 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '@app/../environments/environment';
 import { GameSaved } from '@app/classes/game-saved';
 import { Player } from '@app/classes/player';
-import { UserResponseInterface } from '@app/classes/response.interface';
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { EloChangeService } from '@app/services/elo-change.service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import { TimerService } from '@app/services/timer.service';
 import { UserService } from '@app/services/user.service';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-end-game-results-page',
@@ -34,7 +33,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         public infoClientService: InfoClientService,
         private userService: UserService,
         private dialog: MatDialog,
-        private httpClient: HttpClient,
         private eloChangeService: EloChangeService,
         private socketService: SocketService,
         private timerService: TimerService,
@@ -44,11 +42,9 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.roomName = this.infoClientService.actualRoom.name;
         this.players = this.infoClientService.actualRoom.players.copyWithin(0, 0, 3);
         this.orderPlayerByScore();
-        this.findWinners(this.players);
         this.findNumberOfTurns();
         this.getGameStartDate();
         this.displayPlayingTime();
-        this.orderPlayerByScore();
         this.saveGame();
         this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
         this.changeEloOfPlayersDB();
@@ -62,15 +58,8 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.players = this.players.sort((element1, element2) => element2.score - element1.score);
     }
 
-    getUserByName(playerName: string): Observable<UserResponseInterface> {
-        return this.httpClient.get<UserResponseInterface>(`${this.serverUrl}users/${playerName}`, {
-            observe: 'body',
-            responseType: 'json',
-        });
-    }
-
     openProfilePage(player: Player) {
-        this.openProfileSubscription = this.getUserByName(player.name).subscribe({
+        this.openProfileSubscription = this.userService.getUserByName(player.name).subscribe({
             next: (res) => {
                 this.dialog.open(ProfileReadOnlyPageComponent, {
                     data: {
@@ -110,19 +99,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
             }
         }
         return listLetterStillOnStand.toString();
-    }
-
-    findWinners(players: Player[]): void {
-        let bestScore = 0;
-        for (const player of players) {
-            if (player.score > bestScore) {
-                this.infoClientService.game.winners = [];
-                this.infoClientService.game.winners.push(player);
-                bestScore = player.score;
-            } else if (player.score === bestScore) {
-                this.infoClientService.game.winners.push(player);
-            }
-        }
     }
 
     displayPlayingTime(): void {

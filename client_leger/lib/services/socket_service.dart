@@ -34,6 +34,7 @@ class SocketService with ChangeNotifier{
   TapService tapService = TapService();
   Controller controller = Controller();
   ChatService chatService = ChatService();
+  late String gameId;
 
 
   late IO.Socket socket;
@@ -181,6 +182,9 @@ class SocketService with ChangeNotifier{
 
     socket.on('changeIsTurnOursStatus', (isTurnOurs) {
       infoClientService.isTurnOurs = isTurnOurs;
+    });
+    socket.on('savedGameId', (id) {
+      gameId = id;
     });
   }
 

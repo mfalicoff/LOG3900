@@ -121,11 +121,12 @@ export class SocketManager {
             await this.communicationBoxService.onEnterSpectator(game, spectator, placeMsg);
         }
 
-        // We update the chatHistory and the game of each client
         await this.gameUpdateClients(game);
+
         if (game.gameFinished) {
             this.triggerStopTimer(user.roomName);
         }
+        // We update the chatHistory and the game of each client
     }
 
     private clientEventHandler(socket: io.Socket) {

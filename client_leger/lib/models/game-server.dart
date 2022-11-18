@@ -73,6 +73,7 @@ class GameServer {
     trie = Trie();
     letters = [];
     board = [];
+    winners = [];
     mapLetterOnBoard = {};
     mapPlayers = {};
     mapSpectators = {};
@@ -90,6 +91,7 @@ class GameServer {
     reduceEnnemyNbTurn = 0;
     startTime = 0;
     endTime = 0;
+    gameStart = '';
 
     letterBank = {
       'A': LetterData(quantity: 9, weight: 1),
@@ -130,6 +132,7 @@ class GameServer {
   GameServer.fromJson(game){
     minutesByTurn = game["minutesByTurn"];
     gameMode = game["gameMode"];
+    gameStart = game["gameStart"];
     //TODO Trie
     letters = List<String>.from(game["letters"]);
 
@@ -156,7 +159,13 @@ class GameServer {
     masterTimer = game["masterTimer"];
     displaySkipTurn = game["displaySkipTurn"];
     noTileOnBoard = game["noTileOnBoard"];
-    //TODO winners
+    winners = [];
+    var wins = game["winners"];
+      for (var player in wins) {
+        winners.add(Player.fromJson(player));
+      }
+
+
     //TODO letterBank
 
     bonusBoard = [];
