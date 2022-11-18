@@ -101,15 +101,6 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-            Text("Spectateurs de la partie:",
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 18,
-                  fontWeight: FontWeight.normal,
-                  fontFamily: "Times New Roman"
-              ),
-            ),
               _isThereSpectators(),
                 const SizedBox(
                     height: 10,
@@ -321,15 +312,36 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: List.generate(infoClientService.actualRoom.spectators.length, (index) {
-                            return Text("Nom: ${infoClientService.actualRoom.spectators[index].name}",
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal,
-                                      fontFamily: "Times New Roman"
-                                    ),
+                                                return Column(
+                                children: [
+                                            const Text('.Spectateurs de la partie: ',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.normal,
+                                                fontFamily: "Times New Roman"
+                                                ),
                                     textAlign: TextAlign.left,
+                                           ),
+                                            Text("Nom: ${infoClientService.actualRoom.spectators[index].name}",
+                                            style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.normal,
+                                                fontFamily: "Times New Roman"
+                                                ),
+                                            ),
+                                ],
                             );
+                            // return Text("Nom: ${infoClientService.actualRoom.spectators[index].name}",
+                                    // style: const TextStyle(
+                                    //   color: Colors.black,
+                                    //   fontSize: 15,
+                                    //   fontWeight: FontWeight.normal,
+                                    //   fontFamily: "Times New Roman"
+                                    // ),
+                                    // textAlign: TextAlign.left,
+                            // );
                 }),
             );
         }
