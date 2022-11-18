@@ -102,7 +102,7 @@
             "GIVE_UP": "Abandonner",
             "QUIT": "Quitter Partie",
             "START_GAME": "Démarrer la partie",
-            "TAKE_PLACE": "Take the place of a virtual player",
+            "TAKE_PLACE": "Prendre la place d'un joueur virtuel",
             "LIST_POWERS": "Liste pouvoirs",
             "NO_POWERS": "Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer",
             "VALID_WORD": "mot(s) valide(s) sur le plateau.",

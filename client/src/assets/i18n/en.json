@@ -98,7 +98,7 @@
             "GIVE_UP": "Give up",
             "QUIT": "Quit game",
             "START_GAME": "Start the game",
-            "TAKE_PLACE": "Start the game",
+            "TAKE_PLACE": "Take the place of a virtual player",
             "LIST_POWERS": "Powers list",
             "NO_POWERS": "You have no power. To get one, you need to place",
             "VALID_WORD": "valid word(s) on the board.",
