@@ -126,7 +126,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     }
 
     getGameStartDate(): void {
-        this.gameStartDate = this.infoClientService.game.gameStart.toString();
+        this.gameStartDate = this.infoClientService.game.gameStart.toString().replace('GMT-0500 (heure normale de l’Est nord-américain)', '');
     }
 
     findCreatorOfGame(): string | undefined {

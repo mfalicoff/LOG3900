@@ -284,7 +284,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     void _getGameStartDate() {
-        timestamp = infoClientService.game.gameStart.toString();
+        timestamp = infoClientService.game.gameStart.toString().replaceFirst('GMT-0500 (heure normale de l’Est nord-américain)', '');
     }
 
     void _displayPlayingTime() {
