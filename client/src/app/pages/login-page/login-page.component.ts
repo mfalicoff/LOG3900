@@ -1,10 +1,10 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { Component, ViewChild } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { UserService } from '@app/services/user.service';
 import { Avatar } from '@app/classes/avatar.interface';
 import { GalleryComponent } from '@app/components/gallery/gallery.component';
 import { SocketService } from '@app/services/socket.service';
+import { UserService } from '@app/services/user.service';
+import { environment } from 'src/environments/environment';
 
 interface FormInterface {
     avatar: string;

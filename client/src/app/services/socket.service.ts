@@ -218,15 +218,15 @@ export class SocketService {
             await this.router.navigate(['/login']);
         });
 
-        this.socket.on('createRankedGame', async (name) => {
+        this.socket.on('createRankedGame', async (gameName, userName) => {
             const mockDict = {
                 title: 'Dictionnaire français par défaut',
                 description: 'Ce dictionnaire contient environ trente mille mots français',
             };
             this.socket.emit('dictionarySelected', mockDict);
             this.socket.emit('createRoomAndGame', {
-                roomName: name,
-                playerName: name,
+                roomName: gameName,
+                playerName: userName,
                 timeTurn: 1,
                 isBonusRandom: false,
                 gameMode: GlobalConstants.MODE_RANKED,
@@ -235,6 +235,7 @@ export class SocketService {
                 passwd: '',
             });
             this.infoClientService.creatorShouldBeAbleToStartGame = false;
+            this.rankedService.closeModal();
         });
 
         this.socket.on('startGame', (roomName) => {

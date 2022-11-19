@@ -25,6 +25,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     timerService.clearMatchmakingTimer();
     timerService.startMatchmakingTimer();
     timerService.addListener(refresh);
+    initSockets();
     super.initState();
   }
 
@@ -32,6 +33,15 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void initSockets() {
+    socketService.socket.on("roomChangeAccepted", (data) {
+      if (mounted) {
+        Navigator.pushNamed(context, "/game");
+      }
+    });
+    socketService.socket.emit("listRoom");
   }
 
   Widget build(BuildContext context) {

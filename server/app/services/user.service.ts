@@ -1,4 +1,5 @@
 import { HTTPStatusCode } from '@app/classes/constants/http-codes';
+import { GameSaved } from '@app/classes/game-saved';
 import { SALT_ROUNDS } from '@app/classes/global-constants';
 import { HttpException } from '@app/classes/http.exception';
 import { Player } from '@app/classes/player';
@@ -11,7 +12,6 @@ import { CreateUserValidator } from '@app/utils/validators';
 import { hash } from 'bcrypt';
 import { Service } from 'typedi';
 import GameSavedService from './game-saved.service';
-import { GameSaved } from '@app/classes/game-saved';
 
 @Service()
 class UserService {
@@ -57,7 +57,7 @@ class UserService {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'No data sent');
 
         let findUser: User = (await this.users.findOne({ email: userData.email })) as User;
-        if (findUser) throw new HttpException(HTTPStatusCode.Conflict, `You're email ${userData.email} already exists`);
+        if (findUser) throw new HttpException(HTTPStatusCode.Conflict, `Your email ${userData.email} already exists`);
 
         findUser = (await this.users.findOne({ name: userData.name })) as User;
         if (findUser) throw new HttpException(HTTPStatusCode.Conflict, `The username: ${userData.name} already exists`);
@@ -66,6 +66,7 @@ class UserService {
         return await this.users.create({
             ...userData,
             password: hashedPassword,
+            elo: 2000,
             averagePointsPerGame: 0,
             averageTimePerGame: 0,
             gamesPlayed: 0,
@@ -174,7 +175,7 @@ class UserService {
     }
 
     async changeEloUser(player: Player) {
-        await this.users.updateOne({ name: player.name }, { $push: { elo: player.elo } });
+        await this.users.updateOne({ name: player.name }, { elo: player.elo });
     }
 
     async populateAvatarField(user: User): Promise<string> {

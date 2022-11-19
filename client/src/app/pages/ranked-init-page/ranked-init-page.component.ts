@@ -24,6 +24,6 @@ export class RankedInitPageComponent {
         this.startMatchmaking();
     }
     startMatchmaking() {
-        this.socketService.socket.emit('startMatchmaking',this.eloDisparity, this.userService.user );
+        this.socketService.socket.emit('startMatchmaking', this.eloDisparity, this.userService.user);
     }
 }

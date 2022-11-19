@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:io' as Io;
+import 'dart:developer';
 
 class User {
   late List<dynamic>? actionHistory;
@@ -32,7 +33,8 @@ class User {
     gamesPlayed = parsed["data"]["gamesPlayed"] ?? "Failed";
     gamesWon = parsed["data"]["gamesWon"] ?? "Failed";
     id = parsed["data"]["_id"] ?? "Failed";
-    //elo = parsed["data"]["elo"] ?? "Failed";
+    elo = parsed["data"]["elo"];
+    //log(elo.toString());
   }
 
   Map<String, dynamic> toJson() => {

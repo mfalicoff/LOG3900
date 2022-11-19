@@ -1,14 +1,14 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { User } from '@app/classes/user.interface';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
-import { UserResponseInterface } from '@app/classes/response.interface';
-import { GameSaved } from '@app/classes/game-saved';
-import { InfoClientService } from '@app/services/info-client.service';
+import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { GameSaved } from '@app/classes/game-saved';
+import { UserResponseInterface } from '@app/classes/response.interface';
+import { User } from '@app/classes/user.interface';
+import { InfoClientService } from '@app/services/info-client.service';
+import { Observable } from 'rxjs';
 import { Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',

@@ -21,6 +21,7 @@ import '../models/vec2.dart';
 import 'controller.dart';
 import 'info_client_service.dart';
 import 'ranked.dart';
+import '../models/game.dart';
 
 
 
@@ -88,19 +89,24 @@ class SocketService{
     rankedService.matchHasBeenFound();
     });
 
-    socket.on("createRankedGame", (name) async {
+    socket.on('startGame', (roomName) {
+      socket.emit('startGame', roomName);
+    });
+
+    socket.on("createRankedGame", (data) async {
+      String gameName = data[0];
+      String playerName = data[1];
       MockDict mockDict = MockDict("Dictionnaire français par défaut","Ce dictionnaire contient environ trente mille mots français");
       socket.emit("dictionarySelected", mockDict);
-      socket.emit("createRoomAndGame", [
-                name,
-                name,
+      socket.emit("createRoomAndGame", CreateGameModel(
+                gameName,
+                playerName,
                 1,
-                false,
                 constants.MODE_RANKED,
-                'beginner',
                 false,
                 '',
-            ]);
+      ));
+      rankedService.closeModal();
     });
 
     socket.on("joinRankedRoom", (data){
