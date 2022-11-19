@@ -11,6 +11,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:client_leger/utils/utils.dart';
 
 import '../env/environment.dart';
+import '../services/chat-service.dart';
+import '../widget/chat_panel.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -21,6 +23,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfileStatePage extends State<ProfilePage> {
   final Controller controller = Controller();
+  ChatService chatService = ChatService();
   late List<GameSaved> favouriteGames = [];
 
 
@@ -31,61 +34,93 @@ class _ProfileStatePage extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/background.jpg"),
-                fit: BoxFit.cover,
+    return Scaffold(
+      endDrawer: Drawer(
+          width: 600,
+          child: ChatPanel(
+            isInGame: false,
+          )),
+      onEndDrawerChanged: (isOpen) {
+        chatService.isDrawerOpen = isOpen;
+        chatService.notifyListeners();
+      },
+      body: Stack(
+        children: <Widget>[
+          Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/background.jpg"),
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            padding:
-                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 200.0),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: const BorderRadius.all(Radius.circular(20.0)),
-                    border: Border.all(
-                        color: Theme.of(context).colorScheme.primary,
-                        width: 3)),
-                padding: const EdgeInsets.symmetric(
-                    vertical: 25.0, horizontal: 150.0),
-                child: Center(
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(
-                            globals.userLoggedIn.getUriFromAvatar()),
-                      ),
-                      Text(globals.userLoggedIn.username,
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                              decoration: TextDecoration.none)),
-                      UsernameChangeDialog(
-                        notifyParent: refresh,
-                      ),
-                      AvatarChangeDialog(
-                        notifyParent: refresh,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.only(top: 50, bottom: 50),
-                        child: Table(
+              padding: const EdgeInsets.symmetric(
+                  vertical: 100.0, horizontal: 200.0),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      color: Theme.of(context).colorScheme.secondary,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20.0)),
+                      border: Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 3)),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 25.0, horizontal: 150.0),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            TableRow(
-                              children: [
-                                returnRowTextElement('Parties jouees'),
-                                returnRowTextElement('Parties gagnes'),
-                                returnRowTextElement('Score moyen par partie'),
-                                returnRowTextElement('Temps moyen par partie'),
-                              ],
+                            IconButton(
+                              onPressed: _goBackHomePage,
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
+                            const SizedBox(
+                              width: 192.0,
+                            ),
+                            CircleAvatar(
+                              radius: 48,
+                              backgroundImage: MemoryImage(
+                                  globals.userLoggedIn.getUriFromAvatar()),
+                            ),
+                            const SizedBox(
+                              width: 100.0,
+                            ),
+                            const ChatPanelOpenButton(),
+                          ],
+                        ),
+                        Text(globals.userLoggedIn.username,
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 17,
+                                decoration: TextDecoration.none)),
+                        UsernameChangeDialog(
+                          notifyParent: refresh,
+                        ),
+                        AvatarChangeDialog(
+                          notifyParent: refresh,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.only(top: 50, bottom: 50),
+                          child: Table(
+                            children: [
+                              TableRow(
+                                children: [
+                                  returnRowTextElement('Parties jouees'),
+                                  returnRowTextElement('Parties gagnes'),
+                                  returnRowTextElement(
+                                      'Score moyen par partie'),
+                                  returnRowTextElement(
+                                      'Temps moyen par partie'),
+                                ],
+                              ),
                             TableRow(
                               children: [
                                 returnRowTextElement(globals
@@ -101,31 +136,36 @@ class _ProfileStatePage extends State<ProfilePage> {
                                             .userLoggedIn.averageTimePerGame!
                                             .round())
                                     .toString()),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.only(right: 50),
-                              child: returnHistoryScrollView(
-                                  'Historique des Connections',
-                                  globals.userLoggedIn.actionHistory!)),
-                          returnHistoryScrollView('Historique des Parties',
-                              globals.userLoggedIn.gameHistory!),
-                        ],
-                      )
-                    ],
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                                padding: const EdgeInsets.only(right: 50),
+                                child: returnHistoryScrollView(
+                                    'Historique des Connections',
+                                    globals.userLoggedIn.actionHistory!)),
+                            returnHistoryScrollView('Historique des Parties',
+                                globals.userLoggedIn.gameHistory!),
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            )),
-      ],
+              )),
+        ],
+      ),
     );
+  }
+
+  void _goBackHomePage() {
+    Navigator.pop(context);
   }
 
   Text returnRowTextElement(String textData) {
