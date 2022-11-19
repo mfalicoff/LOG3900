@@ -94,6 +94,7 @@ flutter:
     - assets/audios/letter-removal-small.mp3
     - assets/audios/word-invalid-small.mp3
     - assets/audios/word-valid-small.mp3
+    - assets/audios/notification-small.mp3
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

@@ -24,10 +24,7 @@ import '../models/vec2.dart';
 import 'users_controller.dart';
 import 'info_client_service.dart';
 
-
-
-class SocketService with ChangeNotifier{
-
+class SocketService with ChangeNotifier {
   static final SocketService _socketService = SocketService._internal();
 
   InfoClientService infoClientService = InfoClientService();
@@ -38,14 +35,13 @@ class SocketService with ChangeNotifier{
   late String gameId;
   int count = 1;
 
-
   late IO.Socket socket;
 
   factory SocketService() {
     return _socketService;
   }
 
-  SocketService._internal(){
+  SocketService._internal() {
     socket = IO.io(
         Environment().config?.serverURL,
         OptionBuilder().setTransports(['websocket']) // for Flutter or Dart VM
@@ -67,11 +63,11 @@ class SocketService with ChangeNotifier{
   }
 
   roomManipulationHandler() {
-
     socket.on('addElementListRoom', (data) {
       RoomData room = RoomData.fromJson(data);
-      var exist = infoClientService.rooms.where((element) => element.name == room.name);
-      if(exist.isEmpty){
+      var exist =
+          infoClientService.rooms.where((element) => element.name == room.name);
+      if (exist.isEmpty) {
         infoClientService.addRoom(room);
       }
     });
@@ -82,7 +78,6 @@ class SocketService with ChangeNotifier{
   }
 
   otherSocketOn() {
-
     socket.on('messageServer', (message) {
       print(message);
     });
@@ -96,17 +91,11 @@ class SocketService with ChangeNotifier{
       infoClientService.updateDictionaries(dictionaries);
     });
 
-    socket.on('DictionaryDeletedMessage', (message) {
+    socket.on('DictionaryDeletedMessage', (message) {});
 
-    });
+    socket.on('SendBeginnerVPNamesToClient', (namesVP) {});
 
-    socket.on('SendBeginnerVPNamesToClient', (namesVP) {
-
-    });
-
-    socket.on('SendExpertVPNamesToClient', (namesVP) {
-
-    });
+    socket.on('SendExpertVPNamesToClient', (namesVP) {});
 
     socket.on('isSpectator', (isSpectator) {
       infoClientService.isSpectator = isSpectator;
@@ -121,14 +110,16 @@ class SocketService with ChangeNotifier{
       infoClientService.game.gameFinished = true;
     });
 
-    socket.on("sendLetterReserve", (letterReserveArr){
-      infoClientService.letterReserve = letterReserveArr.map<String>((e)=>e.toString()).toList();
+    socket.on("sendLetterReserve", (letterReserveArr) {
+      infoClientService.letterReserve =
+          letterReserveArr.map<String>((e) => e.toString()).toList();
     });
 
     socket.on('soundPlay', (soundName) async {
-      if(!infoClientService.soundDisabled){
-        final player = AudioPlayer();                         // Create a player
-        await player.setUrl("asset:assets/audios/$soundName"); // Schemes: (https: | file: | asset: )
+      if (!infoClientService.soundDisabled) {
+        final player = AudioPlayer(); // Create a player
+        await player.setUrl(
+            "asset:assets/audios/$soundName"); // Schemes: (https: | file: | asset: )
         await player.play();
         await player.stop();
       }
@@ -156,8 +147,9 @@ class SocketService with ChangeNotifier{
     });
 
     socket.on('playersSpectatorsUpdate', (data) {
-      int idxExistingRoom = infoClientService.rooms.indexWhere((element) => element.name == data['roomName']);
-      if(idxExistingRoom == -1){
+      int idxExistingRoom = infoClientService.rooms
+          .indexWhere((element) => element.name == data['roomName']);
+      if (idxExistingRoom == -1) {
         return;
       }
       infoClientService.actualRoom = infoClientService.rooms[idxExistingRoom];
@@ -166,7 +158,8 @@ class SocketService with ChangeNotifier{
       List<Spectator> updatedSpecs = Spectator.createSpectatorsFromArray(data);
       infoClientService.rooms[idxExistingRoom].spectators = updatedSpecs;
 
-      Player? tmpPlayer = infoClientService.actualRoom.players.firstWhereOrNull((player) => player.name == infoClientService.playerName);
+      Player? tmpPlayer = infoClientService.actualRoom.players.firstWhereOrNull(
+          (player) => player.name == infoClientService.playerName);
       if (tmpPlayer != null) {
         infoClientService.player = tmpPlayer;
       }
@@ -206,21 +199,21 @@ class SocketService with ChangeNotifier{
       String currentNamePlayerPlaying = data["currentNamePlayerPlaying"];
       infoClientService.powerUsedForTurn = false;
       tapService.resetVariablePlacement();
-      if(currentNamePlayerPlaying == infoClientService.playerName) {
+      if (currentNamePlayerPlaying == infoClientService.playerName) {
         infoClientService.displayTurn = "C'est votre tour !";
         infoClientService.isTurnOurs = true;
         infoClientService.notifyListeners();
-
       } else {
-        Player playerPlaying = infoClientService.actualRoom.players.singleWhere((player) => player.name == currentNamePlayerPlaying);
-        infoClientService.displayTurn = "C'est au tour de ${playerPlaying.name} de jouer !";
+        Player playerPlaying = infoClientService.actualRoom.players
+            .singleWhere((player) => player.name == currentNamePlayerPlaying);
+        infoClientService.displayTurn =
+            "C'est au tour de ${playerPlaying.name} de jouer !";
         infoClientService.isTurnOurs = false;
       }
 
       timerService.clearTimer();
       timerService.startTimer(minutesByTurn);
       infoClientService.notifyListeners();
-
     });
 
     socket.on('setTimeoutTimerStart', (_) {
@@ -233,13 +226,10 @@ class SocketService with ChangeNotifier{
       tapService.lettersDrawn = '';
       timerService.clearTimer();
     });
-
   }
 
   canvasActionsHandler() {
-    socket.on('drawBorderTileForTmpHover', (boardIndexs) {
-
-    });
+    socket.on('drawBorderTileForTmpHover', (boardIndexs) {});
 
     socket.on('tileDraggedOnCanvas', (data) {
       Tile clickedTile = Tile.fromJson(data[0]);
@@ -250,44 +240,56 @@ class SocketService with ChangeNotifier{
     });
   }
 
-  chatRoomHandler(){
+  chatRoomHandler() {
     socket.on('setChatRoom', (data) {
       var chatRoom = ChatRoom.fromJson(data);
 
       //if the room is already present we delete it to set the newer one
       //it should never happened though
-      if(chatService.rooms.contains(chatRoom)){
-        chatService.rooms.removeWhere((element) => element.name == chatRoom.name);
+      if (chatService.rooms.contains(chatRoom)) {
+        chatService.rooms
+            .removeWhere((element) => element.name == chatRoom.name);
         print("Should never go here in SocketService:setChatRoom");
       }
       //if the room received is general it means we are getting all the room
       //and this is the start of the app
-      if(chatRoom.name == "general"){
+      if (chatRoom.name == "general") {
         chatService.rooms.clear();
       }
       chatService.rooms.add(chatRoom);
-      if(chatRoom.name == "general"){
+      if (chatRoom.name == "general") {
         chatService.currentChatRoom = chatService.rooms[0];
       }
       chatService.chatRoomWanted = null;
       chatService.notifyListeners();
     });
-    socket.on('addMsgToChatRoom', (data) {
+    socket.on('addMsgToChatRoom', (data) async {
       var chatRoomName = data[0];
       var newMsg = data[1];
-      var roomElement = chatService.rooms.firstWhere((element) => element.name == chatRoomName);
+      var roomElement = chatService.rooms
+          .firstWhere((element) => element.name == chatRoomName);
       int indexRoom = chatService.rooms.indexOf(roomElement);
-      if(indexRoom != -1){
-        chatService.rooms[indexRoom].chatHistory.add(ChatMessage.fromJson(newMsg));
-      }else{
+      if (indexRoom != -1) {
+        chatService.rooms[indexRoom].chatHistory
+            .add(ChatMessage.fromJson(newMsg));
+        if (chatService.currentChatRoom.name !=
+            chatService.rooms[indexRoom].name || !chatService.isDrawerOpen) {
+          chatService.rooms[indexRoom].isUnread = true;
+        }
+      } else {
         print("error in SocketService:addMsgToChatRoom");
       }
       chatService.notifyListeners();
+      final player = AudioPlayer(); // Create a player
+      await player.setUrl(
+          "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+      await player.play();
+      await player.stop();
     });
   }
 
   updateUiBeforeStartGame(List<Player> players) {
-    if(infoClientService.actualRoom.numberRealPlayer >= MIN_PERSON_PLAYING) {
+    if (infoClientService.actualRoom.numberRealPlayer >= MIN_PERSON_PLAYING) {
       infoClientService.displayTurn = WAITING_FOR_CREATOR;
     } else {
       infoClientService.displayTurn = WAIT_FOR_OTHER_PLAYERS;
@@ -302,7 +304,8 @@ class SocketService with ChangeNotifier{
   setTimeoutForTimer() {
     int oneSecond = 1000;
     Timer.periodic(Duration(milliseconds: oneSecond), (timer) {
-      if (timerService.secondsValue <= 0 && infoClientService.game.masterTimer == socket.id) {
+      if (timerService.secondsValue <= 0 &&
+          infoClientService.game.masterTimer == socket.id) {
         socket.emit('turnFinished');
       }
       if (infoClientService.game.gameFinished) {
@@ -311,6 +314,4 @@ class SocketService with ChangeNotifier{
       }
     });
   }
-
-
 }

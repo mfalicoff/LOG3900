@@ -207,7 +207,13 @@ class _GamePageState extends State<GamePage> {
                   padding: const EdgeInsets.fromLTRB(0, 100, 50, 100),
                   color: Theme.of(context).colorScheme.primary,
                   child: Column(
-                    children: const [InfoPanel(), ChatPanelOpenButton()],
+                    children: const [
+                      InfoPanel(),
+                      SizedBox(
+                          width: 50,
+                          height: 50,
+                          child: ChatPanelOpenButton())
+                    ],
                   ),
                 ),
               ),

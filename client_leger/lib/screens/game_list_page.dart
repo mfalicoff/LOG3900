@@ -6,6 +6,9 @@ import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 
+import '../services/chat-service.dart';
+import '../widget/chat_panel.dart';
+
 class GameListPage extends StatefulWidget {
   const GameListPage({Key? key}) : super(key: key);
 
@@ -17,6 +20,7 @@ class _GameListPageState extends State<GameListPage> {
   // late List<Room> rooms = [];
   final SocketService socketService = SocketService();
   final InfoClientService infoClientService = InfoClientService();
+  ChatService chatService = ChatService();
 
   @override
   void initState() {
@@ -43,6 +47,15 @@ class _GameListPageState extends State<GameListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      endDrawer: Drawer(
+          width: 600,
+          child: ChatPanel(
+            isInGame: false,
+          )),
+      onEndDrawerChanged: (isOpen) {
+        chatService.isDrawerOpen = isOpen;
+        chatService.notifyListeners();
+      },
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -109,6 +122,9 @@ class _GameListPageState extends State<GameListPage> {
                                       Theme.of(context).colorScheme.secondary),
                             ),
                           ),
+                          Container(
+                              margin: const EdgeInsets.all(5),
+                              child: const ChatPanelOpenButton()),
                         ],
                       ),
                       const SizedBox(

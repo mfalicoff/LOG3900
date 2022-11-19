@@ -12,8 +12,28 @@ import '../services/info_client_service.dart';
 import '../services/socket_service.dart';
 import '../utils/utils.dart';
 
-class ChatPanelOpenButton extends StatelessWidget {
+class ChatPanelOpenButton extends StatefulWidget {
   const ChatPanelOpenButton({Key? key}) : super(key: key);
+
+  @override
+  State<ChatPanelOpenButton> createState() => _ChatPanelOpenButton();
+}
+
+class _ChatPanelOpenButton extends State<ChatPanelOpenButton> {
+  ChatService chatService = ChatService();
+
+  @override
+  void initState() {
+    super.initState();
+    chatService.addListener(refresh);
+  }
+
+  refresh() {
+    if (mounted) {
+      setState(() {
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +48,27 @@ class ChatPanelOpenButton extends StatelessWidget {
         onPressed: () {
           Scaffold.of(context).openEndDrawer();
         },
-        child: const Icon(Icons.chat));
+        child: Row(
+          children: [
+            const Icon(Icons.chat),
+            chatService.isThereAChatUnread() == true
+                ? Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 10,
+                      minHeight: 10,
+                    ),
+                    child: const SizedBox(
+                      width: 1,
+                      height: 1,
+                    ),
+                  )
+                : Container(),
+          ],
+        ));
   }
 }
 
@@ -80,13 +120,17 @@ class _ChatPanelState extends State<ChatPanel> {
     if (mounted) {
       setState(() {
         if (widget.isInGame) {
-          if(infoClientService.isSpectator){
-            var idxSpectator = infoClientService.actualRoom.spectators.indexWhere((element) => element.name == infoClientService.playerName);
-            if(idxSpectator != -1){
-              chatService.rooms[0].chatHistory = infoClientService.actualRoom.spectators[idxSpectator].chatHistory;
+          if (infoClientService.isSpectator) {
+            var idxSpectator = infoClientService.actualRoom.spectators
+                .indexWhere(
+                    (element) => element.name == infoClientService.playerName);
+            if (idxSpectator != -1) {
+              chatService.rooms[0].chatHistory = infoClientService
+                  .actualRoom.spectators[idxSpectator].chatHistory;
             }
-          }else{
-            chatService.rooms[0].chatHistory = infoClientService.player.chatHistory;
+          } else {
+            chatService.rooms[0].chatHistory =
+                infoClientService.player.chatHistory;
           }
         }
         scrollMessages();
@@ -97,9 +141,13 @@ class _ChatPanelState extends State<ChatPanel> {
   @override
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      _chatScrollController.jumpTo(_chatScrollController.position.maxScrollExtent+30);
+      _chatScrollController
+          .jumpTo(_chatScrollController.position.maxScrollExtent + 30);
+      if (chatService.currentChatRoom.isUnread) {
+        chatService.currentChatRoom.isUnread = false;
+        chatService.notifyListeners();
+      }
     });
-
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -156,8 +204,10 @@ class _ChatPanelState extends State<ChatPanel> {
                               onTap: () {
                                 chatService.currentChatRoom =
                                     chatService.rooms[index];
+                                chatService.currentChatRoom.isUnread = false;
                                 refresh();
                                 scrollMessages();
+                                chatService.notifyListeners();
                               },
                               child: Container(
                                 alignment: Alignment.center,
@@ -181,20 +231,27 @@ class _ChatPanelState extends State<ChatPanel> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      chatService.rooms[index].name,
-                                      style: TextStyle(
-                                        color: (chatService.currentChatRoom ==
-                                                chatService.rooms[index]
-                                            ? Theme.of(context)
-                                                .colorScheme
-                                                .secondary
-                                            : Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                        fontSize: 27,
-                                        fontStyle: FontStyle.italic,
-                                        decoration: TextDecoration.none,
+                                    chatService.rooms[index].isUnread == true &&
+                                            chatService.currentChatRoom.name !=
+                                                chatService.rooms[index].name
+                                        ? notificationContainer(Colors.red)
+                                        : notificationContainer(Theme.of(context).colorScheme.secondary.withOpacity(0)),
+                                    Expanded(
+                                      child: Text(
+                                        chatService.rooms[index].name,
+                                        style: TextStyle(
+                                          color: (chatService.currentChatRoom ==
+                                                  chatService.rooms[index]
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                          fontSize: 27,
+                                          fontStyle: FontStyle.italic,
+                                          decoration: TextDecoration.none,
+                                        ),
                                       ),
                                     ),
                                     if (chatService.rooms[index].name !=
@@ -431,8 +488,24 @@ class _ChatPanelState extends State<ChatPanel> {
     );
   }
 
+  Container notificationContainer(Color color) {
+    return Container(
+        margin: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(7),
+        ),
+        constraints: const BoxConstraints(
+          minWidth: 10,
+          minHeight: 10,
+        ),
+        child: const SizedBox(
+          width: 1,
+          height: 1,
+        ));
+  }
+
   void sendMessage() {
-    print(chatService.currentChatRoom.name);
     if (chatService.currentChatRoom.name == "game") {
       socketService.socket.emit('newMessageClient', message);
     } else {
