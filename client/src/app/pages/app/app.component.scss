@@ -1,6 +1,9 @@
 .grid-container {
     display: grid;
     grid-template-columns: auto auto;
+    background-image: url('https://www.printablee.com/postpic/2011/03/blank-scrabble-board-template-printable_326282.jpg');
+    background-position: center;
+    background-attachment: fixed;
   }
   
 .grid-item {
@@ -17,8 +20,8 @@
 
 #communicationBoxNoLog{
     margin-top: 5%;
-    margin-right: 50px;
-    margin-bottom: 0px;
+    justify-content: right;
+    bottom: 0vh;
 }
 
 .MPButton {
