@@ -15,6 +15,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:collection/collection.dart';
 import 'dart:async';
 
+import '../models/game-server.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/tile.dart';
@@ -30,6 +31,8 @@ class SocketService with ChangeNotifier {
   TapService tapService = TapService();
   Controller controller = Controller();
   ChatService chatService = ChatService();
+  late String gameId;
+  int count = 1;
 
   late IO.Socket socket;
 
@@ -135,6 +138,11 @@ class SocketService with ChangeNotifier {
       tapService.notifyListeners();
       infoClientService.notifyListeners();
       chatService.notifyListeners();
+      if (GameServer.fromJson(game).gameFinished && count == 1) {
+        timerService.clearGameTimer();
+        infoClientService.notifyListeners();
+        count++;
+      }
     });
 
     socket.on('playersSpectatorsUpdate', (data) {
@@ -174,6 +182,9 @@ class SocketService with ChangeNotifier {
     socket.on('changeIsTurnOursStatus', (isTurnOurs) {
       infoClientService.isTurnOurs = isTurnOurs;
     });
+    socket.on('savedGameId', (id) {
+      gameId = id;
+    });
   }
 
   timerHandler() {
@@ -207,6 +218,7 @@ class SocketService with ChangeNotifier {
     socket.on('setTimeoutTimerStart', (_) {
       tapService.lettersDrawn = '';
       setTimeoutForTimer();
+      timerService.startGameTimer();
     });
 
     socket.on('stopTimer', (_) {
