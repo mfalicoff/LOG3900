@@ -1,13 +1,19 @@
 .grid-container {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 605px;
+}
+
+.backgroundImage {
     background-image: url('https://www.printablee.com/postpic/2011/03/blank-scrabble-board-template-printable_326282.jpg');
     background-position: center;
     background-attachment: fixed;
-  }
+}
+
+.backgroundGame {
+    background-color: #0c483f;
+}
   
 .grid-item {
-    // border: 1px solid rgba(0, 0, 0, 0.8);
     text-align: center;
     min-height: 100vh;
 }
@@ -20,7 +26,6 @@
 
 #communicationBoxNoLog{
     margin-top: 5%;
-    justify-content: right;
     bottom: 0vh;
 }
 
