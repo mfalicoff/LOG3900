@@ -6,6 +6,7 @@ import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profi
 import { Subscription } from 'rxjs';
 import { GameSaved } from '@app/classes/game-saved';
 import { TranslateService } from '@ngx-translate/core';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-profile-page',
@@ -28,7 +29,12 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         ['en', 'English'],
     ]);
 
-    constructor(private dialog: MatDialog, public userService: UserService, private translate: TranslateService) {}
+    constructor(
+        private dialog: MatDialog,
+        public userService: UserService,
+        private translate: TranslateService,
+        private socketService: SocketService,
+    ) {}
 
     ngOnInit() {
         this.favourtieGamesSubscription = this.userService.getFavouriteGames().subscribe((res: GameSaved[]) => {
@@ -97,7 +103,9 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     }
 
     onClickLang(lang: string): void {
-        this.userService.updateLanguage(this.langMap.get(lang) as string);
-        this.translate.use(this.langMap.get(lang) as string);
+        const language = this.langMap.get(lang) as string;
+        this.userService.updateLanguage(language);
+        this.socketService.socket.emit('changeLanguage', this.userService.user.name, language);
+        this.translate.use(language);
     }
 }

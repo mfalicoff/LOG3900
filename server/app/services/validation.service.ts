@@ -7,10 +7,11 @@ import { Vec2 } from '@app/classes/vec2';
 import { Service } from 'typedi';
 import { BoardService } from './board.service';
 import { LetterBankService } from './letter-bank.service';
+import { TranslateService } from '@app/services/translate.service';
 
 @Service()
 export class ValidationService {
-    constructor(private letterBankService: LetterBankService, private boardService: BoardService) {}
+    constructor(private letterBankService: LetterBankService, private boardService: BoardService, private translateService: TranslateService) {}
 
     entryIsTooLong(input: string): boolean {
         // verify that the entry of the user isn't longer thant 512 characters
@@ -36,7 +37,7 @@ export class ValidationService {
         switch (command) {
             case '!placer': {
                 const splitted: string[] = input.split(' ', 3);
-                return this.isPlaceInputValid(splitted, game);
+                return this.isPlaceInputValid(splitted, game, player);
             }
             case '!échanger': {
                 const splitted: string[] = input.split(' ', 3);
@@ -45,34 +46,34 @@ export class ValidationService {
             default: {
                 const splitted: string[] = input.split(' ', 2);
                 if (splitted[1]) {
-                    return 'Commande Invalide';
+                    return this.translateService.translateMessage(player.name, 'INVALID_COMMAND');
                 }
                 return '';
             }
         }
     }
 
-    verifyPlacementOnBoard(splittedInput: string[], game: GameServer): string {
+    verifyPlacementOnBoard(splittedInput: string[], game: GameServer, player: Player): string {
         const position: string = splittedInput[1];
         const word: string = splittedInput[2];
 
         if (game.noTileOnBoard && !this.lettersTouchH8Square(word, position)) {
-            return GlobalConstants.FIRST_LETTER_NOT_IN_H8;
+            return this.translateService.translateMessage(player.name, 'FIRST_LETTER_NOT_IN_H8');
         }
 
         if (!this.wordFitsBoard(word, position)) {
-            return GlobalConstants.WORD_DONT_FIT_BOARD;
+            return this.translateService.translateMessage(player.name, 'WORD_DONT_FIT_BOARD');
         }
 
         // verifies that the word touches at least one letter of the board
         if (!game.noTileOnBoard && !this.lettersHaveContactWithOthers(word, position, game)) {
-            return GlobalConstants.LETTERS_MUST_TOUCH_OTHERS;
+            return this.translateService.translateMessage(player.name, 'LETTERS_MUST_TOUCH_OTHERS');
         }
 
         // verify that the temporary letters are touching each other in case
         // there is no tile beetween them
         if (!this.tmpLettersTouchEachOther(game, position)) {
-            return GlobalConstants.TMP_LETTERS_MUST_TOUCH;
+            return this.translateService.translateMessage(player.name, 'TMP_LETTERS_MUST_TOUCH');
         }
 
         return '';
@@ -88,38 +89,38 @@ export class ValidationService {
     private isExchangeInputValid(input: string[], letterBank: Map<string, LetterData>, player: Player): string {
         const lettersToExchange: string = input[1];
         if (this.letterBankService.getNbLettersInLetterBank(letterBank) < GlobalConstants.DEFAULT_NB_LETTER_STAND) {
-            return GlobalConstants.NOT_ENOUGH_LETTERS;
+            return this.translateService.translateMessage(player.name, 'NOT_ENOUGH_LETTERS');
         }
         if (input[2] || !input[1]) {
-            return GlobalConstants.INVALID_ARGUMENTS_EXCHANGE;
+            return this.translateService.translateMessage(player.name, 'INVALID_ARGUMENTS_EXCHANGE');
         }
 
         for (let i = 0; i < input[1].length; i++) {
             const letterToCheck: string = lettersToExchange[i];
             const nbRepetition: number = lettersToExchange.split(lettersToExchange[i]).length - 1;
             if (!this.belongsInAlphabet(letterToCheck)) {
-                return GlobalConstants.LETTER_NOT_IN_ALPHABET;
+                return this.translateService.translateMessage(player.name, 'LETTER_NOT_IN_ALPHABET');
             }
             if (player.mapLetterOnStand.get(letterToCheck) === undefined) {
-                return GlobalConstants.LETTER_NOT_ON_STAND;
+                return this.translateService.translateMessage(player.name, 'LETTER_NOT_ON_STAND');
             }
             if (player.mapLetterOnStand.get(letterToCheck).value === undefined) {
-                return GlobalConstants.LETTER_NOT_ON_STAND;
+                return this.translateService.translateMessage(player.name, 'LETTER_NOT_ON_STAND');
             }
             if (player.mapLetterOnStand.get(letterToCheck).value < nbRepetition) {
-                return GlobalConstants.LETTER_NOT_ON_STAND;
+                return this.translateService.translateMessage(player.name, 'LETTER_NOT_ON_STAND');
             }
         }
         return '';
     }
 
-    private isPlaceInputValid(splittedInput: string[], game: GameServer): string {
+    private isPlaceInputValid(splittedInput: string[], game: GameServer, player: Player): string {
         const position: string = splittedInput[1];
         const word: string = splittedInput[2];
 
         // if the command doesn't have any arguments or a valid position we return false
         if (!word || splittedInput[3] || !this.isPlacePositionValid(position)) {
-            return GlobalConstants.INVALID_ARGUMENTS_PLACER;
+            return this.translateService.translateMessage(player.name, 'INVALID_ARGUMENTS_PLACER');
         }
 
         if (game.mapLetterOnBoard.size === 0) {
@@ -129,7 +130,7 @@ export class ValidationService {
         // verify that each letter is in the alphabet
         for (const letter of word) {
             if (!this.belongsInAlphabet(letter)) {
-                return GlobalConstants.INVALID_WORD;
+                return this.translateService.translateMessage(player.name, 'INVALID_WORD');
             }
         }
         return '';

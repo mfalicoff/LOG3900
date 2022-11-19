@@ -170,11 +170,12 @@ export class SocketService {
             this.infoClientService.powerUsedForTurn = false;
             this.drawingBoardService.lettersDrawn = '';
             if (currentNamePlayerPlaying === this.infoClientService.playerName) {
-                this.infoClientService.displayTurn = "C'est votre tour !";
+                this.infoClientService.displayTurn = this.translate.instant('GAME.ITS_YOUR_TURN');
                 this.infoClientService.isTurnOurs = true;
             } else {
                 const playerPlaying = this.infoClientService.actualRoom.players.find((player) => player.name === currentNamePlayerPlaying);
-                this.infoClientService.displayTurn = "C'est au tour de " + playerPlaying?.name + ' de jouer !';
+                this.infoClientService.displayTurn =
+                    this.translate.instant('GAME.ITS_THE_TURN_OF') + playerPlaying?.name + this.translate.instant('GAME.TO_PLAY');
                 this.infoClientService.isTurnOurs = false;
                 this.placeGraphicService.resetVariablePlacement();
             }

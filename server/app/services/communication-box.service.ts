@@ -10,6 +10,7 @@ import { ChatService } from './chat.service';
 import { PlayAreaService } from './play-area.service';
 import { PowerCardsService } from './power-cards.service';
 import { StandService } from './stand.service';
+import { TranslateService } from '@app/services/translate.service';
 
 @Service()
 export class CommunicationBoxService {
@@ -20,6 +21,7 @@ export class CommunicationBoxService {
         private standService: StandService,
         private boardService: BoardService,
         private powerCardsService: PowerCardsService,
+        private translateService: TranslateService,
     ) {}
 
     // function that shows the content of the input, place it in the array of message then delte the input field
@@ -29,7 +31,9 @@ export class CommunicationBoxService {
         // checking if msg is a command of not
         // we don't want commands until the game is started
         if (dataSeparated[0][0] === '!' && !game.gameStarted) {
-            player?.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.GAME_NOT_STARTED));
+            player?.chatHistory.push(
+                new ChatMessage(Constants.SYSTEM_SENDER, this.translateService.translateMessage(player.name, 'GAME_NOT_STARTED')),
+            );
             return false;
         }
 
@@ -60,7 +64,9 @@ export class CommunicationBoxService {
                         if (playerElem.name === player.name) {
                             // poping the msg "Vous avez placé vos lettres"
                             playerElem.chatHistory.pop();
-                            player?.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.WORD_DOESNT_EXIST));
+                            player?.chatHistory.push(
+                                new ChatMessage(Constants.SYSTEM_SENDER, this.translateService.translateMessage(player.name, 'WORD_DOESNT_EXIST')),
+                            );
                         }
                     }
 
@@ -80,12 +86,22 @@ export class CommunicationBoxService {
                                 continue;
                             }
                             player?.chatHistory.push(
-                                new ChatMessage(Constants.SYSTEM_SENDER, 'Le joueur ' + player.name + Constants.PLAYER_TRIED_A_WORD),
+                                new ChatMessage(
+                                    Constants.SYSTEM_SENDER,
+                                    this.translateService.translateMessage(player.name, 'THE_PLAYER') +
+                                        player.name +
+                                        this.translateService.translateMessage(player.name, 'PLAYER_TRIED_A_WORD'),
+                                ),
                             );
                         }
                         for (const spectator of game.mapSpectators.values()) {
                             spectator.chatHistory.push(
-                                new ChatMessage(Constants.SYSTEM_SENDER, 'Le joueur ' + player.name + Constants.PLAYER_TRIED_A_WORD),
+                                new ChatMessage(
+                                    Constants.SYSTEM_SENDER,
+                                    this.translateService.translateMessage(player.name, 'THE_PLAYER') +
+                                        player.name +
+                                        this.translateService.translateMessage(player.name, 'PLAYER_TRIED_A_WORD'),
+                                ),
                             );
                         }
                         // remove the word from the board bc it isn't valid
@@ -130,7 +146,7 @@ export class CommunicationBoxService {
     }
     async onEnterSpectator(game: GameServer, spec: Spectator, input: string) {
         if (this.chatService.validator.entryIsTooLong(input)) {
-            spec.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.INVALID_LENGTH));
+            spec.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, this.translateService.translateMessage(spec.name, 'INVALID_LENGTH')));
             return;
         }
         this.chatService.pushMsgToAllPlayers(game, spec.name, input, false, 'P');

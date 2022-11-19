@@ -12,6 +12,7 @@ import { VirtualPlayerService } from './virtual-player.service';
 import AvatarService from '@app/services/avatar.service';
 import { PowerCardsService } from './power-cards.service';
 import { ChatMessage } from '@app/classes/chat-message';
+import { TranslateService } from '@app/services/translate.service';
 
 @Service()
 export class PlayAreaService {
@@ -25,6 +26,7 @@ export class PlayAreaService {
         private databaseService: DatabaseService,
         private boardService: BoardService,
         private powerCardService: PowerCardsService,
+        private translateService: TranslateService,
     ) {
         this.sio = new io.Server();
     }
@@ -140,8 +142,8 @@ export class PlayAreaService {
     // function that transforms the playerThatLeaves into a virtual player
     async replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
         // we send to everyone that the player has left and has been replaced by a bot
-        this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
-        this.sendMsgToAllInRoom(game, Constants.REPLACEMENT_BY_BOT);
+        this.sendMsgToAllInRoomWithTranslation(game, ['THE_PLAYER', playerThatLeaves?.name, message]);
+        this.sendMsgToAllInRoomWithTranslation(game, ['REPLACEMENT_BY_BOT']);
 
         // we keep the old id to determine later to change the old player's turn or not
         const oldIdPlayer = playerThatLeaves.id;
@@ -177,6 +179,35 @@ export class PlayAreaService {
         }
         for (const spectator of game.mapSpectators.values()) {
             spectator.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, message));
+        }
+    }
+
+    sendMsgToAllInRoomWithTranslation(game: GameServer, message: string[]) {
+        for (const player of game.mapPlayers.values()) {
+            let fullMessage = '';
+            message.forEach((element) => {
+                const value = this.translateService.translateMessage(player.name, element);
+                if (value !== '') {
+                    fullMessage += value;
+                } else {
+                    fullMessage += element;
+                }
+            });
+            // eslint-disable-next-line no-console
+            console.log(fullMessage);
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, fullMessage));
+        }
+        for (const spectator of game.mapSpectators.values()) {
+            let fullMessage = '';
+            message.forEach((element) => {
+                const value = this.translateService.translateMessage(spectator.name, element);
+                if (value !== '') {
+                    fullMessage += value;
+                } else {
+                    fullMessage += element;
+                }
+            });
+            spectator.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, fullMessage));
         }
     }
 
