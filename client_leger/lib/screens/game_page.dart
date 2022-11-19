@@ -28,7 +28,7 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
     infoClientService.addListener(refresh);
-    // infoClientService.addListener(checkEndGame);
+    // infoClientService.addListener(_checkEndGame);
   }
 
   void refresh() {
@@ -36,11 +36,9 @@ class _GamePageState extends State<GamePage> {
       setState(() {});
     }
   }
-  // void checkEndGame(BuildContext context) {
-  //   if (mounted && infoClientService.game.gameFinished) {
-  //     setState(() {
+  // _checkEndGame() {
+  //   if (infoClientService.game.gameFinished) {
   //       showDialog(context: context, builder: (context) => const EndGameResultsPage());
-  //     });
   //   }
   // }
 
@@ -64,53 +62,53 @@ class _GamePageState extends State<GamePage> {
                     Container(
                       child: shouldBeAbleToLeaveGame()
                           ? ElevatedButton(
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 3.0),
-                                ),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              ),
-                              onPressed: _leaveGame,
-                              child: Text(
-                                "Quitter partie",
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                            )
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                                vertical: 6.0, horizontal: 3.0),
+                          ),
+                          shape: MaterialStateProperty.all<
+                              RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                        onPressed: _leaveGame,
+                        child: Text(
+                          "Quitter partie",
+                          style: TextStyle(
+                            color:
+                            Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      )
                           : null,
                     ),
                     Container(
                       child: shouldBeAbleToGiveUpGame()
                           ? ElevatedButton(
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 3.0),
-                                ),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () => _giveUpGame(context),
-                              child: Text(
-                                "Abandonner",
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                            )
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                            const EdgeInsets.symmetric(
+                                vertical: 6.0, horizontal: 3.0),
+                          ),
+                          shape: MaterialStateProperty.all<
+                              RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                        ),
+                        onPressed: () => _giveUpGame(context),
+                        child: Text(
+                          "Abandonner",
+                          style: TextStyle(
+                            color:
+                            Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      )
                           : null,
                     ),
                     if (infoClientService.gameMode == POWER_CARDS_MODE) ...[
@@ -124,30 +122,30 @@ class _GamePageState extends State<GamePage> {
                     ),
                     Container(
                         child: infoClientService
-                                    .creatorShouldBeAbleToStartGame ==
-                                true
+                            .creatorShouldBeAbleToStartGame ==
+                            true
                             ? ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 3.0),
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: _startGame,
-                                child: Text(
-                                  "Demarrer partie",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              )
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 6.0, horizontal: 3.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: _startGame,
+                          child: Text(
+                            "Demarrer partie",
+                            style: TextStyle(
+                              color:
+                              Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        )
                             : null),
                     Container(
                         child: infoClientService.game.gameFinished == true
@@ -171,27 +169,27 @@ class _GamePageState extends State<GamePage> {
                     Container(
                         child: shouldSpecBeAbleToBePlayer() == true
                             ? ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 3.0),
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: spectWantsToBePlayer,
-                                child: Text(
-                                  "Remplacer joueur virtuel",
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              )
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 6.0, horizontal: 3.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: spectWantsToBePlayer,
+                          child: Text(
+                            "Remplacer joueur virtuel",
+                            style: TextStyle(
+                              color:
+                              Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        )
                             : Container())
                   ],
                 ),
@@ -263,9 +261,9 @@ class _GamePageState extends State<GamePage> {
                       radius: 50,
                       backgroundColor: Theme.of(context).colorScheme.secondary,
                       backgroundImage:
-                        infoClientService.soundDisabled ?
-                        const AssetImage('assets/volume-off.png') :
-                        const AssetImage('assets/volume-on.png'),
+                      infoClientService.soundDisabled ?
+                      const AssetImage('assets/volume-off.png') :
+                      const AssetImage('assets/volume-on.png'),
                     ),
                     onPressed: () {
                       setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
@@ -459,14 +457,14 @@ class _PowerListDialog extends State<PowerListDialog> {
                                   back: Container(
                                     decoration: BoxDecoration(
                                       color:
-                                          Theme.of(context).colorScheme.primary,
+                                      Theme.of(context).colorScheme.primary,
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(5)),
                                     ),
                                     width: 150,
                                     height: 100,
                                     margin:
-                                        const EdgeInsets.fromLTRB(0, 0, 40, 10),
+                                    const EdgeInsets.fromLTRB(0, 0, 40, 10),
                                     // color: Theme.of(context).colorScheme.primary,
                                     child: Padding(
                                       padding: const EdgeInsets.fromLTRB(
@@ -488,7 +486,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                 TextButton(
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStatePropertyAll<
-                                            Color>(
+                                        Color>(
                                         Theme.of(context).colorScheme.primary),
                                   ),
                                   onPressed: () => {
@@ -652,33 +650,33 @@ class _PowerListDialog extends State<PowerListDialog> {
                                 shrinkWrap: true,
                                 children: List.generate(
                                     infoClientService.player.stand.length,
-                                    (index) {
-                                  return Container(
-                                    margin:
+                                        (index) {
+                                      return Container(
+                                        margin:
                                         const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                    child: TextButton(
-                                      style: ButtonStyle(
-                                        backgroundColor:
+                                        child: TextButton(
+                                          style: ButtonStyle(
+                                            backgroundColor:
                                             MaterialStatePropertyAll<Color>(
                                                 standColors[index][0]),
-                                      ),
-                                      onPressed: () => {
-                                        setState(() => {
+                                          ),
+                                          onPressed: () => {
+                                            setState(() => {
                                               standColors = _colorChangeStand(
                                                   standColors, index)
                                             }),
-                                      },
-                                      child: Text(
-                                        infoClientService
-                                            .player.stand[index].letter.value,
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          color: standColors[index][1],
+                                          },
+                                          child: Text(
+                                            infoClientService
+                                                .player.stand[index].letter.value,
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              color: standColors[index][1],
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    ),
-                                  );
-                                }),
+                                      );
+                                    }),
                               ),
                             );
                           }),
@@ -696,7 +694,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                   (BuildContext context, StateSetter setState) {
                                 return Container(
                                   margin:
-                                      const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                  const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   height: 150,
                                   width: 450,
                                   child: GridView.count(
@@ -704,35 +702,35 @@ class _PowerListDialog extends State<PowerListDialog> {
                                     shrinkWrap: true,
                                     children: List.generate(
                                         infoClientService.letterReserve.length,
-                                        (index) {
-                                      return Container(
-                                        margin: const EdgeInsets.fromLTRB(
-                                            0, 0, 10, 10),
-                                        child: TextButton(
-                                          style: ButtonStyle(
-                                            backgroundColor:
+                                            (index) {
+                                          return Container(
+                                            margin: const EdgeInsets.fromLTRB(
+                                                0, 0, 10, 10),
+                                            child: TextButton(
+                                              style: ButtonStyle(
+                                                backgroundColor:
                                                 MaterialStatePropertyAll<Color>(
                                                     reserveColors[index][0]),
-                                          ),
-                                          onPressed: () => {
-                                            setState(() => {
+                                              ),
+                                              onPressed: () => {
+                                                setState(() => {
                                                   reserveColors =
                                                       _colorChangeReserve(
                                                           reserveColors, index)
                                                 }),
-                                          },
-                                          child: Text(
-                                            infoClientService
-                                                .letterReserve[index]
-                                                .toLowerCase(),
-                                            style: TextStyle(
-                                              fontSize: 17,
-                                              color: reserveColors[index][1],
+                                              },
+                                              child: Text(
+                                                infoClientService
+                                                    .letterReserve[index]
+                                                    .toLowerCase(),
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  color: reserveColors[index][1],
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                        ),
-                                      );
-                                    }),
+                                          );
+                                        }),
                                   ),
                                 );
                               },
@@ -872,12 +870,12 @@ class _PowerListDialog extends State<PowerListDialog> {
       return "La forme doit être ligne-colonne. Exemple: e10";
     } else {
       int idxLine = value
-              .substring(0, END_POSITION_INDEX_LINE)
-              .toLowerCase()
-              .codeUnitAt(0) -
+          .substring(0, END_POSITION_INDEX_LINE)
+          .toLowerCase()
+          .codeUnitAt(0) -
           ASCII_CODE_SHIFT;
       int idxColumn =
-          int.parse(value.substring(END_POSITION_INDEX_LINE, value.length));
+      int.parse(value.substring(END_POSITION_INDEX_LINE, value.length));
       if (idxLine <= 0 ||
           idxColumn <= 0 ||
           idxLine > NUMBER_SQUARE_H_AND_W ||
@@ -907,12 +905,12 @@ class _PowerListDialog extends State<PowerListDialog> {
         return;
       }
       int idxLine = coords!
-              .substring(0, END_POSITION_INDEX_LINE)
-              .toLowerCase()
-              .codeUnitAt(0) -
+          .substring(0, END_POSITION_INDEX_LINE)
+          .toLowerCase()
+          .codeUnitAt(0) -
           ASCII_CODE_SHIFT;
       int idxColumn =
-          int.parse(coords!.substring(END_POSITION_INDEX_LINE, coords!.length));
+      int.parse(coords!.substring(END_POSITION_INDEX_LINE, coords!.length));
       socketService.socket
           .emit('powerCardClick', [TRANFORM_EMPTY_TILE, '$idxLine-$idxColumn']);
       infoClientService.powerUsedForTurn = true;

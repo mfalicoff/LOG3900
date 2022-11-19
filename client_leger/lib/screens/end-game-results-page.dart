@@ -284,7 +284,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     void _getGameStartDate() {
-        timestamp = infoClientService.game.gameStart;
+        timestamp = infoClientService.game.gameStart.toString();
     }
 
     void _displayPlayingTime() {
@@ -333,15 +333,6 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                             ),
                                 ],
                             );
-                            // return Text("Nom: ${infoClientService.actualRoom.spectators[index].name}",
-                                    // style: const TextStyle(
-                                    //   color: Colors.black,
-                                    //   fontSize: 15,
-                                    //   fontWeight: FontWeight.normal,
-                                    //   fontFamily: "Times New Roman"
-                                    // ),
-                                    // textAlign: TextAlign.left,
-                            // );
                 }),
             );
         }

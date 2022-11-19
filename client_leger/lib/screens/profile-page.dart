@@ -31,8 +31,10 @@ class _ProfileStatePage extends State<ProfilePage> {
   final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
 
+
   refresh() async {
     setState(() {});
+
   }
 
   @override
