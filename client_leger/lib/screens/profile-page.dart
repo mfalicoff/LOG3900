@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:image_picker/image_picker.dart';
 import 'package:client_leger/utils/utils.dart';
+import '../services/chat-service.dart';
+import '../widget/chat_panel.dart';
 
 import '../env/environment.dart';
 
@@ -27,6 +29,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfileStatePage extends State<ProfilePage> {
   final Controller controller = Controller();
   final String? serverAddress = Environment().config?.serverURL;
+  ChatService chatService = ChatService();
 
   refresh() async {
     setState(() {});
@@ -34,7 +37,17 @@ class _ProfileStatePage extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Scaffold(
+      endDrawer: Drawer(
+          width: 600,
+          child: ChatPanel(
+            isInGame: false,
+          )),
+      onEndDrawerChanged: (isOpen) {
+        chatService.isDrawerOpen = isOpen;
+        chatService.notifyListeners();
+      },
+      body: Stack(
       children: <Widget>[
         Container(
             decoration: const BoxDecoration(
@@ -60,11 +73,25 @@ class _ProfileStatePage extends State<ProfilePage> {
                 child: Center(
                   child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 48,
-                        backgroundImage: MemoryImage(
-                            globals.userLoggedIn.getUriFromAvatar()),
-                      ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IconButton(
+                              onPressed: _goBackHomePage,
+                              icon: Icon(
+                                Icons.arrow_back,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            CircleAvatar(
+                              radius: 48,
+                              backgroundImage: MemoryImage(
+                                  globals.userLoggedIn.getUriFromAvatar()),
+                            ),
+                            const ChatPanelOpenButton(),
+                          ],
+                        ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -131,16 +158,22 @@ class _ProfileStatePage extends State<ProfilePage> {
                 ),
               ),
             )),
-      ],
+         ],
+    ),
     );
+  }
+
+  void _goBackHomePage() {
+    Navigator.pop(context);
   }
 
   Text returnRowTextElement(String textData) {
     return Text((textData),
         style: const TextStyle(
             color: Colors.black,
-            fontSize: 11,
-            decoration: TextDecoration.none));
+            fontSize: 13,
+            decoration: TextDecoration.none,
+            fontWeight: FontWeight.bold));
   }
 
   Column returnHistoryScrollView(String title, List<dynamic> history) {
@@ -152,8 +185,9 @@ class _ProfileStatePage extends State<ProfilePage> {
               Text(title,
                   style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 11,
-                      decoration: TextDecoration.none)),
+                      fontSize: 13,
+                      decoration: TextDecoration.none,
+                      fontWeight: FontWeight.bold)),
               Container(
                 decoration: BoxDecoration(border: Border.all()),
                 height: 280,
@@ -165,8 +199,9 @@ class _ProfileStatePage extends State<ProfilePage> {
                       return Text('\u2022 ${history[index]}',
                           style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 11,
-                              decoration: TextDecoration.none));
+                              fontSize: 13,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.bold));
                     }),
               )
             ],
@@ -185,8 +220,9 @@ class _ProfileStatePage extends State<ProfilePage> {
                         Text(title,
                             style: const TextStyle(
                             color: Colors.black,
-                            fontSize: 11,
-                            decoration: TextDecoration.none)),
+                            fontSize: 13,
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.bold)),
                         Container(
                             decoration: BoxDecoration(border: Border.all()),
                             height: 280,
@@ -199,8 +235,9 @@ class _ProfileStatePage extends State<ProfilePage> {
                                           Text('.Salle: ${widget.favouriteGames[index].roomName}',
                                               style: const TextStyle (
                                               color: Colors.black,
-                                              fontSize: 11,
-                                              decoration: TextDecoration.none)
+                                              fontSize: 13,
+                                              decoration: TextDecoration.none,
+                                              fontWeight: FontWeight.bold)
                                            ),
                                            _isThereSpectators(index),
                                             Column(
@@ -211,15 +248,17 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                     Text("Joueur : ${widget.favouriteGames[index].players[idx]}",
                                                         style: const TextStyle (
                                                         color: Colors.black,
-                                                        fontSize: 11,
-                                                        decoration: TextDecoration.none),
+                                                        fontSize: 13,
+                                                        decoration: TextDecoration.none,
+                                                        fontWeight: FontWeight.bold),
                                                         textAlign: TextAlign.center,
                                                     ),
                                                     Text("Score: ${widget.favouriteGames[index].scores[idx]}",
                                                         style: const TextStyle (
                                                         color: Colors.black,
-                                                        fontSize: 11,
-                                                        decoration: TextDecoration.none),
+                                                        fontSize: 13,
+                                                        decoration: TextDecoration.none,
+                                                        fontWeight: FontWeight.bold),
                                                         textAlign: TextAlign.center,
                                                     ),
                                                         ],
@@ -229,39 +268,45 @@ class _ProfileStatePage extends State<ProfilePage> {
                                           Text('.Gagnant de la partie: ${widget.favouriteGames[index].winners[0]}',
                                               style: const TextStyle (
                                                   color: Colors.black,
-                                                  fontSize: 11,
-                                                  decoration: TextDecoration.none)
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
                                           ),
                                           Text('.Nombre de lettres restantes dans la reserve: ${widget.favouriteGames[index].nbLetterReserve}',
                                               style: const TextStyle (
                                                   color: Colors.black,
-                                                  fontSize: 11,
-                                                  decoration: TextDecoration.none)
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
                                           ),
                                           Text('.Nombre de tours total: ${widget.favouriteGames[index].numberOfTurns}',
                                               style: const TextStyle (
                                                   color: Colors.black,
-                                                  fontSize: 11,
-                                                  decoration: TextDecoration.none)
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
                                           ),
                                           Text('.Duree de la partie (en minutes): ${widget.favouriteGames[index].playingTime}',
                                               style: const TextStyle (
                                                   color: Colors.black,
-                                                  fontSize: 11,
-                                                  decoration: TextDecoration.none)
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
                                           ),
                                           Text('.Date de creation de la salle: ${widget.favouriteGames[index].gameStartDate}',
                                               style: const TextStyle (
                                                   color: Colors.black,
-                                                  fontSize: 11,
-                                                  decoration: TextDecoration.none),
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center
                                           ),
                                           const Text('-------------------------------------------',
                                               style: TextStyle (
                                                   color: Colors.black,
-                                                  fontSize: 11,
-                                                  decoration: TextDecoration.none)
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
                                           ),
 
                                         ],
@@ -285,14 +330,16 @@ class _ProfileStatePage extends State<ProfilePage> {
                                             const Text('.Spectateurs de la partie: ',
                                               style: TextStyle (
                                               color: Colors.black,
-                                              fontSize: 11,
-                                              decoration: TextDecoration.none)
+                                              fontSize: 13,
+                                              decoration: TextDecoration.none,
+                                              fontWeight: FontWeight.bold)
                                            ),
                                     Text("Nom: ${widget.favouriteGames[index].spectators[idx]}",
                                 style: const TextStyle (
                                     color: Colors.black,
-                                    fontSize: 11,
-                                    decoration: TextDecoration.none),
+                                    fontSize: 13,
+                                    decoration: TextDecoration.none,
+                                    fontWeight: FontWeight.bold),
                                     ),
                                 ],
                             );
@@ -303,7 +350,7 @@ class _ProfileStatePage extends State<ProfilePage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [ Text("Il n'y a pas de spectateurs.", style: TextStyle (color: Colors.black, fontSize: 11, decoration: TextDecoration.none))],
+            children: const [ Text("Il n'y a pas de spectateurs.", style: TextStyle (color: Colors.black, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
         );
     }
 
