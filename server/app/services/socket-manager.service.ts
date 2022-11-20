@@ -742,6 +742,12 @@ export class SocketManager {
             oldVirtualPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(user.name));
             this.playAreaService.insertInMapIndex(idxPlayerLeaving, oldVirtualPlayer.name, oldVirtualPlayer, game.mapPlayers);
 
+            // in some cases if the creator left the game and there was a spectator there
+            // would be no creator so when joining the game we asset a new creator
+            if (!game.isSomeoneCreator()) {
+                game.setNewCreatorOfGame();
+            }
+
             socket.emit('isSpectator', false);
 
             for (const player of game.mapPlayers.values()) {
