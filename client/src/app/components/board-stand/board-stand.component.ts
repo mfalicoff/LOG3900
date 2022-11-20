@@ -135,6 +135,10 @@ export class BoardStandComponent implements AfterViewInit {
         // add event lisntener for mouse movement
         // bind the component with the function to get acess to the attributes and functions of this component
         document.getElementById('tmpTileCanvas')?.addEventListener('mousemove', this.handleMouseMove.bind(this), true);
+        // reset the variable of each service used for the placement
+        this.drawingBoardService.initDefaultVariables();
+        this.placeGraphicService.initDefaultVariables();
+        this.mouseKeyboardEventHandler.initDefaultVariables();
     }
 
     continueProcessingDrop() {

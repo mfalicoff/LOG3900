@@ -193,6 +193,10 @@ export class SocketService {
         this.socket.on('addSecsToTimer', (secsToAdd) => {
             this.timerService.addSecsToTimer(secsToAdd);
         });
+
+        this.socket.on('askTimerStatus', () => {
+            this.socket.emit('timerStatus', this.timerService.secondsValue);
+        });
     }
 
     private roomManipulationHandler() {
