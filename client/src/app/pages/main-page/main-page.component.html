@@ -1,18 +1,4 @@
 <div class="container justified">
-    <span 
-        *ngIf="infoClientService.soundDisabled" 
-        class="material-symbols-outlined"
-        (click)="infoClientService.soundDisabled = !infoClientService.soundDisabled"
-    >
-        volume_off
-    </span>
-    <span 
-        *ngIf="!infoClientService.soundDisabled" 
-        class="material-symbols-outlined"
-        (click)="infoClientService.soundDisabled = !infoClientService.soundDisabled"
-        >
-        volume_up
-    </span>
     <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" id="logoScrabble"/>
     <button mat-flat-button id="loginBtn" class="button"
             routerLink="/login">

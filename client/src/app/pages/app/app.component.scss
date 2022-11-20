@@ -12,7 +12,20 @@
 .backgroundGame {
     background-color: #0c483f;
 }
-  
+
+.material-symbols-outlined {
+    top: 2%;
+    right: 3%;
+    position: absolute;
+    font-size: 40px;
+    cursor: pointer;
+    user-select: none;
+    background-color: wheat;
+    color: #0c483f;
+    border-radius: 40px;
+    padding: 10px;
+}
+
 .grid-item {
     text-align: center;
     min-height: 100vh;
