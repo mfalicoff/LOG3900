@@ -18,7 +18,12 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     passwordText: string;
     actualPassword: string;
     roomNameClicked: string;
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private translate: TranslateService, private notifService: NotificationService) {}
+    constructor(
+        private socketService: SocketService,
+        public infoClientService: InfoClientService,
+        private translate: TranslateService,
+        private notifService: NotificationService,
+    ) {}
 
     ngAfterViewInit() {
         this.infoClientService.rooms = [];
