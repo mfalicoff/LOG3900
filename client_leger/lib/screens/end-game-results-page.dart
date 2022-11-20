@@ -159,7 +159,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                  Text("Durée de la partie (en minutes) : $playingTime",
+                  Text("Durée de jeu (en minutes) : $playingTime",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,

@@ -30,9 +30,9 @@
             </div>
             <li> Nombre de lettres restantes dans la réserve : {{infoClientService.game.nbLetterReserve}}</li>
             <li> Nombre de tours totoal: {{this.numberOfTurns}}</li>
-            <li> Duree de la partie (en minutes) : {{this.playingTime}}</li>
+            <li> Duree de jeu (en minutes) : {{this.playingTime}}</li>
             <li> Date du début de la partie (timestamp) : {{this.gameStartDate}}</li>
-            <li> Ajouter cette partie dans vos favoris ? : <button mat-flat-button class="button" (click)="addGameToFavourites()"> Ajouter dans Favoris </button></li>
+            <li> Ajouter cette partie dans vos favoris ? : <button mat-flat-button class="button" (click)="addGameToFavourites(); clicked=true" [disabled]="clicked"> <mat-icon> add </mat-icon> </button></li>
         </ul>
     </div>
     <div class="title-box">

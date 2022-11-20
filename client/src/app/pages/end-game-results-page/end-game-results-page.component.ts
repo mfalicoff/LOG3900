@@ -27,6 +27,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     gameSaved: GameSaved;
     openProfileSubscription: Subscription;
     newPlayersElo: Player[];
+    clicked = false;
 
     constructor(
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
