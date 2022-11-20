@@ -478,6 +478,8 @@ export class SocketManager {
         socket.on('saveGame', async (game: GameSaved) => {
             const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
             this.sio.to(savedGame.roomName + Constants.GAME_SUFFIX).emit('savedGameId', savedGame._id);
+            // eslint-disable-next-line no-console
+            console.log('Gamed saved! : ' + savedGame._id);
         });
     }
 
@@ -602,6 +604,7 @@ export class SocketManager {
             if (!createdGame) {
                 return;
             }
+            createdGame.gameStart = '';
 
             const players = Array.from(createdGame.mapPlayers.values());
             const spectators = Array.from(createdGame.mapSpectators.values());
@@ -617,7 +620,6 @@ export class SocketManager {
             await this.gameUpdateClients(createdGame);
 
             // emit to change page on client after verification
-            createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
 
@@ -773,6 +775,14 @@ export class SocketManager {
             if (!game) {
                 return;
             }
+            let display = 'Le ';
+            const timestamp = new Date();
+            const date = timestamp.toDateString();
+            const time = timestamp.toLocaleTimeString();
+            display += date;
+            display += ' à ';
+            display += time;
+            game.gameStart = display;
 
             if (game.mapPlayers.size >= Constants.MIN_PERSON_PLAYING && !game.gameStarted) {
                 // we give the server bc we can't include socketManager in those childs

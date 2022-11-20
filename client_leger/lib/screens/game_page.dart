@@ -116,6 +116,7 @@ class _GamePageState extends State<GamePage> {
                         notifyParent: refresh,
                       ),
                     ],
+
                     const SizedBox(
                       height: 5,
                     ),
