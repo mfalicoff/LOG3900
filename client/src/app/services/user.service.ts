@@ -177,6 +177,13 @@ export class UserService {
         return this.http.get<GameSaved[]>(environment.serverUrl + 'users/games/' + this.user._id, { observe: 'body' });
     }
 
+    getUserByName(playerName: string): Observable<UserResponseInterface> {
+        return this.http.get<UserResponseInterface>(`${this.serverUrl}users/${playerName}`, {
+            observe: 'body',
+            responseType: 'json',
+        });
+    }
+
     async updateLanguage(languageUpdated: string) {
         return this.http
             .put<UserResponseInterface>(

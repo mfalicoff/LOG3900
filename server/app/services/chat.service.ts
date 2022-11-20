@@ -2,10 +2,10 @@
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
+import { EndGameService } from '@app/services/end-game.service';
+import UserService from '@app/services/user.service';
 import { ValidationService } from '@app/services/validation.service';
 import { Service } from 'typedi';
-import UserService from '@app/services/user.service';
-import { EndGameService } from '@app/services/end-game.service';
 import { DEFAULT_VALUE_NUMBER } from '@app/classes/global-constants';
 import { ChatMessage } from '@app/classes/chat-message';
 import * as io from 'socket.io';
@@ -134,7 +134,6 @@ export class ChatService {
         if (didEveryonePass3Times) {
             this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
             await this.showEndGameStats(game /* , player*/);
-            player.passInARow = 0;
             game.gameFinished = true;
         }
     }

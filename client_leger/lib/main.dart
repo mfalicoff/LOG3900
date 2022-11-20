@@ -13,6 +13,7 @@ import 'env/environment.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+
   const String environment = String.fromEnvironment(
     'ENVIRONMENT',
     defaultValue: Environment.DEVEMU,

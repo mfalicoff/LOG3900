@@ -7,6 +7,7 @@ class TimerService with ChangeNotifier{
   num secondsValue = 0;
   num playingTime = 0;
   late Timer timerInterval = Timer(const Duration(milliseconds: 1), () {});
+  late Timer timerGame = Timer(const Duration(milliseconds: 1), () {});
 
   static final TimerService _timerService = TimerService._internal();
 
@@ -29,7 +30,6 @@ class TimerService with ChangeNotifier{
 
     timerInterval = Timer.periodic(Duration(milliseconds: oneSecond), (timer) {
       secondsValue--;
-      playingTime++;
 
       if (secondsValue >= 0) {
         if (secondsValue % secondsInMinute <= displayZero) {
@@ -42,6 +42,17 @@ class TimerService with ChangeNotifier{
       }
       notifyListeners();
     });
+  }
+  startGameTimer() {
+    int oneSecond = 1000;
+    playingTime = 0.0;
+    timerGame = Timer.periodic(Duration(milliseconds: oneSecond), (timer) {
+        playingTime++;
+    });
+ }
+
+  clearGameTimer() {
+    timerGame.cancel();
   }
 
   clearTimer() {
