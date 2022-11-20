@@ -5,6 +5,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { DrawingBoardService } from '@app/services/drawing-board-service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
+import { NotificationService } from '@app/services/notification.service';
 import { PlaceGraphicService } from '@app/services/place-graphic.service';
 import { SocketService } from '@app/services/socket.service';
 
@@ -36,6 +37,7 @@ export class BoardStandComponent implements AfterViewInit {
         private placeGraphicService: PlaceGraphicService,
         private socketService: SocketService,
         private infoClientService: InfoClientService,
+        private notifService: NotificationService,
     ) {}
 
     @HostListener('document:keydown.escape', ['$event'])
@@ -146,11 +148,11 @@ export class BoardStandComponent implements AfterViewInit {
             this.clickedTile = undefined;
             this.clickedTileIndex = new Vec2();
 
-            alert("Ce n'est plus votre tour de jouer !");
+            this.notifService.openSnackBar("Ce n'est plus votre tour de jouer !", false);
             return;
         }
         if (!this.allLetter(this.letterChoice)) {
-            alert('Votre choix doit être une lettre ! Veuillez réessayer.');
+            this.notifService.openSnackBar('Votre choix doit être une lettre ! Veuillez réessayer.', false);
             return;
         }
         if (!this.clickedTile || this.letterChoice === '') {

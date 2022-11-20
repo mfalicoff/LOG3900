@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';
 import { SocketService } from '@app/services/socket.service';
+import { NotificationService } from '@app/services/notification.service';
 
 @Component({
     selector: 'app-game-mode-options-page',
@@ -18,6 +19,7 @@ export class GameModeOptionsPageComponent {
         private http: HttpClient, 
         private router: Router, 
         private socketService: SocketService,
+        private notifService: NotificationService,
         public userService: UserService
     ) {
         this.socketService.socket.emit("getAllChatRooms");
@@ -55,9 +57,9 @@ export class GameModeOptionsPageComponent {
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            alert('Erreur: ' + error.status + error.error.message);
+            this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
         } else {
-            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
+            this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
         }
     }
     

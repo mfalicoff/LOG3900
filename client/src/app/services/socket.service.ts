@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
+import { NotificationService } from './notification.service';
 import { PlaceGraphicService } from './place-graphic.service';
 import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
@@ -36,6 +37,7 @@ export class SocketService {
         private rankedService: RankedService,
         private drawingService: DrawingService,
         private placeGraphicService: PlaceGraphicService,
+        private notifService: NotificationService,
     ) {
         this.socket = io(this.urlString);
         this.gameFinished = new BehaviorSubject(this.infoClientService.game.gameFinished);
@@ -271,7 +273,7 @@ export class SocketService {
         });
 
         this.socket.on('messageServer', (message) => {
-            alert(message);
+            this.notifService.openSnackBar(message, false);
         });
 
         this.socket.on('SendDictionariesToClient', (dictionaries: MockDict[]) => {
@@ -283,7 +285,7 @@ export class SocketService {
         });
 
         this.socket.on('DictionaryDeletedMessage', (message: string) => {
-            alert(message);
+            this.notifService.openSnackBar(message, false);
         });
 
         this.socket.on('SendBeginnerVPNamesToClient', (namesVP: NameVP[]) => {

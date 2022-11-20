@@ -5,6 +5,7 @@ import { GalleryComponent } from '@app/components/gallery/gallery.component';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import * as Constants from '@app/classes/global-constants';
+import { NotificationService } from '@app/services/notification.service';
 
 @Component({
     selector: 'app-join-chatroom-modal',
@@ -17,7 +18,12 @@ export class JoinChatRoomModalComponent {
     roomsFound: ChatRoom[] = [];
     roomName = '';
 
-    constructor(private dialog: MatDialog, private socketService: SocketService, private infoClientService: InfoClientService) {
+    constructor(
+        private dialog: MatDialog,
+        private socketService: SocketService,
+        private infoClientService: InfoClientService,
+        private notifService: NotificationService,
+    ) {
         socketService.socket.on('getChatRoomsNames', (roomsFound) => {
             this.roomsFound = roomsFound;
             // removing the rooms where the client is already in them
@@ -44,6 +50,6 @@ export class JoinChatRoomModalComponent {
         if (idxRoom !== Constants.DEFAULT_VALUE_NUMBER) {
             this.roomsFound.splice(idxRoom, 1);
         }
-        alert('Vous avez rejoins la salle: ' + chatRoomName);
+        this.notifService.openSnackBar('Vous avez rejoins la salle: ' + chatRoomName, true);
     }
 }
