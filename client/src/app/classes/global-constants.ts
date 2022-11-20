@@ -63,11 +63,6 @@ export const TIME_PER_ROUND_DEFAULT = 1000;
 export const LEFT_CLICK = 0;
 export const RIGHT_CLICK = 2;
 
-/// ///OBJECTIVE CONSTANTS///////
-export const FAILED_OBJECTIVE = 'failed';
-export const COMPLETED_OBJECTIVE = 'completed';
-export const UNCOMPLETED_OBJECTIVE = 'uncompleted';
-
 // GAME MODE CONSTANTS
 export const MODE_RANKED = 'Ranked';
 export const POWER_CARDS_MODE = 'power-cards';

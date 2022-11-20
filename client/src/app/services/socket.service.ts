@@ -284,16 +284,8 @@ export class SocketService {
             this.infoClientService.dictionaries = dictionaries;
         });
 
-        this.socket.on('DictionaryDeletedMessage', (message: string) => {
-            this.notifService.openSnackBar(message, false);
-        });
-
         this.socket.on('SendBeginnerVPNamesToClient', (namesVP: NameVP[]) => {
             this.infoClientService.nameVPBeginner = namesVP;
-        });
-
-        this.socket.on('SendExpertVPNamesToClient', (namesVP: NameVP[]) => {
-            this.infoClientService.nameVPExpert = namesVP;
         });
 
         this.socket.on('isSpectator', (isSpectator) => {

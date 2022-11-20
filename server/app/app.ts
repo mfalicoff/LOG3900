@@ -1,5 +1,4 @@
 import { HttpException } from '@app/classes/http.exception';
-import { DictionariesController } from '@app/controllers/dictionnaries.controller';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as express from 'express';
@@ -22,7 +21,7 @@ export class Application {
     private readonly internalError: number = StatusCodes.INTERNAL_SERVER_ERROR;
     private readonly swaggerOptions: swaggerJSDoc.Options;
 
-    constructor(private dictionariesController: DictionariesController) {
+    constructor() {
         this.app = express();
 
         this.swaggerOptions = {
@@ -42,7 +41,6 @@ export class Application {
     }
 
     bindRoutes(routes: Routes[]): void {
-        this.app.use('/admin', this.dictionariesController.router);
         routes.forEach((route) => {
             this.app.use('/', route.router);
         });
