@@ -103,6 +103,11 @@ class _ChatPanelState extends State<ChatPanel> {
         gameChat.chatHistory = infoClientService.player.chatHistory;
         chatService.rooms.insert(0, gameChat);
       }
+    } else {
+      if(!widget.isInGame && chatService.rooms[0].name == 'game') {
+        chatService.rooms.removeAt(0);
+        chatService.currentChatRoom = chatService.rooms[0];
+      }
     }
     infoClientService.addListener(refresh);
     chatService.addListener(refresh);
@@ -119,7 +124,7 @@ class _ChatPanelState extends State<ChatPanel> {
   void refresh() {
     if (mounted) {
       setState(() {
-        if (widget.isInGame) {
+        if (widget.isInGame && chatService.rooms[0].name == 'game') {
           if (infoClientService.isSpectator) {
             var idxSpectator = infoClientService.actualRoom.spectators
                 .indexWhere(

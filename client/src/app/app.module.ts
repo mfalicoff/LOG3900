@@ -24,9 +24,7 @@ import { RankedMatchmakingPageComponent } from '@app/pages/ranked-matchmaking-pa
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { UserHistoryComponent } from './components/user-history/user-history.component';
-import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { GameModeOptionsPageComponent } from './pages/game-mode-options-page/game-mode-options-page.component';
-import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ModalComponent } from './pages/modal/modal.component';
 import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
@@ -58,8 +56,6 @@ import { ConfirmWindowComponent } from './components/confirm-window/confirm-wind
         CommunicationBoxComponent,
         TimerComponent,
         InfoPanelComponent,
-        LeaderboardPageComponent,
-        AdminPageComponent,
         ModalComponent,
         LoginPageComponent,
         GameModeOptionsPageComponent,
