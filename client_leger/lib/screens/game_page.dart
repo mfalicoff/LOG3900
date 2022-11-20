@@ -428,7 +428,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                         "Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer ${3 - infoClientService.player.nbValidWordPlaced} mot(s) valide(s) sur le plateau.",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: 11,
+                            fontSize: 15,
                             decoration: TextDecoration.none)),
                   ],
                   Container(
@@ -855,6 +855,7 @@ class _PowerListDialog extends State<PowerListDialog> {
             ));
           } else {
             socketService.socket.emit('powerCardClick', [powerCardName, '']);
+            infoClientService.powerUsedForTurn = true;
           }
           Navigator.pop(context);
           break;
