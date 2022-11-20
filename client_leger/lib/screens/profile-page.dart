@@ -234,7 +234,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                 itemBuilder: (BuildContext context, int index) {
                                     return Column(
                                         children: [
-                                          Text('.Salle: ${widget.favouriteGames[index].roomName}',
+                                          Text('Salle: ${widget.favouriteGames[index].roomName}',
                                               style: const TextStyle (
                                               color: Colors.black,
                                               fontSize: 13,
@@ -267,35 +267,35 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                     );
                                                 })
                                             ),
-                                          Text('.Gagnant de la partie: ${widget.favouriteGames[index].winners[0]}',
+                                          Text('Gagnant de la partie: ${widget.favouriteGames[index].winners[0]}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
-                                          Text('.Nombre de lettres restantes dans la reserve: ${widget.favouriteGames[index].nbLetterReserve}',
+                                          Text('Nombre de lettres restantes dans la reserve: ${widget.favouriteGames[index].nbLetterReserve}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
-                                          Text('.Nombre de tours total: ${widget.favouriteGames[index].numberOfTurns}',
+                                          Text('Nombre de tours total: ${widget.favouriteGames[index].numberOfTurns}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
-                                          Text('.Duree de la partie (en minutes): ${widget.favouriteGames[index].playingTime}',
+                                          Text('Duree de la partie (en minutes): ${widget.favouriteGames[index].playingTime}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
-                                          Text('.Date de creation de la salle: ${widget.favouriteGames[index].gameStartDate}',
+                                          Text('Date de creation de la salle: ${widget.favouriteGames[index].gameStartDate}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
@@ -329,7 +329,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                 children: List.generate(widget.favouriteGames[index].spectators.length, (idx) {
                             return Column(
                                 children: [
-                                            const Text('.Spectateurs de la partie: ',
+                                            const Text('Spectateurs de la partie: ',
                                               style: TextStyle (
                                               color: Colors.black,
                                               fontSize: 13,
