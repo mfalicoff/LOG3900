@@ -6,6 +6,7 @@ import 'package:client_leger/screens/search_page.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
+import 'package:client_leger/services/tapService.dart';
 import '../constants/constants.dart';
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final Controller controller = Controller();
   final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
+  final TapService tapService = TapService();
   late List<GameSaved> games = [];
   final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
@@ -174,6 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toGameListPage() {
+    tapService.initDefaultVariables();
     Navigator.pushNamed(context, "/game-list");
   }
 

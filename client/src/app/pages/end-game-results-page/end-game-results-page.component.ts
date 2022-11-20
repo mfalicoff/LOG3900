@@ -7,6 +7,7 @@ import { Player } from '@app/classes/player';
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { EloChangeService } from '@app/services/elo-change.service';
 import { InfoClientService } from '@app/services/info-client.service';
+import { NotificationService } from '@app/services/notification.service';
 import { SocketService } from '@app/services/socket.service';
 import { TimerService } from '@app/services/timer.service';
 import { UserService } from '@app/services/user.service';
@@ -35,6 +36,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         private eloChangeService: EloChangeService,
         private socketService: SocketService,
+        private notifService: NotificationService,
         private timerService: TimerService,
     ) {}
 
@@ -73,9 +75,9 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
             },
             error: (error: HttpErrorResponse) => {
                 if (error.error instanceof ErrorEvent) {
-                    alert('Erreur: ' + error.status + error.error.message);
+                    this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
                 } else {
-                    alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
+                    this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`, false);
                 }
             },
         });
