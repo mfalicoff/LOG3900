@@ -517,9 +517,6 @@ export class SocketManager {
         // set by the creator of the game
         if (gameMode === Constants.POWER_CARDS_MODE) {
             this.powerCardsService.initPowerCards(newGame, activatedPowers);
-
-            // TODO VERY IMPORTANT REMOVE THAT LATER THIS IS ONLY FOR TESTING PURPOSES
-            this.powerCardsService.givePowerToPlayers(newGame);
         }
 
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
@@ -1069,6 +1066,10 @@ export class SocketManager {
                 return;
             }
             const chatRoom = await this.chatRoomService.createChatRoom(dbUser.id, chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
             socket.emit('setChatRoom', chatRoom);
         });
 
