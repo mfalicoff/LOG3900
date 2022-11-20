@@ -5,7 +5,6 @@ import { SocketService } from '@app/services/socket.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EndGameResultsPageComponent } from '@app/pages/end-game-results-page/end-game-results-page.component';
 import { Subscription } from 'rxjs';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-game-page',
@@ -20,7 +19,6 @@ export class GamePageComponent implements OnInit, OnDestroy {
         private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
         public infoClientService: InfoClientService,
         private dialog: MatDialog,
-        private translate: TranslateService,
     ) {}
 
     ngOnInit() {
