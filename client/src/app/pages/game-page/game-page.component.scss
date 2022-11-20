@@ -19,12 +19,25 @@
     float: left;
 }
 
+.material-symbols-outlined {
+    top: 2%;
+    right: 3%;
+    position: absolute;
+    font-size: 40px;
+    cursor: pointer;
+    user-select: none;
+    background-color: wheat;
+    color: #0c483f;
+    border-radius: 40px;
+    padding: 10px;
+  }
+
 body {
     background-color: #0c483f;
 }
 
 #playersInfoNoLog{
-    margin-top: 13%;
+    margin-top: 3%;
     margin-right: 6%;
     margin-bottom: 0px;
 }

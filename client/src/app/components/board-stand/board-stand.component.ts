@@ -20,12 +20,16 @@ export class BoardStandComponent implements AfterViewInit {
     tmpTileCanvas: CanvasRenderingContext2D;
     playAreaConvasSize: Vec2 = { x: Constants.DEFAULT_WIDTH_PLAY_AREA, y: Constants.DEFAULT_WIDTH_PLAY_AREA };
     isMouseDown: boolean = false;
+    savedCoordsClick: Vec2 = { x: 0, y: 0 };
     clickedTile: Tile | undefined;
     // used to keep track of the original position of the tile when taken from board
     clickedTileIndex: Vec2 = new Vec2();
     // buffer used to reduce the number of emit to the server
     bufferMouseEvent: number = 0;
     lastBoardIndexsHover: Vec2 = new Vec2();
+    displayLetterChoiceModal: string;
+    letterChoice: string = '';
+
     constructor(
         private drawingBoardService: DrawingBoardService,
         private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
@@ -84,7 +88,14 @@ export class BoardStandComponent implements AfterViewInit {
             // if we have a tile selected we process it
             if (this.clickedTile && this.clickedTile?.letter.value !== '' && this.placeGraphicService.drapDropEnabled()) {
                 if (this.placeGraphicService.tileClickedFromStand) {
-                    this.mouseKeyboardEventHandler.onStandToBoardDrop(coordsClick, this.clickedTile);
+                    // if the tile from the stand is a star we display the modal to ask for which letter to use
+                    // we save the coords of the click and return
+                    if (this.clickedTile.letter.value === '*') {
+                        this.savedCoordsClick = coordsClick;
+                        this.displayLetterChoiceModal = 'block';
+                        return;
+                    }
+                    this.mouseKeyboardEventHandler.onStandToBoardDrop(coordsClick, this.clickedTile, this.letterChoice);
                 } else {
                     this.mouseKeyboardEventHandler.onBoardToBoardDrop(coordsClick, this.clickedTile);
                 }
@@ -109,8 +120,12 @@ export class BoardStandComponent implements AfterViewInit {
                 }
             }
         }
-        this.clickedTile = undefined;
-        this.clickedTileIndex = new Vec2();
+
+        // if the modal to choose the letter is open we don't reset the variables
+        if (this.displayLetterChoiceModal !== 'block') {
+            this.clickedTile = undefined;
+            this.clickedTileIndex = new Vec2();
+        }
     }
 
     ngAfterViewInit(): void {
@@ -120,6 +135,36 @@ export class BoardStandComponent implements AfterViewInit {
         // add event lisntener for mouse movement
         // bind the component with the function to get acess to the attributes and functions of this component
         document.getElementById('tmpTileCanvas')?.addEventListener('mousemove', this.handleMouseMove.bind(this), true);
+    }
+
+    continueProcessingDrop() {
+        if (!this.infoClientService.isTurnOurs) {
+            this.clickedTile = undefined;
+            this.clickedTileIndex = new Vec2();
+
+            alert("Ce n'est plus votre tour de jouer !");
+            return;
+        }
+        if (!this.allLetter(this.letterChoice)) {
+            alert('Votre choix doit être une lettre ! Veuillez réessayer.');
+            return;
+        }
+        if (!this.clickedTile || this.letterChoice === '') {
+            return;
+        }
+
+        this.mouseKeyboardEventHandler.onStandToBoardDrop(this.savedCoordsClick, this.clickedTile, this.letterChoice);
+        this.displayLetterChoiceModal = 'none';
+        this.letterChoice = '';
+    }
+
+    private allLetter(txt: string): boolean {
+        const letters = /^[A-Za-z]+$/;
+        if (txt.match(letters)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private handleMouseMove(event: MouseEvent) {

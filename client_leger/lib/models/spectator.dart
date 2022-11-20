@@ -1,33 +1,30 @@
+import 'package:client_leger/models/chat.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'command.dart';
 
 class Spectator with ChangeNotifier{
   String socketId = '';
   late String name;
-  List<Command> chatHistory = [];
+  List<ChatMessage> chatHistory = [];
 
   Spectator({required this.name});
 
   Spectator.fromJson(Map parsed) {
+    name = parsed["name"];
+    socketId = parsed["socketId"];
+    var chatH = parsed["chatHistory"];
+    for(var chatMsg in chatH){
+      chatHistory.add(ChatMessage.fromJson(chatMsg));
+    }
     notifyListeners();
-
   }
 
   static List<Spectator> createSpectatorsFromArray(Map parsed){
-    // var mapPlayers = parsed["players"];
-    // List<Player> newPlayers = [];
-    // for(var mapPlayer in mapPlayers){
-    //   Player player = Player.fromJson(mapPlayer);
-    //   // if(player.isCreatorOfGame) roomCreator = player.name;
-    //   // if(player.idPlayer == "virtualPlayer") {
-    //   //   numberVirtualPlayer++;
-    //   // } else {
-    //   //   numberRealPlayer++;
-    //   // }
-    //   newPlayers.add(player);
-    // }
-    return <Spectator>[];
-
+    var mapSpecs = parsed["spectators"];
+    List<Spectator> newSpecs = [];
+    for(var specElement in mapSpecs){
+      Spectator spec = Spectator.fromJson(specElement);
+      newSpecs.add(spec);
+    }
+    return newSpecs;
   }
 }

@@ -2,6 +2,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { Avatar } from '@app/classes/avatar.interface';
 import { GalleryComponent } from '@app/components/gallery/gallery.component';
+import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import { UserService } from '@app/services/user.service';
 import { environment } from 'src/environments/environment';
@@ -36,7 +37,7 @@ export class LoginPageComponent {
     serverUrl = environment.serverUrl;
     avatars: Avatar[] = [];
 
-    constructor(private userService: UserService, private socketService: SocketService) {}
+    constructor(private userService: UserService, private socketService: SocketService, public infoClientService: InfoClientService) {}
 
     onSubmit(): void {
         if (this.showSignup) {

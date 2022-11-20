@@ -42,6 +42,7 @@ export class ParametresSelectionPageComponent implements OnInit {
             title: 'Dictionnaire français par défaut',
             description: 'Ce dictionnaire contient environ trente mille mots français',
         };
+        this.socketService.socket.emit('ReSendDictionariesToClient');
     }
 
     onClickTime(interval: string) {

@@ -31,6 +31,7 @@ export class SidebarComponent {
         if (!resultLeave) {
             return;
         }
+        this.socketService.count = 1;
         this.socketService.socket.emit('giveUpGame');
         this.router.navigate(['/game-mode-options']);
     }
@@ -61,9 +62,11 @@ export class SidebarComponent {
 
     leaveGame() {
         if (this.infoClientService.game.gameMode === 'Ranked' && this.infoClientService.game.gameFinished) {
+            this.socketService.count = 1;
             this.socketService.socket.emit('leaveRankedGame', this.infoClientService.player);
         }
         this.socketService.socket.emit('leaveGame');
+        this.socketService.count = 1;
     }
 
     startGame() {

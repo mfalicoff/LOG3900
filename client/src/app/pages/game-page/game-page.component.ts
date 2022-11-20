@@ -40,6 +40,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
             }
         });
         this.socketSubscription = this.socketService.gameFinished.subscribe((value) => {
+            // eslint-disable-next-line no-constant-condition
             if (value) {
                 this.dialog.open(EndGameResultsPageComponent, {
                     panelClass: 'matDialogWheat',
@@ -54,8 +55,8 @@ export class GamePageComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.socketService.gameFinished.next(false);
+        if (this.socketSubscription) this.socketSubscription.unsubscribe();
         this.routerSubscription.unsubscribe();
-        this.socketSubscription.unsubscribe();
     }
 
     onLeftClickGamePage() {

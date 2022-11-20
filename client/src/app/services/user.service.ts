@@ -171,6 +171,13 @@ export class UserService {
         return this.http.get<GameSaved[]>(environment.serverUrl + 'users/games/' + this.user._id, { observe: 'body' });
     }
 
+    getUserByName(playerName: string): Observable<UserResponseInterface> {
+        return this.http.get<UserResponseInterface>(`${this.serverUrl}users/${playerName}`, {
+            observe: 'body',
+            responseType: 'json',
+        });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse, socket?: Socket, email?: string, password?: string) {
         if (error.error instanceof ErrorEvent) {
             alert('Erreur: ' + error.status + error.error.message);

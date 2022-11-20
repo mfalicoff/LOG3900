@@ -1,3 +1,4 @@
+import { ChatMessage } from '@app/classes/chat-message';
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
@@ -22,23 +23,19 @@ export class CommunicationBoxService {
     ) {}
 
     // function that shows the content of the input, place it in the array of message then delte the input field
-    onEnterPlayer(game: GameServer, player: Player, input: string): boolean {
+    async onEnterPlayer(game: GameServer, player: Player, input: string): Promise<boolean> {
         const dataSeparated = input.split(' ');
 
         // checking if msg is a command of not
         // we don't want commands until the game is started
         if (dataSeparated[0][0] === '!' && !game.gameStarted) {
-            player?.chatHistory.push({
-                message: Constants.GAME_NOT_STARTED,
-                isCommand: false,
-                sender: 'S',
-            });
+            player?.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.GAME_NOT_STARTED));
             return false;
         }
 
         switch (dataSeparated[0]) {
             case '!placer': {
-                if (!this.chatService.sendMessage(input, game, player)) {
+                if (!(await this.chatService.sendMessage(input, game, player))) {
                     // if there is a problem with the message we the letters to the stand
                     // and delete them from the board
                     const letterNotWellUsed = this.boardService.rmTempTiles(game);
@@ -63,11 +60,7 @@ export class CommunicationBoxService {
                         if (playerElem.name === player.name) {
                             // poping the msg "Vous avez placé vos lettres"
                             playerElem.chatHistory.pop();
-                            playerElem.chatHistory.push({
-                                message: Constants.WORD_DOESNT_EXIST,
-                                isCommand: false,
-                                sender: 'S',
-                            });
+                            player?.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.WORD_DOESNT_EXIST));
                         }
                     }
 
@@ -86,18 +79,14 @@ export class CommunicationBoxService {
                             if (playerElem.name === player.name) {
                                 continue;
                             }
-                            playerElem.chatHistory.push({
-                                message: 'Le joueur ' + player.name + Constants.PLAYER_TRIED_A_WORD,
-                                isCommand: false,
-                                sender: 'S',
-                            });
+                            player?.chatHistory.push(
+                                new ChatMessage(Constants.SYSTEM_SENDER, 'Le joueur ' + player.name + Constants.PLAYER_TRIED_A_WORD),
+                            );
                         }
                         for (const spectator of game.mapSpectators.values()) {
-                            spectator.chatHistory.push({
-                                message: 'Le joueur ' + player.name + Constants.PLAYER_TRIED_A_WORD,
-                                isCommand: false,
-                                sender: 'S',
-                            });
+                            spectator.chatHistory.push(
+                                new ChatMessage(Constants.SYSTEM_SENDER, 'Le joueur ' + player.name + Constants.PLAYER_TRIED_A_WORD),
+                            );
                         }
                         // remove the word from the board bc it isn't valid
                         this.putLogicService.boardLogicRemove(game, dataSeparated[1], dataSeparated[2]);
@@ -113,7 +102,7 @@ export class CommunicationBoxService {
                 break;
             }
             case '!échanger': {
-                if (this.chatService.sendMessage(input, game, player)) {
+                if (await this.chatService.sendMessage(input, game, player)) {
                     this.putLogicService.computeWordToExchange(game, player, dataSeparated[1]);
                     // We change the turn
                     this.playAreaService.changePlayer(game);
@@ -121,32 +110,27 @@ export class CommunicationBoxService {
                 break;
             }
             case '!passer': {
-                if (this.chatService.sendMessage(input, game, player)) {
+                if (await this.chatService.sendMessage(input, game, player)) {
                     // We change the turn
                     this.playAreaService.changePlayer(game);
                 }
                 break;
             }
             case '!reserve': {
-                if (this.chatService.sendMessage(input, game, player) && player.debugOn) {
+                if ((await this.chatService.sendMessage(input, game, player)) && player.debugOn) {
                     this.chatService.printReserveStatus(game, player);
                 }
                 break;
             }
             default: {
-                this.chatService.sendMessage(input, game, player);
+                await this.chatService.sendMessage(input, game, player);
             }
         }
         return true;
     }
-    onEnterSpectator(game: GameServer, spec: Spectator, input: string) {
+    async onEnterSpectator(game: GameServer, spec: Spectator, input: string) {
         if (this.chatService.validator.entryIsTooLong(input)) {
-            // verify the length of the command
-            spec.chatHistory.push({
-                message: Constants.INVALID_LENGTH,
-                isCommand: false,
-                sender: 'S',
-            });
+            spec.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, Constants.INVALID_LENGTH));
             return;
         }
         this.chatService.pushMsgToAllPlayers(game, spec.name, input, false, 'P');

@@ -1,4 +1,18 @@
 <body (click)="onLeftClickGamePage()">
+    <span 
+        *ngIf="infoClientService.soundDisabled" 
+        class="material-symbols-outlined"
+        (click)="infoClientService.soundDisabled = !infoClientService.soundDisabled"
+    >
+        volume_off
+    </span>
+    <span 
+        *ngIf="!infoClientService.soundDisabled" 
+        class="material-symbols-outlined"
+        (click)="infoClientService.soundDisabled = !infoClientService.soundDisabled"
+        >
+        volume_up
+    </span>
     <div class="container">
         <app-sidebar></app-sidebar>
         <section class="play-area-container">
@@ -9,7 +23,8 @@
                 <app-info-panel></app-info-panel>
             </div>
             <div id="communicationBoxNoLog">
-                <app-communication-box></app-communication-box>
+                <!-- <app-communication-box></app-communication-box> -->
+                <app-communication-dashboard isInGame="true"></app-communication-dashboard>
             </div>
 
         </div>

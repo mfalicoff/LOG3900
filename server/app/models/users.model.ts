@@ -57,6 +57,12 @@ const userSchema: Schema = new Schema({
         type: [String],
         required: true,
     },
+    chatRooms: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Chatroom',
+        },
+    ],
 });
 
 const userModel = model<User & Document>('User', userSchema);

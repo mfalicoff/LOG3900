@@ -10,6 +10,7 @@ export class TimerService {
     playingTime: number = 0.0;
     private timerInterval: NodeJS.Timeout;
     private timerMatchmaking: NodeJS.Timeout;
+    private timerGame: NodeJS.Timeout;
 
     startTimer(minutesByTurn: number) {
         if (minutesByTurn < 0) {
@@ -23,7 +24,6 @@ export class TimerService {
         const oneSecond = 1000;
         this.timerInterval = setInterval(() => {
             this.secondsValue--;
-            this.playingTime++;
             if (this.secondsValue >= 0) {
                 if (this.secondsValue % secondsInMinute <= displayZero) {
                     this.displayTimer = `Temps Restant : ${Math.floor(this.secondsValue / secondsInMinute)}:0${this.secondsValue % secondsInMinute}`;
@@ -39,6 +39,7 @@ export class TimerService {
         const secondsInMinute = 60;
         const displayZero = 9;
         const oneSecond = 1000;
+        // this.playingTime++;
         this.timerMatchmaking = setInterval(() => {
             this.matchmakingSecondsValue++;
             if (this.matchmakingSecondsValue % secondsInMinute <= displayZero) {
@@ -53,11 +54,22 @@ export class TimerService {
         }, oneSecond);
     }
 
+    startGameTimer() {
+        this.playingTime = 0.0;
+        const oneSecond = 1000;
+        this.timerGame = setInterval(() => {
+            this.playingTime++;
+        }, oneSecond);
+    }
+
     clearTimer() {
         clearInterval(this.timerInterval);
     }
     clearMatchmakingTimer() {
         clearInterval(this.timerMatchmaking);
+    }
+    clearGameTimer() {
+        clearInterval(this.timerGame);
     }
     addSecsToTimer(secs: number) {
         this.secondsValue += secs;

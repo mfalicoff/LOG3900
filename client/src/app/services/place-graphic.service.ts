@@ -39,7 +39,7 @@ export class PlaceGraphicService {
         keyEntered = keyEntered.normalize('NFD').replace(/\p{Diacritic}/gu, '');
         switch (keyEntered) {
             case 'Enter': {
-                if (!this.drawingBoardService.lettersDrawn) {
+                if (!this.drawingBoardService.lettersDrawn || this.drawingBoardService.lettersDrawn === '') {
                     return;
                 }
 
@@ -239,6 +239,8 @@ export class PlaceGraphicService {
                 i--;
             }
         }
+        this.startLettersPlacedPosX = this.drawingBoardService.coordsLettersDrawn[0].x;
+        this.startLettersPlacedPosY = this.drawingBoardService.coordsLettersDrawn[0].y;
     }
 
     private createPlaceMessage(): string {

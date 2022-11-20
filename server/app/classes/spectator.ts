@@ -1,9 +1,9 @@
-import { Command } from './command';
+import { ChatMessage } from './chat-message';
 
 export class Spectator {
     socketId: string;
     name: string;
-    chatHistory: Command[];
+    chatHistory: ChatMessage[];
 
     constructor(nameSpectator: string) {
         this.name = nameSpectator;
