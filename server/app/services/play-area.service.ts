@@ -12,6 +12,7 @@ import { VirtualPlayerService } from './virtual-player.service';
 import AvatarService from '@app/services/avatar.service';
 import { PowerCardsService } from './power-cards.service';
 import { ChatMessage } from '@app/classes/chat-message';
+import { TranslateService } from '@app/services/translate.service';
 
 @Service()
 export class PlayAreaService {
@@ -25,6 +26,7 @@ export class PlayAreaService {
         private databaseService: DatabaseService,
         private boardService: BoardService,
         private powerCardService: PowerCardsService,
+        private translateService: TranslateService,
     ) {
         this.sio = new io.Server();
     }
@@ -53,14 +55,13 @@ export class PlayAreaService {
                 // we go to the next player that was supposed to play
                 game.idxPlayerPlaying = (game.idxPlayerPlaying + 1) % game.mapPlayers.size;
                 // we send a message to everyone in the room to tell that someone used a powerCard
-                this.sendMsgToAllInRoom(
-                    game,
-                    'Le joueur ' +
-                        playerThatJustPlayed.name +
-                        ' a utilisé une carte pouvoir et le tour de ' +
-                        Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name +
-                        ' a été sauté.',
-                );
+                this.sendMsgToAllInRoomWithTranslation(game, [
+                    'THE_PLAYER',
+                    playerThatJustPlayed.name,
+                    'HAS_USED',
+                    Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
+                    'HAS_BEEN_JUMPED',
+                ]);
             }
         }
         // is the game is finished we stop the game
@@ -140,8 +141,8 @@ export class PlayAreaService {
     // function that transforms the playerThatLeaves into a virtual player
     async replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
         // we send to everyone that the player has left and has been replaced by a bot
-        this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
-        this.sendMsgToAllInRoom(game, Constants.REPLACEMENT_BY_BOT);
+        this.sendMsgToAllInRoomWithTranslation(game, ['THE_PLAYER', playerThatLeaves?.name, message]);
+        this.sendMsgToAllInRoomWithTranslation(game, ['REPLACEMENT_BY_BOT']);
 
         // we get the index of the person leaving to replace him at the same index later
         const idxPlayerLeaving = Array.from(game.mapPlayers.values()).findIndex((player) => player.name === playerThatLeaves.name);
@@ -178,6 +179,33 @@ export class PlayAreaService {
         }
         for (const spectator of game.mapSpectators.values()) {
             spectator.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, message));
+        }
+    }
+
+    sendMsgToAllInRoomWithTranslation(game: GameServer, message: string[]) {
+        for (const player of game.mapPlayers.values()) {
+            let fullMessage = '';
+            message.forEach((element) => {
+                const value = this.translateService.translateMessage(player.name, element);
+                if (value !== '') {
+                    fullMessage += value;
+                } else {
+                    fullMessage += element;
+                }
+            });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, fullMessage));
+        }
+        for (const spectator of game.mapSpectators.values()) {
+            let fullMessage = '';
+            message.forEach((element) => {
+                const value = this.translateService.translateMessage(spectator.name, element);
+                if (value !== '') {
+                    fullMessage += value;
+                } else {
+                    fullMessage += element;
+                }
+            });
+            spectator.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, fullMessage));
         }
     }
 
@@ -256,7 +284,7 @@ export class PlayAreaService {
             game.reduceEnnemyNbTurn--;
 
             // we send a message to everyone in the room to tell that someone used a powerCard
-            this.sendMsgToAllInRoom(game, "Le temps est divisé par deux due à l'utilisation d'une carte de pouvoir !");
+            this.sendMsgToAllInRoomWithTranslation(game, ['POWER9']);
         } else {
             this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('startClearTimer', {
                 minutesByTurn: game.minutesByTurn,

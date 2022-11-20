@@ -30,6 +30,7 @@ import { PlayAreaService } from './play-area.service';
 import { PowerCardsService } from './power-cards.service';
 import { PutLogicService } from './put-logic.service';
 import { StandService } from './stand.service';
+import { TranslateService } from '@app/services/translate.service';
 
 @Service()
 export class SocketManager {
@@ -59,6 +60,7 @@ export class SocketManager {
         private powerCardsService: PowerCardsService,
         private letterBankService: LetterBankService,
         private chatRoomService: ChatRoomService,
+        private translateService: TranslateService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -95,6 +97,7 @@ export class SocketManager {
         if (!user) {
             return;
         }
+        placeMsg = this.translateService.translateCommandFromPlayer(user.name, placeMsg);
         const game = this.rooms.get(user.roomName);
         if (!game) {
             return;
@@ -576,8 +579,12 @@ export class SocketManager {
     }
 
     private clientAndRoomHandler(socket: io.Socket) {
-        socket.on('new-user', (name) => {
+        socket.on('new-user', async (name) => {
             this.users.set(socket.id, { name, roomName: '', elo: 2000 });
+            const user = await this.userService.findUserByName(name);
+            if (user.language) {
+                this.translateService.addUser(user.name, user.language);
+            }
         });
 
         socket.on('forceLogout', (name) => {
@@ -750,7 +757,12 @@ export class SocketManager {
             socket.emit('isSpectator', false);
 
             for (const player of game.mapPlayers.values()) {
-                player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, user.name + Constants.REPLACEMENT_BY_PLAYER + oldVPName + '.'));
+                player.chatHistory.push(
+                    new ChatMessage(
+                        Constants.SYSTEM_SENDER,
+                        user.name + this.translateService.translateMessage(player.name, 'REPLACEMENT_BY_PLAYER') + oldVPName + '.',
+                    ),
+                );
             }
 
             // sending game info to all client to update nbPlayers and nbSpectators
@@ -896,6 +908,10 @@ export class SocketManager {
     private disconnectAbandonHandler(socket: io.Socket) {
         socket.on('disconnect', async () => {
             await this.leaveGame(socket, " s'est déconnecté.");
+            const user = this.users.get(socket.id);
+            if (user) {
+                this.translateService.deleteUser(user.name);
+            }
             this.users.delete(socket.id);
         });
 
@@ -1180,6 +1196,11 @@ export class SocketManager {
                 return;
             }
             socket.emit('setTmpChatRoom', chatRoom);
+        });
+
+        // socket to change value in map of translateService
+        socket.on('changeLanguage', async (playerName, language) => {
+            this.translateService.addUser(playerName, language);
         });
     }
 }

@@ -5,6 +5,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';
+import { TranslateService } from "@ngx-translate/core";
 import { SocketService } from '@app/services/socket.service';
 import { NotificationService } from '@app/services/notification.service';
 
@@ -15,12 +16,13 @@ import { NotificationService } from '@app/services/notification.service';
 })
 export class GameModeOptionsPageComponent {
     constructor(
-        private infoClientService: InfoClientService, 
-        private http: HttpClient, 
-        private router: Router, 
+        private infoClientService: InfoClientService,
+        private http: HttpClient,
+        private router: Router,
         private socketService: SocketService,
-        private notifService: NotificationService,
-        public userService: UserService
+        public userService: UserService,
+        private translate: TranslateService,
+        private notifService: NotificationService
     ) {
         this.socketService.socket.emit("getAllChatRooms");
     }
@@ -57,10 +59,10 @@ export class GameModeOptionsPageComponent {
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
+            this.notifService.openSnackBar(this.translate.instant('ERROR') + error.status + error.error.message, false);
         } else {
-            this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
+            this.notifService.openSnackBar(this.translate.instant('ERROR') + error.status + this.translate.instant('MESSAGE_ERROR') + '\n' + error.message, false);
         }
     }
-    
+
 }

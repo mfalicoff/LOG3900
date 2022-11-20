@@ -5,6 +5,8 @@ import { UserService } from '@app/services/user.service';
 import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profile-edit.component';
 import { Subscription } from 'rxjs';
 import { GameSaved } from '@app/classes/game-saved';
+import { TranslateService } from '@ngx-translate/core';
+import { SocketService } from '@app/services/socket.service';
 
 @Component({
     selector: 'app-profile-page',
@@ -14,12 +16,32 @@ import { GameSaved } from '@app/classes/game-saved';
 export class ProfilePageComponent implements OnInit, OnDestroy {
     favourtieGamesSubscription: Subscription;
     favouriteGames: GameSaved[];
-    constructor(private dialog: MatDialog, public userService: UserService) {}
+    langList: string[];
+    langSelected: string | undefined;
+
+    langMap = new Map<string, string>([
+        ['Français', 'fr'],
+        ['English', 'en'],
+    ]);
+
+    inverseLangMap = new Map<string, string>([
+        ['fr', 'Français'],
+        ['en', 'English'],
+    ]);
+
+    constructor(
+        private dialog: MatDialog,
+        public userService: UserService,
+        private translate: TranslateService,
+        private socketService: SocketService,
+    ) {}
 
     ngOnInit() {
         this.favourtieGamesSubscription = this.userService.getFavouriteGames().subscribe((res: GameSaved[]) => {
             this.favouriteGames = res.copyWithin(0, 0);
         });
+        this.langList = ['Français', 'English'];
+        this.langSelected = this.inverseLangMap.get(this.translate.currentLang);
     }
 
     ngOnDestroy() {
@@ -78,5 +100,12 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         const m = date.getMinutes();
         const s = date.getSeconds();
         return `${m}m:${s}s.`;
+    }
+
+    onClickLang(lang: string): void {
+        const language = this.langMap.get(lang) as string;
+        this.userService.updateLanguage(language);
+        this.socketService.socket.emit('changeLanguage', this.userService.user.name, language);
+        this.translate.use(language);
     }
 }

@@ -4,6 +4,7 @@ import { NavigationStart, Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import * as Constants from '@app/classes/global-constants';
+import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from '@app/services/notification.service';
 import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,6 +25,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         private socketService: SocketService,
         public infoClientService: InfoClientService,
         private router: Router,
+        private translate: TranslateService,
         private notifService: NotificationService,
         private dialog: MatDialog,
     ) {
@@ -46,7 +48,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
                     panelClass: 'matDialogWheat',
                 });
 
-                dialogRef.componentInstance.name = 'Voulez vous vraiment quitter cette page ? \nCela équivaudrait à un abandon de partie !';
+                dialogRef.componentInstance.name = this.translate.instant('GAME.DO_YOU_WANT_QUIT');
 
                 dialogRef.afterClosed().subscribe((result) => {
                     if (result) {
@@ -72,7 +74,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
         }
 
         if (this.infoClientService.game.gameFinished) {
-            this.notifService.openSnackBar("La game est finie, plus d'abandon possible.", false);
+            this.notifService.openSnackBar(this.translate.instant('GAME.SIDEBAR.GAME_FINISHED'), false);
             return;
         }
 
@@ -83,7 +85,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
             panelClass: 'matDialogWheat',
         });
 
-        dialogRef.componentInstance.name = 'Voulez vous vraiment abandonner la partie ?';
+        dialogRef.componentInstance.name = this.translate.instant('GAME.SIDEBAR.GIVE_UP_GAME_QUESTION');
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
@@ -102,8 +104,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
         }
 
         let answer = true;
-
-        if (this.infoClientService.displayTurn !== "En attente d'un autre joueur...") {
+        // TODO Will it break game?
+        if (this.infoClientService.displayTurn !== this.translate.instant('GAME.SIDEBAR.WAITING_PLAYERS')) {
             answer = false;
         }
         return answer;
@@ -117,7 +119,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
             panelClass: 'matDialogWheat',
         });
 
-        dialogRef.componentInstance.name = 'Voulez vous vraiment quitter cette page ? \nCela équivaudrait à un abandon de partie !';
+        dialogRef.componentInstance.name = this.translate.instant('GAME.DO_YOU_WANT_QUIT');
 
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
@@ -245,19 +247,24 @@ export class SidebarComponent implements OnInit, OnDestroy {
             idxLine > Constants.NUMBER_SQUARE_H_AND_W ||
             idxColumn > Constants.NUMBER_SQUARE_H_AND_W
         ) {
-            this.notifService.openSnackBar('Coordonnées invalides. Le format doit être (ligne-colonne). Exemple: e10', false);
+            this.notifService.openSnackBar(this.translate.instant('GAME.SIDEBAR.INVALID_COORDINATES'), false);
             return;
         }
         if (this.infoClientService.game.board[idxLine][idxColumn].letter.value !== '') {
-            this.notifService.openSnackBar("Cette case n'est pas vide. Veuillez choisir une autre case.", false);
+            this.notifService.openSnackBar(this.translate.instant('GAME.SIDEBAR.NOT_EMPTY_TILE'), false);
             return;
         }
         if (this.infoClientService.game.board[idxLine][idxColumn].bonus !== 'xx') {
-            this.notifService.openSnackBar('Cette case possède déjà un bonus. Veuillez choisir une autre case.', false);
+            this.notifService.openSnackBar(this.translate.instant('GAME.SIDEBAR.NOT_EMPTY_BONUS_TILE'), false);
             return;
         }
         this.socketService.socket.emit('powerCardClick', Constants.TRANFORM_EMPTY_TILE, idxLine.toString() + '-' + idxColumn.toString());
         this.infoClientService.powerUsedForTurn = true;
         this.infoClientService.displayTransformTileModal = 'none';
+    }
+
+    translateCardName(name: string) {
+        const nameTranslated = this.translate.instant('POWERS.' + name);
+        return nameTranslated;
     }
 }

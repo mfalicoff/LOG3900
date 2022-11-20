@@ -11,7 +11,7 @@
             id="passBtn"
             class="btnStyle"
             (click)="skipTurnButton()"
-        >Passer
+        >{{'GAME.INFO_PANEL.PASS' | translate}}
         </button>
     </div>
     <div *ngIf="!infoClientService.isSpectator" class="btnsContainer">
@@ -21,7 +21,7 @@
             class="btnStyle"
             (click)="this.onExchangeClick()"
             [disabled]= "!infoClientService.isTurnOurs || !this.drawingService.areLettersRightClicked(infoClientService.player.stand) || infoClientService.game.gameFinished"
-        >Échanger
+        >{{'GAME.INFO_PANEL.EXCHANGE' | translate}}
         </button>
         <button
             mat-raised-button
@@ -29,7 +29,7 @@
             class="btnStyle"
             (click)="this.onCancelClick()"
             [disabled]= "!infoClientService.isTurnOurs|| !this.drawingService.areLettersRightClicked(infoClientService.player.stand) || infoClientService.game.gameFinished"
-        >Annuler
+        >{{'GAME.INFO_PANEL.CANCEL' | translate}}
         </button>
         <button
             mat-raised-button
@@ -37,7 +37,7 @@
             class="btnStyle"
             (click)= "this.placeGraphicService.manageKeyboardEvent(infoClientService.game, infoClientService.player, enter, socketService.socket)"
             [disabled]= "!infoClientService.isTurnOurs || !this.placeGraphicService.isLettersDrawnSizeAboveZero() || infoClientService.game.gameFinished"
-        >Jouer
+        >{{'GAME.INFO_PANEL.PLAY' | translate}}
          </button>
     </div>
     <br>
@@ -46,8 +46,8 @@
         <thead>
           <tr>
             <th></th>
-            <th>Nom Joueur</th>
-            <th>Score</th>
+            <th>{{'GAME.INFO_PANEL.PLAYER_NAME' | translate}}</th>
+            <th>{{'GAME.INFO_PANEL.SCORE' | translate}}</th>
           </tr>
         </thead>
         <tbody>

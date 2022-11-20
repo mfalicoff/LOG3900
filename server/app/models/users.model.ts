@@ -53,6 +53,14 @@ const userSchema: Schema = new Schema({
         type: [String],
         required: true,
     },
+    language: {
+        type: String,
+        required: true,
+    },
+    theme: {
+        type: String,
+        required: true,
+    },
     chatRooms: [
         {
             type: Schema.Types.ObjectId,

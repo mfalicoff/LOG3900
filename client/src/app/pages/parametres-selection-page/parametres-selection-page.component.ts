@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MockDict } from '@app/classes/mock-dict';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface TimeIntervals {
     value: number;
@@ -21,7 +22,7 @@ export class ParametresSelectionPageComponent implements OnInit {
     // we use a tmp array bc the one of the game get reseted in
     // initializeService() function
     activatedPowers: boolean[];
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService) {
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private translate: TranslateService) {
         this.activatedPowers = this.infoClientService.game.powerCards.map((powerCard) => powerCard.isActivated);
     }
 
@@ -100,6 +101,10 @@ export class ParametresSelectionPageComponent implements OnInit {
                 return;
             }
         }
+    }
+
+    translateCardName(name: string) {
+        return this.translate.instant('POWERS.' + name);
     }
 
     private timeSelection(interval: string) {
