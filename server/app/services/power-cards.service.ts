@@ -45,8 +45,6 @@ export class PowerCardsService {
     powerCardsHandler(game: GameServer, player: Player, powerCardName: string, additionnalParams: string) {
         // delete the powercard from the player's hand
         this.deletePowerCard(player, powerCardName);
-        // give a new powercard to the player
-        this.givePowerCard(game, player);
 
         switch (powerCardName) {
             case Constants.JUMP_NEXT_ENNEMY_TURN: {
@@ -86,71 +84,73 @@ export class PowerCardsService {
         }
     }
 
-    // the virtual player have a 50% chance to use a power card
+    // the virtual player have a 50% chance to use a power card if he has one
     randomPowerCardVP(game: GameServer, virtualPlayer: Player) {
-        const neinyPercent = 0.5;
+        const fiftyPercent = 0.5;
         const probaMove: number = this.giveProbaMove();
 
-        if (probaMove > neinyPercent && virtualPlayer.powerCards.length > 0) {
-            const choosedPowerCard = virtualPlayer.powerCards[0];
-            switch (choosedPowerCard.name) {
-                case Constants.TRANFORM_EMPTY_TILE: {
-                    const maxTryToFindEmptyTile = 20;
-                    let counter = 0;
-                    let idxLine: number = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
-                    let idxColumn: number = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
-                    while (game.board[idxLine][idxColumn].letter.value !== '' || game.board[idxLine][idxColumn].bonus !== 'xx') {
-                        idxLine = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
-                        idxColumn = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
-                        counter++;
-                        if (counter > maxTryToFindEmptyTile) {
-                            return;
-                        }
-                    }
-                    const additionnalParams = idxLine.toString() + '-' + idxColumn.toString();
-                    this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
-                    break;
-                }
-                case Constants.EXCHANGE_LETTER_JOKER: {
-                    // Choose a letter on the stand
-                    let idxLetterStand = 0;
-                    let didEnter = false;
-                    for (let i = 0; i < virtualPlayer.stand.length; i++) {
-                        if (virtualPlayer.stand[i].letter.value === '') {
-                            continue;
-                        }
-                        idxLetterStand = i;
-                        didEnter = true;
-                        break;
-                    }
-                    if (!didEnter) {
-                        return;
-                    }
-                    // choose a letter in the letter bank
-                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-                    const letterReserve: string[] = Array.from(game.letterBank.keys()).filter((letter) => game.letterBank.get(letter)!.quantity > 0);
-                    if (letterReserve.length <= 0) {
-                        return;
-                    }
-                    const rdmLetter: string = letterReserve[this.randomIntFromInterval(0, letterReserve.length - 1)];
+        if (probaMove < fiftyPercent || virtualPlayer.powerCards.length <= 0) {
+            return;
+        }
 
-                    const additionnalParams: string = rdmLetter + idxLetterStand.toString();
-                    this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
-                    break;
-                }
-                case Constants.EXCHANGE_STAND: {
-                    const otherPlayersName: string[] = Array.from(game.mapPlayers.keys()).filter((name) => name !== virtualPlayer.name);
-                    if (otherPlayersName.length <= 0) {
+        const choosedPowerCard = virtualPlayer.powerCards[0];
+        switch (choosedPowerCard.name) {
+            case Constants.TRANFORM_EMPTY_TILE: {
+                const maxTryToFindEmptyTile = 20;
+                let counter = 0;
+                let idxLine: number = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
+                let idxColumn: number = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
+                while (game.board[idxLine][idxColumn].letter.value !== '' || game.board[idxLine][idxColumn].bonus !== 'xx') {
+                    idxLine = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
+                    idxColumn = this.randomIntFromInterval(1, Constants.NUMBER_SQUARE_H_AND_W);
+                    counter++;
+                    if (counter > maxTryToFindEmptyTile) {
                         return;
                     }
-                    const additionnalParams: string = otherPlayersName[this.randomIntFromInterval(0, otherPlayersName.length - 1)];
-                    this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
+                }
+                const additionnalParams = idxLine.toString() + '-' + idxColumn.toString();
+                this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
+                break;
+            }
+            case Constants.EXCHANGE_LETTER_JOKER: {
+                // Choose a letter on the stand
+                let idxLetterStand = 0;
+                let didEnter = false;
+                for (let i = 0; i < virtualPlayer.stand.length; i++) {
+                    if (virtualPlayer.stand[i].letter.value === '') {
+                        continue;
+                    }
+                    idxLetterStand = i;
+                    didEnter = true;
                     break;
                 }
-                default: {
-                    this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, '');
-                    break;
+                if (!didEnter) {
+                    return;
                 }
+                // choose a letter in the letter bank
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                const letterReserve: string[] = Array.from(game.letterBank.keys()).filter((letter) => game.letterBank.get(letter)!.quantity > 0);
+                if (letterReserve.length <= 0) {
+                    return;
+                }
+                const rdmLetter: string = letterReserve[this.randomIntFromInterval(0, letterReserve.length - 1)];
+
+                const additionnalParams: string = rdmLetter + idxLetterStand.toString();
+                this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
+                break;
+            }
+            case Constants.EXCHANGE_STAND: {
+                const otherPlayersName: string[] = Array.from(game.mapPlayers.keys()).filter((name) => name !== virtualPlayer.name);
+                if (otherPlayersName.length <= 0) {
+                    return;
+                }
+                const additionnalParams: string = otherPlayersName[this.randomIntFromInterval(0, otherPlayersName.length - 1)];
+                this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, additionnalParams);
+                break;
+            }
+            default: {
+                this.powerCardsHandler(game, virtualPlayer, choosedPowerCard.name, '');
+                break;
             }
         }
     }

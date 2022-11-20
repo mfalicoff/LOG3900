@@ -1,4 +1,6 @@
-import 'package:client_leger/screens/end-game-results-page.dart';
+import 'dart:convert';
+
+import 'package:client_leger/models/game-saved.dart';
 import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/screens/search_page.dart';
 import 'package:client_leger/services/users_controller.dart';
@@ -9,8 +11,10 @@ import '../constants/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:http/http.dart' as http;
 
 import '../services/chat-service.dart';
+import '../env/environment.dart';
 import '../widget/chat_panel.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -25,7 +29,24 @@ class _MyHomePageState extends State<MyHomePage> {
   final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
   final TapService tapService = TapService();
+  late List<GameSaved> games = [];
+  final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
+
+    @override
+  void initState() {
+    super.initState();
+    final user = globals.userLoggedIn;
+    http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
+        .then((res) => parseGames(res));
+  }
+
+  void parseGames(http.Response res) {
+    var parsed = json.decode(res.body);
+    for (var game in parsed) {
+      games.add(GameSaved.fromJson(game));
+    }
+  }
 
   refresh() {
     if (mounted) {
@@ -148,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toProfilePage() {
     Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const ProfilePage()))
+            MaterialPageRoute(builder: (context) => ProfilePage(favouriteGames: games)))
         .then((value) {
       setState(() {});
     });

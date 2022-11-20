@@ -128,7 +128,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     }
 
     getGameStartDate(): void {
-        this.gameStartDate = this.infoClientService.game.gameStart.toString();
+        this.gameStartDate = this.infoClientService.game.gameStart;
     }
 
     findCreatorOfGame(): string | undefined {

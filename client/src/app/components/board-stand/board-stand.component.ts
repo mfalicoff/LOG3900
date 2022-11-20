@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { ChatMessage } from '@app/classes/chat-message';
 import * as Constants from '@app/classes/global-constants';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
@@ -37,6 +39,7 @@ export class BoardStandComponent implements AfterViewInit {
         private placeGraphicService: PlaceGraphicService,
         private socketService: SocketService,
         private infoClientService: InfoClientService,
+        private route: Router,
         private notifService: NotificationService,
     ) {}
 
@@ -131,6 +134,21 @@ export class BoardStandComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        if (this.route.url === '/game') {
+            this.infoClientService.chatRooms.unshift({
+                name: 'game',
+                participants: [],
+                creator: '',
+                chatHistory: [new ChatMessage('SYSTEM', 'Bienvenue sur le channel de discussion de la partie.')],
+            });
+        } else {
+            // if the user is not in a game there is no game chat
+            const idxGameRoom = this.infoClientService.chatRooms.findIndex((chatRoom) => chatRoom.name === 'game');
+            if (idxGameRoom !== Constants.DEFAULT_VALUE_NUMBER) {
+                this.infoClientService.chatRooms.splice(idxGameRoom, 1);
+            }
+        }
+
         this.playAreaCanvas = this.playAreaElement.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.tmpTileCanvas = this.tmpTileElement.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingBoardService.canvasInit(this.playAreaCanvas, this.tmpTileCanvas);

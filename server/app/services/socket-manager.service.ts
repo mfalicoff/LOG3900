@@ -481,6 +481,8 @@ export class SocketManager {
         socket.on('saveGame', async (game: GameSaved) => {
             const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
             this.sio.to(savedGame.roomName + Constants.GAME_SUFFIX).emit('savedGameId', savedGame._id);
+            // eslint-disable-next-line no-console
+            console.log('Gamed saved! : ' + savedGame._id);
         });
     }
 
@@ -520,9 +522,6 @@ export class SocketManager {
         // set by the creator of the game
         if (gameMode === Constants.POWER_CARDS_MODE) {
             this.powerCardsService.initPowerCards(newGame, activatedPowers);
-
-            // TODO VERY IMPORTANT REMOVE THAT LATER THIS IS ONLY FOR TESTING PURPOSES
-            this.powerCardsService.givePowerToPlayers(newGame);
         }
 
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
@@ -612,6 +611,7 @@ export class SocketManager {
             if (!createdGame) {
                 return;
             }
+            createdGame.gameStart = '';
 
             const players = Array.from(createdGame.mapPlayers.values());
             const spectators = Array.from(createdGame.mapSpectators.values());
@@ -627,7 +627,6 @@ export class SocketManager {
             await this.gameUpdateClients(createdGame);
 
             // emit to change page on client after verification
-            createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
 
@@ -749,6 +748,12 @@ export class SocketManager {
             oldVirtualPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(user.name));
             this.playAreaService.insertInMapIndex(idxPlayerLeaving, oldVirtualPlayer.name, oldVirtualPlayer, game.mapPlayers);
 
+            // in some cases if the creator left the game and there was a spectator there
+            // would be no creator so when joining the game we asset a new creator
+            if (!game.isSomeoneCreator()) {
+                game.setNewCreatorOfGame();
+            }
+
             socket.emit('isSpectator', false);
 
             for (const player of game.mapPlayers.values()) {
@@ -782,6 +787,14 @@ export class SocketManager {
             if (!game) {
                 return;
             }
+            let display = 'Le ';
+            const timestamp = new Date();
+            const date = timestamp.toDateString();
+            const time = timestamp.toLocaleTimeString();
+            display += date;
+            display += ' à ';
+            display += time;
+            game.gameStart = display;
 
             if (game.mapPlayers.size >= Constants.MIN_PERSON_PLAYING && !game.gameStarted) {
                 // we give the server bc we can't include socketManager in those childs
@@ -1079,6 +1092,10 @@ export class SocketManager {
                 return;
             }
             const chatRoom = await this.chatRoomService.createChatRoom(dbUser.id, chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
             socket.emit('setChatRoom', chatRoom);
         });
 
