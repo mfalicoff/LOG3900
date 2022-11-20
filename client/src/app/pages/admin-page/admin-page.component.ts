@@ -10,6 +10,7 @@ import { NameVP } from '@app/classes/names-vp';
 import { ModalComponent } from '@app/pages/modal/modal.component';
 import { AdminRequestService } from '@app/services/admin-requests.service';
 import { InfoClientService } from '@app/services/info-client.service';
+import { NotificationService } from '@app/services/notification.service';
 import { SocketService } from '@app/services/socket.service';
 import { saveAs } from 'file-saver';
 
@@ -25,6 +26,7 @@ export class AdminPageComponent implements OnInit {
     fileName: string = '';
 
     constructor(
+        private notifService: NotificationService,
         public socketService: SocketService,
         public httpClient: HttpClient,
         public infoClientService: InfoClientService,
@@ -151,7 +153,10 @@ export class AdminPageComponent implements OnInit {
             this.socketService.socket.emit('EditDictionary', dict, formerDictTitle);
             return;
         }
-        alert('Le nouveau nom et/ou la nouvelle description du dictionaire ' + formerDictTitle + '  ne sont pas valides.');
+        this.notifService.openSnackBar(
+            'Le nouveau nom et/ou la nouvelle description du dictionaire ' + formerDictTitle + '  ne sont pas valides.',
+            false,
+        );
     }
 
     private editNameVP(newNom: string, newFirstName: string, nameVP: NameVP) {

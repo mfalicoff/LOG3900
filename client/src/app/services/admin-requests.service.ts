@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { DictJSON } from '@app/classes/dict-json';
 import { MockDict } from '@app/classes/mock-dict';
 import { environment } from 'src/environments/environment';
+import { NotificationService } from './notification.service';
 
 @Injectable({
     providedIn: 'root',
@@ -10,7 +11,7 @@ import { environment } from 'src/environments/environment';
 export class AdminRequestService {
     serverUrl = environment.serverUrl + 'admin';
 
-    constructor(private httpClient: HttpClient) {}
+    constructor(private httpClient: HttpClient, private notifService: NotificationService) {}
 
     validateDictionary(dictionary: DictJSON | MockDict): boolean {
         return this.validateTitle(dictionary.title) && this.validateDescription(dictionary.description);
@@ -35,9 +36,9 @@ export class AdminRequestService {
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            alert('Erreur: ' + error.status + error.error.message);
+            this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
         } else {
-            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`);
+            this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.error}`, false);
         }
     }
 
