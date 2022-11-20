@@ -16,6 +16,7 @@ class AuthController {
 
             res.status(HTTPStatusCode.Created).json({ data: signUpUserData, message: 'signup' });
         } catch (error) {
+            // eslint-disable-next-line no-console
             console.log('erreur: ' + error);
             next(error);
         }

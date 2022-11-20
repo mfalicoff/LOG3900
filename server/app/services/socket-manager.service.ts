@@ -536,7 +536,6 @@ export class SocketManager {
 
         // create button for creator to start the game if enough reel player are in the game
         if (gameMode !== Constants.MODE_RANKED) {
-            ('why');
             this.shouldCreatorBeAbleToStartGame(newGame);
         }
     }
@@ -953,7 +952,7 @@ export class SocketManager {
         } else {
             // should never go there
             // eslint-disable-next-line no-console
-            ('Game is broken in socketManager::leaveGame. Good luck to u who got this error :)');
+            console.log('Game is broken in socketManager::leaveGame. Good luck to u who got this error :)');
         }
 
         // we check if we should delete the game or not
