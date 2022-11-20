@@ -1,24 +1,14 @@
-<body>
-    <body>
-        <div class="bg-image"></div>
-        <div id="container" class="center">
-            <div>
-                <h6 class="MPButton" routerLink="/game-mode-options">
-                    <mat-icon>arrow_back</mat-icon>
-                  </h6>
-            </div>
-            <div id="container-content">
-                <div class="container-1">
-                    <div class="box-1">
-                        <label>maximum rating difference</label>
-                        <br />
-                        <p>{{ this.eloDisparity }}</p>
-                        <mat-slider min="20" max="100" step="1" value="60" (change)="onEloDisparityChange($event)"></mat-slider>
-                        <br />
-                        <button mat-flat-button class="startButton" (click)="onConfirm()" routerLink="/ranked-matchmaking">Confirm</button>
-                    </div>
-                </div>
+<div id="container" class="center">
+    <div id="container-content">
+        <div class="container-1">
+            <div class="box-1">
+                <label>maximum rating difference</label>
+                <br />
+                <p>{{ this.eloDisparity }}</p>
+                <mat-slider min="20" max="100" step="1" value="60" (change)="onEloDisparityChange($event)"></mat-slider>
+                <br />
+                <button mat-flat-button class="startButton" (click)="onConfirm()" routerLink="/ranked-matchmaking">Confirm</button>
             </div>
         </div>
-    </body>
-</body>
+    </div>
+</div>
