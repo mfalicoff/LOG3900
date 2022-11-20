@@ -6,7 +6,6 @@ import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { ChatRoom } from '@app/classes/interfaces/chatroom.interface';
 import { MockDict } from '@app/classes/mock-dict';
-import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { Score } from '@app/classes/score';
 import { Spectator } from '@app/classes/spectator';
@@ -238,13 +237,6 @@ export class SocketManager {
             if (player) {
                 this.mouseEventService.resetAllTilesStand(player);
             }
-        });
-
-        socket.on('dbReception', async () => {
-            this.scoreClassic = (await this.databaseService.bestScoreClassicCollection.getScoreClassic()) as Score[];
-            this.scoreLOG2990 = (await this.databaseService.bestScoreLOG2990Collection.getScoreLOG2990()) as Score[];
-
-            socket.emit('sendScoreDb', this.scoreClassic, this.scoreLOG2990);
         });
 
         socket.on('dictionarySelected', async (dictionary: MockDict) => {
@@ -1035,81 +1027,9 @@ export class SocketManager {
     private adminHandler(socket: io.Socket) {
         socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
         socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-        socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
 
         socket.on('ReSendDictionariesToClient', () => {
             socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('DictionaryUploaded', async () => {
-            await this.databaseService.updateDBDict();
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('DeleteVPName', async (vpName: NameVP) => {
-            await this.databaseService.beginnerVPNamesCollections.deleteNameVP(vpName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-        });
-
-        socket.on('DeleteExpertVPName', async (vpName: NameVP) => {
-            await this.databaseService.expertVPNamesCollection.deleteNameVP(vpName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
-        });
-
-        socket.on('RefreshBothDbs', async () => {
-            await this.databaseService.resetDatabase();
-            await this.databaseService.updateDBNames();
-            await this.databaseService.updateDBDict();
-            socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
-            socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('AddBeginnerNameVP', async (vpName: NameVP) => {
-            await this.databaseService.beginnerVPNamesCollections.addNameVP(vpName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-        });
-
-        socket.on('AddExpertNameVP', async (vpName: NameVP) => {
-            await this.databaseService.expertVPNamesCollection.addNameVP(vpName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
-        });
-
-        socket.on('deleteSelectedDictionary', async (dictionary: MockDict) => {
-            await this.databaseService.dictionariesCollection.deleteDictionary(dictionary.title);
-            await this.databaseService.updateDBDict();
-            this.sio.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-            const message = 'Le dictionaire ' + dictionary.title + ' a été supprimé !';
-            this.sio.emit('DictionaryDeletedMessage', message);
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('EditDictionary', async (dictionary: MockDict, formerTitle: string) => {
-            await this.databaseService.dictionariesCollection.modifyDictionary(dictionary, formerTitle);
-            await this.databaseService.updateDBDict();
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('AddDictionary', async (dictionary: DictJSON) => {
-            await this.databaseService.dictionariesCollection.addDictionary(dictionary);
-            await this.databaseService.updateDBDict();
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('EditBeginnerNameVP', async (vpName: NameVP, formerVPName: NameVP) => {
-            await this.databaseService.beginnerVPNamesCollections.editNameVP(vpName, formerVPName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-        });
-
-        socket.on('EditExpertNameVP', async (vpName: NameVP, formerVPName: NameVP) => {
-            await this.databaseService.expertVPNamesCollection.editNameVP(vpName, formerVPName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
         });
     }
 

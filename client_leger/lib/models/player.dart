@@ -2,13 +2,17 @@ import 'package:client_leger/models/power-cards.dart';
 import 'package:client_leger/constants/constants.dart';
 import 'package:client_leger/models/vec4.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:collection/collection.dart';
 
 import 'package:client_leger/models/tile.dart';
+import 'package:just_audio/just_audio.dart';
 
+import '../services/chat-service.dart';
 import 'chat.dart';
 import 'letter.dart';
 
 class Player with ChangeNotifier {
+  ChatService chatService = ChatService();
   late String id;
   late String name;
   late List<Tile> stand = [];
@@ -24,6 +28,8 @@ class Player with ChangeNotifier {
   late bool debugOn;
   late int passInARow;
   late List<ChatMessage> chatHistory = [];
+  late List<ChatMessage> oldChatHistory = [];
+  Function deepEq = const DeepCollectionEquality().equals;
 
   // MOUSE EVENT SERVICE DATA
   late int tileIndexManipulation;
@@ -80,6 +86,14 @@ class Player with ChangeNotifier {
       chatHistory.add(ChatMessage.fromJson(chatMsg));
     }
 
+    if(!deepEq(chatHistory, oldChatHistory)) {
+      if(chatService.rooms[0].name == 'game') {
+        chatService.rooms[0].isUnread = true;
+        playAudio();
+      }
+    }
+    oldChatHistory = chatHistory;
+
     notifyListeners();
   }
 
@@ -98,6 +112,14 @@ class Player with ChangeNotifier {
     }
     return newPlayers;
 
+  }
+
+  Future<void> playAudio() async {
+    final player = AudioPlayer(); // Create a player
+    await player.setUrl(
+        "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+    await player.play();
+    await player.stop();
   }
   //tmp function to initialize the stand
   //DO NOT REUSE IT
