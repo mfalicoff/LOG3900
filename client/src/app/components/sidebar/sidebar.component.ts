@@ -201,4 +201,9 @@ export class SidebarComponent {
         this.infoClientService.powerUsedForTurn = true;
         this.infoClientService.displayTransformTileModal = 'none';
     }
+
+    translateCardName(name: string) {
+        const nameTranslated = this.translate.instant('POWERS.' + name);
+        return nameTranslated;
+    }
 }

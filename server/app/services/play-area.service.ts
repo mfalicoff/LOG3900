@@ -55,14 +55,13 @@ export class PlayAreaService {
                 // we go to the next player that was supposed to play
                 game.idxPlayerPlaying = (game.idxPlayerPlaying + 1) % game.mapPlayers.size;
                 // we send a message to everyone in the room to tell that someone used a powerCard
-                this.sendMsgToAllInRoom(
-                    game,
-                    'Le joueur ' +
-                        playerThatJustPlayed.name +
-                        ' a utilisé une carte pouvoir et le tour de ' +
-                        Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name +
-                        ' a été sauté.',
-                );
+                this.sendMsgToAllInRoomWithTranslation(game, [
+                    'THE_PLAYER',
+                    playerThatJustPlayed.name,
+                    'HAS_USED',
+                    Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
+                    'HAS_BEEN_JUMPED',
+                ]);
             }
         }
         // is the game is finished we stop the game
@@ -193,8 +192,6 @@ export class PlayAreaService {
                     fullMessage += element;
                 }
             });
-            // eslint-disable-next-line no-console
-            console.log(fullMessage);
             player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, fullMessage));
         }
         for (const spectator of game.mapSpectators.values()) {
@@ -286,7 +283,7 @@ export class PlayAreaService {
             game.reduceEnnemyNbTurn--;
 
             // we send a message to everyone in the room to tell that someone used a powerCard
-            this.sendMsgToAllInRoom(game, "Le temps est divisé par deux due à l'utilisation d'une carte de pouvoir !");
+            this.sendMsgToAllInRoomWithTranslation(game, ['POWER9']);
         } else {
             this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('startClearTimer', {
                 minutesByTurn: game.minutesByTurn,

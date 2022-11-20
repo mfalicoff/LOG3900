@@ -183,5 +183,15 @@
         "GAME_FOUND": "Game found",
         "ACCEPT": "Accept",
         "REFUSE": "Refuse"
+    },
+    "POWERS": {
+        "Cette carte permet de faire sauter le tour du prochain joueur.": "This card skips the next player's turn.",
+        "Cette carte permet de transformer une tuile vide en case bonus de couleur aléatoire.": "This card allows you to transform an empty tile into a bonus space of random color.",
+        "Cette carte permet de réduire de moitié le temps de réflexion des prochains joueurs pendant 1 tour.": "This card reduces the thinking time of the next players by half for 1 turn.",
+        "Cette carte permet d'échanger une lettre de votre chevalet contre une lettre de votre choix du sac de lettres.": "This card allows you to exchange a letter from your stand for a letter of your choice from the bag of letters.",
+        "Cette carte permet d'échanger votre chevalet avec celui d'un de vos adversaires.": "This card allows you to exchange your stand with that of one of your opponents.",
+        "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.": "This card removes points from the opponent who has the most points and redistributes them to all the other players.",
+        "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.": "This card adds 1 minute to your thinking time.",
+        "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "This card removes a power card from all enemy players."
     }
 }
