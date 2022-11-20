@@ -1,27 +1,71 @@
 /* eslint-disable deprecation/deprecation */
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { NavigationStart, Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import * as Constants from '@app/classes/global-constants';
 import { TranslateService } from '@ngx-translate/core';
+import { NotificationService } from '@app/services/notification.service';
+import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
+import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-sidebar',
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit, OnDestroy {
     coordsTileToChange: string;
     letterFromReserveChoosed: string;
     idxTileFromStandChoosed: number;
+    routerSubscription: Subscription;
+    hasAskedForLeave: boolean = false;
     constructor(
         private socketService: SocketService,
         public infoClientService: InfoClientService,
         private router: Router,
         private translate: TranslateService,
+        private notifService: NotificationService,
+        private dialog: MatDialog,
     ) {
         this.coordsTileToChange = '';
+    }
+
+    ngOnInit() {
+        this.hasAskedForLeave = false;
+        // we weren't able to find an equivalent without using subscribe
+        // nothing was working for this specific case
+        // pages are handled differently and it doesn't fit our feature
+        // TODO find a way to do it better
+        // eslint-disable-next-line deprecation/deprecation
+        this.routerSubscription = this.router.events.subscribe((event) => {
+            const isAtCorrectPage: boolean = event instanceof NavigationStart && this.router.url === '/game';
+            if (isAtCorrectPage && !this.infoClientService.game.gameFinished && !this.infoClientService.isSpectator && !this.hasAskedForLeave) {
+                const dialogRef = this.dialog.open(ConfirmWindowComponent, {
+                    height: '25%',
+                    width: '20%',
+                    panelClass: 'matDialogWheat',
+                });
+
+                dialogRef.componentInstance.name = this.translate.instant('GAME.DO_YOU_WANT_QUIT');
+
+                dialogRef.afterClosed().subscribe((result) => {
+                    if (result) {
+                        this.socketService.socket.emit('giveUpGame');
+                    } else {
+                        this.router.navigate(['/game']);
+                    }
+                });
+            }
+            if (!this.hasAskedForLeave) {
+                this.router.navigate(['/game']);
+            }
+        });
+    }
+
+    ngOnDestroy() {
+        this.routerSubscription.unsubscribe();
     }
 
     onClickGiveUpButton() {
@@ -30,28 +74,29 @@ export class SidebarComponent {
         }
 
         if (this.infoClientService.game.gameFinished) {
-            alert(this.translate.instant('GAME.SIDEBAR.GAME_FINISHED'));
+            this.notifService.openSnackBar(this.translate.instant('GAME.SIDEBAR.GAME_FINISHED'), false);
             return;
         }
-        const resultLeave = confirm(this.translate.instant('GAME.SIDEBAR.GIVE_UP_GAME_QUESTION'));
-        if (!resultLeave) {
-            return;
-        }
-        this.socketService.count = 1;
-        this.socketService.socket.emit('giveUpGame');
-        this.router.navigate(['/game-mode-options']);
+
+        this.hasAskedForLeave = true;
+        const dialogRef = this.dialog.open(ConfirmWindowComponent, {
+            height: '25%',
+            width: '20%',
+            panelClass: 'matDialogWheat',
+        });
+
+        dialogRef.componentInstance.name = this.translate.instant('GAME.SIDEBAR.GIVE_UP_GAME_QUESTION');
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.socketService.count = 1;
+                this.socketService.socket.emit('giveUpGame');
+                this.router.navigate(['/game-mode-options']);
+            } else {
+                this.hasAskedForLeave = false;
+            }
+        });
     }
-
-    // finishGameClick() {
-    //     if (this.infoClientService.isSpectator) {
-    //         return;
-    //     }
-
-    //     if (!this.infoClientService.game.gameFinished) {
-    //         return;
-    //     }
-    //     this.router.navigate(['/game-mode-options']);
-    // }
 
     shouldLeaveGameBe() {
         if (this.infoClientService.isSpectator || this.infoClientService.game.gameFinished || !this.infoClientService.game.gameStarted) {
@@ -67,12 +112,28 @@ export class SidebarComponent {
     }
 
     leaveGame() {
-        if (this.infoClientService.game.gameMode === 'Ranked' && this.infoClientService.game.gameFinished) {
-            this.socketService.count = 1;
-            this.socketService.socket.emit('leaveRankedGame', this.infoClientService.player);
-        }
-        this.socketService.socket.emit('leaveGame');
-        this.socketService.count = 1;
+        this.hasAskedForLeave = true;
+        const dialogRef = this.dialog.open(ConfirmWindowComponent, {
+            height: '25%',
+            width: '20%',
+            panelClass: 'matDialogWheat',
+        });
+
+        dialogRef.componentInstance.name = this.translate.instant('GAME.DO_YOU_WANT_QUIT');
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                if (this.infoClientService.game.gameMode === 'Ranked' && this.infoClientService.game.gameFinished) {
+                    this.socketService.count = 1;
+                    this.socketService.socket.emit('leaveRankedGame', this.infoClientService.player);
+                }
+                this.socketService.socket.emit('leaveGame');
+                this.socketService.count = 1;
+                this.router.navigate(['/game-mode-options']);
+            } else {
+                this.hasAskedForLeave = false;
+            }
+        });
     }
 
     startGame() {
@@ -186,15 +247,15 @@ export class SidebarComponent {
             idxLine > Constants.NUMBER_SQUARE_H_AND_W ||
             idxColumn > Constants.NUMBER_SQUARE_H_AND_W
         ) {
-            alert(this.translate.instant('GAME.SIDEBAR.INVALID_COORDINATES'));
+            this.notifService.openSnackBar(this.translate.instant('GAME.SIDEBAR.INVALID_COORDINATES'), false);
             return;
         }
         if (this.infoClientService.game.board[idxLine][idxColumn].letter.value !== '') {
-            alert(this.translate.instant('GAME.SIDEBAR.NOT_EMPTY_TILE'));
+            this.notifService.openSnackBar(this.translate.instant('GAME.SIDEBAR.NOT_EMPTY_TILE'), false);
             return;
         }
         if (this.infoClientService.game.board[idxLine][idxColumn].bonus !== 'xx') {
-            alert(this.translate.instant('GAME.SIDEBAR.NOT_EMPTY_BONUS_TILE'));
+            this.notifService.openSnackBar(this.translate.instant('GAME.SIDEBAR.NOT_EMPTY_BONUS_TILE'), false);
             return;
         }
         this.socketService.socket.emit('powerCardClick', Constants.TRANFORM_EMPTY_TILE, idxLine.toString() + '-' + idxColumn.toString());

@@ -6,7 +6,6 @@ import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { ChatRoom } from '@app/classes/interfaces/chatroom.interface';
 import { MockDict } from '@app/classes/mock-dict';
-import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { Score } from '@app/classes/score';
 import { Spectator } from '@app/classes/spectator';
@@ -243,13 +242,6 @@ export class SocketManager {
             }
         });
 
-        socket.on('dbReception', async () => {
-            this.scoreClassic = (await this.databaseService.bestScoreClassicCollection.getScoreClassic()) as Score[];
-            this.scoreLOG2990 = (await this.databaseService.bestScoreLOG2990Collection.getScoreLOG2990()) as Score[];
-
-            socket.emit('sendScoreDb', this.scoreClassic, this.scoreLOG2990);
-        });
-
         socket.on('dictionarySelected', async (dictionary: MockDict) => {
             this.dictionaryService.gameDictionary = (await this.databaseService.dictionariesCollection.getDictionary(dictionary.title)) as DictJSON;
             const player = this.users.get(socket.id);
@@ -350,6 +342,7 @@ export class SocketManager {
             if (!player) {
                 return;
             }
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('soundPlay', Constants.LETTER_REMOVED_SOUND);
             this.mouseEventService.onBoardToStandDrop(tileDroppedIdxs, letterDropped, standIdx, player, game);
             await this.gameUpdateClients(game);
         });
@@ -364,6 +357,7 @@ export class SocketManager {
                 return;
             }
             this.mouseEventService.onBoardToBoardDrop(game, posClickedTileIdxs, posDropBoardIdxs);
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('soundPlay', Constants.LETTER_PLACED_SOUND);
             this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('gameBoardUpdate', game);
         });
 
@@ -666,6 +660,24 @@ export class SocketManager {
             await this.joinRoom(socket, userData, game);
         });
 
+        socket.on('timerStatus', (secondsRemaining) => {
+            const userData = this.users.get(socket.id);
+            if (!userData) {
+                return;
+            }
+
+            const game = this.rooms.get(userData.roomName);
+            if (!game || !game.gameStarted) {
+                return;
+            }
+
+            const secondsInOneMin = 60;
+            this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('startClearTimer', {
+                minutesByTurn: secondsRemaining / secondsInOneMin,
+                currentNamePlayerPlaying: Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
+            });
+        });
+
         socket.on('acceptPlayer', async (isAccepted, newPlayerId) => {
             const userData = this.users.get(newPlayerId);
             if (!userData) {
@@ -711,7 +723,7 @@ export class SocketManager {
             }
             game.mapSpectators.delete(socket.id);
 
-            let oldVirtualPlayer;
+            let oldVirtualPlayer: Player | undefined;
             // take the first virtualPlayer that the server founds
             for (const player of game.mapPlayers.values()) {
                 if (player.id === 'virtualPlayer') {
@@ -725,6 +737,9 @@ export class SocketManager {
                 return;
             }
             const oldVPName = oldVirtualPlayer.name;
+            // we get the index of the person leaving to replace him at the same index later
+            const idxPlayerLeaving = Array.from(game.mapPlayers.values()).findIndex((player) => player.name === oldVPName);
+
             // delete the old virtual player from the map
             game.mapPlayers.delete(oldVirtualPlayer.name);
 
@@ -732,7 +747,7 @@ export class SocketManager {
             oldVirtualPlayer.id = socket.id;
             oldVirtualPlayer.name = user.name;
             oldVirtualPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(user.name));
-            game.mapPlayers.set(oldVirtualPlayer.name, oldVirtualPlayer);
+            this.playAreaService.insertInMapIndex(idxPlayerLeaving, oldVirtualPlayer.name, oldVirtualPlayer, game.mapPlayers);
 
             socket.emit('isSpectator', false);
 
@@ -818,6 +833,8 @@ export class SocketManager {
 
         // if condition respected it means the new user is a player and not a spectator
         // else it is a spectator
+        // in this case the new user will ALWAYS ALWAYS join as a spectator bc in this game mode
+        // there are virtual players filling the empty slots
         if (game.mapPlayers.size < Constants.MAX_PERSON_PLAYING) {
             this.joinGameAsPlayer(socket, game, userData);
         } else {
@@ -832,6 +849,16 @@ export class SocketManager {
 
         // emit to change page on client after verification
         socket.emit('roomChangeAccepted', '/game');
+
+        // find a socket that is not the socket that just joined the room
+        // to ask him the status of the timer in the game
+        for (const player of game.mapPlayers.values()) {
+            if (player.id !== socket.id && player.id !== 'virtualPlayer') {
+                // ask for the timer status
+                this.sio.sockets.sockets.get(player.id)?.emit('askTimerStatus');
+                break;
+            }
+        }
 
         // sending game info to all client to update nbPlayers and nbSpectators
         const players = Array.from(game.mapPlayers.values());
@@ -926,26 +953,20 @@ export class SocketManager {
 
             if ((nbRealPlayer >= 1 || nbSpectators >= 1) && !game.gameFinished) {
                 // we send to the opponent a update of the game
-                const waitBeforeAbandonment = 1000;
-                setTimeout(async () => {
-                    await this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
-                    if (socket.id === game.masterTimer) {
-                        game.setMasterTimer();
-                    }
-                    if (playerThatLeaves.isCreatorOfGame) {
-                        playerThatLeaves.isCreatorOfGame = !playerThatLeaves.isCreatorOfGame;
-                        game.setNewCreatorOfGame();
-                    }
-                    await this.gameUpdateClients(game);
+                await this.playAreaService.replaceHumanByBot(playerThatLeaves, game, leaveMsg);
+                if (socket.id === game.masterTimer) {
+                    game.setMasterTimer();
+                }
+                if (playerThatLeaves.isCreatorOfGame) {
+                    playerThatLeaves.isCreatorOfGame = !playerThatLeaves.isCreatorOfGame;
+                    game.setNewCreatorOfGame();
+                }
+                await this.gameUpdateClients(game);
 
-                    // if the game hasn't started we check if the button start game should be present
-                    if (!game.gameStarted) {
-                        this.shouldCreatorBeAbleToStartGame(game);
-                    }
-
-                    // we check if we should delete the game or not
-                    this.gameFinishedAction(game);
-                }, waitBeforeAbandonment);
+                // if the game hasn't started we check if the button start game should be present
+                if (!game.gameStarted) {
+                    this.shouldCreatorBeAbleToStartGame(game);
+                }
             } else {
                 // we remove the player leaving in the map
                 game.mapPlayers.delete(playerThatLeaves.name);
@@ -1012,81 +1033,9 @@ export class SocketManager {
     private adminHandler(socket: io.Socket) {
         socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
         socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-        socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
 
         socket.on('ReSendDictionariesToClient', () => {
             socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('DictionaryUploaded', async () => {
-            await this.databaseService.updateDBDict();
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('DeleteVPName', async (vpName: NameVP) => {
-            await this.databaseService.beginnerVPNamesCollections.deleteNameVP(vpName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-        });
-
-        socket.on('DeleteExpertVPName', async (vpName: NameVP) => {
-            await this.databaseService.expertVPNamesCollection.deleteNameVP(vpName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
-        });
-
-        socket.on('RefreshBothDbs', async () => {
-            await this.databaseService.resetDatabase();
-            await this.databaseService.updateDBNames();
-            await this.databaseService.updateDBDict();
-            socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
-            socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('AddBeginnerNameVP', async (vpName: NameVP) => {
-            await this.databaseService.beginnerVPNamesCollections.addNameVP(vpName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-        });
-
-        socket.on('AddExpertNameVP', async (vpName: NameVP) => {
-            await this.databaseService.expertVPNamesCollection.addNameVP(vpName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
-        });
-
-        socket.on('deleteSelectedDictionary', async (dictionary: MockDict) => {
-            await this.databaseService.dictionariesCollection.deleteDictionary(dictionary.title);
-            await this.databaseService.updateDBDict();
-            this.sio.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-            const message = 'Le dictionaire ' + dictionary.title + ' a été supprimé !';
-            this.sio.emit('DictionaryDeletedMessage', message);
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('EditDictionary', async (dictionary: MockDict, formerTitle: string) => {
-            await this.databaseService.dictionariesCollection.modifyDictionary(dictionary, formerTitle);
-            await this.databaseService.updateDBDict();
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('AddDictionary', async (dictionary: DictJSON) => {
-            await this.databaseService.dictionariesCollection.addDictionary(dictionary);
-            await this.databaseService.updateDBDict();
-            socket.emit('SendDictionariesToClient', this.databaseService.dictionariesMock);
-        });
-
-        socket.on('EditBeginnerNameVP', async (vpName: NameVP, formerVPName: NameVP) => {
-            await this.databaseService.beginnerVPNamesCollections.editNameVP(vpName, formerVPName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendBeginnerVPNamesToClient', this.databaseService.namesVP);
-        });
-
-        socket.on('EditExpertNameVP', async (vpName: NameVP, formerVPName: NameVP) => {
-            await this.databaseService.expertVPNamesCollection.editNameVP(vpName, formerVPName);
-            await this.databaseService.updateDBNames();
-            socket.emit('SendExpertVPNamesToClient', this.databaseService.namesVPExpert);
         });
     }
 

@@ -10,6 +10,9 @@ import { InfoClientService } from '@app/services/info-client.service';
 import { Router } from '@angular/router';
 import { Socket } from 'socket.io-client';
 import { TranslateService } from '@ngx-translate/core';
+import { NotificationService } from './notification.service';
+import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
     providedIn: 'root',
@@ -22,6 +25,8 @@ export class UserService {
         private http: HttpClient,
         private infoClientService: InfoClientService,
         private router: Router,
+        private notifService: NotificationService,
+        private dialog: MatDialog,
         private translate: TranslateService,
     ) {}
 
@@ -206,32 +211,39 @@ export class UserService {
 
     private handleErrorPOST(error: HttpErrorResponse, socket?: Socket, email?: string, password?: string) {
         if (error.error instanceof ErrorEvent) {
-            alert('Erreur: ' + error.status + error.error.message);
+            this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
         } else {
             if (error.error.includes('Already logged in')) {
-                if (
-                    confirm(
-                        'Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?\n ' +
-                            'Si vous ete actuellement en match vous abandonnerez votre match',
-                    )
-                ) {
-                    this.http
-                        .post<any>(this.serverUrl + 'forcelogin', {
-                            email,
-                            password,
-                        })
-                        .subscribe({
-                            next: (response) => {
-                                socket?.emit('forceLogout', response.data.name);
-                                this.saveUserInfo(response, socket as Socket);
-                            },
-                            error: (newError) => {
-                                this.handleErrorPOST(newError);
-                            },
-                        });
-                }
+                const dialogRef = this.dialog.open(ConfirmWindowComponent, {
+                    height: '25%',
+                    width: '25%',
+                    panelClass: 'matDialogWheat',
+                });
+
+                dialogRef.componentInstance.name =
+                    'Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?\n ' +
+                    'Si vous ete actuellement en match vous abandonnerez votre match';
+
+                dialogRef.afterClosed().subscribe((result) => {
+                    if (result) {
+                        this.http
+                            .post<any>(this.serverUrl + 'forcelogin', {
+                                email,
+                                password,
+                            })
+                            .subscribe({
+                                next: (response) => {
+                                    socket?.emit('forceLogout', response.data.name);
+                                    this.saveUserInfo(response, socket as Socket);
+                                },
+                                error: (newError) => {
+                                    this.handleErrorPOST(newError);
+                                },
+                            });
+                    }
+                });
             } else {
-                alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
+                this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
             }
         }
     }

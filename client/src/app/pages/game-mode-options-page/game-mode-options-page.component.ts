@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UserService } from '@app/services/user.service';
 import { TranslateService } from "@ngx-translate/core";
 import { SocketService } from '@app/services/socket.service';
+import { NotificationService } from '@app/services/notification.service';
 
 @Component({
     selector: 'app-game-mode-options-page',
@@ -21,6 +22,7 @@ export class GameModeOptionsPageComponent {
         private socketService: SocketService,
         public userService: UserService,
         private translate: TranslateService,
+        private notifService: NotificationService
     ) {
         this.socketService.socket.emit("getAllChatRooms");
     }
@@ -57,9 +59,9 @@ export class GameModeOptionsPageComponent {
 
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            alert(this.translate.instant('ERROR') + error.status + error.error.message);
+            this.notifService.openSnackBar(this.translate.instant('ERROR') + error.status + error.error.message, false);
         } else {
-            alert(this.translate.instant('ERROR') + this.translate.instant('MESSAGE_ERROR') + '\n' + error.message);
+            this.notifService.openSnackBar(this.translate.instant('ERROR') + error.status + this.translate.instant('MESSAGE_ERROR') + '\n' + error.message, false);
         }
     }
 

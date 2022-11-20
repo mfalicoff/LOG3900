@@ -24,9 +24,7 @@ import { RankedMatchmakingPageComponent } from '@app/pages/ranked-matchmaking-pa
 import { NgxGalleryModule } from '@kolkov/ngx-gallery';
 import { GalleryComponent } from './components/gallery/gallery.component';
 import { UserHistoryComponent } from './components/user-history/user-history.component';
-import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { GameModeOptionsPageComponent } from './pages/game-mode-options-page/game-mode-options-page.component';
-import { LeaderboardPageComponent } from './pages/leaderboard-page/leaderboard-page.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { ModalComponent } from './pages/modal/modal.component';
 import { ProfileEditComponent } from './pages/profile-page/profile-edit/profile-edit.component';
@@ -37,6 +35,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { EndGameResultsPageComponent } from '@app/pages/end-game-results-page/end-game-results-page.component';
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { NgDisableLinkModule } from 'ng-disable-link';
+import { ConfirmWindowComponent } from './components/confirm-window/confirm-window.component';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention,prefer-arrow/prefer-arrow-functions
 export function HttpLoaderFactory(http: HttpClient) {
@@ -63,8 +62,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         CommunicationBoxComponent,
         TimerComponent,
         InfoPanelComponent,
-        LeaderboardPageComponent,
-        AdminPageComponent,
         ModalComponent,
         LoginPageComponent,
         GameModeOptionsPageComponent,
@@ -77,6 +74,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         CommunicationDashboardComponent,
         NewChatroomModalComponent,
         JoinChatRoomModalComponent,
+        ConfirmWindowComponent,
     ],
     imports: [
         AppMaterialModule,

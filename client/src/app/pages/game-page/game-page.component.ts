@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { NavigationStart, Router } from '@angular/router';
 import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
 import { SocketService } from '@app/services/socket.service';
@@ -14,33 +13,17 @@ import { TranslateService } from '@ngx-translate/core';
     styleUrls: ['./game-page.component.scss'],
 })
 export class GamePageComponent implements OnInit, OnDestroy {
-    routerSubscription: Subscription;
     socketSubscription: Subscription;
+    routerSubscription: Subscription;
     constructor(
         private socketService: SocketService,
         private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
-        private router: Router,
         public infoClientService: InfoClientService,
         private dialog: MatDialog,
         private translate: TranslateService,
     ) {}
+
     ngOnInit() {
-        // we weren't able to find an equivalent without using subscribe
-        // nothing was working for this specific case
-        // pages are handled differently and it doesn't fit our feature
-        // TODO find a way to do it better
-        // eslint-disable-next-line deprecation/deprecation
-        this.routerSubscription = this.router.events.subscribe((event) => {
-            const isAtCorrectPage: boolean = event instanceof NavigationStart && this.router.url === '/game';
-            if (isAtCorrectPage && !this.infoClientService.game.gameFinished && !this.infoClientService.isSpectator) {
-                const resultLeave = confirm(this.translate.instant('GAME.DO_YOU_WANT_QUIT'));
-                if (!resultLeave) {
-                    this.router.navigate(['/game']);
-                } else {
-                    this.socketService.socket.emit('giveUpGame');
-                }
-            }
-        });
         this.socketSubscription = this.socketService.gameFinished.subscribe((value) => {
             // eslint-disable-next-line no-constant-condition
             if (value) {
@@ -58,7 +41,6 @@ export class GamePageComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.socketService.gameFinished.next(false);
         if (this.socketSubscription) this.socketSubscription.unsubscribe();
-        this.routerSubscription.unsubscribe();
     }
 
     onLeftClickGamePage() {

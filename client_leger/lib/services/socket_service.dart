@@ -225,6 +225,10 @@ class SocketService with ChangeNotifier {
       tapService.lettersDrawn = '';
       timerService.clearTimer();
     });
+
+    socket.on('askTimerStatus', (_) {
+      socket.emit('timerStatus', timerService.secondsValue);
+    });
   }
 
   canvasActionsHandler() {

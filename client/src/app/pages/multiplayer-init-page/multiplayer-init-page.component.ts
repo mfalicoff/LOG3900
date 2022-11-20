@@ -5,6 +5,7 @@ import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
 import * as Constants from '@app/classes/global-constants';
 import { TranslateService } from '@ngx-translate/core';
+import { NotificationService } from '@app/services/notification.service';
 
 @Component({
     selector: 'app-multiplayer-init-page',
@@ -17,7 +18,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     passwordText: string;
     actualPassword: string;
     roomNameClicked: string;
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private translate: TranslateService) {}
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private translate: TranslateService, private notifService: NotificationService) {}
 
     ngAfterViewInit() {
         this.infoClientService.rooms = [];
@@ -44,7 +45,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     askForPasswd() {
         this.passwdModalStyle = 'none';
         if (this.passwordText !== this.actualPassword) {
-            alert(this.translate.instant('WRONG_PASSWORD'));
+            this.notifService.openSnackBar(this.translate.instant('WRONG_PASSWORD'), false);
         } else {
             this.joinRoom(this.roomNameClicked);
         }
@@ -122,7 +123,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
             // join room
             this.joinRoom(roomName);
         } else {
-            alert(this.translate.instant('NO_ROOMS'));
+            this.notifService.openSnackBar(this.translate.instant('NO_ROOMS'), false);
         }
     }
 

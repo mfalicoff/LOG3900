@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ChatRoom } from '@app/classes/chatroom.interface';
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
@@ -7,7 +8,7 @@ import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { RoomData } from '@app/classes/room-data';
 import { TranslateService } from '@ngx-translate/core';
-import { ChatRoom } from '@app/classes/chatroom.interface';
+import { TimerService } from './timer.service';
 
 @Injectable({
     providedIn: 'root',
@@ -64,7 +65,7 @@ export class InfoClientService {
     // variable to allow/block sound effects
     soundDisabled: boolean;
 
-    constructor(private translate: TranslateService) {
+    constructor(private translate: TranslateService, private timerService: TimerService) {
         this.gameMode = Constants.CLASSIC_MODE;
         this.minutesByTurn = 1;
         this.isGamePrivate = false;
@@ -92,6 +93,8 @@ export class InfoClientService {
         this.displayExchLetterModal = 'none';
         this.displayTransformTileModal = 'none';
         this.soundDisabled = false;
+        this.timerService.displayTimer = this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') + '1:00';
+        this.timerService.clearTimer();
 
         this.letterReserve = ['a', 'b'];
         this.letterBank = new Map([

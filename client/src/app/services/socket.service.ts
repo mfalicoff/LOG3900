@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
+import { NotificationService } from './notification.service';
 import { PlaceGraphicService } from './place-graphic.service';
 import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
@@ -37,6 +38,7 @@ export class SocketService {
         private rankedService: RankedService,
         private drawingService: DrawingService,
         private placeGraphicService: PlaceGraphicService,
+        private notifService: NotificationService,
         private translate: TranslateService,
     ) {
         this.socket = io(this.urlString);
@@ -198,6 +200,10 @@ export class SocketService {
         this.socket.on('addSecsToTimer', (secsToAdd) => {
             this.timerService.addSecsToTimer(secsToAdd);
         });
+
+        this.socket.on('askTimerStatus', () => {
+            this.socket.emit('timerStatus', this.timerService.secondsValue);
+        });
     }
 
     private roomManipulationHandler() {
@@ -270,7 +276,7 @@ export class SocketService {
         });
 
         this.socket.on('messageServer', (message) => {
-            alert(message);
+            this.notifService.openSnackBar(message, false);
         });
 
         this.socket.on('SendDictionariesToClient', (dictionaries: MockDict[]) => {
@@ -281,16 +287,8 @@ export class SocketService {
             this.infoClientService.dictionaries = dictionaries;
         });
 
-        this.socket.on('DictionaryDeletedMessage', (message: string) => {
-            alert(message);
-        });
-
         this.socket.on('SendBeginnerVPNamesToClient', (namesVP: NameVP[]) => {
             this.infoClientService.nameVPBeginner = namesVP;
-        });
-
-        this.socket.on('SendExpertVPNamesToClient', (namesVP: NameVP[]) => {
-            this.infoClientService.nameVPExpert = namesVP;
         });
 
         this.socket.on('isSpectator', (isSpectator) => {

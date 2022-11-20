@@ -255,6 +255,13 @@ export class MouseEventService {
     }
 
     private resetTileStandAtPos(player: Player, position: number) {
+        if (!player.stand[position]) {
+            // eslint-disable-next-line no-console
+            console.log('Bug in MouseEventService:resetTileStandAtPos. Position is: ' + position);
+            // eslint-disable-next-line no-console
+            console.log('Player.stand is: ' + player.stand);
+            return;
+        }
         player.stand[position].backgroundColor = '#F7F7E3';
     }
 
