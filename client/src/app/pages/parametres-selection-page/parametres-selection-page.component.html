@@ -93,24 +93,28 @@
     </button>
 </div>
 
-<!-- The Modal to show the powers available to the player -->
-<div class="modal" [style.display]="displayPowerModal">
-    <div class="modal-content" >
-        <span id="closeModalX" (click)="hidePowerModal()">X</span>
-        <table id="tablePowers">
-            <thead>
-                <tr>
-                <th>Pouvoir Description</th>
-                <th>Actif</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let powerCard of infoClientService.game.powerCards">
-                <td>
-                    <div class="flip-card">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">
-                        <img src="../../../assets/card.png" alt="Avatar" class="cardImg">
+    <!-- The Modal to show the powers available to the player -->
+    <div class="modal" [style.display]="displayPowerModal">
+        <div class="modal-content" >
+            <span id="closeModalX" (click)="hidePowerModal()">X</span>
+            <table id="tablePowers">
+                <thead>
+                  <tr>
+                    <th>Pouvoir Description</th>
+                    <th>Actif</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let powerCard of infoClientService.game.powerCards">
+                    <td>
+                      <div class="flip-card">
+                        <div class="flip-card-inner">
+                          <div class="flip-card-front">
+                            <img src="./assets/card.png" alt="Avatar" class="cardImg">
+                          </div>
+                          <div class="flip-card-back">
+                            {{powerCard.name}}
+                          </div>
                         </div>
                         <div class="flip-card-back">
                         {{powerCard.name}}

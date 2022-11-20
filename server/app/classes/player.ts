@@ -57,6 +57,7 @@ export class Player {
         this.isMoveBingo = false;
         this.powerCards = [];
         this.nbValidWordPlaced = 0;
+        this.avatarUri = '';
         if (elo === undefined) {
             const startingElo = 2000;
             this.elo = startingElo;

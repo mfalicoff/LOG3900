@@ -143,18 +143,19 @@ export class PlayAreaService {
         this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
         this.sendMsgToAllInRoom(game, Constants.REPLACEMENT_BY_BOT);
 
-        // we keep the old id to determine later to change the old player's turn or not
-        const oldIdPlayer = playerThatLeaves.id;
+        // we get the index of the person leaving to replace him at the same index later
+        const idxPlayerLeaving = Array.from(game.mapPlayers.values()).findIndex((player) => player.name === playerThatLeaves.name);
 
         let isChangeTurnNeccesary = false;
         // we check if we will have to change the turn of the player that just left
         if (game.gameStarted) {
             // we change the player turn if it was the player that left's turn
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-            if (playerPlaying.id === oldIdPlayer) {
+            if (playerPlaying.id === playerThatLeaves.id) {
                 isChangeTurnNeccesary = true;
             }
         }
+
         // we delete the old player
         game.mapPlayers.delete(playerThatLeaves.name);
 
@@ -162,7 +163,7 @@ export class PlayAreaService {
         playerThatLeaves.id = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
         playerThatLeaves.avatarUri = await this.avatarService.getRandomAvatar();
-        this.insertInMapIndex(game.idxPlayerPlaying, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
+        this.insertInMapIndex(idxPlayerLeaving, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
 
         // if the game is not started we don't need to change the turn
         // furthermore if we entered here game.idxPlayerPlaying would be -1 so server would crash
@@ -183,7 +184,7 @@ export class PlayAreaService {
     // function used to keep the order of elements in the map
     // we need to keep the ordre because otherwise the change of turn would be wrong
     // since it is based on this order
-    private insertInMapIndex(index: number, key: string, value: Player, map: Map<string, Player>) {
+    insertInMapIndex(index: number, key: string, value: Player, map: Map<string, Player>) {
         const arr = Array.from(map);
         arr.splice(index, 0, [key, value]);
         map.clear();

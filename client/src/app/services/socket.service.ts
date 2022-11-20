@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment';
 import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
+import { NotificationService } from './notification.service';
 import { PlaceGraphicService } from './place-graphic.service';
 import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
@@ -36,6 +37,7 @@ export class SocketService {
         private rankedService: RankedService,
         private drawingService: DrawingService,
         private placeGraphicService: PlaceGraphicService,
+        private notifService: NotificationService,
     ) {
         this.socket = io(this.urlString);
         this.gameFinished = new BehaviorSubject(this.infoClientService.game.gameFinished);
@@ -97,6 +99,7 @@ export class SocketService {
                 }, Constants.WAIT_FOR_CANVAS_INI);
             }
             if (game.gameFinished && this.count === 1) {
+                this.timerService.clearGameTimer();
                 this.gameFinished.next(true);
                 this.count++;
             }
@@ -183,6 +186,7 @@ export class SocketService {
         this.socket.on('setTimeoutTimerStart', () => {
             this.drawingBoardService.lettersDrawn = '';
             this.setTimeoutForTimer();
+            this.timerService.startGameTimer();
         });
 
         this.socket.on('stopTimer', () => {
@@ -192,6 +196,10 @@ export class SocketService {
 
         this.socket.on('addSecsToTimer', (secsToAdd) => {
             this.timerService.addSecsToTimer(secsToAdd);
+        });
+
+        this.socket.on('askTimerStatus', () => {
+            this.socket.emit('timerStatus', this.timerService.secondsValue);
         });
     }
 
@@ -265,7 +273,7 @@ export class SocketService {
         });
 
         this.socket.on('messageServer', (message) => {
-            alert(message);
+            this.notifService.openSnackBar(message, false);
         });
 
         this.socket.on('SendDictionariesToClient', (dictionaries: MockDict[]) => {
@@ -277,7 +285,7 @@ export class SocketService {
         });
 
         this.socket.on('DictionaryDeletedMessage', (message: string) => {
-            alert(message);
+            this.notifService.openSnackBar(message, false);
         });
 
         this.socket.on('SendBeginnerVPNamesToClient', (namesVP: NameVP[]) => {

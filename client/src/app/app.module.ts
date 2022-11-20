@@ -35,6 +35,7 @@ import { ProfilePageComponent } from './pages/profile-page/profile-page.componen
 import { EndGameResultsPageComponent } from '@app/pages/end-game-results-page/end-game-results-page.component';
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { NgDisableLinkModule } from 'ng-disable-link';
+import { ConfirmWindowComponent } from './components/confirm-window/confirm-window.component';
 
 /**
  * Main module that is used in main.ts.
@@ -71,6 +72,7 @@ import { NgDisableLinkModule } from 'ng-disable-link';
         CommunicationDashboardComponent,
         NewChatroomModalComponent,
         JoinChatRoomModalComponent,
+        ConfirmWindowComponent,
     ],
     imports: [
         AppMaterialModule,
