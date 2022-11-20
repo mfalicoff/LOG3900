@@ -1,23 +1,15 @@
-.container {
-    min-height: 100vh;
-    height: auto;
-    background-image: url('https://www.printablee.com/postpic/2011/03/blank-scrabble-board-template-printable_326282.jpg');
-    background-position: center;
-    background-attachment: fixed;
-}
-
 .justified {
     display: flex;
     flex-direction: column;
-    // justify-content: space-between;
     align-items: center;
 }
 
 #container {
     position: inherit;
-    width: 60%;
-    margin-top: 40%;
-    height: 70%;
+    width: 80%;
+    margin-top: 10%;
+    margin-left: 10%;
+    height: 80%;
     background-color: white;
     z-index: 2;
     background: #0c483f;
@@ -28,6 +20,7 @@
 }
 
 .container-1 {
+    margin-top: -10%;
     display: flex;
 }
 
@@ -96,10 +89,13 @@
 .roomList {
     border: solid 3px;
     color: wheat;
-    height: 40%;
-    width: 50%;
+    height: 50%;
+    width: 80%;
     border-radius: 3px;
-    margin-top: 1%;
+    margin-top: 5%;
+    margin-left: 10%;
+    margin-right: 10%;
+    align-self: center;
     align-items: center;
     position: inherit;
     overflow-y: auto;
@@ -155,7 +151,7 @@
 
 #tableRoom th {
     padding-top: 12px;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
     text-align: left;
     background-color: wheat;
     color: #0C483F;
