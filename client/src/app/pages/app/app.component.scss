@@ -1,4 +1,9 @@
-.grid-container {
+.gridContainer {
+    display: grid;
+    grid-template-columns: auto 700px;
+}
+
+.gridContainerInGame {
     display: grid;
     grid-template-columns: auto 620px;
 }
@@ -33,7 +38,6 @@
 
 #playersInfoNoLog{
     margin-top: 3%;
-    margin-right: 6%;
     margin-bottom: 0px;
 }
 

@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" [ngClass]="{notInGame: this.router.url !== '/game'}">
   <div style="position: absolute; top: 0; left: 5%;">
     <button class="btnStyle" mat-button (click)="popoutWindow1.popOut()">Detacher<mat-icon>keyboard_capslock</mat-icon></button>
   </div>

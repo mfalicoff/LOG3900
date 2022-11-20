@@ -9,7 +9,7 @@ import { ChatMessage } from '@app/classes/chat-message';
 import { SocketService } from '@app/services/socket.service';
 import { JoinChatRoomModalComponent } from './join-chatroom-modal.component.ts/join-chatroom-modal.component';
 import * as Constants from '@app/classes/global-constants';
-import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-communication-dashboard',
@@ -26,12 +26,7 @@ export class CommunicationDashboardComponent implements AfterViewInit {
     @Input() isInGame: string;
     currSelectedChatroom: ChatRoom;
     hideChatrooms = false;
-    constructor(
-        private socketService: SocketService,
-        public infoClientService: InfoClientService,
-        private dialog: MatDialog,
-        public route: ActivatedRoute,
-    ) {
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private dialog: MatDialog, public router: Router) {
         this.currSelectedChatroom = { name: 'default', participants: [], creator: '', chatHistory: [new ChatMessage('system', 'defaultMsg')] };
         if (this.infoClientService.chatRooms.length > 0) {
             this.currSelectedChatroom = this.infoClientService.chatRooms[0];

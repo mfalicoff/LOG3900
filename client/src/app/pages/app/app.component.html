@@ -17,7 +17,7 @@
         <h6 *ngIf="this.router.url !== '/game' && this.router.url !== '/home' && this.router.url !== '/game-mode-options'" class="MPButton" onclick="history.back()"><mat-icon>arrow_back</mat-icon></h6>
     </router-outlet>
 </ng-template>
-<div class="grid-container" id="hideInGame" *ngIf="this.infoClientService.playerName !== undefined && this.infoClientService.playerName !== null && this.infoClientService.playerName !== 'DefaultPlayerName'; else other_content1">   
+<div id="hideInGame" *ngIf="this.infoClientService.playerName !== undefined && this.infoClientService.playerName !== null && this.infoClientService.playerName !== 'DefaultPlayerName'; else other_content1" [ngClass]="{gridContainerInGame: this.router.url === '/game', gridContainer: this.router.url !== 'game'}">   
     <span 
     *ngIf="infoClientService.soundDisabled" 
     class="material-symbols-outlined"

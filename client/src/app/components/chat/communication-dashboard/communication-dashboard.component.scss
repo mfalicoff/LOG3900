@@ -7,8 +7,12 @@
   bottom: 0;
 }
 
-.inGame {
+.notInGame {
+  margin-bottom: 5%;
+  padding-right: 10%;
   align-items: center;
+  justify-content: center;
+  align-self: center;
 }
 
 #main {
@@ -17,7 +21,6 @@
   width: 600px;
   height: 450px;
   padding: 10px;
-  padding-right: 0;
   padding-top: 0;
 }
 
