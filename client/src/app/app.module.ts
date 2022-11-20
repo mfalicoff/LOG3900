@@ -40,7 +40,7 @@ import { NgDisableLinkModule } from 'ng-disable-link';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention,prefer-arrow/prefer-arrow-functions
 export function HttpLoaderFactory(http: HttpClient) {
-    return new TranslateHttpLoader(http);
+    return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 /**
  * Main module that is used in main.ts.
