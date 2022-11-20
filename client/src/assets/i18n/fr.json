@@ -197,5 +197,6 @@
         "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.": "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.",
         "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.": "Cette carte permet d'ajouter 1 minute à votre temps de réflexion.",
         "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis."
-    }
+    },
+    "DETACH": "Détacher"
 }
