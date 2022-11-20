@@ -22,6 +22,7 @@ export class InfoPanelComponent {
     ) {}
 
     onExchangeClick() {
+        console.log('1');
         this.socketService.socket.emit('onExchangeClick');
     }
     onCancelClick() {

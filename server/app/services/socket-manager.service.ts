@@ -158,14 +158,18 @@ export class SocketManager {
         socket.on('onExchangeClick', async () => {
             const user = this.users.get(socket.id);
             if (!user) {
+                console.log('2:' + user);
                 return;
             }
             const player = this.rooms.get(user.roomName)?.mapPlayers.get(user.name);
 
             const game = this.rooms.get(user.roomName);
             if (game && player) {
+
                 await this.mouseEventService.exchangeButtonClicked(game, player);
             }
+            console.log('3:' + game);
+            console.log('4:' + player);
         });
 
         socket.on('onAnnulerClick', () => {
