@@ -43,7 +43,7 @@ export class TranslateService {
 
     translateCommandFromPlayer(name: string, message: string) {
         if (this.userNameToLang.get(name) === 'en') {
-            message = message.replace('!place', '!placer');
+            message = message.replace('!place ', '!placer ');
             message = message.replace('!exchange', '!échanger');
             message = message.replace('!pass', '!passer');
             message = message.replace('!help', '!aide');
