@@ -149,6 +149,15 @@ export class GameServer {
         }
     }
 
+    isSomeoneCreator(): boolean {
+        for (const player of this.mapPlayers.values()) {
+            if (player.isCreatorOfGame) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private setMockTiles() {
         this.bonusBoard = [
             ['xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx', 'xx'],
