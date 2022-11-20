@@ -9,6 +9,9 @@ import { GameSaved } from '@app/classes/game-saved';
 import { InfoClientService } from '@app/services/info-client.service';
 import { Router } from '@angular/router';
 import { Socket } from 'socket.io-client';
+import { NotificationService } from './notification.service';
+import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +20,13 @@ export class UserService {
     user: User;
     serverUrl = environment.serverUrl;
 
-    constructor(private http: HttpClient, private infoClientService: InfoClientService, private router: Router) {}
+    constructor(
+        private http: HttpClient,
+        private infoClientService: InfoClientService,
+        private router: Router,
+        private notifService: NotificationService,
+        private dialog: MatDialog,
+    ) {}
 
     getUser(user: User): Observable<UserResponseInterface> {
         return this.http.get<UserResponseInterface>(`${environment.serverUrl}users/${user._id}`);
@@ -114,7 +123,7 @@ export class UserService {
                     // @ts-ignore
                     localStorage.removeItem('cookie');
                     localStorage.removeItem('user');
-                    this.infoClientService.playerName = '';
+                    this.infoClientService.playerName = 'DefaultPlayerName';
                     this.router.navigate(['/login']);
                 },
                 error: (error) => {
@@ -188,11 +197,18 @@ export class UserService {
         return this.http.get<GameSaved[]>(environment.serverUrl + 'users/games/' + this.user._id, { observe: 'body' });
     }
 
+    getUserByName(playerName: string): Observable<UserResponseInterface> {
+        return this.http.get<UserResponseInterface>(`${this.serverUrl}users/${playerName}`, {
+            observe: 'body',
+            responseType: 'json',
+        });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
-            alert('Erreur: ' + error.status + error.error.message);
+            this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
         } else {
-            alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
+                this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
         }
     }
 

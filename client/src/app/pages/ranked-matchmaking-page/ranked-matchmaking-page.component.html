@@ -1,32 +1,27 @@
-<body>
-    <body>
-        <div class="bg-image"></div>
-        <div id="container" class="center">
-            <div id="container-content">
-                <div class="container-1">
-                    <div class="box-1">
-                        <h1>Matchmaking en cours</h1>
-                        <br />
-                        <mat-spinner class='mat-spinner-color'></mat-spinner>
-                        <br />
-                        <div class= "font-size-30" >{{timerService.matchmakingDisplayTimer}}</div>
-                        <div class="modal" *ngIf="this.rankedService.isShowModal === true">
-                            <div class="modal-content" >
-                                <h1>Partie trouvée</h1>
-                                <div class= "font-size-30">{{timerService.displayTimer}}</div>
-                                <br>
-                                <button class="accept-button" (click)="acceptMatch()"
-                                [ngClass]="{'green' : matchAccepted}"
-                                >Accepter</button>
-                                <button class="refuse-button" (click)="refuseMatch()"
-                                [ngClass]="{'red' : matchRefuseCss}"
-                                routerLink="/ranked-init"
-                                >Refuser</button>
-                            </div>
-                        </div>
+<div id="container" class="center">
+    <div id="container-content">
+        <div class="container-1">
+            <div class="box-1">
+                <h1>Matchmaking en cours</h1>
+                <br />
+                <mat-spinner class='mat-spinner-color'></mat-spinner>
+                <br />
+                <div class= "font-size-30" >{{timerService.matchmakingDisplayTimer}}</div>
+                <div class="modal" *ngIf="this.rankedService.isShowModal === true">
+                    <div class="modal-content" >
+                        <h1>Partie trouvée</h1>
+                        <div class= "font-size-30">{{timerService.displayTimer}}</div>
+                        <br>
+                        <button class="accept-button" (click)="acceptMatch()"
+                        [ngClass]="{'green' : matchAccepted}"
+                        >Accepter</button>
+                        <button class="refuse-button" (click)="refuseMatch()"
+                        [ngClass]="{'red' : matchRefuseCss}"
+                        routerLink="/ranked-init"
+                        >Refuser</button>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
-</body>
+    </div>
+</div>

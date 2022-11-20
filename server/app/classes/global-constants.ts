@@ -115,10 +115,7 @@ export const DATABASE_URL = 'mongodb+srv://Stephane:HarryP0tter7@project-databas
 export const DATABASE_PROD = 'Project-Database';
 export const DATABASE_DEV = 'test';
 export const DATABASE_COLLECTION_DICTIONARIES = 'Dictionaries';
-export const DATABASE_COLLECTION_BESTSCORECLASSIC = 'BestScoreClassic';
-export const DATABASE_COLLECTION_BESTSCORELOG2990 = 'BestScoreLOG2990';
 export const DATABASE_COLLECTION_BEGINNER_NAMESVP = 'BeginnerVPNames';
-export const DATABASE_COLLECTION_EXPERT_NAMESVP = 'ExpertVPNames';
 export const GAME_NOT_STARTED = "La partie n'a pas commencée !";
 
 // OBJECTIVE CONSTANTS///////
