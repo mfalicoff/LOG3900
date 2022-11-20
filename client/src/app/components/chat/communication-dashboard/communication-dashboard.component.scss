@@ -23,8 +23,10 @@
 
 #titleChatDashBoard{
   padding: 5px;
+  text-align: center;
   padding-bottom: 0px;
-  margin-bottom: 0px;
+  margin-bottom: -10%;
+  margin-top: 15%;
 }
 
 #leftDiv{
@@ -80,7 +82,6 @@
 
 .btnStyle{
   background-color: #0C483F;
-  display: inline;
   margin-top: 0px;
   margin-bottom: 5px;
   font-size: 15px;
