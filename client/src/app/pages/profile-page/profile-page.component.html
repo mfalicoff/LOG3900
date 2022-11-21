@@ -1,46 +1,40 @@
-<div class="container justified">
-    <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
-    <div id="profileWrapper">
-        <div class="subcontainer justified">
-            <h6 class="MPButton" routerLink="/game-mode-options">
-                <mat-icon>arrow_back</mat-icon>
-            </h6>
-            <img [src]="userService.user.avatarUri" id="profile"/>
-            <h1>{{this.userService.user.name}}</h1>
-            <button mat-flat-button (click)="openEditProfileComponent()">{{'PROFILE.EDIT' | translate}}</button>
-            <div id="statsContainer">
-                <h2>{{'PROFILE.STATS' | translate}}</h2>
-                <mat-grid-list cols="2" rowHeight="2:1" id="statsList">
-                    <mat-grid-tile class="statsElement">{{'PROFILE.GAMES_PLAYED' | translate}}{{this.userService.user.gamesPlayed}}</mat-grid-tile>
-                    <mat-grid-tile class="statsElement">{{'PROFILE.GAMES_WON' | translate}}{{this.userService.user.gamesWon}}</mat-grid-tile>
-                    <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_SCORE' | translate}}{{this.userService.user.averagePointsPerGame}}</mat-grid-tile>
-                    <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_TIMES' | translate}}{{this.millisToMinutesAndSeconds()}}</mat-grid-tile>
-                </mat-grid-list>
+<div class="justified" id="container">
+    <div class="subcontainer justified">
+        <img [src]="userService.user.avatarUri" id="profile"/>
+        <h1>{{this.userService.user.name}}</h1>
+        <button class="editButton" mat-flat-button (click)="openEditProfileComponent()">{{'PROFILE.EDIT' | translate}}</button>
+        <div id="statsContainer">
+            <h2>{{'PROFILE.STATS' | translate}}</h2>
+            <mat-grid-list cols="2" rowHeight="2:1" id="statsList">
+                <mat-grid-tile class="statsElement">{{'PROFILE.GAMES_PLAYED' | translate}}{{this.userService.user.gamesPlayed}}</mat-grid-tile>
+                <mat-grid-tile class="statsElement">{{'PROFILE.GAMES_WON' | translate}}{{this.userService.user.gamesWon}}</mat-grid-tile>
+                <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_SCORE' | translate}}{{this.userService.user.averagePointsPerGame}}</mat-grid-tile>
+                <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_TIMES' | translate}}{{this.millisToMinutesAndSeconds()}}</mat-grid-tile>
+            </mat-grid-list>
+        </div>
+        <div class="title-box">
+            <h1 mat-dialog-title class="title">{{'PROFILE.HISTORY_ACTIONS' | translate}}</h1>
+        </div>
+        <div class="button-grid-row">
+            <div class="button-grid-col">
+                <button mat-flat-button (click)="openActionHistoryComponent()" class="history">{{'PROFILE.HISTORY_CONNECTIONS' | translate}}</button>
             </div>
-            <div class="title-box">
-                <h1 mat-dialog-title class="title">{{'PROFILE.HISTORY_ACTIONS' | translate}}</h1>
+            <div class="button-grid-col">
+                <button mat-flat-button (click)="openGameHistoryComponent()" class="history">{{'PROFILE.HISTORY_GAMES' | translate}}</button>
             </div>
-            <div class="button-grid-row">
-                <div class="button-grid-col">
-                    <button mat-flat-button (click)="openActionHistoryComponent()" class="history">{{'PROFILE.HISTORY_CONNECTIONS' | translate}}</button>
-                </div>
-                <div class="button-grid-col">
-                    <button mat-flat-button (click)="openGameHistoryComponent()" class="history">{{'PROFILE.HISTORY_GAMES' | translate}}</button>
-                </div>
-                <div class="button-grid-col">
-                    <button mat-flat-button (click)="openFavouriteGamesComponent()" class="history">{{'PROFILE.FAVORITES' | translate}}</button>
-                </div>
+            <div class="button-grid-col">
+                <button mat-flat-button (click)="openFavouriteGamesComponent()" class="history">{{'PROFILE.FAVORITES' | translate}}</button>
             </div>
-            <div class="button-grid-row">
-                <mat-form-field appearance="fill" class="languageSelect">
-                    <mat-label>{{'PROFILE.LANGUAGE' | translate}}</mat-label>
-                    <mat-select [(ngModel)]="langSelected">
-                        <mat-option *ngFor="let lang of langList" [value]="lang" (click)="onClickLang(lang)">
-                            <h2 >{{ lang }}</h2>
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+        </div>
+        <div class="button-grid-row">
+            <mat-form-field appearance="fill" class="languageSelect">
+                <mat-label>{{'PROFILE.LANGUAGE' | translate}}</mat-label>
+                <mat-select [(ngModel)]="langSelected">
+                    <mat-option *ngFor="let lang of langList" [value]="lang" (click)="onClickLang(lang)">
+                        <h2 >{{ lang }}</h2>
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
         </div>
     </div>
 </div>
