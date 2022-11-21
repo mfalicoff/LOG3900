@@ -1,24 +1,8 @@
-body,
-html {
-    height: 100%;
-}
-
-.bg-image {
-    background-image: url('../../../assets/scrabble-background.jpg');
-    background-size: 100%;
-    filter: blur(5px);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
-}
-
 #container {
-    position: absolute;
     width: 30%;
-    height: 40%;
-    bottom: 30%;
-    left: 35%;
+    height: 30%;
+    bottom: 35%;
+    left: 20%;
     background-color: white;
     z-index: 2;
     background: #0c483f;
@@ -26,6 +10,10 @@ html {
     font-size: large;
     border-radius: 25px;
     justify-content: center;
+    display: flex;
+    align-items: center;
+    align-self: center;
+    position: fixed;
 }
 
 .font-size-30 {

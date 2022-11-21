@@ -23,6 +23,8 @@ class UsersRoute implements Routes {
         this.router.put(`${this.path}/:id`, authMiddleware, validationMiddleware(CreateUserValidator, 'body', true), this.usersController.updateUser);
         this.router.patch(`${this.path}/:id`, authMiddleware, this.usersController.updateFavouriteGames);
         this.router.delete(`${this.path}/:id`, authMiddleware, this.usersController.deleteUser);
+        this.router.put(`${this.path}/language/:id`, authMiddleware, this.usersController.updateLanguageUser);
+        this.router.put(`${this.path}/theme/:id`, authMiddleware, this.usersController.updateThemeUser);
     }
 }
 

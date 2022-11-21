@@ -20,7 +20,7 @@
     <div id="favouriteGames">
         <div *ngFor="let game of this.favouriteGames">
             <ul>
-                <li> NOM DE LA SALLE : {{game.roomName}}</li>
+                <li> Salle : {{game.roomName}}</li>
                 <div *ngIf="game.spectators.length !== 0">
                     <li>Spectateurs de la partie:</li>
                     <div *ngFor="let spect of game.spectators" class="two-grid-row">

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 @Injectable({
     providedIn: 'root',
 })
@@ -10,6 +11,8 @@ export class TimerService {
     playingTime: number = 0.0;
     private timerInterval: NodeJS.Timeout;
     private timerMatchmaking: NodeJS.Timeout;
+
+    constructor(private translate: TranslateService) {}
 
     startTimer(minutesByTurn: number) {
         if (minutesByTurn < 0) {
@@ -25,9 +28,17 @@ export class TimerService {
             this.secondsValue--;
             if (this.secondsValue >= 0) {
                 if (this.secondsValue % secondsInMinute <= displayZero) {
-                    this.displayTimer = `Temps Restant : ${Math.floor(this.secondsValue / secondsInMinute)}:0${this.secondsValue % secondsInMinute}`;
+                    this.displayTimer =
+                        this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') +
+                        Math.floor(this.secondsValue / secondsInMinute) +
+                        ':0' +
+                        (this.secondsValue % secondsInMinute);
                 } else {
-                    this.displayTimer = `Temps Restant : ${Math.floor(this.secondsValue / secondsInMinute)}:${this.secondsValue % secondsInMinute}`;
+                    this.displayTimer =
+                        this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') +
+                        Math.floor(this.secondsValue / secondsInMinute) +
+                        ':' +
+                        (this.secondsValue % secondsInMinute);
                 }
             }
         }, oneSecond);
@@ -42,13 +53,17 @@ export class TimerService {
         this.timerMatchmaking = setInterval(() => {
             this.matchmakingSecondsValue++;
             if (this.matchmakingSecondsValue % secondsInMinute <= displayZero) {
-                this.matchmakingDisplayTimer = `Temps écoulé : ${Math.floor(this.matchmakingSecondsValue / secondsInMinute)}:0${
-                    this.matchmakingSecondsValue % secondsInMinute
-                }`;
+                this.matchmakingDisplayTimer =
+                    this.translate.instant('GAME.TIMER_SERVICE.TIME_ELAPSED') +
+                    Math.floor(this.secondsValue / secondsInMinute) +
+                    ':0' +
+                    (this.secondsValue % secondsInMinute);
             } else {
-                this.matchmakingDisplayTimer = `Temps écoulé : ${Math.floor(this.matchmakingSecondsValue / secondsInMinute)}:${
-                    this.matchmakingSecondsValue % secondsInMinute
-                }`;
+                this.matchmakingDisplayTimer =
+                    this.translate.instant('GAME.TIMER_SERVICE.TIME_ELAPSED') +
+                    Math.floor(this.secondsValue / secondsInMinute) +
+                    ':' +
+                    (this.secondsValue % secondsInMinute);
             }
         }, oneSecond);
     }

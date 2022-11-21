@@ -285,7 +285,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     void _getGameStartDate() {
-        timestamp = infoClientService.game.gameStart;
+        timestamp = infoClientService.game.gameStart.toString();
     }
 
     void _displayPlayingTime() {

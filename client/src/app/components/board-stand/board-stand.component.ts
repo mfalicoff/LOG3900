@@ -1,10 +1,13 @@
 import { AfterViewInit, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { ChatMessage } from '@app/classes/chat-message';
 import * as Constants from '@app/classes/global-constants';
 import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
 import { DrawingBoardService } from '@app/services/drawing-board-service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
+import { NotificationService } from '@app/services/notification.service';
 import { PlaceGraphicService } from '@app/services/place-graphic.service';
 import { SocketService } from '@app/services/socket.service';
 
@@ -36,6 +39,8 @@ export class BoardStandComponent implements AfterViewInit {
         private placeGraphicService: PlaceGraphicService,
         private socketService: SocketService,
         private infoClientService: InfoClientService,
+        private route: Router,
+        private notifService: NotificationService,
     ) {}
 
     @HostListener('document:keydown.escape', ['$event'])
@@ -129,12 +134,31 @@ export class BoardStandComponent implements AfterViewInit {
     }
 
     ngAfterViewInit(): void {
+        if (this.route.url === '/game') {
+            this.infoClientService.chatRooms.unshift({
+                name: 'game',
+                participants: [],
+                creator: '',
+                chatHistory: [new ChatMessage('SYSTEM', 'Bienvenue sur le channel de discussion de la partie.')],
+            });
+        } else {
+            // if the user is not in a game there is no game chat
+            const idxGameRoom = this.infoClientService.chatRooms.findIndex((chatRoom) => chatRoom.name === 'game');
+            if (idxGameRoom !== Constants.DEFAULT_VALUE_NUMBER) {
+                this.infoClientService.chatRooms.splice(idxGameRoom, 1);
+            }
+        }
+
         this.playAreaCanvas = this.playAreaElement.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.tmpTileCanvas = this.tmpTileElement.nativeElement.getContext('2d') as CanvasRenderingContext2D;
         this.drawingBoardService.canvasInit(this.playAreaCanvas, this.tmpTileCanvas);
         // add event lisntener for mouse movement
         // bind the component with the function to get acess to the attributes and functions of this component
         document.getElementById('tmpTileCanvas')?.addEventListener('mousemove', this.handleMouseMove.bind(this), true);
+        // reset the variable of each service used for the placement
+        this.drawingBoardService.initDefaultVariables();
+        this.placeGraphicService.initDefaultVariables();
+        this.mouseKeyboardEventHandler.initDefaultVariables();
     }
 
     continueProcessingDrop() {
@@ -142,11 +166,11 @@ export class BoardStandComponent implements AfterViewInit {
             this.clickedTile = undefined;
             this.clickedTileIndex = new Vec2();
 
-            alert("Ce n'est plus votre tour de jouer !");
+            this.notifService.openSnackBar("Ce n'est plus votre tour de jouer !", false);
             return;
         }
         if (!this.allLetter(this.letterChoice)) {
-            alert('Votre choix doit être une lettre ! Veuillez réessayer.');
+            this.notifService.openSnackBar('Votre choix doit être une lettre ! Veuillez réessayer.', false);
             return;
         }
         if (!this.clickedTile || this.letterChoice === '') {

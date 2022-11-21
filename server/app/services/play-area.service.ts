@@ -8,10 +8,11 @@ import { ChatService } from './chat.service';
 import { DatabaseService } from './database.service';
 import { LetterBankService } from './letter-bank.service';
 import { StandService } from './stand.service';
-// import { VirtualPlayerService } from './virtual-player.service';
+import { VirtualPlayerService } from './virtual-player.service';
 import AvatarService from '@app/services/avatar.service';
 import { PowerCardsService } from './power-cards.service';
 import { ChatMessage } from '@app/classes/chat-message';
+import { TranslateService } from '@app/services/translate.service';
 
 @Service()
 export class PlayAreaService {
@@ -20,11 +21,12 @@ export class PlayAreaService {
     constructor(
         private standService: StandService,
         private letterBankService: LetterBankService,
-        // private virtualPService: VirtualPlayerService,
+        private virtualPService: VirtualPlayerService,
         private chatService: ChatService,
         private databaseService: DatabaseService,
         private boardService: BoardService,
         private powerCardService: PowerCardsService,
+        private translateService: TranslateService,
     ) {
         this.sio = new io.Server();
     }
@@ -53,14 +55,13 @@ export class PlayAreaService {
                 // we go to the next player that was supposed to play
                 game.idxPlayerPlaying = (game.idxPlayerPlaying + 1) % game.mapPlayers.size;
                 // we send a message to everyone in the room to tell that someone used a powerCard
-                this.sendMsgToAllInRoom(
-                    game,
-                    'Le joueur ' +
-                        playerThatJustPlayed.name +
-                        ' a utilisé une carte pouvoir et le tour de ' +
-                        Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name +
-                        ' a été sauté.',
-                );
+                this.sendMsgToAllInRoomWithTranslation(game, [
+                    'THE_PLAYER',
+                    playerThatJustPlayed.name,
+                    'HAS_USED',
+                    Array.from(game.mapPlayers.values())[game.idxPlayerPlaying].name,
+                    'HAS_BEEN_JUMPED',
+                ]);
             }
         }
         // is the game is finished we stop the game
@@ -140,21 +141,22 @@ export class PlayAreaService {
     // function that transforms the playerThatLeaves into a virtual player
     async replaceHumanByBot(playerThatLeaves: Player, game: GameServer, message: string) {
         // we send to everyone that the player has left and has been replaced by a bot
-        this.sendMsgToAllInRoom(game, 'Le joueur ' + playerThatLeaves?.name + message);
-        this.sendMsgToAllInRoom(game, Constants.REPLACEMENT_BY_BOT);
+        this.sendMsgToAllInRoomWithTranslation(game, ['THE_PLAYER', playerThatLeaves?.name, message]);
+        this.sendMsgToAllInRoomWithTranslation(game, ['REPLACEMENT_BY_BOT']);
 
-        // we keep the old id to determine later to change the old player's turn or not
-        const oldIdPlayer = playerThatLeaves.id;
+        // we get the index of the person leaving to replace him at the same index later
+        const idxPlayerLeaving = Array.from(game.mapPlayers.values()).findIndex((player) => player.name === playerThatLeaves.name);
 
         let isChangeTurnNeccesary = false;
         // we check if we will have to change the turn of the player that just left
         if (game.gameStarted) {
             // we change the player turn if it was the player that left's turn
             const playerPlaying = Array.from(game.mapPlayers.values())[game.idxPlayerPlaying];
-            if (playerPlaying.id === oldIdPlayer) {
+            if (playerPlaying.id === playerThatLeaves.id) {
                 isChangeTurnNeccesary = true;
             }
         }
+
         // we delete the old player
         game.mapPlayers.delete(playerThatLeaves.name);
 
@@ -162,7 +164,7 @@ export class PlayAreaService {
         playerThatLeaves.id = 'virtualPlayer';
         playerThatLeaves.name = this.generateNameOpponent(game, playerThatLeaves.name);
         playerThatLeaves.avatarUri = await this.avatarService.getRandomAvatar();
-        this.insertInMapIndex(game.idxPlayerPlaying, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
+        this.insertInMapIndex(idxPlayerLeaving, playerThatLeaves.name, playerThatLeaves, game.mapPlayers);
 
         // if the game is not started we don't need to change the turn
         // furthermore if we entered here game.idxPlayerPlaying would be -1 so server would crash
@@ -180,10 +182,37 @@ export class PlayAreaService {
         }
     }
 
+    sendMsgToAllInRoomWithTranslation(game: GameServer, message: string[]) {
+        for (const player of game.mapPlayers.values()) {
+            let fullMessage = '';
+            message.forEach((element) => {
+                const value = this.translateService.translateMessage(player.name, element);
+                if (value !== '') {
+                    fullMessage += value;
+                } else {
+                    fullMessage += element;
+                }
+            });
+            player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, fullMessage));
+        }
+        for (const spectator of game.mapSpectators.values()) {
+            let fullMessage = '';
+            message.forEach((element) => {
+                const value = this.translateService.translateMessage(spectator.name, element);
+                if (value !== '') {
+                    fullMessage += value;
+                } else {
+                    fullMessage += element;
+                }
+            });
+            spectator.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, fullMessage));
+        }
+    }
+
     // function used to keep the order of elements in the map
     // we need to keep the ordre because otherwise the change of turn would be wrong
     // since it is based on this order
-    private insertInMapIndex(index: number, key: string, value: Player, map: Map<string, Player>) {
+    insertInMapIndex(index: number, key: string, value: Player, map: Map<string, Player>) {
         const arr = Array.from(map);
         arr.splice(index, 0, [key, value]);
         map.clear();
@@ -208,7 +237,7 @@ export class PlayAreaService {
     }
 
     private async randomActionVP(game: GameServer, virtualPlayer: Player) {
-        /* const neinyPercent = 0.9;
+        const neinyPercent = 0.9;
         const tenPercent = 0.1;
         const probaMove: number = this.giveProbaMove();
 
@@ -224,15 +253,14 @@ export class PlayAreaService {
             // 80% chances to place a letter
             await this.virtualPService.generateMoves(game, virtualPlayer);
             this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('soundPlay', Constants.WORD_VALID_SOUND);
-        } else {*/
-        await this.chatService.passCommand('!passer', game, virtualPlayer);
-        // }
-        // }
+        } else {
+            await this.chatService.passCommand('!passer', game, virtualPlayer);
+        }
     }
 
-    // private giveProbaMove(): number {
-    //     return Math.random();
-    // }
+    private giveProbaMove(): number {
+        return Math.random();
+    }
 
     private updateOldTiles(game: GameServer) {
         const board = game.board;
@@ -256,7 +284,7 @@ export class PlayAreaService {
             game.reduceEnnemyNbTurn--;
 
             // we send a message to everyone in the room to tell that someone used a powerCard
-            this.sendMsgToAllInRoom(game, "Le temps est divisé par deux due à l'utilisation d'une carte de pouvoir !");
+            this.sendMsgToAllInRoomWithTranslation(game, ['POWER9']);
         } else {
             this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('startClearTimer', {
                 minutesByTurn: game.minutesByTurn,

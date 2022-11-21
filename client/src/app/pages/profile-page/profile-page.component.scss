@@ -1,16 +1,31 @@
-.container {
-    min-height: 100vh;
-    height: auto;
-    background-image: url('../../../assets/scrabble-background.jpg');
-    background-position: center;
-    background-attachment: fixed;
-}
-
 .justified {
     display: flex;
     flex-direction: column;
-    // justify-content: space-between;
     align-items: center;
+}
+
+h1 {
+    color: #0c483f;
+}
+
+#container {
+    position: inherit;
+    width: 80%;
+    margin-top: 5%;
+    margin-left: 10%;
+    height: 90%;
+    background-color: wheat;
+    font-size: large;
+    border-radius: 25px;
+    justify-content: center;
+}
+
+#profileWrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
 
 #profile {
@@ -19,21 +34,12 @@
     height: 125px;
 }
 
-#profileWrapper {
-    background-color: wheat;
-    width: 70%;
-    height: 90%;
-    position: absolute;
-    border-top-left-radius: 20px;
-    top: 50%;
-    left: 50%;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-}
-
 #statsContainer {
+    color: #0c483f;
+    z-index: 2;
     text-align: center;
-    width: 50%;
+    width: 80%;
+    height: 40%;
 }
 
 #statsList {
@@ -48,6 +54,11 @@
 
 .mat-grid-tile-content {
     justify-content: left;
+}
+
+.editButton {
+    background-color: #0c483f;
+    color: wheat;
 }
 
 .subcontainer {
@@ -86,8 +97,24 @@
     margin-right: 15px;
     margin-left: 15px;
 }
+
 .title-box {
     max-width: 100%;
     color: #0c483f;
     margin-bottom: 10px;
+}
+
+.languageSelect{
+    background-color: wheat;
+    height: 66px;
+    border-radius: 10px;
+    position: relative;
+    margin: 0 0 20px;
+    padding-top: 10%;
+}
+
+mat-option {
+    background-color: wheat !important;
+    color: #0c483f;
+    margin: 0;
 }

@@ -1,37 +1,15 @@
-body,
-html {
-    height: 100%;
-}
-
-.material-symbols-outlined {
-    top: 5%;
-    right: 5%;
-    position: absolute;
-    font-size: 40px;
-    cursor: pointer;
-    user-select: none;
-    background-color: wheat;
-    color: #0c483f;
-    border-radius: 40px;
-    padding: 10px;
-  }
-  
-.bg-image {
-    background-image: url('../../../assets/scrabble-background.jpg');
-    background-size: 100%;
-    filter: blur(5px);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    height: 100%;
+.justified {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #container {
-    position: absolute;
-    width: 60%;
-    height: 70%;
-    bottom: 15%;
-    left: 20%;
+    position: inherit;
+    width: 80%;
+    margin-top: 10%;
+    margin-left: 10%;
+    height: 80%;
     background-color: white;
     z-index: 2;
     background: #0c483f;
@@ -42,6 +20,7 @@ html {
 }
 
 .container-1 {
+    margin-top: -10%;
     display: flex;
 }
 
@@ -72,7 +51,7 @@ html {
 
 .startButton {
     top: 50%;
-    position: relative;
+    position: inherit;
     text-align: center;
     height: 10%;
     width: 20%;
@@ -110,14 +89,15 @@ html {
 .roomList {
     border: solid 3px;
     color: wheat;
-    height: 40%;
-    width: 50%;
+    height: 50%;
+    width: 80%;
     border-radius: 3px;
-    margin-left: 5%;
-    margin-top: 1%;
-    justify-content: center;
+    margin-top: 5%;
+    margin-left: 10%;
+    margin-right: 10%;
+    align-self: center;
     align-items: center;
-    position: fixed;
+    position: inherit;
     overflow-y: auto;
     overflow-x: auto;
 }
@@ -171,7 +151,7 @@ html {
 
 #tableRoom th {
     padding-top: 12px;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
     text-align: left;
     background-color: wheat;
     color: #0C483F;

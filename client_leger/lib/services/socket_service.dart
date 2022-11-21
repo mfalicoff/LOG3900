@@ -47,7 +47,6 @@ class SocketService with ChangeNotifier {
             .setExtraHeaders({'foo': 'bar'}) // optional
             .build());
     OptionBuilder().setTransports(['websocket']);
-    socket.emit("new-user", globals.userLoggedIn.username);
 
     socketListen();
   }
@@ -222,6 +221,14 @@ class SocketService with ChangeNotifier {
     socket.on('stopTimer', (_) {
       tapService.lettersDrawn = '';
       timerService.clearTimer();
+    });
+
+    socket.on('addSecsToTimer', (secsToAdd){
+      timerService.addSecsToTimer(secsToAdd);
+    });
+
+    socket.on('askTimerStatus', (_) {
+      socket.emit('timerStatus', timerService.secondsValue);
     });
   }
 

@@ -6,6 +6,8 @@ import { Avatar } from '@app/classes/avatar.interface';
 import { GalleryComponent } from '@app/components/gallery/gallery.component';
 import { SocketService } from '@app/services/socket.service';
 import { InfoClientService } from '@app/services/info-client.service';
+import { NotificationService } from '@app/services/notification.service';
+import { MatDialog } from '@angular/material/dialog';
 
 interface FormInterface {
     avatar: string;
@@ -37,7 +39,13 @@ export class LoginPageComponent {
     serverUrl = environment.serverUrl;
     avatars: Avatar[] = [];
 
-    constructor(private userService: UserService, private socketService: SocketService, public infoClientService: InfoClientService) {}
+    constructor(
+        private userService: UserService,
+        private socketService: SocketService,
+        public infoClientService: InfoClientService,
+        public notifService: NotificationService,
+        public dialog: MatDialog,
+    ) {}
 
     onSubmit(): void {
         if (this.showSignup) {
