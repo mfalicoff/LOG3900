@@ -118,18 +118,19 @@ export class MouseEventService {
         const response: boolean = (await this.chatService.sendMessage(exchangeCmd, game, player)) as boolean;
         console.log('6:' + response);
         if (response) {
-            console.log('6.5:' + player.stand);
+            console.log('6.5:' + player.stand[0].letter);
             for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
                 if (player.stand[i].backgroundColor === '#AEB1D9') {
+                    console.log(player.stand[i].backgroundColor)
                     this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
                 }
             }
         }
-        else {
-            console.log('7');
-        }
+        console.log('9');
         this.resetExchangeTiles(player);
+        console.log('10');
         this.sendStandToClient(player);
+        console.log('11');
         this.playAreaService.changePlayer(game);
     }
 
