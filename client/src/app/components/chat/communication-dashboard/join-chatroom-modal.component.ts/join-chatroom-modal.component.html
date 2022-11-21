@@ -1,8 +1,8 @@
 <div class="container justified">
     <div class="newChatroom">
-        <h2>Recherche de canal de discussion </h2>
+        <h2>{{'GAME.SEARCH_CHAT_ROOM' | translate}}</h2>
         <mat-form-field>
-            <mat-label style="color:#0C483F">Nom de la salle à trouver</mat-label>
+            <mat-label style="color:#0C483F">{{'GAME.NAME_CHAT_ROOM_TO_FIND' | translate}}</mat-label>
             <input matInput [(ngModel)]="roomName" (input)="onChangeInput()">
           </mat-form-field>
     </div>
@@ -11,5 +11,5 @@
             <mat-icon>add_circle_outline</mat-icon>
         </button>
     </div>
-    <button class="saveButtonAvatar saveButton" mat-button (click)="closeDialog()">Fermer</button>
+    <button class="saveButtonAvatar saveButton" mat-button (click)="closeDialog()">{{'GAME.CLOSE' | translate}}</button>
 </div>

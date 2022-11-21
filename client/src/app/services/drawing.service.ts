@@ -239,18 +239,18 @@ export class DrawingService {
             this.playAreaCanvas.strokeStyle = '#54534A';
             this.roundRect(i, y + Constants.SIZE_OUTER_BORDER_STAND, Constants.WIDTH_EACH_SQUARE, Constants.WIDTH_EACH_SQUARE, this.playAreaCanvas);
 
-            const spaceForLetter: Vec2 = { x: 4, y: 25 };
-            const spaceForNumber: Vec2 = { x: 23, y: 25 };
+            const spaceForLetter: Vec2 = { x: 12, y: 26 };
+            const spaceForNumber: Vec2 = { x: 27, y: 29 };
             // draws the letter on the tile
             this.playAreaCanvas.fillStyle = '#212121';
-            this.playAreaCanvas.font = '18px bold system-ui';
+            this.playAreaCanvas.font = 'bold 17px Roboto';
             this.playAreaCanvas.fillText(
                 player.stand[j].letter.value.toUpperCase(),
                 i + spaceForLetter.x,
                 y + Constants.SIZE_OUTER_BORDER_STAND + spaceForLetter.y,
             );
             // draws the weight of the letter on the tile
-            this.playAreaCanvas.font = '12px bold system-ui';
+            this.playAreaCanvas.font = '10px Roboto';
             const letterWeight = player.stand[j].letter.weight;
             if (letterWeight) {
                 this.playAreaCanvas.fillText(letterWeight.toString(), i + spaceForNumber.x, y + Constants.SIZE_OUTER_BORDER_STAND + spaceForNumber.y);
@@ -336,18 +336,18 @@ export class DrawingService {
             this.playAreaCanvas.strokeStyle = '#54534A';
             this.roundRect(x + Constants.SIZE_OUTER_BORDER_STAND, i, Constants.WIDTH_EACH_SQUARE, Constants.WIDTH_EACH_SQUARE, this.playAreaCanvas);
 
-            const spaceForLetter: Vec2 = { x: 4, y: 25 };
-            const spaceForNumber: Vec2 = { x: 23, y: 25 };
+            const spaceForLetter: Vec2 = { x: 12, y: 26 };
+            const spaceForNumber: Vec2 = { x: 27, y: 29 };
             // draws the letter on the tile
             this.playAreaCanvas.fillStyle = '#212121';
-            this.playAreaCanvas.font = '18px bold system-ui';
+            this.playAreaCanvas.font = 'bold 17px Roboto';
             this.playAreaCanvas.fillText(
                 player.stand[j].letter.value.toUpperCase(),
                 x + Constants.SIZE_OUTER_BORDER_STAND + spaceForLetter.x,
                 i + spaceForLetter.y,
             );
             // draws the weight of the letter on the tile
-            this.playAreaCanvas.font = '12px bold system-ui';
+            this.playAreaCanvas.font = '10px Roboto';
             const letterWeight = player.stand[j].letter.weight;
             if (letterWeight) {
                 this.playAreaCanvas.fillText(letterWeight.toString(), x + Constants.SIZE_OUTER_BORDER_STAND + spaceForNumber.x, i + spaceForNumber.y);

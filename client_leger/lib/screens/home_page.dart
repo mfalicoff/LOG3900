@@ -1,12 +1,18 @@
+import 'dart:convert';
+
+import 'package:client_leger/models/game-saved.dart';
 import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/screens/search_page.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
+import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 import '../constants/constants.dart';
+import '../env/environment.dart';
 import '../services/chat-service.dart';
 import '../widget/chat_panel.dart';
 
@@ -21,7 +27,25 @@ class _MyHomePageState extends State<MyHomePage> {
   final Controller controller = Controller();
   final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
+  final TapService tapService = TapService();
+  late List<GameSaved> games = [];
+  final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
+
+    @override
+  void initState() {
+    super.initState();
+    final user = globals.userLoggedIn;
+    http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
+        .then((res) => parseGames(res));
+  }
+
+  void parseGames(http.Response res) {
+    var parsed = json.decode(res.body);
+    for (var game in parsed) {
+      games.add(GameSaved.fromJson(game));
+    }
+  }
 
   refresh() {
     if (mounted) {
@@ -151,13 +175,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toProfilePage() {
     Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const ProfilePage()))
+            MaterialPageRoute(builder: (context) => ProfilePage(favouriteGames: games)))
         .then((value) {
       setState(() {});
     });
   }
 
   void _toGameListPage() {
+    tapService.initDefaultVariables();
     print("GameModeIs: " + infoClientService.gameMode);
     Navigator.pushNamed(context, "/game-list"); // best way to change page
   } // context is the information of the widget

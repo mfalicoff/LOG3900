@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoClientService } from '@app/services/info-client.service';
@@ -8,6 +9,7 @@ import { ChatMessage } from '@app/classes/chat-message';
 import { SocketService } from '@app/services/socket.service';
 import { JoinChatRoomModalComponent } from './join-chatroom-modal.component.ts/join-chatroom-modal.component';
 import * as Constants from '@app/classes/global-constants';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-communication-dashboard',
@@ -23,9 +25,9 @@ import * as Constants from '@app/classes/global-constants';
 export class CommunicationDashboardComponent implements AfterViewInit {
     @Input() isInGame: string;
     currSelectedChatroom: ChatRoom;
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private dialog: MatDialog) {
+    hideChatrooms = false;
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private dialog: MatDialog, public router: Router) {
         this.currSelectedChatroom = { name: 'default', participants: [], creator: '', chatHistory: [new ChatMessage('system', 'defaultMsg')] };
-        // initialize the default selected chatroom
         if (this.infoClientService.chatRooms.length > 0) {
             this.currSelectedChatroom = this.infoClientService.chatRooms[0];
         }
@@ -39,15 +41,14 @@ export class CommunicationDashboardComponent implements AfterViewInit {
                 creator: '',
                 chatHistory: [new ChatMessage('SYSTEM', 'Bienvenue sur le channel de discussion de la partie.')],
             });
-            this.currSelectedChatroom = this.infoClientService.chatRooms[0];
         } else {
             // if the user is not in a game there is no game chat
             const idxGameRoom = this.infoClientService.chatRooms.findIndex((chatRoom) => chatRoom.name === 'game');
             if (idxGameRoom !== Constants.DEFAULT_VALUE_NUMBER) {
                 this.infoClientService.chatRooms.splice(idxGameRoom, 1);
-                this.currSelectedChatroom = this.infoClientService.chatRooms[0];
             }
         }
+        this.currSelectedChatroom = this.infoClientService.chatRooms[0];
     }
 
     onChatRoomSelect(selectedChatRoom: ChatRoom) {

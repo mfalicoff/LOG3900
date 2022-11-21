@@ -6,24 +6,34 @@ form {
     text-align: center;
 }
 
-input {
-    font-size: large;
-    height: 30px;
-    border-radius: 8px;
-    border-color: #0c483f;
-    background-color: wheat;
+.justified {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #container {
-    position: absolute;
-    width: 70%;
+    position: inherit;
+    align-self: center;
+    width: 80%;
     height: 80%;
+    margin-top: 10%;
+    margin-left: 10%;
     background-color: white;
     z-index: 2;
     background: #0c483f;
     color: wheat;
     font-size: large;
     border-radius: 25px;
+    justify-content: center;
+}
+
+input {
+    font-size: large;
+    height: 30px;
+    border-radius: 8px;
+    border-color: #0c483f;
+    background-color: wheat;
 }
 
 .center {
@@ -79,7 +89,6 @@ html {
 }
 
 .startbutton {
-    left: 38%;
     position: relative;
     text-align: center;
     height: 12%;
@@ -129,7 +138,7 @@ html {
 
 
 #instructionRoomName{
-    font-size: 10px;
+    font-size: 12px;
 }
 
 #dictOptionsMulti{
@@ -177,8 +186,9 @@ mat-option {
   flex-flow: row wrap;
   align-items: center;
   text-align: center;
-  margin-left: 40%;
-  margin-top: 1%;
+  margin-left: 25%;
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 
 #passwdDiv{

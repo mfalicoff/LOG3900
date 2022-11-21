@@ -72,6 +72,10 @@ class TimerService with ChangeNotifier{
     });
  }
 
+  addSecsToTimer(num secsToAdd){
+    secondsValue += secsToAdd;
+  }
+
   clearGameTimer() {
     timerGame.cancel();
   }

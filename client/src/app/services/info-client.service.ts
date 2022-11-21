@@ -7,6 +7,8 @@ import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { RoomData } from '@app/classes/room-data';
+import { TranslateService } from '@ngx-translate/core';
+import { TimerService } from './timer.service';
 
 @Injectable({
     providedIn: 'root',
@@ -63,7 +65,7 @@ export class InfoClientService {
     // variable to allow/block sound effects
     soundDisabled: boolean;
 
-    constructor() {
+    constructor(private translate: TranslateService, private timerService: TimerService) {
         this.gameMode = Constants.CLASSIC_MODE;
         this.minutesByTurn = 1;
         this.isGamePrivate = false;
@@ -79,7 +81,7 @@ export class InfoClientService {
     initializeService() {
         this.game = new GameServer(0, Constants.CLASSIC_MODE, 'defaultRoom', false, '');
         this.player = new Player('DefaultPlayerName', false);
-        this.displayTurn = "En attente d'un autre joueur...";
+        this.displayTurn = this.translate.instant('GAME.SIDEBAR.WAITING_PLAYERS');
         this.isTurnOurs = false;
         this.nameVP1dictionary0 = 0;
         this.isSpectator = false;
@@ -91,6 +93,8 @@ export class InfoClientService {
         this.displayExchLetterModal = 'none';
         this.displayTransformTileModal = 'none';
         this.soundDisabled = false;
+        this.timerService.displayTimer = this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') + '1:00';
+        this.timerService.clearTimer();
 
         this.letterReserve = ['a', 'b'];
         this.letterBank = new Map([

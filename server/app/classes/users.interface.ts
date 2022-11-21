@@ -12,6 +12,8 @@ export interface User {
     avatarPath?: string;
     avatarUri?: string;
     favouriteGames?: string[];
+    language?: string;
+    theme?: string;
 
     elo: number;
     name: string;
