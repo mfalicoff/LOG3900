@@ -19,7 +19,6 @@ export class RankedMatchmakingPageComponent {
         public infoClientService: InfoClientService,
         public rankedService: RankedService,
     ) {
-        // this.matchAccepted = false;
         this.timerService.clearTimer();
         this.timerService.clearMatchmakingTimer();
         this.timerService.startMatchmakingTimer();
@@ -27,7 +26,6 @@ export class RankedMatchmakingPageComponent {
 
     acceptMatch() {
         this.rankedService.matchAccepted = true;
-        // this.matchAccepted = true;
         this.socketService.socket.emit('acceptMatch', this.userService.user);
     }
     refuseMatch() {

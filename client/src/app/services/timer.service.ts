@@ -56,15 +56,15 @@ export class TimerService {
             if (this.matchmakingSecondsValue % secondsInMinute <= displayZero) {
                 this.matchmakingDisplayTimer =
                     this.translate.instant('GAME.TIMER_SERVICE.TIME_ELAPSED') +
-                    Math.floor(this.secondsValue / secondsInMinute) +
+                    Math.floor(this.matchmakingSecondsValue / secondsInMinute) +
                     ':0' +
-                    (this.secondsValue % secondsInMinute);
+                    (this.matchmakingSecondsValue % secondsInMinute);
             } else {
                 this.matchmakingDisplayTimer =
                     this.translate.instant('GAME.TIMER_SERVICE.TIME_ELAPSED') +
-                    Math.floor(this.secondsValue / secondsInMinute) +
+                    Math.floor(this.matchmakingSecondsValue / secondsInMinute) +
                     ':' +
-                    (this.secondsValue % secondsInMinute);
+                    (this.matchmakingSecondsValue % secondsInMinute);
             }
         }, oneSecond);
     }
