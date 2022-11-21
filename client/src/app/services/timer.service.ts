@@ -10,7 +10,6 @@ export class TimerService {
     playingTime: number = 0.0;
     private timerInterval: NodeJS.Timeout;
     private timerMatchmaking: NodeJS.Timeout;
-    private timerGame: NodeJS.Timeout;
 
     startTimer(minutesByTurn: number) {
         if (minutesByTurn < 0) {
@@ -54,22 +53,11 @@ export class TimerService {
         }, oneSecond);
     }
 
-    startGameTimer() {
-        this.playingTime = 0.0;
-        const oneSecond = 1000;
-        this.timerGame = setInterval(() => {
-            this.playingTime++;
-        }, oneSecond);
-    }
-
     clearTimer() {
         clearInterval(this.timerInterval);
     }
     clearMatchmakingTimer() {
         clearInterval(this.timerMatchmaking);
-    }
-    clearGameTimer() {
-        clearInterval(this.timerGame);
     }
     addSecsToTimer(secs: number) {
         this.secondsValue += secs;

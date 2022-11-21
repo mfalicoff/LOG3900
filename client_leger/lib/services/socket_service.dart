@@ -139,7 +139,6 @@ class SocketService with ChangeNotifier {
       infoClientService.notifyListeners();
       chatService.notifyListeners();
       if (GameServer.fromJson(game).gameFinished && count == 1) {
-        timerService.clearGameTimer();
         infoClientService.notifyListeners();
         count++;
       }
@@ -218,7 +217,6 @@ class SocketService with ChangeNotifier {
     socket.on('setTimeoutTimerStart', (_) {
       tapService.lettersDrawn = '';
       setTimeoutForTimer();
-      timerService.startGameTimer();
     });
 
     socket.on('stopTimer', (_) {
