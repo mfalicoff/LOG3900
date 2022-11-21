@@ -1202,5 +1202,9 @@ export class SocketManager {
         socket.on('changeLanguage', async (playerName, language) => {
             this.translateService.addUser(playerName, language);
         });
+
+        socket.on('changeTheme', async (playerName, theme) => {
+            this.translateService.addUser(playerName, theme);
+        });
     }
 }

@@ -18,6 +18,8 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     favouriteGames: GameSaved[];
     langList: string[];
     langSelected: string | undefined;
+    themeList: string[];
+    themeSelected: string | undefined;
 
     langMap = new Map<string, string>([
         ['Français', 'fr'],
@@ -27,6 +29,16 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     inverseLangMap = new Map<string, string>([
         ['fr', 'Français'],
         ['en', 'English'],
+    ]);
+
+    themeMap = new Map<string, string>([
+        ['Light', 'lt'],
+        ['Dark', 'dk'],
+    ]);
+
+    inverseThemeMap = new Map<string, string>([
+        ['lt', 'Light'],
+        ['dk', 'Dark'],
     ]);
 
     constructor(
@@ -42,6 +54,8 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         });
         this.langList = ['Français', 'English'];
         this.langSelected = this.inverseLangMap.get(this.translate.currentLang);
+        this.themeList = ['Light', 'Dark'];
+        this.themeSelected = this.inverseThemeMap.get('lt');
     }
 
     ngOnDestroy() {
@@ -107,5 +121,12 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         this.userService.updateLanguage(language);
         this.socketService.socket.emit('changeLanguage', this.userService.user.name, language);
         this.translate.use(language);
+    }
+
+    onClickTheme(theme: string): void {
+        const themeSelect = this.themeMap.get(theme) as string;
+        this.userService.updateTheme(themeSelect);
+        // this.socketService.socket.emit('changeTheme', this.userService.user.name, themeSelect);
+        // this.translate.use(themeSelect);
     }
 }

@@ -209,6 +209,26 @@ export class UserService {
             });
     }
 
+    async updateTheme(themeUpdated: string) {
+        return this.http
+            .put<UserResponseInterface>(
+                environment.serverUrl + 'users/theme/' + this.user._id,
+                { theme: themeUpdated },
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    // eslint-disable-next-line no-console
+                    console.log(res);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse, socket?: Socket, email?: string, password?: string) {
         if (error.error instanceof ErrorEvent) {
             this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
