@@ -89,8 +89,8 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
 
     openEditProfileComponent(): void {
         this.dialog.open(ProfileEditComponent, {
-            height: '75%',
-            width: '75%',
+            height: '90%',
+            width: '50%',
             panelClass: 'matDialogWheat',
         });
     }
