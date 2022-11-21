@@ -3,10 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { UserHistoryComponent } from '@app/components/user-history/user-history.component';
 import { UserService } from '@app/services/user.service';
 import { ProfileEditComponent } from '@app/pages/profile-page/profile-edit/profile-edit.component';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { GameSaved } from '@app/classes/game-saved';
 import { TranslateService } from '@ngx-translate/core';
 import { SocketService } from '@app/services/socket.service';
+import { DarkModeService } from 'angular-dark-mode';
 
 @Component({
     selector: 'app-profile-page',
@@ -20,6 +21,8 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     langSelected: string | undefined;
     themeList: string[];
     themeSelected: string | undefined;
+    // eslint-disable-next-line no-invalid-this
+    darkMode$: Observable<boolean> = this.themeService.darkMode$;
 
     langMap = new Map<string, string>([
         ['Français', 'fr'],
@@ -45,6 +48,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         public userService: UserService,
         private translate: TranslateService,
+        private themeService: DarkModeService,
         private socketService: SocketService,
     ) {}
 
@@ -55,7 +59,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         this.langList = ['Français', 'English'];
         this.langSelected = this.inverseLangMap.get(this.translate.currentLang);
         this.themeList = ['Light', 'Dark'];
-        this.themeSelected = this.inverseThemeMap.get('lt');
+        // this.themeSelected = this.inverseThemeMap.get(this.themeService.darkMode$);
     }
 
     ngOnDestroy() {
@@ -128,5 +132,9 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         this.userService.updateTheme(themeSelect);
         // this.socketService.socket.emit('changeTheme', this.userService.user.name, themeSelect);
         // this.translate.use(themeSelect);
+    }
+
+    onToggle(): void {
+        this.themeService.toggle();
     }
 }

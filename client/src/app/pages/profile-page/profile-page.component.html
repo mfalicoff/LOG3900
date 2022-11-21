@@ -35,14 +35,19 @@
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <mat-form-field appearance="fill" class="matSelect">
+            <!-- <mat-form-field appearance="fill" class="matSelect">
                 <mat-label>Themes</mat-label>
                 <mat-select [(ngModel)]="themeSelected">
                     <mat-option *ngFor="let theme of themeList" [value]="theme" (click)="onClickTheme(theme)">
                         <h2 >{{ theme }}</h2>
                     </mat-option>
                 </mat-select>
-            </mat-form-field>
+            </mat-form-field> -->
+            <input
+                type="checkbox"
+                [checked]="darkMode$ | async"
+                (change)="onToggle()"
+            />
         </div>
     </div>
 </div>

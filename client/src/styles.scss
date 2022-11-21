@@ -108,9 +108,9 @@ body {
 }
 
 #mat-dialog-0{
-    background: wheat;
+    // background: wheat;
     font-weight: bold;
-    color: #0c483f;
+    // color: #0c483f;
     font-family: Arial, Helvetica, sans-serif;
     font-size: large;
     border-spacing: 2px;
@@ -122,25 +122,55 @@ body {
     top: 10px;
     // position: fixed;
     border-radius: 5px;
-    background-color: #0c483f;
-    color: wheat;
+    // background-color: #0c483f;
+    // color: wheat;
     align-self: center;
     margin-top: 50px;
     font-weight: bold;
 }
 
 #mat-dialog-container {
+    // background-color: wheat;
+}
+
+// body.my-dark-mode {
+//     background-color: #0c483f;
+//     color: wheat;
+// }
+
+// body.my-light-mode {
+//     background-color: wheat;
+//     color: #0c483f;
+// }
+
+body.my-dark-mode {
+    background-color: #0c483f;
+    color: wheat;
+}
+
+button.my-dark-mode {
     background-color: wheat;
+    color: #0c483f;
+}
+
+
+button.my-light-mode {
+    background-color: #0c483f;
+    color: wheat;
+}
+
+body.my-light-mode {
+    background-color: wheat;
+    color: #0c483f;
 }
 
 .customDialog .mat-dialog-container {
     overflow-y: hidden!important;
-    background-color: wheat ;
+    // background-color: wheat ;
   }
 
 .matDialogWheat .mat-dialog-container{
-    background-color: wheat ;
-
+    // background-color: wheat ;
 }
 
 .ngx-gallery {
