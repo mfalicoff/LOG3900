@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/timer.dart';
 import 'package:client_leger/services/socket_service.dart';
@@ -8,7 +10,9 @@ import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:client_leger/models/user.dart';
 import 'package:image/image.dart';
+import 'package:http/http.dart' as http;
 
+import '../env/environment.dart';
 import '../models/spectator.dart';
 
 
@@ -378,7 +382,6 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                         infoClientService.actualRoom.spectators,
                         infoClientService.game.winners);
             socketService.socket.emit('saveGame', gameSaved);
-            print('${socketService.socket.id}   game emit au server');
         }
     }
 
@@ -401,28 +404,20 @@ class ProfileReadOnlyDialog extends StatefulWidget {
 
 class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
     final Controller usersController = Controller();
-    // late User currentUser;
+    final String? serverAddress = Environment().config?.serverURL;
+    late User currentUser;
 
-//     @override
-//   void initState() {
-//     final user
-//     super.initState();
-//   }
+      @override
+    void initState() {
+    super.initState();
+    http.get(Uri.parse("$serverAddress/users/${widget.username}"))
+        .then((res) => parseUser(res));
+  }
 
-//       @override
-//   void initState() {
-//     super.initState();
-//     final user = globals.userLoggedIn;
-//     http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
-//         .then((res) => parseGames(res));
-//   }
-
-//   void parseGames(http.Response res) {
-//     var parsed = json.decode(res.body);
-//     for (var game in parsed) {
-//       games.add(GameSaved.fromJson(game));
-//     }
-//   }
+  void parseUser(http.Response res) {
+    var parsed = json.decode(res.body);
+    currentUser = User.fromJson(parsed);
+  }
 
     @override
   Widget build(BuildContext context) {
@@ -453,17 +448,14 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
                     ),
                     TableRow(
                         children: [
-                        returnRowTextElement(globals
-                            .userLoggedIn.gamesPlayed
+                        returnRowTextElement(currentUser.gamesPlayed
                             .toString()),
                         returnRowTextElement(
-                            globals.userLoggedIn.gamesWon.toString()),
-                        returnRowTextElement(globals
-                            .userLoggedIn.averagePointsPerGame!
+                            currentUser.gamesWon.toString()),
+                        returnRowTextElement(currentUser.averagePointsPerGame!
                             .toStringAsFixed(2)),
                         returnRowTextElement(Duration(
-                                milliseconds: globals
-                                    .userLoggedIn.averageTimePerGame!
+                                milliseconds: currentUser.averageTimePerGame!
                                     .round())
                             .toString()),
                         ],
@@ -480,8 +472,8 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
   }
     Text returnRowTextElement(String textData) {
     return Text((textData),
-        style: const TextStyle(
-            color: Colors.black,
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
             fontSize: 13,
             decoration: TextDecoration.none,
             fontWeight: FontWeight.bold));

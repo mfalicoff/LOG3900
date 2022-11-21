@@ -174,8 +174,8 @@ class Controller {
     }
   }
 
-  Future<User> getUserByName(String id) async {
-    final response = await http.get(Uri.parse("$serverAddress/users/id/$id"));
+  Future<User> getUserByName(String name) async {
+    final response = await http.get(Uri.parse("$serverAddress/users/$name"));
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       return user;
