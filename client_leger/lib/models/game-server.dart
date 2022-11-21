@@ -164,7 +164,8 @@ class GameServer {
       for (var player in wins) {
         winners.add(Player.fromJson(player));
       }
-
+    startTime = game["startTime"];
+    endTime = game["endTime"];
 
     //TODO letterBank
 

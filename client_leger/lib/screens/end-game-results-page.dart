@@ -6,6 +6,7 @@ import 'package:client_leger/models/player.dart';
 import 'package:client_leger/models/game-saved.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
+import 'package:client_leger/models/user.dart';
 import 'package:image/image.dart';
 
 import '../models/spectator.dart';
@@ -45,6 +46,10 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     _getGameStartDate();
     _displayPlayingTime();
     _saveGame;
+  }
+    refresh() async {
+    setState(() {});
+
   }
 
     @override
@@ -228,13 +233,14 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                       return
                         Column(
                             children: [
-                                Text("JOUEUR: ${players[index].name}",
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
+                                _isLinkEnabled(players[index], index),
+                                // Text("JOUEUR: .name}",
+                                //   style: TextStyle(
+                                //     color: Theme.of(context).colorScheme.primary,
+                                //     fontSize: 18,
+                                //     fontWeight: FontWeight.normal,
+                                //   ),
+                                // ),
                                 Text("Score: ${players[index].score}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
@@ -291,11 +297,11 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     void _displayPlayingTime() {
         const secondsInMinute = 60;
         const displayZero = 9;
-        final end = infoClientService.game.endTime;
-        final begin = infoClientService.game.startTime;
-        final timeInSeconds = (end - begin) / 1000;
-        final minutesToDisplay = (timeInSeconds / secondsInMinute).floor();
-        final secondsToDisplay = (timeInSeconds % secondsInMinute).floor();
+        // // final end = infoClientService.game.endTime;
+        // // final begin = infoClientService.game.startTime;
+        // // final timeInSeconds = (end - begin) / 1000;
+        final minutesToDisplay = (15458 / secondsInMinute).floor();
+        final secondsToDisplay = (15458 % secondsInMinute).floor();
         if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
             playingTime = "0$minutesToDisplay:0$secondsToDisplay";
         } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
@@ -310,6 +316,14 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     void _findCreatorOfGame() {
         creator = infoClientService.actualRoom.players.firstWhere((element) => element.isCreatorOfGame).name;
     }
+
+    Widget _isLinkEnabled(Player player, int index) {
+        if (player.id != 'virtualPlayer') {
+            return ProfileReadOnlyDialog(username: players[index].name, notifyParent: refresh);
+        }
+        return Text(player.name, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontWeight: FontWeight.normal,));
+    }
+
     Column _isThereSpectators() {
         if (infoClientService.actualRoom.spectators.isNotEmpty) {
             return Column(
@@ -364,7 +378,113 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                         infoClientService.actualRoom.spectators,
                         infoClientService.game.winners);
             socketService.socket.emit('saveGame', gameSaved);
+            print('${socketService.socket.id}   game emit au server');
         }
     }
+
+}
+
+
+class ProfileReadOnlyDialog extends StatefulWidget {
+  final String username;
+  final Function() notifyParent;
+
+  const ProfileReadOnlyDialog({
+      Key? key,
+      required this.username,
+      required this.notifyParent,
+      }) : super(key: key);
+
+  @override
+  State<ProfileReadOnlyDialog> createState() => _ProfileReadOnlyStateDialog();
+}
+
+class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
+    final Controller usersController = Controller();
+    // late User currentUser;
+
+//     @override
+//   void initState() {
+//     final user
+//     super.initState();
+//   }
+
+//       @override
+//   void initState() {
+//     super.initState();
+//     final user = globals.userLoggedIn;
+//     http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
+//         .then((res) => parseGames(res));
+//   }
+
+//   void parseGames(http.Response res) {
+//     var parsed = json.decode(res.body);
+//     for (var game in parsed) {
+//       games.add(GameSaved.fromJson(game));
+//     }
+//   }
+
+    @override
+  Widget build(BuildContext context) {
+     return TextButton(
+      onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+            title: const Text('STATISTIQUES DES JOUEURS'),
+            backgroundColor: Theme.of(context).colorScheme.secondary,
+            actionsAlignment: MainAxisAlignment.spaceBetween,
+            actions: [
+                CircleAvatar(
+                    radius: 25,
+                    backgroundImage: MemoryImage(
+                        globals.userLoggedIn.getUriFromAvatar()),
+                ),
+                Container(
+                padding: const EdgeInsets.only(top: 15, bottom: 30),
+                child: Table(
+                    children: [
+                    TableRow(
+                        children: [
+                        returnRowTextElement('Parties jouees'),
+                        returnRowTextElement('Parties gagnes'),
+                        returnRowTextElement('Score moyen par partie'),
+                        returnRowTextElement('Temps moyen par partie'),
+                        ],
+                    ),
+                    TableRow(
+                        children: [
+                        returnRowTextElement(globals
+                            .userLoggedIn.gamesPlayed
+                            .toString()),
+                        returnRowTextElement(
+                            globals.userLoggedIn.gamesWon.toString()),
+                        returnRowTextElement(globals
+                            .userLoggedIn.averagePointsPerGame!
+                            .toStringAsFixed(2)),
+                        returnRowTextElement(Duration(
+                                milliseconds: globals
+                                    .userLoggedIn.averageTimePerGame!
+                                    .round())
+                            .toString()),
+                        ],
+                    ),
+                    ],
+                ),
+                ),
+            ],
+        ),
+      ),
+      child: Text(widget.username),
+     );
+
+  }
+    Text returnRowTextElement(String textData) {
+    return Text((textData),
+        style: const TextStyle(
+            color: Colors.black,
+            fontSize: 13,
+            decoration: TextDecoration.none,
+            fontWeight: FontWeight.bold));
+  }
 
 }

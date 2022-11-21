@@ -223,10 +223,6 @@ class SocketService with ChangeNotifier {
       timerService.clearTimer();
     });
 
-    socket.on('addSecsToTimer', (secsToAdd){
-      timerService.addSecsToTimer(secsToAdd);
-    });
-
     socket.on('askTimerStatus', (_) {
       socket.emit('timerStatus', timerService.secondsValue);
     });
