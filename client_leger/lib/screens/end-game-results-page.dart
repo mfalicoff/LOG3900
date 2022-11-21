@@ -291,16 +291,19 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     void _displayPlayingTime() {
         const secondsInMinute = 60;
         const displayZero = 9;
-        final minutesToDisplay = timerService.playingTime / secondsInMinute;
-        final secondsToDisplay = timerService.playingTime % secondsInMinute;
+        final end = infoClientService.game.endTime;
+        final begin = infoClientService.game.startTime;
+        final timeInSeconds = (end - begin) / 1000;
+        final minutesToDisplay = (timeInSeconds / secondsInMinute).floor();
+        final secondsToDisplay = (timeInSeconds % secondsInMinute).floor();
         if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
-            playingTime = "0${minutesToDisplay.floor()}:0$secondsToDisplay";
+            playingTime = "0$minutesToDisplay:0$secondsToDisplay";
         } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
-            playingTime = "${minutesToDisplay.floor()}:0$secondsToDisplay";
+            playingTime = "$minutesToDisplay:0$secondsToDisplay";
         } else if (secondsToDisplay > displayZero && minutesToDisplay <= displayZero) {
-            playingTime = "0${minutesToDisplay.floor()}:$secondsToDisplay";
+            playingTime = "0$minutesToDisplay:$secondsToDisplay";
         } else if (secondsToDisplay > displayZero && minutesToDisplay > displayZero) {
-            playingTime = "${minutesToDisplay.floor()}:$secondsToDisplay";
+            playingTime = "$minutesToDisplay:$secondsToDisplay";
         }
     }
 
