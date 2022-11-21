@@ -19,6 +19,7 @@ import { Subscription } from 'rxjs';
 })
 export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     roomName: string;
+    creator: string;
     numberOfTurns: number = 0;
     gameStartDate: string;
     playingTime: string;
@@ -44,6 +45,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.players = this.infoClientService.actualRoom.players.copyWithin(0, 0, 3);
         this.orderPlayerByScore();
         this.findNumberOfTurns();
+        this.findCreatorOfGame();
         this.getGameStartDate();
         this.displayPlayingTime();
         this.saveGame();
@@ -130,9 +132,9 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.gameStartDate = this.infoClientService.game.gameStart;
     }
 
-    findCreatorOfGame(): string | undefined {
+    findCreatorOfGame(): void {
         // @ts-ignore
-        return this.infoClientService.actualRoom.players.find((player: Player) => {
+        this.creator = this.infoClientService.actualRoom.players.find((player: Player) => {
             if (player.isCreatorOfGame) return player.name;
         }).name;
     }

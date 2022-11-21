@@ -31,6 +31,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     late int numberOfTurns;
     late String playingTime;
     late String timestamp = '';
+    bool isPressed = false;
 
     @override
   void initState() {
@@ -195,7 +196,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                           ),
                         ),
                         ElevatedButton(
-                            onPressed: _addGameToFavourites,
+                            onPressed: isPressed == false ? _addGameToFavourites : null,
                             child: const Icon(Icons.playlist_add_sharp),
                         ),
                     ],
@@ -343,6 +344,9 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     Future<void> _addGameToFavourites() async {
+        setState(() {
+          isPressed = true;
+        });
         await usersController.updateFavouriteGames(socketService.gameId);
     }
 

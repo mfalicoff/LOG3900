@@ -7,7 +7,7 @@
     <div mat-dialog-content id="roomStats">
         <ul>
             <li> SALLE : {{roomName}}</li>
-            <li >Créateur de la salle : {{findCreatorOfGame()}}</li>
+            <li >Créateur de la salle : {{this.creator}}</li>
             <div *ngIf="this.infoClientService.actualRoom.spectators.length !== 0">
                 <li>Spectateurs de la partie:</li>
                 <div *ngFor="let spect of this.infoClientService.actualRoom.spectators" class="two-grid-row">
