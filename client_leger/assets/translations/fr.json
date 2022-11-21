@@ -1,0 +1,21 @@
+{
+    "CANCEL": "Annuler",
+    "CONTINUE": "Continuer",
+    "PASSWORD": "Mot de passe",
+    "UNABLE_TO_CONNECT": "Impossible de se connecter",
+    "LOGIN": {
+        "LOGIN": "Connexion",
+        "EMAIL": "Adresse Courriel",
+        "PASSWORD": "Mot de passe",
+        "GO_SIGN_UP_PAGE": "Aller à la page d'inscription",
+        "ENTER_EMAIL": "Rentrez une adresse courriel",
+        "ENTER_VALID_EMAIL": "Rentrez une adresse courriel valide",
+        "ENTER_PASSWORD": "Rentrez un mot de passe",
+        "CONNECTED_OTHER_DEVICE": "Vous êtes actuellement connecté sur une autre machine, voulez vous forcer une connexion?",
+        "YOU_WILL_GIVE_UP": "Si vous ête actuellement en match vous abandonnerez votre match"
+    },
+    "HOME_SCREEN": {
+        "CLASSIC_MODE": "Mode Classique",
+        "POWER_CARDS_MODE": "Mode Carte De Pouvoir Configurable"
+    }
+}

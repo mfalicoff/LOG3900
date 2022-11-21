@@ -3,7 +3,9 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:client_leger/models/game-saved.dart';
+import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/users_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -30,6 +32,8 @@ class _ProfileStatePage extends State<ProfilePage> {
   final Controller controller = Controller();
   final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
+  SocketService socketService = SocketService();
+  Controller userController = Controller();
 
 
   refresh() async {
@@ -154,7 +158,24 @@ class _ProfileStatePage extends State<ProfilePage> {
                                     globals.userLoggedIn.gameHistory!),
                             returnFavouriteGamesScrollView('Parties favorites'),
                         ],
-                      )
+                      ),
+                      DropdownButton(
+                          value: context.locale.languageCode,
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'fr',
+                                child: Text("Français"),
+                            ),
+                            DropdownMenuItem(
+                              value: 'en',
+                              child: Text("English"),
+                            ),
+                          ],
+                          onChanged: (String? value){
+                            userController.updateLanguage(value!);
+                            context.setLocale(Locale(value));
+                            socketService.socket.emit("changeLanguage", {globals.userLoggedIn.username, value});
+                          },),
                     ],
                   ),
                 ),

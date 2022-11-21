@@ -1,0 +1,20 @@
+{
+    "CANCEL": "Cancel",
+    "CONTINUE": "Continue",
+    "PASSWORD": "Password",
+    "UNABLE_TO_CONNECT": "Impossible de se connecter",
+    "LOGIN": {
+        "LOGIN": "Login",
+        "EMAIL": "Email",
+        "GO_SIGN_UP_PAGE": "Go to sign up page",
+        "ENTER_EMAIL": "Enter an email address",
+        "ENTER_VALID_EMAIL": "Enter a valid email address",
+        "ENTER_PASSWORD": "Enter a password",
+        "CONNECTED_OTHER_DEVICE": "You are currently connected on another machine, do you want to force a connection?",
+        "YOU_WILL_GIVE_UP": "If you are currently in a match, you are giving up your match"
+    },
+    "HOME_SCREEN": {
+        "CLASSIC_MODE": "Classic Mode ",
+        "POWER_CARDS_MODE": "Configurable Power Card Mode"
+    }
+}
