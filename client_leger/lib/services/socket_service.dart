@@ -47,7 +47,6 @@ class SocketService with ChangeNotifier {
             .setExtraHeaders({'foo': 'bar'}) // optional
             .build());
     OptionBuilder().setTransports(['websocket']);
-    socket.emit("new-user", globals.userLoggedIn.username);
 
     socketListen();
   }
