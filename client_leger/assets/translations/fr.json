@@ -139,5 +139,20 @@
         "NUMBER_OF_TURN_PLAYED": "Nombre de tours joué",
         "GAME_SPECTATORS": "Spectateurs de la partie",
         "NO_SPECTATORS": "Il n'y a pas de spectateurs."
+    },
+    "CREATE_GAME_PAGE": {
+        "YOU": "Vous",
+        "ROOM_NAME": "Nom de la salle",
+        "GAME_MODE": "Mode de partie:",
+        "PUBLIC": "Publique",
+        "PRIVATE": "Privée",
+        "PASSWORD": "Mot de passe",
+        "ACTIVATE": "Activer/desactiver des carte de pouvoir",
+        "START": "Démarrer",
+        "ENTER_ROOM_NAME": "Rentrez un nom de salle",
+        "ROOM_NAME_NOT_VALID": "Nom de salle non valide",
+        "AVAILABLE_CARD": "Cartes disponibles",
+        "CONFIRM": "Confirmer",
+        "POWER_LIST": "Liste pouvoirs"
     }
 }

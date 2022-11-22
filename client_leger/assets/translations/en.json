@@ -139,5 +139,20 @@
         "NUMBER_OF_TURN_PLAYED": "Number of turns played",
         "GAME_SPECTATORS": "Game spectators",
         "NO_SPECTATORS": "There are no spectators."
+    },
+    "CREATE_GAME_PAGE": {
+        "YOU": "You",
+        "ROOM_NAME": "Room name",
+        "GAME_MODE": "Game mode:",
+        "PUBLIC": "Public",
+        "PRIVATE": "Private",
+        "PASSWORD": "Password",
+        "ACTIVATE": "Activate/deactivate power cards",
+        "START": "Start",
+        "ENTER_ROOM_NAME": "Enter a room name",
+        "ROOM_NAME_NOT_VALID": "Invalid room name",
+        "AVAILABLE_CARD": "Available cards",
+        "CONFIRM": "Confirm",
+        "POWER_LIST": "Power list"
     }
 }
