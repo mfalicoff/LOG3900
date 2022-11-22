@@ -297,14 +297,14 @@ class SocketService with ChangeNotifier {
 
   updateUiBeforeStartGame(List<Player> players) {
     if (infoClientService.actualRoom.numberRealPlayer >= MIN_PERSON_PLAYING) {
-      infoClientService.displayTurn = WAITING_FOR_CREATOR;
+      infoClientService.displayTurn = "WAITING_FOR_CREATOR".tr();
     } else {
-      infoClientService.displayTurn = WAIT_FOR_OTHER_PLAYERS;
+      infoClientService.displayTurn = "WAITING_OTHER_PLAYER".tr();
     }
   }
 
   displayChangeEndGameCallBack(String displayChange) {
-    infoClientService.displayTurn = displayChange;
+    infoClientService.displayTurn = "END_GAME".tr();
     infoClientService.notifyListeners();
   }
 

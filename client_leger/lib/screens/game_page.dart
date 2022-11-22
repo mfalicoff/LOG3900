@@ -466,7 +466,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                           10, 10, 10, 10),
                                       child: Text(
                                         infoClientService
-                                            .player.powerCards[index].name,
+                                            .player.powerCards[index].name.tr(),
                                         style: TextStyle(
                                           fontSize: 12.0,
                                           color: Theme.of(context)

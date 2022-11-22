@@ -472,7 +472,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                         child: Padding(
                                           padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
                                           child: Text(
-                                            infoClientService.game.powerCards[index].name,
+                                            infoClientService.game.powerCards[index].name.tr(),
                                             style: TextStyle(
                                               fontSize: 10.0,
                                               color: Theme.of(context).colorScheme.secondary,
