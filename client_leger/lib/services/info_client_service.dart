@@ -38,6 +38,8 @@ class InfoClientService with ChangeNotifier{
 
   bool soundDisabled = false;
 
+  Map<String, String> userAvatars = {};
+
   factory InfoClientService(){
     return _gameService;
   }

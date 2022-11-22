@@ -338,6 +338,10 @@ export class SocketService {
             }
             this.infoClientService.chatRooms[idxChatRoom].chatHistory.push(msg);
         });
+
+        this.socket.on('sendAvatars', (name, avatar) => {
+            this.infoClientService.userAvatars.set(name, avatar);
+        });
     }
 
     private setTimeoutForTimer() {

@@ -86,6 +86,7 @@ export class UserService {
             .subscribe({
                 next: (response) => {
                     this.saveUserInfo(response, socket);
+                    socket.emit('getAllAvatars');
                 },
                 error: (error) => {
                     this.handleErrorPOST(error, socket, email, password);

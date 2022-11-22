@@ -1202,5 +1202,17 @@ export class SocketManager {
         socket.on('changeLanguage', async (playerName, language) => {
             this.translateService.addUser(playerName, language);
         });
+
+        socket.on('getAllAvatars', async () => {
+            const avatarUsers: Map<string, string> = new Map();
+            const users = await this.userService.findAllUser();
+            users.map(async (user) => {
+                if (!avatarUsers.has(user.name)) {
+                    const test = await this.userService.populateAvatarField(user);
+                    avatarUsers.set(user.name, test);
+                    socket.emit('sendAvatars', user.name, test);
+                }
+            });
+        });
     }
 }

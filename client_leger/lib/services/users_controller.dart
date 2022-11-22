@@ -25,6 +25,7 @@ class Controller {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
       socket.emit("new-user", user.username);
+      socket.emit('getAllAvatars');
       return user;
     } else {
       if(response.statusCode == 409) {

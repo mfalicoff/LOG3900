@@ -292,6 +292,12 @@ class SocketService with ChangeNotifier {
       await player.play();
       await player.stop();
     });
+
+    socket.on('sendAvatars', (nameAndAvatar) {
+      String name = nameAndAvatar[0];
+      String avatar = nameAndAvatar[1];
+      infoClientService.userAvatars[name] = avatar;
+  });
   }
 
   updateUiBeforeStartGame(List<Player> players) {
