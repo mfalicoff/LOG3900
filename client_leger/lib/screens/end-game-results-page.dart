@@ -238,13 +238,6 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                         Column(
                             children: [
                                 _isLinkEnabled(players[index], index),
-                                // Text("JOUEUR: .name}",
-                                //   style: TextStyle(
-                                //     color: Theme.of(context).colorScheme.primary,
-                                //     fontSize: 18,
-                                //     fontWeight: FontWeight.normal,
-                                //   ),
-                                // ),
                                 Text("Score: ${players[index].score}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
@@ -301,11 +294,11 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     void _displayPlayingTime() {
         const secondsInMinute = 60;
         const displayZero = 9;
-        // // final end = infoClientService.game.endTime;
-        // // final begin = infoClientService.game.startTime;
-        // // final timeInSeconds = (end - begin) / 1000;
-        final minutesToDisplay = (15458 / secondsInMinute).floor();
-        final secondsToDisplay = (15458 % secondsInMinute).floor();
+        final end = infoClientService.game.endTime;
+        final begin = infoClientService.game.startTime;
+        final timeInSeconds = (end - begin) / 1000;
+        final minutesToDisplay = (timeInSeconds / secondsInMinute).floor();
+        final secondsToDisplay = (timeInSeconds % secondsInMinute).floor();
         if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
             playingTime = "0$minutesToDisplay:0$secondsToDisplay";
         } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
@@ -325,7 +318,9 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         if (player.id != 'virtualPlayer') {
             return ProfileReadOnlyDialog(username: players[index].name, notifyParent: refresh);
         }
-        return Text(player.name, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontWeight: FontWeight.normal,));
+        return TextButton(onPressed: (() {
+
+        }), child: Text(player.name, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontWeight: FontWeight.normal,)));
     }
 
     Column _isThereSpectators() {
@@ -372,17 +367,18 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     void _saveGame() {
-        if (socketService.socket.id == infoClientService.game.masterTimer) {
-            gameSaved = GameSaved(infoClientService.actualRoom.players,
-                        infoClientService.actualRoom.name,
-                        numberOfTurns,
-                        playingTime,
-                        infoClientService.game.nbLetterReserve,
-                        timestamp,
-                        infoClientService.actualRoom.spectators,
-                        infoClientService.game.winners);
-            socketService.socket.emit('saveGame', gameSaved);
-        }
+        gameSaved = GameSaved(infoClientService.actualRoom.players,
+                infoClientService.actualRoom.name,
+                numberOfTurns,
+                playingTime,
+                infoClientService.game.nbLetterReserve,
+                timestamp,
+                infoClientService.actualRoom.spectators,
+                infoClientService.game.winners);
+        if (socketService.socket.id == infoClientService.game.masterTimer) socketService.socket.emit('saveGame', gameSaved);
+
+        print("Appel a save game light_client");
+
     }
 
 }
@@ -425,8 +421,10 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
       onPressed: () => showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-            title: const Text('STATISTIQUES DES JOUEURS'),
+            title: const Text('STATISTIQUES', textAlign: TextAlign.center,),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
             backgroundColor: Theme.of(context).colorScheme.secondary,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 40.0),
             actionsAlignment: MainAxisAlignment.spaceBetween,
             actions: [
                 Row(
@@ -480,7 +478,7 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
             ],
         ),
       ),
-      child: Text(widget.username),
+      child: Text(widget.username, style: TextStyle( color: Theme.of(context).colorScheme.primary),),
      );
 
   }
