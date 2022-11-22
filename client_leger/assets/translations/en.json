@@ -167,7 +167,7 @@
         "SUBMIT": "Submit",
         "CREATE_ROOM": "Create Room"
     },
-    "CLICK_ON_LETTER": "Cliquez sur la lettre que vous voulez:",
+    "CLICK_ON_LETTER": "Click on the letter you want:",
     "INFO_PANEL": {
         "PASS": "Pass",
         "EXCHANGE": "Exchange",
@@ -175,5 +175,14 @@
         "PLAY": "Play",
         "PLAYER_NAME": "Player name",
         "SCORE": "Score"
-    }
+    },
+    "TIMER_SERVICE": {
+        "TIME_LEFT": "Time left"
+    },
+    "SOCKET_SERVICE": {
+        "ITS_YOUR_TURN": "It's your turn!",
+        "ITS_THE_TURN": "It's the turn of",
+        "TO_PLAY": "to play!"
+    },
+    "": ""
 }

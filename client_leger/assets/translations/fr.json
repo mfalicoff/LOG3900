@@ -167,6 +167,7 @@
         "SUBMIT": "Soumettre",
         "CREATE_ROOM": "Créer une salle"
     },
+    "CLICK_ON_LETTER": "Cliquez sur la lettre que vous voulez:",
     "INFO_PANEL": {
         "PASS": "Passer",
         "EXCHANGE": "Échanger",
@@ -174,5 +175,14 @@
         "PLAY": "Jouer",
         "PLAYER_NAME": "Nom Joueur",
         "SCORE": "Score"
-    }
+    },
+    "TIMER_SERVICE": {
+        "TIME_LEFT": "Temps Restant"
+    },
+    "SOCKET_SERVICE": {
+        "ITS_YOUR_TURN": "C'est votre tour !",
+        "ITS_THE_TURN": "C'est au tour de",
+        "TO_PLAY": "de jouer !"
+    },
+    "WAITING_OTHER_PLAYER": "En attente d'un autre joueur..."
 }
