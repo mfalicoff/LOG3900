@@ -429,13 +429,27 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
             backgroundColor: Theme.of(context).colorScheme.secondary,
             actionsAlignment: MainAxisAlignment.spaceBetween,
             actions: [
-                CircleAvatar(
-                    radius: 25,
-                    backgroundImage: MemoryImage(
-                        globals.userLoggedIn.getUriFromAvatar()),
+                Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                        CircleAvatar(
+                        radius: 30,
+                        backgroundImage: MemoryImage(
+                            currentUser.getUriFromAvatar()),
+                        ),
+                        // Text(currentUser.username, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))
+                    ],
+                ),
+                Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                        Text(currentUser.username, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))
+                    ],
                 ),
                 Container(
-                padding: const EdgeInsets.only(top: 15, bottom: 30),
+                padding: const EdgeInsets.only(top: 30, bottom: 10),
                 child: Table(
                     children: [
                     TableRow(
@@ -456,7 +470,7 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
                             .toStringAsFixed(2)),
                         returnRowTextElement(Duration(
                                 milliseconds: currentUser.averageTimePerGame!
-                                    .round())
+                                    .floor())
                             .toString()),
                         ],
                     ),
@@ -477,6 +491,6 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
             fontSize: 13,
             decoration: TextDecoration.none,
             fontWeight: FontWeight.bold));
-  }
+    }
 
 }
