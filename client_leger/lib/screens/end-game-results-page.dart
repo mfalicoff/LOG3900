@@ -66,6 +66,10 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
             scrollDirection: Axis.vertical,
             addAutomaticKeepAlives: false,
             children: [
+              ElevatedButton(
+                onPressed: () => Navigator.popUntil(context, ModalRoute.withName("/home")), // passing false
+                child: const Text('Close'),
+              ),
               const SizedBox(
                 height: 35,
               ),
