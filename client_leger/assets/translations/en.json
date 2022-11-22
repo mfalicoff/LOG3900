@@ -154,5 +154,17 @@
         "AVAILABLE_CARD": "Available cards",
         "CONFIRM": "Confirm",
         "POWER_LIST": "Power list"
+    },
+    "CHAT_PANEL": {
+        "ROOMS": "Rooms",
+        "SEARCH_ROOM": "Search Room",
+        "WRITE_MESSAGE": "Write message...",
+        "CREATE_NEW_CHATROOM": "Create a new chatroom",
+        "ENTER_CHATROOM": "Enter chatroom name",
+        "NAME": "Name",
+        "PASSWORD": "Password",
+        "CANCEL": "Cancel",
+        "SUBMIT": "Submit",
+        "CREATE_ROOM": "Create Room"
     }
 }

@@ -154,5 +154,17 @@
         "AVAILABLE_CARD": "Cartes disponibles",
         "CONFIRM": "Confirmer",
         "POWER_LIST": "Liste pouvoirs"
+    },
+    "CHAT_PANEL": {
+        "ROOMS": "Salles",
+        "SEARCH_ROOM": "Recherche de salle",
+        "WRITE_MESSAGE": "Écrire message...",
+        "CREATE_NEW_CHATROOM": "Créer une nouvelle salle",
+        "ENTER_CHATROOM": "Entrez le nom de la salle",
+        "NAME": "Nom",
+        "PASSWORD": "Mot de passe",
+        "CANCEL": "Annuler",
+        "SUBMIT": "Soumettre",
+        "CREATE_ROOM": "Créer une salle"
     }
 }
