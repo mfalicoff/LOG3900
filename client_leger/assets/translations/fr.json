@@ -166,5 +166,13 @@
         "CANCEL": "Annuler",
         "SUBMIT": "Soumettre",
         "CREATE_ROOM": "Créer une salle"
+    },
+    "INFO_PANEL": {
+        "PASS": "Passer",
+        "EXCHANGE": "Échanger",
+        "CANCEL": "Annuler",
+        "PLAY": "Jouer",
+        "PLAYER_NAME": "Nom Joueur",
+        "SCORE": "Score"
     }
 }

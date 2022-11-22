@@ -166,5 +166,14 @@
         "CANCEL": "Cancel",
         "SUBMIT": "Submit",
         "CREATE_ROOM": "Create Room"
+    },
+    "CLICK_ON_LETTER": "Cliquez sur la lettre que vous voulez:",
+    "INFO_PANEL": {
+        "PASS": "Pass",
+        "EXCHANGE": "Exchange",
+        "CANCEL": "Cancel",
+        "PLAY": "Play",
+        "PLAYER_NAME": "Player name",
+        "SCORE": "Score"
     }
 }
