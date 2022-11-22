@@ -99,7 +99,7 @@ class _LoginFormState extends State<LoginForm> {
             obscureText: true,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
-              labelText: 'PASSWORD'.tr(),
+              labelText: 'LOGIN.PASSWORD'.tr(),
               labelStyle:
                   TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
@@ -225,7 +225,7 @@ class _LoginFormState extends State<LoginForm> {
           return false;
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(tr("UNABLE_TO_CONNECT")),
+            content: Text(tr("LOGIN.UNABLE_TO_CONNECT")),
             backgroundColor: Colors.red.shade300,
           ));
           return true;

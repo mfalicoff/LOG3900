@@ -1,8 +1,6 @@
 {
     "CANCEL": "Annuler",
     "CONTINUE": "Continuer",
-    "PASSWORD": "Mot de passe",
-    "UNABLE_TO_CONNECT": "Impossible de se connecter",
     "LOGIN": {
         "LOGIN": "Connexion",
         "EMAIL": "Adresse Courriel",
@@ -12,10 +10,40 @@
         "ENTER_VALID_EMAIL": "Rentrez une adresse courriel valide",
         "ENTER_PASSWORD": "Rentrez un mot de passe",
         "CONNECTED_OTHER_DEVICE": "Vous êtes actuellement connecté sur une autre machine, voulez vous forcer une connexion?",
-        "YOU_WILL_GIVE_UP": "Si vous ête actuellement en match vous abandonnerez votre match"
+        "YOU_WILL_GIVE_UP": "Si vous ête actuellement en match vous abandonnerez votre match",
+        "UNABLE_TO_CONNECT": "Impossible de se connecter"
     },
     "HOME_SCREEN": {
         "CLASSIC_MODE": "Mode Classique",
         "POWER_CARDS_MODE": "Mode Carte De Pouvoir Configurable"
+    },
+    "PROFILE_PAGE": {
+        "GAMES_PLAYED": "Parties jouées",
+        "GAMES_WON": "Parties gagnés",
+        "AVERAGE_SCORE": "Score moyen par partie",
+        "AVERAGE_TIME": "Temps moyen par partie",
+        "CONNECTION_HISTORY": "Historique des Connections",
+        "GAME_HISTORY": "Historique des Parties",
+        "GAME_FAVORITE": "Parties favorites",
+        "ROOM": "Salle : ",
+        "PLAYER": "Joueur : ",
+        "SCORE": "Score: ",
+        "WINNERS": "Gagnant de la partie: ",
+        "TILE_LEFT": "Nombre de lettres restantes dans la reserve: ",
+        "TURN_PLAYED": "Nombre de tours total: ",
+        "GAME_TIME": "Durée de la partie (en minutes): ",
+        "GAME_CREATION_DATE": "Date de creation de la salle: ",
+        "SPECTATORS": "Spectateurs de la partie: ",
+        "NAME": "Nom: ",
+        "NO_SPECTATORS": "Il n'y a pas de spectateurs.",
+        "MODIFY_NAME": "Modifier le nom",
+        "ENTER_NAME": "Veuillez rentrer le nouveau nom",
+        "NEW_USERNAME": "Nouveau Pseudonyme",
+        "SUBMIT": "Soumettre",
+        "ENTER_USERNAME": "Rentrez un pseudonyme",
+        "ENTER_VALID_USERNAME": "Rentrez un pseudonyme avec des charactères alphanumériques",
+        "ERROR": "Erreur",
+        "MODIFY_AVATAR": "Modifier Avatar",
+        "SELECT_AVATAR": "Selectionner avatar voulu ou prenez une photo"
     }
 }
