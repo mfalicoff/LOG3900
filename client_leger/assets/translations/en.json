@@ -118,5 +118,26 @@
         "CANCEL": "CANCEL",
         "OK": "OK",
         "WRONG_PASSWORD": "Wrong password"
+    },
+    "END_GAME_RESULT_PAGE": {
+        "RESULT_END_GAME": "END GAME RESULTS",
+        "ROOM": "Room",
+        "CREATOR_GAME": "Room creator",
+        "GAME_WINNER": "Game winners",
+        "NAME": "Name",
+        "SCORE_OF": "with a score of",
+        "POINTS": "points",
+        "NUMBER_LETTER_LEFT": "Number of letters left in reserve",
+        "NUMBER_TOTAL_TURN": "Total number of turns",
+        "GAME_LENGTH": "Length of game (in minutes)",
+        "GAME_CREATION_DATE": "Game start date (timestamp)",
+        "ADD_GAME_IN_FAVORITE": "Add game to your favorites",
+        "STATS": "PLAYER STATISTICS",
+        "PLAYER": "PLAYER",
+        "SCORE": "Score",
+        "LETTER_LEFT": "Letters left",
+        "NUMBER_OF_TURN_PLAYED": "Number of turns played",
+        "GAME_SPECTATORS": "Game spectators",
+        "NO_SPECTATORS": "There are no spectators."
     }
 }

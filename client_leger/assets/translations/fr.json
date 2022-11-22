@@ -118,5 +118,26 @@
         "CANCEL": "ANNULER",
         "OK": "OK",
         "WRONG_PASSWORD": "Mauvais mot de passe"
+    },
+    "END_GAME_RESULT_PAGE": {
+        "RESULT_END_GAME": "RÉSULTATS DE FIN DE PARTIE",
+        "ROOM": "Salle",
+        "CREATOR_GAME": "Créateur de la salle",
+        "GAME_WINNER": "Gagnants de la partie",
+        "NAME": "Nom",
+        "SCORE_OF": "avec un score de",
+        "POINTS": "points",
+        "NUMBER_LETTER_LEFT": "Nombre de lettres restantes dans la reserve",
+        "NUMBER_TOTAL_TURN": "Nombre de tours total",
+        "GAME_LENGTH": "Durée de la partie (en minutes)",
+        "GAME_CREATION_DATE": "Date du début de la partie (timestamp)",
+        "ADD_GAME_IN_FAVORITE": "Ajouter la partie dans vos favoris",
+        "STATS": "STATISTIQUES DES JOUEURS",
+        "PLAYER": "JOUEUR",
+        "SCORE": "Score",
+        "LETTER_LEFT": "Lettres restantes",
+        "NUMBER_OF_TURN_PLAYED": "Nombre de tours joué",
+        "GAME_SPECTATORS": "Spectateurs de la partie",
+        "NO_SPECTATORS": "Il n'y a pas de spectateurs."
     }
 }
