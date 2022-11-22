@@ -104,5 +104,19 @@
         "POSITION_INVALID": "Coordonnées invalides. Le format doit être (ligne-colonne). Exemple: e10",
         "NOT_EMPTY_POSITION": "Cette case n'est pas vide. Veuillez choisir une autre case.",
         "ALREADY_BONUS_POSITION": "Cette case possède déjà un bonus. Veuillez choisir une autre case."
+    },
+    "GAME_LIST_PAGE": {
+        "YOU": "Vous",
+        "CREATE_GAME": "Créer Partie",
+        "LIST_ROOM_GAMES": "Liste des salles de jeux",
+        "ROOM_NAME": "Nom de la salle",
+        "CREATOR_NAME": "Nom du créateur",
+        "NUMBER_REAL_PLAYERS": "Nombre de joueurs réel",
+        "NUMBER_VIRTUAL_PLAYERS": "Nombre de joueurs virtuels",
+        "NUMBER_SPECTATORS": "Nombre d'observateurs",
+        "PASSWORD": "Mot de passe",
+        "CANCEL": "ANNULER",
+        "OK": "OK",
+        "WRONG_PASSWORD": "Mauvais mot de passe"
     }
 }

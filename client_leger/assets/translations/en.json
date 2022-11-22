@@ -104,5 +104,19 @@
         "POSITION_INVALID": "Invalid coordinates. Format must be (row-column). Example: e10",
         "NOT_EMPTY_POSITION": "This tile is not empty. Please choose another box.",
         "ALREADY_BONUS_POSITION": "This tile already has a bonus. Please choose another tile."
+    },
+    "GAME_LIST_PAGE": {
+        "YOU": "You",
+        "CREATE_GAME": "Create game",
+        "LIST_ROOM_GAMES": "List of game rooms",
+        "ROOM_NAME": "Room name",
+        "CREATOR_NAME": "Creator name",
+        "NUMBER_REAL_PLAYERS": "Number of real players",
+        "NUMBER_VIRTUAL_PLAYERS": "Number of virtual players",
+        "NUMBER_SPECTATORS": "Number of spectators",
+        "PASSWORD": "Password",
+        "CANCEL": "CANCEL",
+        "OK": "OK",
+        "WRONG_PASSWORD": "Wrong password"
     }
 }
