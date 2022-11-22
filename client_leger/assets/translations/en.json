@@ -45,5 +45,30 @@
         "ERROR": "Error",
         "MODIFY_AVATAR": "Modify Avatar",
         "SELECT_AVATAR": "Select desired avatar or take a photo"
+    },
+    "SEARCH_PAGE": {
+        "SEARCH_PLAYERS": "Search players"
+    },
+    "SEARCH_PAGE_CHAT": {
+        "SEARCH_CHAT": "Search for chat rooms",
+        "ROOM_NAME": "Room name: ",
+        "YOU_HAVE_JOINED": "You have joined the room.",
+        "JOIN_ROOM": "Join Room"
+    },
+    "SIGN_UP_PAGE": {
+        "SELECT_AVATAR_WANTED": "Select avatar wanted, a photo will only be available in the edit account page",
+        "SELECT_AVATAR": "Select avatar",
+        "SIGN_UP": "Sign Up",
+        "USERNAME": "Pseudonym",
+        "EMAIL": "Email address",
+        "PASSWORD": "Password",
+        "SUBMIT": "Submit",
+        "GO_LOGIN_PAGE": "Go to login page",
+        "ENTER_EMAIL": "Enter an email address",
+        "ENTER_VALID_EMAIL": "Enter a valid email address",
+        "ENTER_USERNAME": "Enter a username",
+        "ENTER_VALID_USERNAME": "Enter a username with alphanumeric characters",
+        "ENTER_PASSWORD": "Enter a password",
+        "UNABLE_TO_CREATE_ACCOUNT": "Unable to create an account"
     }
 }

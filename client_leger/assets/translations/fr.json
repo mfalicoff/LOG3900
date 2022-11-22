@@ -45,5 +45,30 @@
         "ERROR": "Erreur",
         "MODIFY_AVATAR": "Modifier Avatar",
         "SELECT_AVATAR": "Selectionner avatar voulu ou prenez une photo"
+    },
+    "SEARCH_PAGE": {
+        "SEARCH_PLAYERS": "Rechercher joueurs"
+    },
+    "SEARCH_PAGE_CHAT": {
+        "SEARCH_CHAT": "Rechercher salles",
+        "ROOM_NAME": "Nom de la salle: ",
+        "YOU_HAVE_JOINED": "Vous avez rejoint la salle.",
+        "JOIN_ROOM": "Joindre la salle"
+    },
+    "SIGN_UP_PAGE": {
+        "SELECT_AVATAR_WANTED": "Selectionner avatar voulu, une photo se seras que disponible dans la page de modification du compte",
+        "SELECT_AVATAR": "Selectionner avatar",
+        "SIGN_UP": "Inscription",
+        "USERNAME": "Pseudonyme",
+        "EMAIL": "Adresse Courriel",
+        "PASSWORD": "Mot de passe",
+        "SUBMIT": "Soumettre",
+        "GO_LOGIN_PAGE": "Aller à la page de connexion",
+        "ENTER_EMAIL": "Rentrez une adresse courriel",
+        "ENTER_VALID_EMAIL": "Rentrez une adresse courriel valide",
+        "ENTER_USERNAME": "Rentrez un pseudonyme",
+        "ENTER_VALID_USERNAME": "Rentrez un pseudonyme avec des charactères alphanumériques",
+        "ENTER_PASSWORD": "Rentrez un mot de passe",
+        "UNABLE_TO_CREATE_ACCOUNT": "Impossible de créer un compte"
     }
 }
