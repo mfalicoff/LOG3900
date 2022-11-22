@@ -41,7 +41,7 @@
         <div id="playersInfoNoLog" *ngIf="this.router.url === '/game'">
             <app-info-panel></app-info-panel>
         </div>
-        <div id="communicationBoxNoLog">
+        <div id="communicationBoxNoLog" *ngIf="this.router.url !== '/home' && this.router.url !== '/login'">
             <app-communication-dashboard isInGame="true"></app-communication-dashboard>
         </div>
     </div>
