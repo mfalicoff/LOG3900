@@ -585,6 +585,8 @@ export class SocketManager {
             if (user.language) {
                 this.translateService.addUser(user.name, user.language);
             }
+            const avatar = await this.userService.populateAvatarField(user);
+            socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
 
         socket.on('forceLogout', (name) => {
@@ -1208,9 +1210,9 @@ export class SocketManager {
             const users = await this.userService.findAllUser();
             users.map(async (user) => {
                 if (!avatarUsers.has(user.name)) {
-                    const test = await this.userService.populateAvatarField(user);
-                    avatarUsers.set(user.name, test);
-                    socket.emit('sendAvatars', user.name, test);
+                    const avatar = await this.userService.populateAvatarField(user);
+                    avatarUsers.set(user.name, avatar);
+                    socket.emit('sendAvatars', user.name, avatar);
                 }
             });
         });
