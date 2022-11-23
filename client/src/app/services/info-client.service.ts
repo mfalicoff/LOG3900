@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
+import { ChatRoom } from '@app/classes/chatroom.interface';
 import { GameServer } from '@app/classes/game-server';
-import * as GlobalConstants from '@app/classes/global-constants';
+import * as Constants from '@app/classes/global-constants';
 import { LetterData } from '@app/classes/letter-data';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { RoomData } from '@app/classes/room-data';
+import { TranslateService } from '@ngx-translate/core';
+import { TimerService } from './timer.service';
 
 @Injectable({
     providedIn: 'root',
@@ -57,22 +60,28 @@ export class InfoClientService {
     displayExchLetterModal: string;
     displayTransformTileModal: string;
 
-    constructor() {
-        this.gameMode = GlobalConstants.CLASSIC_MODE;
+    // variable used for the chat rooms
+    chatRooms: ChatRoom[];
+    // variable to allow/block sound effects
+    soundDisabled: boolean;
+
+    constructor(private translate: TranslateService, private timerService: TimerService) {
+        this.gameMode = Constants.CLASSIC_MODE;
         this.minutesByTurn = 1;
         this.isGamePrivate = false;
         this.playerName = 'DefaultPlayerName';
         this.incommingPlayer = '';
         this.incommingPlayerId = '';
         this.rooms = [];
+        this.chatRooms = [];
         this.initializeService();
     }
 
     // public bc it is reused to reset for new games
     initializeService() {
-        this.game = new GameServer(0, GlobalConstants.CLASSIC_MODE, 'defaultRoom', false, '');
-        this.player = new Player('DefaultPlayerObject', false);
-        this.displayTurn = "En attente d'un autre joueur...";
+        this.game = new GameServer(0, Constants.CLASSIC_MODE, 'defaultRoom', false, '');
+        this.player = new Player('DefaultPlayerName', false);
+        this.displayTurn = this.translate.instant('GAME.SIDEBAR.WAITING_PLAYERS');
         this.isTurnOurs = false;
         this.nameVP1dictionary0 = 0;
         this.isSpectator = false;
@@ -83,6 +92,9 @@ export class InfoClientService {
         this.displayExchStandModal = 'none';
         this.displayExchLetterModal = 'none';
         this.displayTransformTileModal = 'none';
+        this.soundDisabled = false;
+        this.timerService.displayTimer = this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') + '1:00';
+        this.timerService.clearTimer();
 
         this.letterReserve = ['a', 'b'];
         this.letterBank = new Map([

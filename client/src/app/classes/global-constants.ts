@@ -38,7 +38,7 @@ export const WAIT_FOR_CANVAS_INI = 10;
 // TODO switch this to 4 when 4 game players will be enabled
 export const MIN_PERSON_PLAYING = 2;
 export const MAX_PERSON_PLAYING = 4;
-export const WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
+export const WAITING_FOR_CREATOR = 'En attente du créateur pour démarrer la partie...';
 export const WAIT_FOR_OTHER_PLAYERS = "En attente d'autres joueurs...";
 
 /// ////////////////////////////////////////////////////////////////////////
@@ -63,11 +63,6 @@ export const TIME_PER_ROUND_DEFAULT = 1000;
 export const LEFT_CLICK = 0;
 export const RIGHT_CLICK = 2;
 
-/// ///OBJECTIVE CONSTANTS///////
-export const FAILED_OBJECTIVE = 'failed';
-export const COMPLETED_OBJECTIVE = 'completed';
-export const UNCOMPLETED_OBJECTIVE = 'uncompleted';
-
 // GAME MODE CONSTANTS
 export const MODE_RANKED = 'Ranked';
 export const POWER_CARDS_MODE = 'power-cards';
@@ -83,3 +78,12 @@ export const REMOVE_POINTS_FROM_MAX =
     "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.";
 export const ADD_1_MIN = "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.";
 export const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.';
+
+export const SYSTEM_SENDER = 'SYSTEM';
+// SOUND FILE CONSTANTS
+export const LETTER_PLACED_SOUND = 'letter-placement-small.mp3';
+export const LETTER_REMOVED_SOUND = 'letter-removal-small.mp3';
+export const WORD_VALID_SOUND = 'word-valid-small.mp3';
+export const WORD_INVALID_SOUND = 'word-invalid-small.mp3';
+export const GAME_LOST_SOUND = 'game-lost-small.mp3';
+export const GAME_WON_SOUND = 'game-won-small.mp3';

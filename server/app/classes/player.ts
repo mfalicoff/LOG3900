@@ -1,5 +1,5 @@
 import * as GlobalConstants from '@app/classes/global-constants';
-import { Command } from './command';
+import { ChatMessage } from './chat-message';
 import { PowerCard } from './power-card';
 import { Tile } from './tile';
 
@@ -21,7 +21,7 @@ export class Player {
 
     // CHAT SERVICE DATA
     lastWordPlaced: string;
-    chatHistory: Command[];
+    chatHistory: ChatMessage[];
     debugOn: boolean;
     passInARow: number;
 
@@ -57,6 +57,7 @@ export class Player {
         this.isMoveBingo = false;
         this.powerCards = [];
         this.nbValidWordPlaced = 0;
+        this.avatarUri = '';
         if (elo === undefined) {
             const startingElo = 2000;
             this.elo = startingElo;

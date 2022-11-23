@@ -1,12 +1,17 @@
 import 'dart:ui';
 
-import 'package:client_leger/models/power-cards.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
-
+import 'package:client_leger/constants/constants.dart';
+import 'package:flip_card/flip_card.dart';
 import '../models/mock_dict.dart';
+
+List<bool> activatedPowerCards = [
+  true, true, true, true,
+  true, true, true, true,
+];
 
 class CreateGamePage extends StatefulWidget {
   const CreateGamePage({Key? key}) : super(key: key);
@@ -42,6 +47,12 @@ class _CreateGamePageState extends State<CreateGamePage> {
       ));
     });
     super.initState();
+  }
+
+  void refresh() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -184,8 +195,8 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                               isPasswordOn = value;
                                             });
                                           }),
-                                      Text("Mot de passe"),
-                                      SizedBox(width: 10,),
+                                      const Text("Mot de passe"),
+                                      const SizedBox(width: 10,),
                                       if (isPasswordOn!)
                                         Expanded(
                                             child: TextFormField(
@@ -265,13 +276,10 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     height: 25,
                                   ),
                                   DropdownButtonFormField<MockDict>(
-                                    items: List<
-                                            DropdownMenuItem<
-                                                MockDict>>.generate(
+                                    items: List<DropdownMenuItem<MockDict>>.generate(
                                         infoClientService.dictionaries.length,
                                         (int index) => DropdownMenuItem(
-                                              child: Text(infoClientService
-                                                  .dictionaries[index].title),
+                                              child: Text(infoClientService.dictionaries[index].title),
                                             )),
                                     onChanged: (MockDict? value) {
                                       dictionary = value;
@@ -287,6 +295,20 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                   const SizedBox(
                                     height: 25,
                                   ),
+                                  if(infoClientService.gameMode == POWER_CARDS_MODE)...[
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text("Activer/desactiver des carte de pouvoir :"),
+                                        PowerListDialog(
+                                          notifyParent: refresh,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 25,
+                                    ),
+                                  ],
                                   ElevatedButton(
                                     style: ButtonStyle(
                                       padding: MaterialStateProperty.all(
@@ -306,9 +328,8 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                       "Démarrer",
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .secondary),
+                                          color: Theme.of(context).colorScheme.secondary
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -352,7 +373,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
       socketService.socket.emit(
           "createRoomAndGame",
           CreateGameModel(roomName!, globals.userLoggedIn.username, turnTime!,
-              infoClientService.gameMode, _isGamePrivate!, password!));
+              infoClientService.gameMode, _isGamePrivate!, password!, activatedPowerCards));
       socketService.socket.emit("dictionarySelected", dictionary);
     }
   }
@@ -363,9 +384,9 @@ class CreateGameModel {
   late String playerName;
   late double timeTurn;
   late String gameMode;
+  late List<bool> activatedPowers;
   late bool isGamePrivate = false;
   late String passwd = "";
-  final List<PowerCard> activatedPowers = [];
 
   Map<String, dynamic> toJson() {
     return {
@@ -379,6 +400,140 @@ class CreateGameModel {
     };
   }
 
-  CreateGameModel(this.roomName, this.playerName, this.timeTurn, this.gameMode,
-      this.isGamePrivate, this.passwd);
+  CreateGameModel(
+      this.roomName, this.playerName, this.timeTurn, this.gameMode,
+      this.isGamePrivate, this.passwd, this.activatedPowers);
 }
+
+class PowerListDialog extends StatefulWidget {
+  final Function() notifyParent;
+
+  const PowerListDialog({super.key, required this.notifyParent});
+
+  @override
+  State<PowerListDialog> createState() => _PowerListDialog();
+}
+
+class _PowerListDialog extends State<PowerListDialog> {
+  InfoClientService infoClientService = InfoClientService();
+  SocketService socketService = SocketService();
+
+  @override
+  Widget build(BuildContext context) {
+    infoClientService.game.initPowerCards();
+    return TextButton(
+      onPressed: () =>
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) =>
+                AlertDialog(
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  actions: <Widget>[
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('Cartes disponibles',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                              decoration: TextDecoration.none
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                          height: 450,
+                          width: 300,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: infoClientService.game.powerCards.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                child: Row(
+                                  children: <Widget>[
+                                    FlipCard(
+                                      direction: FlipDirection.HORIZONTAL,
+                                      front: const SizedBox(
+                                        width: 50,
+                                        height: 50,
+                                        // color: Colors.red,
+                                        child: Image(image: AssetImage("assets/card.png")),
+                                      ),
+                                      back: Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                        ),
+                                        width: 200,
+                                        height: 50,
+                                        margin: const EdgeInsets.fromLTRB(0, 0, 40, 5),
+                                        // color: Theme.of(context).colorScheme.primary,
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                          child: Text(
+                                            infoClientService.game.powerCards[index].name,
+                                            style: TextStyle(
+                                              fontSize: 10.0,
+                                              color: Theme.of(context).colorScheme.secondary,
+                                            ),
+                                            textAlign: TextAlign.justify,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    StatefulBuilder(
+                                      builder: (BuildContext context, StateSetter setState) {
+                                        return Checkbox(
+                                          value: activatedPowerCards[index],
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              activatedPowerCards[index] =
+                                              !activatedPowerCards[index];
+                                            });
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => Navigator.pop(context, 'Confirmer'),
+                          child: const Text('Confirmer'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+          ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStatePropertyAll<Color>(Theme
+            .of(context)
+            .colorScheme
+            .primary),
+        padding: MaterialStateProperty.all(
+          const EdgeInsets.symmetric(
+              vertical: 6.0, horizontal: 6.0),
+        ),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+        ),
+      ),
+      child: Text(
+        "Liste pouvoirs",
+        style: TextStyle(
+          color: Theme
+              .of(context)
+              .colorScheme
+              .secondary,
+        ),
+      ),
+    );
+  }
+}
+

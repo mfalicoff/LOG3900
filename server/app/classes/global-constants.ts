@@ -107,7 +107,7 @@ export const REPLACEMENT_BY_PLAYER = ' a remplacé le joueur virtuel: ';
 export const NB_MIN_LETTER_BANK = 6;
 export const WAITING_FOR_CREATOR = 'En attente du créateur pour demarrer la partie...';
 export const PLAYER_TRIED_A_WORD = ' a placé un mot non valide, son tour passe !';
-
+export const SYSTEM_SENDER = 'SYSTEM';
 /// ////////////////////////////////////////////////////////////////////////
 /// //////////// databaseService constants//////////////////////////////////
 /// //////////////////////////////////////////////////////////////////////
@@ -115,10 +115,7 @@ export const DATABASE_URL = 'mongodb+srv://Stephane:HarryP0tter7@project-databas
 export const DATABASE_PROD = 'Project-Database';
 export const DATABASE_DEV = 'test';
 export const DATABASE_COLLECTION_DICTIONARIES = 'Dictionaries';
-export const DATABASE_COLLECTION_BESTSCORECLASSIC = 'BestScoreClassic';
-export const DATABASE_COLLECTION_BESTSCORELOG2990 = 'BestScoreLOG2990';
 export const DATABASE_COLLECTION_BEGINNER_NAMESVP = 'BeginnerVPNames';
-export const DATABASE_COLLECTION_EXPERT_NAMESVP = 'ExpertVPNames';
 export const GAME_NOT_STARTED = "La partie n'a pas commencée !";
 
 // OBJECTIVE CONSTANTS///////
@@ -151,3 +148,16 @@ export const REMOVE_POINTS_FROM_MAX =
     "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.";
 export const ADD_1_MIN = "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.";
 export const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.';
+
+// SOUND FILE CONSTANTS
+export const LETTER_PLACED_SOUND = 'letter-placement-small.mp3';
+export const LETTER_REMOVED_SOUND = 'letter-removal-small.mp3';
+export const WORD_VALID_SOUND = 'word-valid-small.mp3';
+export const WORD_INVALID_SOUND = 'word-invalid-small.mp3';
+export const GAME_LOST_SOUND = 'game-lost-small.mp3';
+export const GAME_WON_SOUND = 'game-won-small.mp3';
+
+// SOCKET SUFFIX CONSTANTS FOR GAME OR CHATROOM
+export const GAME_SUFFIX = '_game';
+export const CHATROOM_SUFFIX = '_chatroom';
+export const RANKED_SUFFIX = '_ranked';

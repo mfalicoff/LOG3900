@@ -1,7 +1,7 @@
 .container {
   min-height: 100vh;
   height: auto;
-  background-image: url('https://www.printablee.com/postpic/2011/03/blank-scrabble-board-template-printable_326282.jpg');
+  background-image: url('../../../assets/scrabble-background.jpg');
   background-position: center;
   background-attachment: fixed;
 }
@@ -28,6 +28,10 @@ label {
 }
 
 .card {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   background-color: #f7f7f7;
   margin: 0 auto 15%;
   -moz-border-radius: 2px;

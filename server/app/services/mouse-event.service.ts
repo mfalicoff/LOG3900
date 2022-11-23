@@ -111,12 +111,14 @@ export class MouseEventService {
         this.doTheManipulation(game, player, indexTileChanged);
     }
 
-    exchangeButtonClicked(game: GameServer, player: Player): void {
+    async exchangeButtonClicked(game: GameServer, player: Player): Promise<void> {
         const exchangeCmd: string = this.createExchangeCmd(player);
-        this.chatService.sendMessage(exchangeCmd, game, player);
-        for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
-            if (player.stand[i].backgroundColor === '#AEB1D9') {
-                this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
+        const response: boolean = (await this.chatService.sendMessage(exchangeCmd, game, player)) as boolean;
+        if (response) {
+            for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
+                if (player.stand[i].backgroundColor === '#AEB1D9') {
+                    this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
+                }
             }
         }
 
@@ -253,6 +255,13 @@ export class MouseEventService {
     }
 
     private resetTileStandAtPos(player: Player, position: number) {
+        if (!player.stand[position]) {
+            // eslint-disable-next-line no-console
+            console.log('Bug in MouseEventService:resetTileStandAtPos. Position is: ' + position);
+            // eslint-disable-next-line no-console
+            console.log('Player.stand is: ' + player.stand);
+            return;
+        }
         player.stand[position].backgroundColor = '#F7F7E3';
     }
 

@@ -34,8 +34,6 @@ const Map<int, String> indexToLetter = {
   15 : "O",
 };
 
-const int ASCII_CODE_SHIFT = 96;
-
 const num DEFAULT_VALUE_NUMBER = -1;
 
 const double WIDTH_HEIGHT_BOARD = 750;
@@ -55,6 +53,7 @@ const double HEIGHT_STAND = WIDTH_EACH_SQUARE + SIZE_OUTER_BORDER_STAND * 2;
 const double PADDING_BOARD_FOR_STANDS = HEIGHT_STAND + PADDING_BET_BOARD_AND_STAND;
 
 // CLIENT_LEGER_CONSTANTS
+double CANVAS_SIZE = 692;
 double WIDTH_HEIGHT_BOARD_CORRECTED = crossProductGlobal(WIDTH_HEIGHT_BOARD);
 double WIDTH_PLAY_AREA_CORRECTED = crossProductGlobal(WIDTH_PLAY_AREA);
 double PADDING_BET_BOARD_AND_STAND_CORRECTED = crossProductGlobal(PADDING_BET_BOARD_AND_STAND);
@@ -71,12 +70,12 @@ double SIZE_OUTER_BORDER_STAND_CORECTED = crossProductGlobal(SIZE_OUTER_BORDER_S
 
 double crossProductGlobal(double valueToConvert){
   const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
-  return (valueToConvert * 692)/originalSizeCanvas;
+  return (valueToConvert * CANVAS_SIZE)/originalSizeCanvas;
 }
 
 double crossProductGlobalToLargeCanvas(double valueToConvert){
   const originalSizeCanvas = WIDTH_HEIGHT_BOARD + 2 * PADDING_BOARD_FOR_STANDS;
-  return (valueToConvert * originalSizeCanvas)/692;
+  return (valueToConvert * originalSizeCanvas)/CANVAS_SIZE;
 }
 
 const num NUMBER_SQUARE_H_AND_W = 15;
@@ -100,3 +99,10 @@ const REMOVE_1_POWER_CARD_FOR_EVERYONE = 'Cette carte permet de retirer une cart
 const POWER_CARDS_MODE = 'power-cards';
 const CLASSIC_MODE = 'classic';
 const MODE_RANKED = 'Ranked';
+
+///////////////////////////////////////////////////////////////////////////
+// CONSTANTS FOR ISOLATION OF POSITION
+///////////////////////////////////////////////////////////////////////////
+const ASCII_CODE_SHIFT = 96;
+const POSITION_LAST_LETTER = -1;
+const END_POSITION_INDEX_LINE = 1;

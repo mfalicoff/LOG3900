@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MockDict } from '@app/classes/mock-dict';
 import { InfoClientService } from '@app/services/info-client.service';
 import { SocketService } from '@app/services/socket.service';
+import { TranslateService } from '@ngx-translate/core';
 
 interface TimeIntervals {
     value: number;
@@ -21,7 +22,7 @@ export class ParametresSelectionPageComponent implements OnInit {
     // we use a tmp array bc the one of the game get reseted in
     // initializeService() function
     activatedPowers: boolean[];
-    constructor(private socketService: SocketService, public infoClientService: InfoClientService) {
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private translate: TranslateService) {
         this.activatedPowers = this.infoClientService.game.powerCards.map((powerCard) => powerCard.isActivated);
     }
 
@@ -42,6 +43,7 @@ export class ParametresSelectionPageComponent implements OnInit {
             title: 'Dictionnaire français par défaut',
             description: 'Ce dictionnaire contient environ trente mille mots français',
         };
+        this.socketService.socket.emit('ReSendDictionariesToClient');
     }
 
     onClickTime(interval: string) {
@@ -82,11 +84,6 @@ export class ParametresSelectionPageComponent implements OnInit {
             activatedPowers: this.activatedPowers,
         });
         this.socketService.socket.emit('dictionarySelected', this.mockDictionary);
-        this.mockDictionary = {
-            title: 'Dictionnaire français par défaut',
-            description: 'Ce dictionnaire contient environ trente mille mots français',
-        };
-        this.infoClientService.dictionaries[0] = this.mockDictionary;
     }
 
     showPowerModal() {
@@ -104,6 +101,10 @@ export class ParametresSelectionPageComponent implements OnInit {
                 return;
             }
         }
+    }
+
+    translateCardName(name: string) {
+        return this.translate.instant('POWERS.' + name);
     }
 
     private timeSelection(interval: string) {

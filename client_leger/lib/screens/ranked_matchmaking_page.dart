@@ -25,6 +25,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     timerService.clearMatchmakingTimer();
     timerService.startMatchmakingTimer();
     timerService.addListener(refresh);
+    initSockets();
     super.initState();
   }
 

@@ -1,5 +1,4 @@
 import { HttpException } from '@app/classes/http.exception';
-import { DictionariesController } from '@app/controllers/dictionnaries.controller';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import * as express from 'express';
@@ -14,6 +13,7 @@ import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import AuthRoute from '@app/routes/auth.route';
 import AvatarRoute from '@app/routes/avatar.route';
 import GameSavedRoute from '@app/routes/game-saved.route';
+import ChatroomsModel from '@app/models/chatrooms.model';
 
 @Service()
 export class Application {
@@ -21,7 +21,7 @@ export class Application {
     private readonly internalError: number = StatusCodes.INTERNAL_SERVER_ERROR;
     private readonly swaggerOptions: swaggerJSDoc.Options;
 
-    constructor(private dictionariesController: DictionariesController) {
+    constructor() {
         this.app = express();
 
         this.swaggerOptions = {
@@ -36,12 +36,11 @@ export class Application {
         };
 
         this.config();
-
+        this.setupGeneralChatroom();
         this.bindRoutes([new UsersRoute(), new AuthRoute(), new AvatarRoute(), new GameSavedRoute()]);
     }
 
     bindRoutes(routes: Routes[]): void {
-        this.app.use('/admin', this.dictionariesController.router);
         routes.forEach((route) => {
             this.app.use('/', route.router);
         });
@@ -86,5 +85,16 @@ export class Application {
                 error: {},
             });
         });
+    }
+
+    private async setupGeneralChatroom() {
+        const generalRoom = await ChatroomsModel.findOne({ name: 'general' });
+        if (!generalRoom) {
+            await ChatroomsModel.create({
+                name: 'general',
+                participants: [],
+                chatHistory: [],
+            });
+        }
     }
 }

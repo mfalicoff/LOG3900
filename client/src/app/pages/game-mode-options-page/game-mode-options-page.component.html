@@ -2,19 +2,17 @@
     <div class="container justified">
         <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
         <input type="image" [src]="userService.user.avatarUri" class="profile" routerLink="/profile"/>
-
         <button mat-flat-button class="button"
                     routerLink="/multiplayer-init" (click)="setGameMode('classic')">
-                    Mode classique
+                    {{'GAME_MODE_OPTIONS.CLASSIC_MODE' | translate}}
         </button>
         <div>
-            <button mat-flat-button class="button" routerLink="/ranked-init" (click)="setGameMode('Ranked')">Mode de jeu classé</button>
+            <button mat-flat-button class="button" routerLink="/ranked-init" (click)="setGameMode('Ranked')">{{'GAME_MODE_OPTIONS.RANKED_MODE' | translate}}</button>
         </div>
         <button mat-flat-button class="button"
                     routerLink="/multiplayer-init" (click)="setGameMode('power-cards')">
-                    Mode cartes de pouvoir configurables
+                    {{'GAME_MODE_OPTIONS.POWER_CARD_MODE' | translate}}
         </button>
-        <button mat-flat-button class="button" (click)="logOut()" routerLink="/login"> Logout </button>
-        <button mat-flat-button class="button" routerLink="/leaderboard">Meilleurs scores</button>
+        <button mat-flat-button class="button" (click)="logOut()" routerLink="/login"> {{'GAME_MODE_OPTIONS.LOGOUT' | translate}} </button>
     </div>
 </div>

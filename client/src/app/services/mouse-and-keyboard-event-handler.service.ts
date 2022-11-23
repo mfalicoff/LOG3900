@@ -4,7 +4,6 @@ import { PlaceGraphicService } from '@app/services/place-graphic.service';
 import { SocketService } from '@app/services/socket.service';
 import { DrawingBoardService } from './drawing-board-service';
 import { InfoClientService } from './info-client.service';
-import { ChatMessage } from '@app/classes/chat-message.interface';
 import { Tile } from '@app/classes/tile';
 import { DrawingService } from './drawing.service';
 
@@ -23,6 +22,10 @@ export class MouseKeyboardEventHandlerService {
         private infoClientService: InfoClientService,
         private drawingService: DrawingService,
     ) {
+        this.initDefaultVariables();
+    }
+
+    initDefaultVariables() {
         this.isCommunicationBoxFocus = false;
         this.isStandClicked = false;
         this.isCommBoxJustBeenClicked = false;
@@ -40,7 +43,7 @@ export class MouseKeyboardEventHandlerService {
 
     // function that get the index of a pixel position mouse up
     // and send ask the server to place the tile as a temporary one
-    onStandToBoardDrop(coordsClick: Vec2, tileDropped: Tile) {
+    onStandToBoardDrop(coordsClick: Vec2, tileDropped: Tile, letterChoice: string) {
         // indexs of the tile where the "tileDropped" has been dropped
         const posDropBoardIdxs: Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
         // if the tile on which we drop the new one is an old one (from a precedent turn)
@@ -55,20 +58,26 @@ export class MouseKeyboardEventHandlerService {
             this.placeGraphicService.startLettersPlacedPosX = posDropBoardIdxs.x;
             this.placeGraphicService.startLettersPlacedPosY = posDropBoardIdxs.y;
         }
-        this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
-        this.drawingBoardService.coordsLettersDrawn.push(posDropBoardIdxs);
+
         // remove the tile from the stand logically and visually
         this.socketService.socket.emit('rmTileFromStand', tileDropped);
-        // ask for update board logic for a temporary tile
-        this.socketService.socket.emit('addTempLetterBoard', tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y);
+
+        // check if the tile is a special tile (star or not)
+        if (letterChoice !== '') {
+            this.drawingBoardService.lettersDrawn += letterChoice.toLowerCase();
+            this.socketService.socket.emit('addTempLetterBoard', letterChoice.toLowerCase(), posDropBoardIdxs.x, posDropBoardIdxs.y);
+        } else {
+            this.drawingBoardService.lettersDrawn += tileDropped.letter.value;
+            this.socketService.socket.emit('addTempLetterBoard', tileDropped.letter.value, posDropBoardIdxs.x, posDropBoardIdxs.y);
+        }
+        this.drawingBoardService.coordsLettersDrawn.push(posDropBoardIdxs);
     }
 
     onBoardToBoardDrop(coordsClick: Vec2, tileDropped: Tile) {
         // indexs of the tile where the "tileDropped" has been dropped
         const posDropBoardIdxs: Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick(coordsClick);
 
-        // if the tile on which we drop the new one is an old one (from a precedent turn)
-        // we do nothing
+        // if the tile on which we drop the new one has a letter already on it we do nothing
         if (this.infoClientService.game?.board[posDropBoardIdxs.y][posDropBoardIdxs.x].letter.value !== '') {
             return;
         }
@@ -79,12 +88,32 @@ export class MouseKeyboardEventHandlerService {
             y: tileDropped.position.y1,
         });
 
+        // changes the coords in the drawingBoardService.coordsLettersDrawn array to set the new position
+        this.changeCoordsLettersDrawn(posClickedTileIdxs, posDropBoardIdxs);
+
+        // if there is only one letter on the board we want to reassign the start position
+        if (this.drawingBoardService.lettersDrawn.length === 1) {
+            this.placeGraphicService.startLettersPlacedPosX = posDropBoardIdxs.x;
+            this.placeGraphicService.startLettersPlacedPosY = posDropBoardIdxs.y;
+        }
+
         // if the tile on which we drop the new one is the same tile we do nothing
         if (posClickedTileIdxs.x === posDropBoardIdxs.x && posClickedTileIdxs.y === posDropBoardIdxs.y) {
             return;
         }
         // ask for update board logic for a move of temporary tile
         this.socketService.socket.emit('onBoardToBoardDrop', posClickedTileIdxs, posDropBoardIdxs);
+    }
+
+    // function that changes the coords drawingBoardService.coordsLettersDrawn array to set the new position
+    changeCoordsLettersDrawn(oldPosIdxs: Vec2, newPosIdx: Vec2) {
+        for (const coord of this.drawingBoardService.coordsLettersDrawn) {
+            if (coord.x === oldPosIdxs.x && coord.y === oldPosIdxs.y) {
+                coord.x = newPosIdx.x;
+                coord.y = newPosIdx.y;
+                return;
+            }
+        }
     }
 
     onBoardToStandDrop(coordsClick: Vec2, tileDropped: Tile, originalClickTileIndexs: Vec2) {
@@ -100,6 +129,8 @@ export class MouseKeyboardEventHandlerService {
         this.drawingBoardService.lettersDrawn =
             this.drawingBoardService.lettersDrawn.slice(0, idxToRm) +
             this.drawingBoardService.lettersDrawn.slice(idxToRm + 1, this.drawingBoardService.lettersDrawn.length);
+        this.drawingBoardService.coordsLettersDrawn.splice(idxToRm, 1);
+
         const standIdx: number = this.drawingService.getIndexOnStandLogicFromClick(coordsClick.x);
         // indexs of the "tileDropped" variable on the board
         const tileDroppedIdxs: Vec2 = this.drawingBoardService.getIndexOnBoardLogicFromClick({
@@ -158,20 +189,14 @@ export class MouseKeyboardEventHandlerService {
         }
     }
 
-    onCommunicationBoxEnter(input: string) {
-        this.socketService.socket.emit('newMessageClient', input);
+    onCommunicationBoxEnter(msg: string, actualChatRoomName: string) {
+        if (actualChatRoomName === 'game') {
+            this.socketService.socket.emit('newMessageClient', msg);
+        } else {
+            this.socketService.socket.emit('addMsgToChatRoom', actualChatRoomName, msg);
+        }
         this.isCommBoxJustBeenClicked = false;
         this.isCommunicationBoxFocus = true;
-    }
-
-    onCommunicationBoxEnterChat(chat: ChatMessage) {
-        if (this.socketService.socket.connected) {
-            this.socketService.socket.emit('chat msg', chat);
-            this.isCommBoxJustBeenClicked = false;
-            this.isCommunicationBoxFocus = true;
-        } else {
-            throw new Error('not connected to server');
-        }
     }
 
     handleKeyboardEvent(event: KeyboardEvent) {

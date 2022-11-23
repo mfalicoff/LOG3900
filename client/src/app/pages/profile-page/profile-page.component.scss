@@ -1,7 +1,7 @@
 .container {
     min-height: 100vh;
     height: auto;
-    background-image: url('https://www.printablee.com/postpic/2011/03/blank-scrabble-board-template-printable_326282.jpg');
+    background-image: url('../../../assets/scrabble-background.jpg');
     background-position: center;
     background-attachment: fixed;
 }
@@ -90,4 +90,29 @@
     max-width: 100%;
     color: #0c483f;
     margin-bottom: 10px;
+}
+
+.languageSelect{
+    background-color: wheat;
+    height: 66px;
+    border-radius: 10px;
+    position: relative;
+    margin: 0 0 20px;
+    padding-top: 10%;
+}
+
+mat-option {
+    background-color: wheat !important;
+    margin: 0;
+}
+
+.MPButton {
+    cursor: pointer;
+    top: 10px;
+    left: 10px;
+    position: absolute;
+    transform: scale(1.5);
+    margin-top: 2%;
+    margin-left : 2%;
+    color: #0c483f;
 }

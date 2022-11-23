@@ -25,12 +25,7 @@ export class DrawingBoardService {
     private mapTileColours: Map<string, string>;
 
     constructor(private drawingService: DrawingService, private infoClientService: InfoClientService) {
-        this.isArrowVertical = false;
-        this.isArrowPlaced = false;
-        this.arrowPosX = Constants.DEFAULT_VALUE_NUMBER;
-        this.arrowPosY = Constants.DEFAULT_VALUE_NUMBER;
-        this.lettersDrawn = '';
-        this.coordsLettersDrawn = [];
+        this.initDefaultVariables();
         this.mapTileColours = new Map([
             ['xx', '#BEB9A6'],
             ['wordx3', '#f75d59'],
@@ -44,6 +39,15 @@ export class DrawingBoardService {
         this.playAreaCanvas = playAreaCanvas;
         this.tmpTileCanvas = tmpTileCanvas;
         this.drawingService.canvasInit(playAreaCanvas, tmpTileCanvas);
+    }
+
+    initDefaultVariables() {
+        this.isArrowVertical = false;
+        this.isArrowPlaced = false;
+        this.arrowPosX = Constants.DEFAULT_VALUE_NUMBER;
+        this.arrowPosY = Constants.DEFAULT_VALUE_NUMBER;
+        this.lettersDrawn = '';
+        this.coordsLettersDrawn = [];
     }
 
     drawBoardInit(bonusBoard: string[][]) {
@@ -240,8 +244,8 @@ export class DrawingBoardService {
         this.tmpTileCanvas.stroke();
         this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / 2, startPosYPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile);
         this.tmpTileCanvas.stroke();
-        this.arrowPosX = verticalPosTile;
-        this.arrowPosY = horizontalPosTile;
+        // this.arrowPosX = verticalPosTile;
+        // this.arrowPosY = horizontalPosTile;
         this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
     }
 
@@ -262,8 +266,8 @@ export class DrawingBoardService {
         this.tmpTileCanvas.stroke();
         this.tmpTileCanvas.lineTo(startPosXPx + Constants.WIDTH_EACH_SQUARE / oneFifthOfTile, startPosYPx + Constants.WIDTH_EACH_SQUARE / 2);
         this.tmpTileCanvas.stroke();
-        this.arrowPosX = verticalPosTile;
-        this.arrowPosY = horizontalPosTile;
+        // this.arrowPosX = verticalPosTile;
+        // this.arrowPosY = horizontalPosTile;
         this.tmpTileCanvas.lineWidth = Constants.WIDTH_LINE_BLOCKS;
     }
 
@@ -383,6 +387,8 @@ export class DrawingBoardService {
                 y: coordsIndexOnBoard.y,
             });
         }
+        this.arrowPosX = coordsIndexOnBoard.x;
+        this.arrowPosY = coordsIndexOnBoard.y;
         this.isArrowVertical = !this.isArrowVertical;
     }
 

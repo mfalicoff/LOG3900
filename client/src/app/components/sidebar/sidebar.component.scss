@@ -135,11 +135,6 @@ button {
     margin-bottom: -15%;
 }
 
-.validateBtn{
-    background-color: #0C483F;
-    color: wheat;
-}
-
 .cardImg{
     height: 130px;
 }
@@ -184,9 +179,9 @@ button {
   /* Style the back side */
   .flip-card-back {
     vertical-align: middle;
-    border: 2px solid #0C483F;
-    border-radius: 20px;
-    color: #0C483F;
+    border-radius: 15px;
+    color: wheat;
+    background-color: #0C483F;
     transform: rotateY(180deg);
   }
 

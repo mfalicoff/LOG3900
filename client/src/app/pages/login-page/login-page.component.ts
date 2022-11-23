@@ -1,10 +1,13 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { Component, ViewChild } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { UserService } from '@app/services/user.service';
+import { MatDialog } from '@angular/material/dialog';
 import { Avatar } from '@app/classes/avatar.interface';
 import { GalleryComponent } from '@app/components/gallery/gallery.component';
+import { InfoClientService } from '@app/services/info-client.service';
+import { NotificationService } from '@app/services/notification.service';
 import { SocketService } from '@app/services/socket.service';
+import { UserService } from '@app/services/user.service';
+import { environment } from 'src/environments/environment';
 
 interface FormInterface {
     avatar: string;
@@ -36,7 +39,13 @@ export class LoginPageComponent {
     serverUrl = environment.serverUrl;
     avatars: Avatar[] = [];
 
-    constructor(private userService: UserService, private socketService: SocketService) {}
+    constructor(
+        private userService: UserService,
+        private socketService: SocketService,
+        public infoClientService: InfoClientService,
+        public notifService: NotificationService,
+        public dialog: MatDialog,
+    ) {}
 
     onSubmit(): void {
         if (this.showSignup) {

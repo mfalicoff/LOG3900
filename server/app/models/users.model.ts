@@ -1,5 +1,5 @@
-import { Document, model, Schema } from 'mongoose';
 import { User } from '@app/classes/users.interface';
+import { Document, model, Schema } from 'mongoose';
 
 const userSchema: Schema = new Schema({
     email: {
@@ -15,6 +15,10 @@ const userSchema: Schema = new Schema({
     },
     password: {
         type: String,
+        required: true,
+    },
+    elo: {
+        type: Number,
         required: true,
     },
     averagePointsPerGame: {
@@ -53,6 +57,20 @@ const userSchema: Schema = new Schema({
         type: [String],
         required: true,
     },
+    language: {
+        type: String,
+        required: true,
+    },
+    theme: {
+        type: String,
+        required: true,
+    },
+    chatRooms: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Chatroom',
+        },
+    ],
 });
 
 const userModel = model<User & Document>('User', userSchema);

@@ -1,20 +1,21 @@
 class ChatMessage{
   late String msg;
-  late String sender;
+  late String senderName;
   late int timestamp;
 
-  ChatMessage({required this.msg, required this.sender, required this.timestamp});
+  ChatMessage({required this.msg, required this.senderName, required this.timestamp});
 
   Map<String, dynamic> toJson(){
     return {
-      'sender': sender,
+      'senderName': senderName,
       'msg': msg,
       'timestamp': timestamp,
     };
   }
 
-  ChatMessage.fromJson(Map json)
-      : sender = json['sender'],
-        msg = json['msg'],
-        timestamp = json['timestamp'];
+  ChatMessage.fromJson(Map json){
+    senderName = json['senderName'];
+    msg = json['msg'];
+    timestamp = json['timestamp'];
+  }
 }

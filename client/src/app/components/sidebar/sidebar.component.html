@@ -1,17 +1,17 @@
 <div class="container">
-    <h1>CONTRÔLES</h1>
+    <h1>{{'GAME.SIDEBAR.CONTROL' | translate}}</h1>
     <div class="buttonContainer">
         <button
             mat-raised-button
             matTooltip="Abandonner"
             *ngIf="
-                !infoClientService.game.gameFinished && 
+                !infoClientService.game.gameFinished &&
                 infoClientService.game.gameStarted &&
                 !infoClientService.isSpectator"
             (click)="onClickGiveUpButton()"
             class="optionButton"
         >
-        Abandonner
+            {{'GAME.SIDEBAR.GIVE_UP' | translate}}
         </button>
     </div>
 
@@ -21,9 +21,8 @@
             id="cancelGame"
             class="optionButton"
             (click)="leaveGame()"
-            routerLink="/game-mode-options"
         >
-            Quitter Partie
+            {{'GAME.SIDEBAR.QUIT' | translate}}
         </button>
     </div>
 
@@ -35,7 +34,7 @@
             class="optionButton"
             (click)="startGame()"
         >
-            START GAME
+            {{'GAME.SIDEBAR.START_GAME' | translate}}
         </button>
     </div>
     <div class="buttonContainer">
@@ -46,7 +45,7 @@
             class="optionButton"
             (click)="spectWantsToBePlayer()"
         >
-            Prendre la place d'un joueur virtuel
+            {{'GAME.SIDEBAR.TAKE_PLACE' | translate}}
         </button>
     </div>
     <div class="buttonContainer">
@@ -63,7 +62,7 @@
             class="optionButton"
             (click)="showPowerList()"
         >
-            Liste pouvoirs
+            {{'GAME.SIDEBAR.LIST_POWERS' | translate}}
         </button>
     </div>
 
@@ -72,9 +71,9 @@
         <div class="modal-content" >
             <span id="closeModalX" (click)="hidePowerModal()">X</span>
             <span *ngIf="infoClientService.player.powerCards.length === 0">
-                Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer {{3 - infoClientService.player.nbValidWordPlaced}} mot(s) valide(s) sur le plateau.
+                {{'GAME.SIDEBAR.NO_POWERS' | translate}} {{3 - infoClientService.player.nbValidWordPlaced}} {{'GAME.SIDEBAR.VALID_WORD' | translate}}
             </span>
-            <span id="titlePowerCardList">Cartes disponibles</span>
+            <span id="titlePowerCardList">{{'GAME.SIDEBAR.AVAILABLE_CARDS' | translate}}</span>
             <table *ngIf="infoClientService.player.powerCards.length > 0" class="table">
                 <tbody>
                   <tr *ngFor="let powerCard of infoClientService.player.powerCards">
@@ -82,10 +81,10 @@
                       <div class="flip-card">
                         <div class="flip-card-inner">
                           <div class="flip-card-front">
-                            <img src="../../../assets/card.png" alt="Avatar" class="cardImg">
+                            <img src="./assets/card.png" alt="Avatar" class="cardImg">
                           </div>
                           <div class="flip-card-back">
-                            <br>{{powerCard.name}}
+                            <br>{{translateCardName(powerCard.name)}}
                           </div>
                         </div>
                       </div>
@@ -96,18 +95,18 @@
                             class="validateBtn"
                             id="buttonShowModal"
                             (click)="onPowerCardClick(powerCard.name)"
-                        >Utiliser</button>
+                        >{{'GAME.SIDEBAR.USE' | translate}}</button>
                     </td>
                   </tr>
                 </tbody>
-              </table>
+            </table>
         </div>
     </div>
 
     <!-- the modal to choose the target player in case the player uses the card "EXCHANGE_STAND" -->
     <div class="modal" [style.display]="infoClientService.displayExchStandModal">
         <div class="modal-content" >
-            <span>Cliquer sur le joueur avec lequel vous voulez échanger votre stand !</span>
+            <span>{{'GAME.SIDEBAR.CLICK_PLAYER' | translate}}</span>
             <div if="displayLogoPlayers">
                 <table class="table">
                     <thead>
@@ -133,7 +132,7 @@
     <!-- the modal to choose the target letter on the satnd in case the player uses the card "EXCHANGE_LETTER_JOKER" -->
     <div class="modal" [style.display]="infoClientService.displayExchLetterModal">
         <div class="modal-content" >
-            <span style="font-size:16px">Cliquez sur la lettre que vous voulez échanger :</span>
+            <span style="font-size:16px">{{'GAME.SIDEBAR.CLICK_ON_LETTER_EXCHANGE' | translate}}</span>
             <br><br>
             <div id="divLetterStand" *ngFor="let tile of infoClientService.player.stand; let indexOfelement=index;">
                 <span
@@ -145,7 +144,7 @@
                 </span>
             </div>
             <br><br>
-            <span style="font-size:16px">Cliquez sur la lettre que vous voulez prendre de la reserve :</span>
+            <span style="font-size:16px">{{'GAME.SIDEBAR.CLICK_ON_LETTER_RESERVE' | translate}}</span>
             <br><br>
             <div id="divLetterStand" *ngFor="let letter of this.infoClientService.letterReserve; let indexOfelement=index;">
                 <!-- +7 necessary to not confond the letter to exchange from the one to take from the reserve-->
@@ -163,7 +162,7 @@
                 class="validateBtn"
                 (click)="activateLetterExchange()"
             >
-                Valider
+                {{'GAME.SIDEBAR.VALIDATE' | translate}}
             </button>
         </div>
     </div>
@@ -171,10 +170,10 @@
     <!-- the modal to choose the target letter on the satnd in case the player uses the card "EXCHANGE_LETTER_JOKER" -->
     <div class="modal" [style.display]="infoClientService.displayTransformTileModal">
         <div class="modal-content" >
-            <span>Veuillez entrer les coordonnées de la case à changer :</span>
+            <span>{{'GAME.SIDEBAR.ENTER_COORDINATES' | translate}}</span>
             <br>
             <mat-form-field id="letterToChangeField">
-                <mat-label>Coordonnées</mat-label>
+                <mat-label>{{'GAME.SIDEBAR.COORDINATES' | translate}}</mat-label>
                 <input matInput placeholder="Ex. a9" [(ngModel)]='coordsTileToChange'>
             </mat-form-field>
             <button
@@ -182,7 +181,7 @@
                 class="validateBtn"
                 (click)="validateTileChangeCoords()"
             >
-                Valider
+                {{'GAME.SIDEBAR.VALIDATE' | translate}}
             </button>
         </div>
     </div>

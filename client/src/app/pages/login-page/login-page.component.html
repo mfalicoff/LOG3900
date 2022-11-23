@@ -1,5 +1,7 @@
 <div class="container justified">
-    <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
+    <div>
+      <img src="https://i.imgur.com/nyRorRT.png" height="400" alt="Logo Scrabble" />
+    </div>
     <!-- Sign up form -->
     <div *ngIf="showSignup" class="card card-container">
       <form
@@ -11,10 +13,10 @@
       >
         <div>
           <div>
-              <h2>Avatar</h2>
+              <h2>{{'LOGIN_PAGE.AVATAR' | translate}}</h2>
               <app-gallery></app-gallery>
           </div>
-          <label for="username">Username</label>
+          <label for="username">{{'LOGIN_PAGE.USERNAME' | translate}}</label>
           <input
             type="text"
             class="username"
@@ -26,17 +28,17 @@
             #username="ngModel"
           />
           <div class="alert-danger" *ngIf="username.errors && f.submitted">
-            <div *ngIf="username.errors.required">Username is required</div>
+            <div *ngIf="username.errors.required">{{'LOGIN_PAGE.REQUIRED_USERNAME' | translate}}</div>
             <div *ngIf="username.errors.minlength">
-              Username must be at least 3 characters
+                {{'LOGIN_PAGE.MIN_USERNAME' | translate}}
             </div>
             <div *ngIf="username.errors.maxlength">
-              Username must be at most 20 characters
+                {{'LOGIN_PAGE.MAX_USERNAME' | translate}}
             </div>
           </div>
         </div>
         <div>
-          <label for="email">Email</label>
+          <label for="email">{{'LOGIN_PAGE.EMAIL' | translate}}</label>
           <input
             type="email"
             class="email"
@@ -47,14 +49,14 @@
             #email="ngModel"
           />
           <div class="alert-danger" *ngIf="email.errors && f.submitted">
-            <div *ngIf="email.errors.required">Email is required</div>
+            <div *ngIf="email.errors.required">{{'LOGIN_PAGE.REQUIRED_EMAIL' | translate}}</div>
             <div *ngIf="email.errors.email">
-              Email must be a valid email address
+                {{'LOGIN_PAGE.VALID_EMAIL' | translate}}
             </div>
           </div>
         </div>
         <div>
-          <label for="password">Password</label>
+          <label for="password">{{'LOGIN_PAGE.PASSWORD' | translate}}</label>
           <input
             type="password"
             class="password"
@@ -65,29 +67,29 @@
             #password="ngModel"
           />
           <div class="alert-danger" *ngIf="password.errors && f.submitted">
-            <div *ngIf="password.errors.required">Password is required</div>
+            <div *ngIf="password.errors.required">{{'LOGIN_PAGE.REQUIRED_PASSWORD' | translate}}</div>
             <div *ngIf="password.errors.minlength">
-              Password must be at least 6 characters
+                {{'LOGIN_PAGE.MIN_PASSWORD' | translate}}
             </div>
           </div>
         </div>
         <div>
-          <button class="signUpInBtn">Sign Up</button>
+          <button class="signUpInBtn">{{'LOGIN_PAGE.SIGN_UP' | translate}}</button>
         </div>
         <br>
         <div>
-            <p>If you already have an account, click the sign-in button:
-                <button (click)="toggleShow()" class="signUpInBtn">Sign In</button>
+            <p>{{'LOGIN_PAGE.ALREADY_ACCOUNT' | translate}}
+                <button (click)="toggleShow()" class="signUpInBtn">{{'LOGIN_PAGE.SIGN_IN' | translate}}</button>
             </p>
         </div>
 
         <div class="alert alert-warning" *ngIf="f.submitted && isSignUpFailed">
-          Signup failed!<br />{{ errorMessage }}
+            {{'LOGIN_PAGE.SIGN_UP_FAILED' | translate}}<br />{{ errorMessage }}
         </div>
       </form>
 
       <div class="alert alert-success" *ngIf="isSuccessful">
-        Your registration is successful!
+          {{'LOGIN_PAGE.REGISTRATION_SUCCESSFUL' | translate}}
       </div>
     </div>
 
@@ -101,7 +103,7 @@
           novalidate
         >
           <div>
-            <label for="email">Email</label>
+            <label for="email">{{'LOGIN_PAGE.EMAIL' | translate}}</label>
             <input
               type="email"
               class="email"
@@ -112,14 +114,14 @@
               #email="ngModel"
             />
             <div class="alert-danger" *ngIf="email.errors && f.submitted">
-              <div *ngIf="email.errors.required">Email is required</div>
+              <div *ngIf="email.errors.required">{{'LOGIN_PAGE.REQUIRED_EMAIL' | translate}}</div>
               <div *ngIf="email.errors.email">
-                Email must be a valid email address
+                  {{'LOGIN_PAGE.VALID_EMAIL' | translate}}
               </div>
             </div>
           </div>
           <div>
-            <label for="password">Password</label>
+            <label for="password">{{'LOGIN_PAGE.PASSWORD' | translate}}</label>
             <input
               type="password"
               class="password"
@@ -130,29 +132,29 @@
               #password="ngModel"
             />
             <div class="alert-danger" *ngIf="password.errors && f.submitted">
-              <div *ngIf="password.errors.required">Password is required</div>
+              <div *ngIf="password.errors.required">{{'LOGIN_PAGE.REQUIRED_PASSWORD' | translate}}</div>
               <div *ngIf="password.errors.minlength">
-                Password must be at least 6 characters
+                  {{'LOGIN_PAGE.MIN_PASSWORD' | translate}}
               </div>
             </div>
           </div>
           <div>
-            <button class="signUpInBtn">Sign In</button>
+            <button class="signUpInBtn">{{'LOGIN_PAGE.SIGN_IN' | translate}}</button>
           </div>
           <br>
           <div>
-              <p>If you don't have an account, click the sign-up button:
-                <button (click)="toggleShow()" class="signUpInBtn">Sign Up</button>
+              <p>{{'LOGIN_PAGE.NO_ACCOUNT' | translate}}
+                <button (click)="toggleShow()" class="signUpInBtn">{{'LOGIN_PAGE.SIGN_UP' | translate}}</button>
               </p>
           </div>
 
           <div class="alert alert-warning" *ngIf="f.submitted && isSignUpFailed">
-            Signup failed!<br />{{ errorMessage }}
+              {{'LOGIN_PAGE.SIGN_UP_FAILED' | translate}}<br />{{ errorMessage }}
           </div>
         </form>
 
         <div class="alert alert-success" *ngIf="isSuccessful">
-          Your registration is successful!
+            {{'LOGIN_PAGE.REGISTRATION_SUCCESSFUL' | translate}}
         </div>
       </div>
   </div>

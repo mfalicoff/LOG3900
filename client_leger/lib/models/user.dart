@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:io' as Io;
+import 'dart:developer';
 
 class User {
   late List<dynamic>? actionHistory;
@@ -11,6 +12,7 @@ class User {
   late String? cookie;
   late String email;
   late List<dynamic>? gameHistory;
+  late List<dynamic>? favouriteGames;
   late int? gamesPlayed;
   late int? gamesWon;
   late String? id;
@@ -31,8 +33,10 @@ class User {
     gameHistory = parsed["data"]["gameHistory"] ?? "Failed";
     gamesPlayed = parsed["data"]["gamesPlayed"] ?? "Failed";
     gamesWon = parsed["data"]["gamesWon"] ?? "Failed";
+    favouriteGames = parsed["data"]["favouriteGames"] ?? "Failed";
     id = parsed["data"]["_id"] ?? "Failed";
-    //elo = parsed["data"]["elo"] ?? "Failed";
+    elo = parsed["data"]["elo"];
+    //log(elo.toString());
   }
 
   Map<String, dynamic> toJson() => {

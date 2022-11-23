@@ -1,14 +1,18 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { User } from '@app/classes/user.interface';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
-import { UserResponseInterface } from '@app/classes/response.interface';
-import { GameSaved } from '@app/classes/game-saved';
-import { InfoClientService } from '@app/services/info-client.service';
+import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { GameSaved } from '@app/classes/game-saved';
+import { UserResponseInterface } from '@app/classes/response.interface';
+import { User } from '@app/classes/user.interface';
+import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
+import { InfoClientService } from '@app/services/info-client.service';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
 import { Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
+import { NotificationService } from './notification.service';
 
 @Injectable({
     providedIn: 'root',
@@ -17,7 +21,14 @@ export class UserService {
     user: User;
     serverUrl = environment.serverUrl;
 
-    constructor(private http: HttpClient, private infoClientService: InfoClientService, private router: Router) {}
+    constructor(
+        private http: HttpClient,
+        private infoClientService: InfoClientService,
+        private router: Router,
+        private notifService: NotificationService,
+        private dialog: MatDialog,
+        private translate: TranslateService,
+    ) {}
 
     getUser(user: User): Observable<UserResponseInterface> {
         return this.http.get<UserResponseInterface>(`${environment.serverUrl}users/${user._id}`);
@@ -97,7 +108,7 @@ export class UserService {
                     // @ts-ignore
                     localStorage.removeItem(`cookie-${this.user._id}`);
                     localStorage.removeItem(`user-${this.user._id}`);
-                    this.infoClientService.playerName = '';
+                    this.infoClientService.playerName = 'DefaultPlayerName';
                     this.router.navigate(['/login']);
                 },
                 error: (error) => {
@@ -171,34 +182,68 @@ export class UserService {
         return this.http.get<GameSaved[]>(environment.serverUrl + 'users/games/' + this.user._id, { observe: 'body' });
     }
 
+    getUserByName(playerName: string): Observable<UserResponseInterface> {
+        return this.http.get<UserResponseInterface>(`${this.serverUrl}users/${playerName}`, {
+            observe: 'body',
+            responseType: 'json',
+        });
+    }
+
+    async updateLanguage(languageUpdated: string) {
+        return this.http
+            .put<UserResponseInterface>(
+                environment.serverUrl + 'users/language/' + this.user._id,
+                { language: languageUpdated },
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    // eslint-disable-next-line no-console
+                    console.log(res);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse, socket?: Socket, email?: string, password?: string) {
         if (error.error instanceof ErrorEvent) {
-            alert('Erreur: ' + error.status + error.error.message);
+            this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
         } else {
             if (error.error.includes('Already logged in')) {
-                if (
-                    confirm(
-                        'Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?\n ' +
-                            'Si vous ete actuellement en match vous abandonnerez votre match',
-                    )
-                ) {
-                    this.http
-                        .post<any>(this.serverUrl + 'forcelogin', {
-                            email,
-                            password,
-                        })
-                        .subscribe({
-                            next: (response) => {
-                                socket?.emit('forceLogout', response.data.name);
-                                this.saveUserInfo(response, socket as Socket);
-                            },
-                            error: (newError) => {
-                                this.handleErrorPOST(newError);
-                            },
-                        });
-                }
+                const dialogRef = this.dialog.open(ConfirmWindowComponent, {
+                    height: '25%',
+                    width: '25%',
+                    panelClass: 'matDialogWheat',
+                });
+
+                dialogRef.componentInstance.name =
+                    'Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?\n ' +
+                    'Si vous ete actuellement en match vous abandonnerez votre match';
+
+                dialogRef.afterClosed().subscribe((result) => {
+                    if (result) {
+                        this.http
+                            .post<any>(this.serverUrl + 'forcelogin', {
+                                email,
+                                password,
+                            })
+                            .subscribe({
+                                next: (response) => {
+                                    socket?.emit('forceLogout', response.data.name);
+                                    this.saveUserInfo(response, socket as Socket);
+                                },
+                                error: (newError) => {
+                                    this.handleErrorPOST(newError);
+                                },
+                            });
+                    }
+                });
             } else {
-                alert(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`);
+                this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
             }
         }
     }
@@ -207,6 +252,7 @@ export class UserService {
         localStorage.setItem(`cookie-${response.data._id}`, response.token);
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
+        this.translate.use(response.data.language);
         this.infoClientService.playerName = response.data.name;
         this.router.navigate(['/game-mode-options']);
     }

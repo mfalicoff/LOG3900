@@ -82,7 +82,7 @@ export class GameServer {
         this.powerCards = [];
         this.jmpNextEnnemyTurn = false;
         this.reduceEnnemyNbTurn = 0;
-
+        this.gameStart = '';
         this.letterBank = new Map([
             ['A', { quantity: 9, weight: 1 }],
             ['B', { quantity: 2, weight: 3 }],
@@ -147,6 +147,15 @@ export class GameServer {
             // eslint-disable-next-line no-console
             console.log('Game is broken in GameServer::setNewCreatorOfGame', realPlayers);
         }
+    }
+
+    isSomeoneCreator(): boolean {
+        for (const player of this.mapPlayers.values()) {
+            if (player.isCreatorOfGame) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private setMockTiles() {

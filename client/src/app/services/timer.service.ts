@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 @Injectable({
     providedIn: 'root',
 })
@@ -10,6 +11,9 @@ export class TimerService {
     playingTime: number = 0.0;
     private timerInterval: NodeJS.Timeout;
     private timerMatchmaking: NodeJS.Timeout;
+    private timerGame: NodeJS.Timeout;
+
+    constructor(private translate: TranslateService) {}
 
     startTimer(minutesByTurn: number) {
         if (minutesByTurn < 0) {
@@ -23,12 +27,19 @@ export class TimerService {
         const oneSecond = 1000;
         this.timerInterval = setInterval(() => {
             this.secondsValue--;
-            this.playingTime++;
             if (this.secondsValue >= 0) {
                 if (this.secondsValue % secondsInMinute <= displayZero) {
-                    this.displayTimer = `Temps Restant : ${Math.floor(this.secondsValue / secondsInMinute)}:0${this.secondsValue % secondsInMinute}`;
+                    this.displayTimer =
+                        this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') +
+                        Math.floor(this.secondsValue / secondsInMinute) +
+                        ':0' +
+                        (this.secondsValue % secondsInMinute);
                 } else {
-                    this.displayTimer = `Temps Restant : ${Math.floor(this.secondsValue / secondsInMinute)}:${this.secondsValue % secondsInMinute}`;
+                    this.displayTimer =
+                        this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') +
+                        Math.floor(this.secondsValue / secondsInMinute) +
+                        ':' +
+                        (this.secondsValue % secondsInMinute);
                 }
             }
         }, oneSecond);
@@ -39,17 +50,30 @@ export class TimerService {
         const secondsInMinute = 60;
         const displayZero = 9;
         const oneSecond = 1000;
+        // this.playingTime++;
         this.timerMatchmaking = setInterval(() => {
             this.matchmakingSecondsValue++;
             if (this.matchmakingSecondsValue % secondsInMinute <= displayZero) {
-                this.matchmakingDisplayTimer = `Temps écoulé : ${Math.floor(this.matchmakingSecondsValue / secondsInMinute)}:0${
-                    this.matchmakingSecondsValue % secondsInMinute
-                }`;
+                this.matchmakingDisplayTimer =
+                    this.translate.instant('GAME.TIMER_SERVICE.TIME_ELAPSED') +
+                    Math.floor(this.matchmakingSecondsValue / secondsInMinute) +
+                    ':0' +
+                    (this.matchmakingSecondsValue % secondsInMinute);
             } else {
-                this.matchmakingDisplayTimer = `Temps écoulé : ${Math.floor(this.matchmakingSecondsValue / secondsInMinute)}:${
-                    this.matchmakingSecondsValue % secondsInMinute
-                }`;
+                this.matchmakingDisplayTimer =
+                    this.translate.instant('GAME.TIMER_SERVICE.TIME_ELAPSED') +
+                    Math.floor(this.matchmakingSecondsValue / secondsInMinute) +
+                    ':' +
+                    (this.matchmakingSecondsValue % secondsInMinute);
             }
+        }, oneSecond);
+    }
+
+    startGameTimer() {
+        this.playingTime = 0.0;
+        const oneSecond = 1000;
+        this.timerGame = setInterval(() => {
+            this.playingTime++;
         }, oneSecond);
     }
 
@@ -58,6 +82,9 @@ export class TimerService {
     }
     clearMatchmakingTimer() {
         clearInterval(this.timerMatchmaking);
+    }
+    clearGameTimer() {
+        clearInterval(this.timerGame);
     }
     addSecsToTimer(secs: number) {
         this.secondsValue += secs;

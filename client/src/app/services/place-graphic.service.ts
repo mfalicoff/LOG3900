@@ -9,6 +9,7 @@ import { DrawingBoardService } from './drawing-board-service';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
 import { Socket } from 'socket.io-client';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root',
@@ -25,7 +26,12 @@ export class PlaceGraphicService {
         private drawingBoardService: DrawingBoardService,
         private drawingService: DrawingService,
         private infoClientService: InfoClientService,
+        private translate: TranslateService,
     ) {
+        this.initDefaultVariables();
+    }
+
+    initDefaultVariables() {
         this.startLettersPlacedPosX = 0;
         this.startLettersPlacedPosY = 0;
         this.placeMethodIsDragDrop = false;
@@ -33,13 +39,13 @@ export class PlaceGraphicService {
     }
 
     manageKeyboardEvent(game: GameServer, player: Player, keyEntered: string, socket: Socket) {
-        if (this.infoClientService.displayTurn !== "C'est votre tour !") {
+        if (this.infoClientService.displayTurn !== this.translate.instant('GAME.ITS_YOUR_TURN')) {
             return;
         }
         keyEntered = keyEntered.normalize('NFD').replace(/\p{Diacritic}/gu, '');
         switch (keyEntered) {
             case 'Enter': {
-                if (!this.drawingBoardService.lettersDrawn) {
+                if (!this.drawingBoardService.lettersDrawn || this.drawingBoardService.lettersDrawn === '') {
                     return;
                 }
 
@@ -63,7 +69,9 @@ export class PlaceGraphicService {
                     return;
                 }
                 this.deleteLetterPlacedOnBoard(game, socket);
-                this.drawingBoardService.isArrowPlaced = this.drawingBoardService.lettersDrawn.length !== 0;
+                if (this.drawingBoardService.lettersDrawn.length === 0) {
+                    this.resetVariablePlacement();
+                }
                 return;
             }
             case 'Escape': {
@@ -86,6 +94,10 @@ export class PlaceGraphicService {
         }
         let letterPos: number;
         if (keyEntered.toUpperCase() === keyEntered) {
+            // if character is not a letter we return and do nothing
+            if (!keyEntered.match(/[A-Z]/i)) {
+                return;
+            }
             letterPos = this.findIndexLetterInStandForPlacement('*', false, player);
         } else {
             letterPos = this.findIndexLetterInStandForPlacement(keyEntered, false, player);
@@ -239,6 +251,8 @@ export class PlaceGraphicService {
                 i--;
             }
         }
+        this.startLettersPlacedPosX = this.drawingBoardService.coordsLettersDrawn[0].x;
+        this.startLettersPlacedPosY = this.drawingBoardService.coordsLettersDrawn[0].y;
     }
 
     private createPlaceMessage(): string {
@@ -301,27 +315,34 @@ export class PlaceGraphicService {
                 // delete the arrow
                 socket.emit('clearTmpTileCanvas');
             }
-            while (game.board[this.drawingBoardService.arrowPosY - 1][this.drawingBoardService.arrowPosX].old) {
+            // the arrow move one case back
+            this.drawingBoardService.arrowPosY -= 1;
+            // check if the arrow is on a old letter
+            while (game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX].old) {
                 this.drawingBoardService.arrowPosY -= 1;
             }
 
             // remove precedent letter
             socket.emit('rmTempLetterBoard', {
                 x: this.drawingBoardService.arrowPosX,
-                y: this.drawingBoardService.arrowPosY - 1,
+                y: this.drawingBoardService.arrowPosY,
             });
         } else {
             if (this.drawingBoardService.arrowPosX <= Constants.NUMBER_SQUARE_H_AND_W) {
                 // delete the arrow
                 socket.emit('clearTmpTileCanvas');
             }
-            while (game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX - 1].old) {
+
+            // the arrow move one case back
+            this.drawingBoardService.arrowPosX -= 1;
+            // check if the arrow is on a old letter
+            while (game.board[this.drawingBoardService.arrowPosY][this.drawingBoardService.arrowPosX].old) {
                 this.drawingBoardService.arrowPosX -= 1;
             }
 
             // remove precedent letter
             socket.emit('rmTempLetterBoard', {
-                x: this.drawingBoardService.arrowPosX - 1,
+                x: this.drawingBoardService.arrowPosX,
                 y: this.drawingBoardService.arrowPosY,
             });
         }
@@ -335,28 +356,27 @@ export class PlaceGraphicService {
 
         this.drawingBoardService.lettersDrawn = this.drawingBoardService.lettersDrawn.substr(0, this.drawingBoardService.lettersDrawn.length - 1);
         this.drawingBoardService.coordsLettersDrawn.pop();
+
         if (this.drawingBoardService.isArrowVertical) {
-            if (this.drawingBoardService.arrowPosY - 1 === this.startLettersPlacedPosY || this.areAllLettersBeforeOld(game)) {
-                this.drawingBoardService.isArrowVertical = true;
-                this.drawingBoardService.lettersDrawn = '';
+            if (this.drawingBoardService.lettersDrawn === '') {
+                this.drawingBoardService.isArrowPlaced = false;
                 this.drawingBoardService.arrowPosX = Constants.NUMBER_SQUARE_H_AND_W + 1;
                 this.drawingBoardService.arrowPosY = Constants.NUMBER_SQUARE_H_AND_W + 1;
                 return;
             }
             socket.emit('drawVerticalArrow', {
                 x: this.drawingBoardService.arrowPosX,
-                y: this.drawingBoardService.arrowPosY - 1,
+                y: this.drawingBoardService.arrowPosY,
             });
         } else {
-            if (this.drawingBoardService.arrowPosX - 1 === this.startLettersPlacedPosX || this.areAllLettersBeforeOld(game)) {
-                this.drawingBoardService.isArrowVertical = true;
-                this.drawingBoardService.lettersDrawn = '';
+            if (this.drawingBoardService.lettersDrawn === '') {
+                this.drawingBoardService.isArrowPlaced = false;
                 this.drawingBoardService.arrowPosX = Constants.NUMBER_SQUARE_H_AND_W + 1;
                 this.drawingBoardService.arrowPosY = Constants.NUMBER_SQUARE_H_AND_W + 1;
                 return;
             }
             socket.emit('drawHorizontalArrow', {
-                x: this.drawingBoardService.arrowPosX - 1,
+                x: this.drawingBoardService.arrowPosX,
                 y: this.drawingBoardService.arrowPosY,
             });
         }
@@ -380,6 +400,8 @@ export class PlaceGraphicService {
             this.drawingBoardService.arrowPosY > Constants.NUMBER_SQUARE_H_AND_W ||
             this.drawingBoardService.arrowPosX > Constants.NUMBER_SQUARE_H_AND_W
         ) {
+            // delete the arrow
+            socket.emit('clearTmpTileCanvas');
             this.drawingBoardService.isArrowPlaced = false;
             return;
         }
@@ -405,24 +427,5 @@ export class PlaceGraphicService {
             }
         }
         return indexLetterToSearch;
-    }
-
-    private areAllLettersBeforeOld(game: GameServer): boolean {
-        let tmpArrowPosY: number = this.drawingBoardService.arrowPosY;
-        let tmpArrowPosX: number = this.drawingBoardService.arrowPosX;
-        let tmpLettersDrawn: string = this.drawingBoardService.lettersDrawn;
-        if (this.drawingBoardService.isArrowVertical) {
-            while (game.board[tmpArrowPosY - 2][tmpArrowPosX].old) {
-                tmpArrowPosY -= 1;
-                tmpLettersDrawn = tmpLettersDrawn.substr(0, tmpLettersDrawn.length - 1);
-            }
-            return tmpLettersDrawn === '';
-        } else {
-            while (game.board[tmpArrowPosY][tmpArrowPosX - 2].old) {
-                tmpArrowPosX -= 1;
-                tmpLettersDrawn = tmpLettersDrawn.substr(0, tmpLettersDrawn.length - 1);
-            }
-            return tmpLettersDrawn === '';
-        }
     }
 }

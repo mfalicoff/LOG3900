@@ -1,4 +1,3 @@
-import 'package:client_leger/screens/chat_page.dart';
 import 'package:client_leger/screens/create_game_page.dart';
 import 'package:client_leger/screens/game_list_page.dart';
 import 'package:client_leger/screens/game_page.dart';
@@ -15,6 +14,7 @@ import 'env/environment.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+
 
   const String environment = String.fromEnvironment(
     'ENVIRONMENT',
@@ -39,7 +39,6 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: appTheme,
       routes: <String, WidgetBuilder>{
-        '/chat': (BuildContext context) => const ChatPage(),
         '/home': (BuildContext context) => const MyHomePage(),
         '/login': (BuildContext context) => const LoginPage(),
         '/signup': (BuildContext context) => const SignUpPage(),

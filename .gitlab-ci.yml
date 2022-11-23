@@ -208,7 +208,7 @@ deploy:server:
 
                 # Build the project
                 cd server
-                npm ci --legacy-peer-deps
+                npm ci
                 npm run build
 
                 # Force kill any node app or any app running on the server port

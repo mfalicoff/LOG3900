@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:client_leger/screens/home_page.dart';
-import 'package:client_leger/services/controller.dart';
+import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:flutter/material.dart';
@@ -66,7 +66,9 @@ class _LoginFormState extends State<LoginForm> {
   final SocketService socketService = SocketService();
 
   @override
-  Widget build(BuildContext context) {
+    Widget build(BuildContext context) {
+    // const alarmAudioPath = "assets/audios/letter-placement.wav";
+    // player.play(DeviceFileSource(alarmAudioPath));
     return Form(
       key: _formKey,
       child: Column(
@@ -126,11 +128,6 @@ class _LoginFormState extends State<LoginForm> {
                   fontSize: 20, color: Theme.of(context).colorScheme.secondary),
             ),
           ),
-          //TODO REMOVE THIS BUTTON LATER
-          ElevatedButton(
-            onPressed: _toGamePageState,
-            child: const Text("Go to Game Board (tmpButton)"),
-          ),
           GestureDetector(
             onTap: _toSignUpPage,
             child: Text(
@@ -179,8 +176,7 @@ class _LoginFormState extends State<LoginForm> {
               email: email, password: password, socket: socketService.socket);
           infoClientService.playerName = globals.userLoggedIn.username;
           socketService.socket.emit('forceLogout', globals.userLoggedIn.username);
-          Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => const MyHomePage()));
+          Navigator.pushNamed(context, "/home");
         } on Exception {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: const Text("Impossible de se connecter"),
@@ -192,9 +188,9 @@ class _LoginFormState extends State<LoginForm> {
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text(
+      title: const Text(
           "Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?"),
-      content: Text(
+      content: const Text(
           "Si vous ete actuellement en match vous abandonnerez votre match"),
       actions: [
         cancelButton,
@@ -218,8 +214,7 @@ class _LoginFormState extends State<LoginForm> {
         globals.userLoggedIn = await controller.login(
             email: email, password: password, socket: socketService.socket);
         infoClientService.playerName = globals.userLoggedIn.username;
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const MyHomePage()));
+        Navigator.pushNamed(context, "/home");
         return true;
       } on Exception catch (e) {
         print(e.toString());
@@ -235,10 +230,6 @@ class _LoginFormState extends State<LoginForm> {
       }
     }
     return true;
-  }
-
-  void _toGamePageState() {
-    Navigator.pushNamed(context, "/game");
   }
 
   void _toSignUpPage() {

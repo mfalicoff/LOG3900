@@ -1,6 +1,7 @@
 import { Component, Optional, ViewChild } from '@angular/core';
 import { NgForm, NgModel } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { InfoClientService } from '@app/services/info-client.service';
 
 @Component({
     selector: 'app-main-page',
@@ -13,5 +14,5 @@ export class MainPageComponent {
 
     expansionPanelStyleClassic: string;
 
-    constructor(@Optional() public dialog?: MatDialog) {}
+    constructor(public infoClientService: InfoClientService, @Optional() public dialog?: MatDialog) {}
 }
