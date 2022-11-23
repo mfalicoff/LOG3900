@@ -6,6 +6,7 @@ import 'package:client_leger/models/power-cards.dart';
 import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/models/tile.dart';
 import 'package:client_leger/models/trie.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'letter-data.dart';
 import 'letter.dart';
@@ -82,7 +83,7 @@ class GameServer {
     gameFinished = false;
     idxPlayerPlaying = 0;
     masterTimer = '';
-    displaySkipTurn = "En attente d'autres joueurs...";
+    displaySkipTurn = tr("WAITING_OTHER_PLAYER");
     noTileOnBoard = true;
     winners = List.from([Player('', false)]);
     bonusBoard = constBoard1;

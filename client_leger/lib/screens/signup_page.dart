@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 import 'package:client_leger/services/users_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
@@ -24,30 +25,23 @@ class SignUpPage extends StatelessWidget {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 200.0),
+                const EdgeInsets.symmetric(vertical: 50.0, horizontal: 200.0),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Theme.of(context).colorScheme.secondary,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20.0)),
-                      border: Border.all(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 3)),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 25.0, horizontal: 250.0),
-                  child: Column(
-                    children: const [
-                      // Center(
-                      //   child: AvatarPicker(),
-                      // ),
-                      Center(
-                        child: SignUpForm(),
-                      ),
-                    ],
-                  )),
+                decoration: BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  color: Theme.of(context).colorScheme.secondary,
+                  borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+                  border: Border.all(
+                      color: Theme.of(context).colorScheme.primary, width: 3),
+                ),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 25.0, horizontal: 250.0),
+                child: const Center(
+                  child: SignUpForm(),
+                ),
+              ),
             ),
           )
         ],
@@ -78,8 +72,8 @@ class _SignUpFormState extends State<SignUpForm> {
     super.initState();
     http
         .get(
-      Uri.parse("$serverAddress/avatar"),
-    )
+          Uri.parse("$serverAddress/avatar"),
+        )
         .then((res) => parseAvatars(res));
   }
 
@@ -93,18 +87,20 @@ class _SignUpFormState extends State<SignUpForm> {
     return Form(
       key: _formKey,
       child: Column(
-        children: [ TextButton(
-          onPressed: () => showDialog<String>(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          TextButton(
+            onPressed: () => showDialog<String>(
               context: context,
               builder: (BuildContext context) {
-                return StatefulBuilder(builder: (context, setState) {
-                  return AlertDialog(
-                    title: const Text('Avatar'),
-                    content:
-                    const Text('Selectionner avatar voulu, une photo se seras que disponible dans la page de modification du compte'),
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    actions: <Widget>[
-                      Container(
+                return StatefulBuilder(
+                  builder: (context, setState) {
+                    return AlertDialog(
+                      title: const Text('Avatar'),
+                      content: Text("SIGN_UP_PAGE.SELECT_AVATAR_WANTED".tr()),
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      actions: <Widget>[
+                        Container(
                           child: Column(
                             children: [
                               Row(
@@ -116,109 +112,108 @@ class _SignUpFormState extends State<SignUpForm> {
                                     avatarPicker(6),
                                   ]),
                               Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    avatarPicker(1),
-                                    avatarPicker(3),
-                                    avatarPicker(5),
-                                    avatarPicker(7),
-                                  ]),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  avatarPicker(1),
+                                  avatarPicker(3),
+                                  avatarPicker(5),
+                                  avatarPicker(7),
+                                ],
+                              ),
                             ],
-                          )),
-                    ],
-                  );
-                });
-              }),
-          child: const Text('Selectionner avatar'),
-        ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(
-                "Sign Up",
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 30),
-              TextFormField(
-                onSaved: (String? value) {
-                  username = value;
-                },
-                validator: _usernameValidator,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: "Pseudonyme",
-                  labelStyle:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-              const SizedBox(height: 30),
-              TextFormField(
-                onSaved: (String? value) {
-                  email = value;
-                },
-                validator: _emailValidator,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: "Adresse Courriel",
-                  labelStyle:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-              const SizedBox(height: 30),
-              TextFormField(
-                onSaved: (String? value) {
-                  password = value;
-                },
-                validator: _passwordValidator,
-                obscureText: true,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  labelText: "Mot de passe",
-                  labelStyle:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(
-                    const EdgeInsets.symmetric(vertical: 18.0, horizontal: 40.0),
-                  ),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                ),
-                onPressed: _submit,
-                child: Text(
-                  "Submit",
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Theme.of(context).colorScheme.secondary),
-                ),
-              ),
-              const SizedBox(height: 30),
-              GestureDetector(
-                onTap: _toLoginPage,
-                child: Text(
-                  "Go to the Login Page",
-                  style: TextStyle(color: Theme.of(context).colorScheme.primary),
-                ),
-              ),
-            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            child: Text("SIGN_UP_PAGE.SELECT_AVATAR".tr()),
           ),
-      ]),
+          Text(
+            "SIGN_UP_PAGE.SIGN_UP".tr(),
+            style: Theme.of(context).textTheme.headlineLarge,
+          ),
+          const SizedBox(height: 30),
+          TextFormField(
+            onSaved: (String? value) {
+              username = value;
+            },
+            validator: _usernameValidator,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              labelText: "SIGN_UP_PAGE.USERNAME".tr(),
+              labelStyle:
+                  TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          const SizedBox(height: 30),
+          TextFormField(
+            onSaved: (String? value) {
+              email = value;
+            },
+            validator: _emailValidator,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              labelText: "SIGN_UP_PAGE.EMAIL".tr(),
+              labelStyle:
+                  TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          const SizedBox(height: 30),
+          TextFormField(
+            onSaved: (String? value) {
+              password = value;
+            },
+            validator: _passwordValidator,
+            obscureText: true,
+            decoration: InputDecoration(
+              border: const OutlineInputBorder(),
+              labelText: "SIGN_UP_PAGE.PASSWORD".tr(),
+              labelStyle:
+                  TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            style: ButtonStyle(
+              padding: MaterialStateProperty.all(
+                const EdgeInsets.symmetric(vertical: 18.0, horizontal: 40.0),
+              ),
+              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
+            ),
+            onPressed: _submit,
+            child: Text(
+              "SIGN_UP_PAGE.SIGN_UP".tr(),
+              style: TextStyle(
+                  fontSize: 20, color: Theme.of(context).colorScheme.secondary),
+            ),
+          ),
+          const SizedBox(height: 30),
+          GestureDetector(
+            onTap: _toLoginPage,
+            child: Text(
+              "SIGN_UP_PAGE.GO_LOGIN_PAGE".tr(),
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   GestureDetector avatarPicker(int index) {
     return (GestureDetector(
         onTap: () {
-          avatarPath = 'avatar${index+1}';
+          avatarPath = 'avatar${index + 1}';
           Navigator.pop(context);
         },
         child: getAvatarFromString(48, avatars[index]['uri'])));
@@ -226,11 +221,11 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String? _emailValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return "Rentrez une adresse courriel";
+      return "SIGN_UP_PAGE.ENTER_EMAIL".tr();
     } else if (!RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(value)) {
-      return "Rentrez une adresse courriel valide";
+      return "SIGN_UP_PAGE.ENTER_VALID_EMAIL".tr();
     } else {
       return null;
     }
@@ -238,9 +233,9 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String? _usernameValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return "Rentrez un pseudonyme";
+      return "SIGN_UP_PAGE.ENTER_USERNAME".tr();
     } else if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
-      return "Rentrez un pseudonyme avec des charactères alphanumériques";
+      return "SIGN_UP_PAGE.ENTER_VALID_USERNAME".tr();
     } else {
       return null;
     }
@@ -248,7 +243,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
   String? _passwordValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return "Rentrez un mot de passe";
+      return "SIGN_UP_PAGE.ENTER_PASSWORD".tr();
     } else {
       return null;
     }
@@ -258,15 +253,18 @@ class _SignUpFormState extends State<SignUpForm> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try {
-        if(avatarPath == '') {
+        if (avatarPath == '') {
           avatarPath = 'avatar1';
         }
         await controller.signUp(
-            username: username, email: email, password: password, avatarPath: avatarPath);
+            username: username,
+            email: email,
+            password: password,
+            avatarPath: avatarPath);
         Navigator.pop(context);
       } on Exception {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text("Impossible de créer un compte"),
+          content: Text("SIGN_UP_PAGE.UNABLE_TO_CREATE_ACCOUNT".tr()),
           backgroundColor: Colors.red.shade300,
         ));
       }

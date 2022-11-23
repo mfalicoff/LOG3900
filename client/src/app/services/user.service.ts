@@ -9,9 +9,8 @@ import { GameSaved } from '@app/classes/game-saved';
 import { InfoClientService } from '@app/services/info-client.service';
 import { Router } from '@angular/router';
 import { Socket } from 'socket.io-client';
+import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from './notification.service';
-import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
-import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
     providedIn: 'root',
@@ -25,7 +24,7 @@ export class UserService {
         private infoClientService: InfoClientService,
         private router: Router,
         private notifService: NotificationService,
-        private dialog: MatDialog,
+        private translate: TranslateService,
     ) {}
 
     getUser(user: User): Observable<UserResponseInterface> {
@@ -124,7 +123,7 @@ export class UserService {
                     localStorage.removeItem('cookie');
                     localStorage.removeItem('user');
                     this.infoClientService.playerName = 'DefaultPlayerName';
-                    this.router.navigate(['/login']);
+                    this.router.navigate(['/home']);
                 },
                 error: (error) => {
                     this.handleErrorPOST(error);
@@ -204,11 +203,31 @@ export class UserService {
         });
     }
 
+    async updateLanguage(languageUpdated: string) {
+        return this.http
+            .put<UserResponseInterface>(
+                environment.serverUrl + 'users/language/' + this.user._id,
+                { language: languageUpdated },
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    // eslint-disable-next-line no-console
+                    console.log(res);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
             this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
         } else {
-                this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
+            this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
         }
     }
 
@@ -216,6 +235,7 @@ export class UserService {
         localStorage.setItem('cookie', response.token);
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
+        this.translate.use(response.data.language);
         this.infoClientService.playerName = response.data.name;
         this.router.navigate(['/game-mode-options']);
     }

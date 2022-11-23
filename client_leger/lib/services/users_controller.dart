@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:client_leger/env/environment.dart';
-import 'package:client_leger/models/game-saved.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -186,15 +185,30 @@ class Controller {
     }
   }
 
-  String splitCookie (String fullCookie) {
-    return fullCookie.split("=")[1].split(";")[0];
+  updateLanguage(String languageUpdated) async {
+    final user = globals.userLoggedIn;
+    final response = await http.put(Uri.parse("$serverAddress/users/language/${user.id}"),
+      headers : <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+      },
+      body: jsonEncode(<String, String>{"language": languageUpdated}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception("Failed to update language");
+    }
   }
 
-  Future<List<GameSaved>> getFavouriteGames() async {
+String splitCookie(String fullCookie) {
+    return fullCookie.split("=")[1].split(";")[0];
+}
+   
+
+  Future<List<dynamic>> getFavouriteGames() async {
     final user = globals.userLoggedIn;
-    final response = await http.get(Uri.parse("$serverAddress/users/games/$user.id"));
+    final response = await http.get(Uri.parse("$serverAddress/users/games/${user.id}"));
     if (response.statusCode == 200) {
-      List<GameSaved> favouriteGames = json.decode(response.body) as List<GameSaved>;
+      List<dynamic> favouriteGames = json.decode(response.body);
       return favouriteGames;
     } else {
         throw Exception('Failed to get favourite games');

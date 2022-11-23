@@ -21,10 +21,10 @@
             id="inputCommBox"
             class="inputField"
             type="text"
-            placeholder="Ecrivez une commande avec ! ou un message"
+            placeholder="{{'GAME.PLACEHOLDER_CHAT' | translate}}"
             [(ngModel)]="inputInComBox"
             (keydown.enter)="onEnterComBox()"
         />
-        <button mat-button class="btnStyle" (click)="onEnterComBox()">Envoyer</button>
+        <button mat-button class="btnStyle" (click)="onEnterComBox()">{{'GAME.SEND' | translate}}</button>
     </div>
 </div>

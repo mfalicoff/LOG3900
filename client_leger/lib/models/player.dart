@@ -51,6 +51,7 @@ class Player with ChangeNotifier {
     ];
     nbValidWordPlaced = 0;
     initStand();
+    avatarUri = '';
   }
 
   Player.fromJson(Map parsed) {

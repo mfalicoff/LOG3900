@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../services/info_client_service.dart';
@@ -100,7 +101,7 @@ class _LoginFormState extends State<LoginForm> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Text(
-            "Login",
+            tr("LOGIN.LOGIN"),
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           TextFormField(
@@ -110,7 +111,7 @@ class _LoginFormState extends State<LoginForm> {
             validator: _emailValidator,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
-              labelText: "Adresse Courriel",
+              labelText: tr("LOGIN.EMAIL"),
               labelStyle:
                   TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
@@ -124,7 +125,7 @@ class _LoginFormState extends State<LoginForm> {
             obscureText: true,
             decoration: InputDecoration(
               border: const OutlineInputBorder(),
-              labelText: "Mot de passe",
+              labelText: 'LOGIN.PASSWORD'.tr(),
               labelStyle:
                   TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
@@ -143,7 +144,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
             onPressed: _submit,
             child: Text(
-              "Submit",
+              tr("LOGIN.LOGIN"),
               style: TextStyle(
                   fontSize: 20, color: Theme.of(context).colorScheme.secondary),
             ),
@@ -151,7 +152,7 @@ class _LoginFormState extends State<LoginForm> {
           GestureDetector(
             onTap: _toSignUpPage,
             child: Text(
-              "Go to the Sign Up Page",
+              tr("LOGIN.GO_SIGN_UP_PAGE"),
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
           ),
@@ -162,11 +163,11 @@ class _LoginFormState extends State<LoginForm> {
 
   String? _emailValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return "Rentrez une adresse courriel";
+      return tr("LOGIN.ENTER_EMAIL");
     } else if (!RegExp(
             r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
         .hasMatch(value)) {
-      return "Rentrez une adresse courriel valide";
+      return tr("LOGIN.ENTER_VALID_EMAIL");
     } else {
       return null;
     }
@@ -174,7 +175,7 @@ class _LoginFormState extends State<LoginForm> {
 
   String? _passwordValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return "Rentrez un mot de passe";
+      return tr("LOGIN.ENTER_PASSWORD");
     } else {
       return null;
     }
@@ -187,10 +188,13 @@ class _LoginFormState extends State<LoginForm> {
         globals.userLoggedIn = await controller.login(
             email: email, password: password, socket: socketService.socket);
         infoClientService.playerName = globals.userLoggedIn.username;
-        Navigator.pushNamed(context, "/home");
+        if (mounted) {
+          context.setLocale(Locale(globals.userLoggedIn.language!));
+          Navigator.pushNamed(context, "/home");
+        }
       } on Exception {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: const Text("Impossible de se connecter"),
+            content: Text(tr("LOGIN.UNABLE_TO_CONNECT")),
             backgroundColor: Colors.red.shade300,
           ));
       }

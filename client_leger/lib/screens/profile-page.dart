@@ -3,19 +3,26 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:client_leger/models/game-saved.dart';
+import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/users_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:image_picker/image_picker.dart';
 import 'package:client_leger/utils/utils.dart';
-
-import '../env/environment.dart';
 import '../services/chat-service.dart';
 import '../widget/chat_panel.dart';
 
+import '../env/environment.dart';
+
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  final List<GameSaved> favouriteGames;
+
+  const ProfilePage({
+      Key? key,
+      required this.favouriteGames,
+      }) : super(key: key);
 
   @override
   State<ProfilePage> createState() => _ProfileStatePage();
@@ -23,13 +30,15 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfileStatePage extends State<ProfilePage> {
   final Controller controller = Controller();
-  late List<GameSaved> favouriteGames = [];
+  final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
+  SocketService socketService = SocketService();
+  Controller userController = Controller();
 
 
   refresh() async {
     setState(() {});
-    favouriteGames =  (await controller.getFavouriteGames());
+
   }
 
   @override
@@ -45,34 +54,34 @@ class _ProfileStatePage extends State<ProfilePage> {
         chatService.notifyListeners();
       },
       body: Stack(
-        children: <Widget>[
-          Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/background.jpg"),
-                  fit: BoxFit.cover,
-                ),
+      children: <Widget>[
+        Container(
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/background.jpg"),
+                fit: BoxFit.cover,
               ),
-              padding: const EdgeInsets.symmetric(
-                  vertical: 100.0, horizontal: 200.0),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      shape: BoxShape.rectangle,
-                      color: Theme.of(context).colorScheme.secondary,
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(20.0)),
-                      border: Border.all(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 3)),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 25.0, horizontal: 150.0),
-                  child: Center(
-                    child: Column(
-                      children: [
+            ),
+            padding:
+                const EdgeInsets.symmetric(vertical: 70.0, horizontal: 100.0),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    shape: BoxShape.rectangle,
+                    color: Theme.of(context).colorScheme.secondary,
+                    borderRadius: const BorderRadius.all(Radius.circular(20.0)),
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 3)),
+                padding: const EdgeInsets.symmetric(
+                    vertical: 20.0, horizontal: 30.0),
+                child: Center(
+                  child: Column(
+                    children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             IconButton(
                               onPressed: _goBackHomePage,
@@ -81,46 +90,44 @@ class _ProfileStatePage extends State<ProfilePage> {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
-                            const SizedBox(
-                              width: 192.0,
-                            ),
                             CircleAvatar(
                               radius: 48,
                               backgroundImage: MemoryImage(
                                   globals.userLoggedIn.getUriFromAvatar()),
                             ),
-                            const SizedBox(
-                              width: 100.0,
-                            ),
                             const ChatPanelOpenButton(),
                           ],
                         ),
-                        Text(globals.userLoggedIn.username,
-                            style: const TextStyle(
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                            UsernameChangeDialog(
+                                notifyParent: refresh,
+                            ),
+                            Text(globals.userLoggedIn.username,
+                                style: const TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
                                 decoration: TextDecoration.none)),
-                        UsernameChangeDialog(
-                          notifyParent: refresh,
-                        ),
-                        AvatarChangeDialog(
-                          notifyParent: refresh,
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(top: 50, bottom: 50),
-                          child: Table(
-                            children: [
-                              TableRow(
-                                children: [
-                                  returnRowTextElement('Parties jouees'),
-                                  returnRowTextElement('Parties gagnes'),
-                                  returnRowTextElement(
-                                      'Score moyen par partie'),
-                                  returnRowTextElement(
-                                      'Temps moyen par partie'),
-                                ],
-                              ),
+                            AvatarChangeDialog(
+                                notifyParent: refresh,
+                            ),
+                        ],
+                      ),
+                      Container(
+                        padding: const EdgeInsets.only(top: 15, bottom: 30),
+                        child: Table(
+                          children: [
+                            TableRow(
+                              children: [
+                                returnRowTextElement('PROFILE_PAGE.GAMES_PLAYED'.tr()),
+                                returnRowTextElement('PROFILE_PAGE.GAMES_WON'.tr()),
+                                returnRowTextElement('PROFILE_PAGE.AVERAGE_SCORE'.tr()),
+                                returnRowTextElement('PROFILE_PAGE.AVERAGE_TIME'.tr()),
+                              ],
+                            ),
                             TableRow(
                               children: [
                                 returnRowTextElement(globals
@@ -136,31 +143,46 @@ class _ProfileStatePage extends State<ProfilePage> {
                                             .userLoggedIn.averageTimePerGame!
                                             .round())
                                     .toString()),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                                padding: const EdgeInsets.only(right: 50),
-                                child: returnHistoryScrollView(
-                                    'Historique des Connections',
-                                    globals.userLoggedIn.actionHistory!)),
-                            returnHistoryScrollView('Historique des Parties',
-                                globals.userLoggedIn.gameHistory!),
+                              ],
+                            ),
                           ],
-                        )
-                      ],
-                    ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                            returnHistoryScrollView('PROFILE_PAGE.CONNECTION_HISTORY'.tr(),
+                                    globals.userLoggedIn.actionHistory!),
+                            returnHistoryScrollView('PROFILE_PAGE.GAME_HISTORY'.tr(),
+                                    globals.userLoggedIn.gameHistory!),
+                            returnFavouriteGamesScrollView('PROFILE_PAGE.GAME_FAVORITE'.tr()),
+                        ],
+                      ),
+                      DropdownButton(
+                          value: context.locale.languageCode,
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'fr',
+                                child: Text("Français"),
+                            ),
+                            DropdownMenuItem(
+                              value: 'en',
+                              child: Text("English"),
+                            ),
+                          ],
+                          onChanged: (String? value){
+                            userController.updateLanguage(value!);
+                            context.setLocale(Locale(value));
+                            socketService.socket.emit("changeLanguage", {globals.userLoggedIn.username, value});
+                          },),
+                    ],
                   ),
                 ),
-              )),
-        ],
-      ),
+              ),
+            )),
+         ],
+    ),
     );
   }
 
@@ -172,8 +194,9 @@ class _ProfileStatePage extends State<ProfilePage> {
     return Text((textData),
         style: const TextStyle(
             color: Colors.black,
-            fontSize: 11,
-            decoration: TextDecoration.none));
+            fontSize: 13,
+            decoration: TextDecoration.none,
+            fontWeight: FontWeight.bold));
   }
 
   Column returnHistoryScrollView(String title, List<dynamic> history) {
@@ -185,21 +208,23 @@ class _ProfileStatePage extends State<ProfilePage> {
               Text(title,
                   style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 11,
-                      decoration: TextDecoration.none)),
+                      fontSize: 13,
+                      decoration: TextDecoration.none,
+                      fontWeight: FontWeight.bold)),
               Container(
                 decoration: BoxDecoration(border: Border.all()),
-                height: 100,
-                width: 200,
+                height: 280,
+                width: 300,
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: history.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Text('\u2022 ${history[index]}',
+                      return Text('\u2022 ${translateConnection(history[index])}',
                           style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 11,
-                              decoration: TextDecoration.none));
+                              fontSize: 13,
+                              decoration: TextDecoration.none,
+                              fontWeight: FontWeight.bold));
                     }),
               )
             ],
@@ -208,6 +233,167 @@ class _ProfileStatePage extends State<ProfilePage> {
       ],
     );
   }
+
+  String translateConnection(String text){
+    String newText = text;
+    if (context.locale.languageCode == "fr"){
+      newText = newText.replaceAll("Login:", "Connexion:");
+      newText = newText.replaceAll("Logout:", "Déconnexion");
+      newText = newText.replaceAll("Creation de compte:", "Création de compte:");
+      newText = newText.replaceAll("Partie Gagne", "Partie Gagné");
+    }
+    else {
+      newText = newText.replaceAll("Creation de compte:", "Account creation:");
+      newText = newText.replaceAll("Partie Gagne le", "Game won the");
+      newText = newText.replaceAll("Partie Perdu le ", "Game lost the ");
+      newText = newText.replaceAll("à", "at");
+    }
+    return newText;
+  }
+
+  Column returnFavouriteGamesScrollView(String title) {
+    return Column(
+        children: [
+            SingleChildScrollView(
+                child: Column(
+                    children: [
+                        Text(title,
+                            style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 13,
+                            decoration: TextDecoration.none,
+                            fontWeight: FontWeight.bold)),
+                        Container(
+                            decoration: BoxDecoration(border: Border.all()),
+                            height: 280,
+                            width: 350,
+                            child: ListView.builder(
+                                itemCount: widget.favouriteGames.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                    return Column(
+                                        children: [
+                                          Text('${'PROFILE_PAGE.ROOM'.tr()}${widget.favouriteGames[index].roomName}',
+                                              style: const TextStyle (
+                                              color: Colors.black,
+                                              fontSize: 13,
+                                              decoration: TextDecoration.none,
+                                              fontWeight: FontWeight.bold)
+                                           ),
+                                           _isThereSpectators(index),
+                                            Column(
+                                                children: List.generate(widget.favouriteGames[index].players.length, (idx) {
+                                                    return Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                    Text("${'PROFILE_PAGE.PLAYER'.tr()}${widget.favouriteGames[index].players[idx]}",
+                                                        style: const TextStyle (
+                                                        color: Colors.black,
+                                                        fontSize: 13,
+                                                        decoration: TextDecoration.none,
+                                                        fontWeight: FontWeight.bold),
+                                                        textAlign: TextAlign.center,
+                                                    ),
+                                                    Text("${'PROFILE_PAGE.SCORE'.tr()}${widget.favouriteGames[index].scores[idx]}",
+                                                        style: const TextStyle (
+                                                        color: Colors.black,
+                                                        fontSize: 13,
+                                                        decoration: TextDecoration.none,
+                                                        fontWeight: FontWeight.bold),
+                                                        textAlign: TextAlign.center,
+                                                    ),
+                                                        ],
+                                                    );
+                                                })
+                                            ),
+                                          Text('${'PROFILE_PAGE.WINNERS'.tr()}${widget.favouriteGames[index].winners[0]}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
+                                          ),
+                                          Text('${'PROFILE_PAGE.TILE_LEFT'.tr()}${widget.favouriteGames[index].nbLetterReserve}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
+                                          ),
+                                          Text('${'PROFILE_PAGE.TURN_PLAYED'.tr()}${widget.favouriteGames[index].numberOfTurns}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
+                                          ),
+                                          Text('${'PROFILE_PAGE.GAME_TIME'.tr()}${widget.favouriteGames[index].playingTime}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
+                                          ),
+                                          Text('${'PROFILE_PAGE.GAME_CREATION_DATE'.tr()}${widget.favouriteGames[index].gameStartDate}',
+                                              style: const TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center
+                                          ),
+                                          const Text('-------------------------------------------',
+                                              style: TextStyle (
+                                                  color: Colors.black,
+                                                  fontSize: 13,
+                                                  decoration: TextDecoration.none,
+                                                  fontWeight: FontWeight.bold)
+                                          ),
+
+                                        ],
+                                    );
+                                }),
+                        ),
+                    ],
+                ),
+            )
+        ],
+    );
+  }
+    Column _isThereSpectators(int index) {
+        if (widget.favouriteGames[index].spectators.isNotEmpty) {
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: List.generate(widget.favouriteGames[index].spectators.length, (idx) {
+                            return Column(
+                                children: [
+                                            Text('PROFILE_PAGE.SPECTATORS'.tr(),
+                                              style: const TextStyle (
+                                              color: Colors.black,
+                                              fontSize: 13,
+                                              decoration: TextDecoration.none,
+                                              fontWeight: FontWeight.bold)
+                                           ),
+                                    Text("${'PROFILE_PAGE.NAME'.tr()}${widget.favouriteGames[index].spectators[idx]}",
+                                style: const TextStyle (
+                                    color: Colors.black,
+                                    fontSize: 13,
+                                    decoration: TextDecoration.none,
+                                    fontWeight: FontWeight.bold),
+                                    ),
+                                ],
+                            );
+                                    // textAlign: TextAlign.left,
+
+                }),
+            );
+        }
+        return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: TextStyle (color: Colors.black, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
+        );
+    }
+
 }
 
 class UsernameChangeDialog extends StatefulWidget {
@@ -230,8 +416,8 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
       onPressed: () => showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: const Text('Modification nom'),
-          content: const Text('Veuillez rentrer le nouveau nom'),
+          title: Text('PROFILE_PAGE.MODIFY_NAME'.tr()),
+          content: Text('PROFILE_PAGE.ENTER_NAME'.tr()),
           backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: <Widget>[
             Form(
@@ -246,7 +432,7 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
                     validator: _usernameValidator,
                     decoration: InputDecoration(
                       border: const OutlineInputBorder(),
-                      labelText: "Nouveau Pseudonyme",
+                      labelText: 'PROFILE_PAGE.NEW_USERNAME'.tr(),
                       labelStyle: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
@@ -255,11 +441,11 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(context, 'Cancel'),
-                    child: const Text('Cancel'),
+                    child: Text('CANCEL'.tr()),
                   ),
                   TextButton(
                     onPressed: _changeName,
-                    child: const Text('Soumettre'),
+                    child: Text('PROFILE_PAGE.SUBMIT'.tr()),
                   ),
                 ],
               ),
@@ -267,15 +453,15 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
           ],
         ),
       ),
-      child: const Text('Edit name'),
+      child: Text('PROFILE_PAGE.MODIFY_NAME'.tr()),
     );
   }
 
   String? _usernameValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return "Rentrez un pseudonyme";
+      return 'PROFILE_PAGE.ENTER_USERNAME'.tr();
     } else if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
-      return "Rentrez un pseudonyme avec des charactères alphanumériques";
+      return 'PROFILE_PAGE.ENTER_VALID_USERNAME'.tr();
     } else {
       return null;
     }
@@ -293,7 +479,7 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
         Navigator.pop(context, 'Submit');
       } on Exception {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: const Text("Erreur"),
+          content: Text('PROFILE_PAGE.ERROR'.tr()),
           backgroundColor: Colors.red.shade300,
         ));
       }
@@ -340,9 +526,9 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
             File? cameraImageFile;
             return StatefulBuilder(builder: (context, setState) {
               return AlertDialog(
-                title: const Text('Modifier Avatar'),
+                title: Text('PROFILE_PAGE.MODIFY_AVATAR'.tr()),
                 content:
-                    const Text('Selectionner avatar voulu ou prenez une photo'),
+                    Text('PROFILE_PAGE.SELECT_AVATAR'.tr()),
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 actions: <Widget>[
                   Row(
@@ -414,14 +600,14 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
                                     TextButton(
                                       onPressed: (() => setState(
                                           () => cameraImageFile = null)),
-                                      child: const Text('Annuler'),
+                                      child: Text('CANCEL'.tr()),
                                     ),
                                   ],
                                 ),
                                 TextButton(
                                   onPressed: (() => _changeAvatarFromCamera(
                                       cameraImageFile as File)),
-                                  child: const Text('Soumettre'),
+                                  child: Text('PROFILE_PAGE.SUBMIT'.tr()),
                                 ),
                               ],
                             )),
@@ -429,7 +615,7 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
               );
             });
           }),
-      child: const Text('Edit avatar'),
+      child: Text('PROFILE_PAGE.MODIFY_AVATAR'.tr()),
     );
   }
 
@@ -451,7 +637,7 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
       Navigator.pop(context, 'Submit');
     } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text("Erreur"),
+        content: Text('PROFILE_PAGE.ERROR'.tr()),
         backgroundColor: Colors.red.shade300,
       ));
     }
@@ -468,7 +654,7 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
       Navigator.pop(context, 'Submit');
     } on Exception {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text("Erreur"),
+        content: Text('PROFILE_PAGE.ERROR'.tr()),
         backgroundColor: Colors.red.shade300,
       ));
     }

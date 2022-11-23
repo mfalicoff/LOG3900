@@ -1,5 +1,6 @@
 .container {
-    min-height: 100vh;
+    height: 60%;
+    color: #0c483f;
     height: auto;
     background-position: center;
     background-attachment: fixed;
@@ -18,14 +19,15 @@
 .avatarEdit {
     margin-top: 50px;
     text-align: center;
+    align-items: center;
+    align-self: center;
 }
 
 .saveButton {
-    background-color: burlywood;
-    margin-left: 5px;
-}
-
-.saveButtonAvatar {
+    color: wheat;
+    align-self: center;
+    background-color: #0c483f;
+    margin-left: 10%;
+    margin-right: 10%;
     margin-top: 10px;
-    display: block;
 }

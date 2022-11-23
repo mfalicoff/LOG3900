@@ -2,86 +2,86 @@
     <div><button mat-icon-button (click)="closeModalEndGame()" class="closeButton"> <mat-icon> close </mat-icon></button></div>
 
     <div class="title-box">
-        <h1 mat-dialog-title class="title"> RÉSULTATS DE LA PARTIE </h1>
+        <h1 mat-dialog-title class="title">{{'RESULT.RESULT_GAME' | translate}}</h1>
     </div>
     <div mat-dialog-content id="roomStats">
         <ul>
-            <li> SALLE : {{roomName}}</li>
-            <li >Créateur de la salle : {{findCreatorOfGame()}}</li>
+            <li>{{'RESULT.ROOM' | translate}}{{roomName}}</li>
+            <li >{{'RESULT.CREATOR' | translate}}{{findCreatorOfGame()}}</li>
             <div *ngIf="this.infoClientService.actualRoom.spectators.length !== 0">
-                <li>Spectateurs de la partie:</li>
+                <li>{{'RESULT.SPECTATORS' | translate}}</li>
                 <div *ngFor="let spect of this.infoClientService.actualRoom.spectators" class="two-grid-row">
                     <div class="two-grid-col" style="margin-right: -85%">
-                        <span> Nom: </span>
+                        <span>{{'RESULT.NAME' | translate}}</span>
                     </div>
                     <div class="two-grid-col">
                         <span> {{spect.name}} </span>
                     </div>
                 </div>
             </div>
-            <li> Gagnant(s) de la partie :</li>
+            <li>{{'RESULT.WINNER' | translate}}</li>
             <div *ngFor="let winner of this.infoClientService.game.winners" class="two-grid-row">
                 <div class="two-grid-col" style="margin-right: -60%">
-                    <span> Nom: {{winner.name}} </span>
+                    <span>{{'RESULT.NAME' | translate}}{{winner.name}} </span>
                 </div>
                 <div class="two-grid-col">
-                    <span> score: {{winner.score}} </span>
+                    <span>{{'RESULT.SCORE' | translate}}{{winner.score}} </span>
                 </div>
             </div>
-            <li> Nombre de lettres restantes dans la réserve : {{infoClientService.game.nbLetterReserve}}</li>
-            <li> Nombre de tours totoal: {{this.numberOfTurns}}</li>
-            <li> Duree de la partie (en minutes) : {{this.playingTime}}</li>
-            <li> Date du début de la partie (timestamp) : {{this.gameStartDate}}</li>
-            <li> Ajouter cette partie dans vos favoris ? : <button mat-flat-button class="button" (click)="addGameToFavourites()"> Ajouter dans Favoris </button></li>
+            <li>{{'RESULT.NUMBER_OF_LETTERS_LEFT' | translate}}{{infoClientService.game.nbLetterReserve}}</li>
+            <li>{{'RESULT.NUMBER_TURNS' | translate}}{{this.numberOfTurns}}</li>
+            <li>{{'RESULT.GAME_LENGTH' | translate}}{{this.playingTime}}</li>
+            <li>{{'RESULT.GAME_START_TIME' | translate}}{{this.gameStartDate}}</li>
+            <li>{{'RESULT.ADD_GAME_FAVORITE_QUESTION' | translate}}<button mat-flat-button class="button" (click)="addGameToFavourites()">{{'RESULT.ADD_GAME_FAVORITE' | translate}}</button></li>
         </ul>
     </div>
     <div class="title-box">
-        <h1 mat-dialog-title class="title"> STATISTIQUES DES JOUEURS </h1>
+        <h1 mat-dialog-title class="title">{{'RESULT.STATS' | translate}}</h1>
     </div>
     <div mat-dialog-content id="playersStats">
         <div class="players-grid-row">
             <div class="players-grid-col">
                 <ul>
-                    <h2 mat-dialog-title> JOUEUR: <a (click)="this.openProfilePage(this.players[0])" [ngDisableLink]="isLinkEnabled(this.players[0])" >
+                    <h2 mat-dialog-title>{{'RESULT.PLAYER' | translate}}<a (click)="this.openProfilePage(this.players[0])" [ngDisableLink]="isLinkEnabled(this.players[0])" >
                         {{this.players[0].name}}</a>
                     </h2>
-                    <li> Score: {{this.players[0].score}} </li>
-                    <li> Lettres sur stand: {{this.lettersOnStand(this.players[0])}}</li>
-                    <li> Nombre de tours joué dans la partie: {{this.players[0].turn}}</li>
-                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'"> Elo: {{this.players[0].elo}} + {{this.newPlayersElo[0].elo - this.players[0].elo}} = {{this.newPlayersElo[0].elo}}</li>
+                    <li>{{'RESULT.SCORE2' | translate}}{{this.players[0].score}} </li>
+                    <li>{{'RESULT.LETTER_ON_STAND' | translate}}{{this.lettersOnStand(this.players[0])}}</li>
+                    <li>{{'RESULT.NUMBER_TURNS_IN_GAME' | translate}}{{this.players[0].turn}}</li>
+                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}{{this.players[0].elo}} + {{this.newPlayersElo[0].elo - this.players[0].elo}} = {{this.newPlayersElo[0].elo}}</li>
                 </ul>
             </div>
             <div class="players-grid-col">
                 <ul>
-                    <h2 mat-dialog-title> JOUEUR: <a (click)="this.openProfilePage(this.players[1])" [ngDisableLink]="isLinkEnabled(this.players[1])">
+                    <h2 mat-dialog-title>{{'RESULT.PLAYER' | translate}}<a (click)="this.openProfilePage(this.players[1])" [ngDisableLink]="isLinkEnabled(this.players[1])">
                         {{this.players[1].name}}</a>
                     </h2>
-                    <li> Score: {{this.players[1].score}} </li>
-                    <li> Lettres sur stand: {{this.lettersOnStand(this.players[1])}}</li>
-                    <li> Nombre de tours joué dans la partie: {{this.players[1].turn}}</li>
-                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'"> Elo: {{this.players[1].elo}} + {{this.newPlayersElo[1].elo - this.players[1].elo}} = {{this.newPlayersElo[1].elo}}</li>
+                    <li>{{'RESULT.SCORE2' | translate}}{{this.players[1].score}} </li>
+                    <li>{{'RESULT.LETTER_ON_STAND' | translate}}{{this.lettersOnStand(this.players[1])}}</li>
+                    <li>{{'RESULT.NUMBER_TURNS_IN_GAME' | translate}}{{this.players[1].turn}}</li>
+                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}{{this.players[1].elo}} + {{this.newPlayersElo[1].elo - this.players[1].elo}} = {{this.newPlayersElo[1].elo}}</li>
                 </ul>
             </div>
             <div class="players-grid-col">
                 <ul>
-                    <h2 mat-dialog-title> JOUEUR: <a (click)="this.openProfilePage(this.players[2])" [ngDisableLink]="isLinkEnabled(this.players[2])">
+                    <h2 mat-dialog-title>{{'RESULT.PLAYER' | translate}}<a (click)="this.openProfilePage(this.players[2])" [ngDisableLink]="isLinkEnabled(this.players[2])">
                         {{this.players[2].name}}</a>
                     </h2>
-                    <li> Score: {{this.players[2].score}} </li>
-                    <li> Lettres sur stand: {{this.lettersOnStand(this.players[2])}}</li>
-                    <li> Nombre de tours joué dans la partie: {{this.players[2].turn}}</li>
-                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'"> Elo: {{this.players[2].elo}} {{this.newPlayersElo[2].elo - this.players[2].elo}} = {{this.newPlayersElo[2].elo}}</li>
+                    <li>{{'RESULT.SCORE2' | translate}}{{this.players[2].score}} </li>
+                    <li>{{'RESULT.LETTER_ON_STAND' | translate}}{{this.lettersOnStand(this.players[2])}}</li>
+                    <li>{{'RESULT.NUMBER_TURNS_IN_GAME' | translate}}{{this.players[2].turn}}</li>
+                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}{{this.players[2].elo}} {{this.newPlayersElo[2].elo - this.players[2].elo}} = {{this.newPlayersElo[2].elo}}</li>
                 </ul>
             </div>
             <div class="players-grid-col">
                 <ul>
-                    <h2 mat-dialog-title> JOUEUR: <a (click)="this.openProfilePage(this.players[3])" [ngDisableLink]="isLinkEnabled(this.players[3])">
+                    <h2 mat-dialog-title>{{'RESULT.PLAYER' | translate}}<a (click)="this.openProfilePage(this.players[3])" [ngDisableLink]="isLinkEnabled(this.players[3])">
                         {{this.players[3].name}}</a>
                     </h2>
-                    <li> Score: {{this.players[3].score}} </li>
-                    <li> Lettres sur stand: {{this.lettersOnStand(this.players[3])}}</li>
-                    <li> Nombre de tours joué dans la partie: {{this.players[3].turn}}</li>
-                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'"> Elo: {{this.players[3].elo}} {{this.newPlayersElo[3].elo - this.players[3].elo}} = {{this.newPlayersElo[3].elo}}</li>
+                    <li>{{'RESULT.SCORE2' | translate}}{{this.players[3].score}} </li>
+                    <li>{{'RESULT.LETTER_ON_STAND' | translate}}{{this.lettersOnStand(this.players[3])}}</li>
+                    <li>{{'RESULT.NUMBER_TURNS_IN_GAME' | translate}}{{this.players[3].turn}}</li>
+                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}{{this.players[3].elo}} {{this.newPlayersElo[3].elo - this.players[3].elo}} = {{this.newPlayersElo[3].elo}}</li>
                 </ul>
             </div>
         </div>

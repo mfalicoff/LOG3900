@@ -30,6 +30,7 @@ import { PlayAreaService } from './play-area.service';
 import { PowerCardsService } from './power-cards.service';
 import { PutLogicService } from './put-logic.service';
 import { StandService } from './stand.service';
+import { TranslateService } from '@app/services/translate.service';
 
 @Service()
 export class SocketManager {
@@ -59,6 +60,7 @@ export class SocketManager {
         private powerCardsService: PowerCardsService,
         private letterBankService: LetterBankService,
         private chatRoomService: ChatRoomService,
+        private translateService: TranslateService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -95,6 +97,7 @@ export class SocketManager {
         if (!user) {
             return;
         }
+        placeMsg = this.translateService.translateCommandFromPlayer(user.name, placeMsg);
         const game = this.rooms.get(user.roomName);
         if (!game) {
             return;
@@ -478,6 +481,8 @@ export class SocketManager {
         socket.on('saveGame', async (game: GameSaved) => {
             const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
             this.sio.to(savedGame.roomName + Constants.GAME_SUFFIX).emit('savedGameId', savedGame._id);
+            // eslint-disable-next-line no-console
+            console.log('Gamed saved! : ' + savedGame._id);
         });
     }
 
@@ -517,9 +522,6 @@ export class SocketManager {
         // set by the creator of the game
         if (gameMode === Constants.POWER_CARDS_MODE) {
             this.powerCardsService.initPowerCards(newGame, activatedPowers);
-
-            // TODO VERY IMPORTANT REMOVE THAT LATER THIS IS ONLY FOR TESTING PURPOSES
-            this.powerCardsService.givePowerToPlayers(newGame);
         }
 
         // Since this.socketService.sio doesn't work, we made functions to initialize the sio in other services
@@ -577,8 +579,12 @@ export class SocketManager {
     }
 
     private clientAndRoomHandler(socket: io.Socket) {
-        socket.on('new-user', (name) => {
+        socket.on('new-user', async (name) => {
             this.users.set(socket.id, { name, roomName: '', elo: 2000 });
+            const user = await this.userService.findUserByName(name);
+            if (user.language) {
+                this.translateService.addUser(user.name, user.language);
+            }
         });
 
         socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, gameMode, isGamePrivate, passwd, activatedPowers }) => {
@@ -597,6 +603,7 @@ export class SocketManager {
             if (!createdGame) {
                 return;
             }
+            createdGame.gameStart = '';
 
             const players = Array.from(createdGame.mapPlayers.values());
             const spectators = Array.from(createdGame.mapSpectators.values());
@@ -612,7 +619,6 @@ export class SocketManager {
             await this.gameUpdateClients(createdGame);
 
             // emit to change page on client after verification
-            createdGame.gameStart = new Date().toString();
             socket.emit('roomChangeAccepted', '/game');
         });
 
@@ -734,10 +740,21 @@ export class SocketManager {
             oldVirtualPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(user.name));
             this.playAreaService.insertInMapIndex(idxPlayerLeaving, oldVirtualPlayer.name, oldVirtualPlayer, game.mapPlayers);
 
+            // in some cases if the creator left the game and there was a spectator there
+            // would be no creator so when joining the game we asset a new creator
+            if (!game.isSomeoneCreator()) {
+                game.setNewCreatorOfGame();
+            }
+
             socket.emit('isSpectator', false);
 
             for (const player of game.mapPlayers.values()) {
-                player.chatHistory.push(new ChatMessage(Constants.SYSTEM_SENDER, user.name + Constants.REPLACEMENT_BY_PLAYER + oldVPName + '.'));
+                player.chatHistory.push(
+                    new ChatMessage(
+                        Constants.SYSTEM_SENDER,
+                        user.name + this.translateService.translateMessage(player.name, 'REPLACEMENT_BY_PLAYER') + oldVPName + '.',
+                    ),
+                );
             }
 
             // sending game info to all client to update nbPlayers and nbSpectators
@@ -762,6 +779,14 @@ export class SocketManager {
             if (!game) {
                 return;
             }
+            let display = 'Le ';
+            const timestamp = new Date();
+            const date = timestamp.toDateString();
+            const time = timestamp.toLocaleTimeString();
+            display += date;
+            display += ' à ';
+            display += time;
+            game.gameStart = display;
 
             if (game.mapPlayers.size >= Constants.MIN_PERSON_PLAYING && !game.gameStarted) {
                 // we give the server bc we can't include socketManager in those childs
@@ -875,6 +900,10 @@ export class SocketManager {
     private disconnectAbandonHandler(socket: io.Socket) {
         socket.on('disconnect', async () => {
             await this.leaveGame(socket, " s'est déconnecté.");
+            const user = this.users.get(socket.id);
+            if (user) {
+                this.translateService.deleteUser(user.name);
+            }
             this.users.delete(socket.id);
         });
 
@@ -1055,6 +1084,10 @@ export class SocketManager {
                 return;
             }
             const chatRoom = await this.chatRoomService.createChatRoom(dbUser.id, chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
             socket.emit('setChatRoom', chatRoom);
         });
 
@@ -1155,6 +1188,11 @@ export class SocketManager {
                 return;
             }
             socket.emit('setTmpChatRoom', chatRoom);
+        });
+
+        // socket to change value in map of translateService
+        socket.on('changeLanguage', async (playerName, language) => {
+            this.translateService.addUser(playerName, language);
         });
     }
 }

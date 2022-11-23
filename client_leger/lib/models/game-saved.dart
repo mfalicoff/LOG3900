@@ -30,6 +30,34 @@ class GameSaved {
     populateMap(players);
   }
 
+  GameSaved.fromJson(game) {
+    roomName = game["roomName"];
+    numberOfTurns = game["numberOfTurns"];
+    playingTime = game["playingTime"];
+    nbLetterReserve = game["nbLetterReserve"];
+    gameStartDate = game["gameStartDate"];
+    var playersString = game["players"];
+    players = [];
+    for (var pl in playersString){
+        players.add(pl);
+    }
+    var winnersString = game["winners"];
+    winners = [];
+    for (var wn in winnersString) {
+        winners.add(wn);
+    }
+    var spectatorsString = game["spectators"];
+    spectators = [];
+    for (var spec in spectatorsString) {
+        spectators.add(spec);
+    }
+    var scoresString = game["scores"];
+    scores = [];
+    for (var sc in scoresString) {
+        scores.add(sc);
+    }
+  }
+
   void populateArrays(List<Player> players, List<Spectator>? spectators, List<Player>? winners){
     for (var i = 0; i < players.length; i++) {
       this.players[i] = players[i].name;

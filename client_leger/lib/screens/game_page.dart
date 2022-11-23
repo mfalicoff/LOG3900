@@ -6,6 +6,7 @@ import 'package:client_leger/screens/end-game-results-page.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
 
@@ -28,7 +29,6 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
     infoClientService.addListener(refresh);
-    // infoClientService.addListener(_checkEndGame);
   }
 
   void refresh() {
@@ -36,11 +36,6 @@ class _GamePageState extends State<GamePage> {
       setState(() {});
     }
   }
-  // _checkEndGame() {
-  //   if (infoClientService.game.gameFinished) {
-  //       showDialog(context: context, builder: (context) => const EndGameResultsPage());
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +71,7 @@ class _GamePageState extends State<GamePage> {
                         ),
                         onPressed: _leaveGame,
                         child: Text(
-                          "Quitter partie",
+                          "GAME_PAGE.QUIT_GAME".tr(),
                           style: TextStyle(
                             color:
                             Theme.of(context).colorScheme.secondary,
@@ -102,7 +97,7 @@ class _GamePageState extends State<GamePage> {
                         ),
                         onPressed: () => _giveUpGame(context),
                         child: Text(
-                          "Abandonner",
+                          "GAME_PAGE.GIVE_UP".tr(),
                           style: TextStyle(
                             color:
                             Theme.of(context).colorScheme.secondary,
@@ -116,6 +111,7 @@ class _GamePageState extends State<GamePage> {
                         notifyParent: refresh,
                       ),
                     ],
+
                     const SizedBox(
                       height: 5,
                     ),
@@ -138,7 +134,7 @@ class _GamePageState extends State<GamePage> {
                           ),
                           onPressed: _startGame,
                           child: Text(
-                            "Demarrer partie",
+                            "GAME_PAGE.START_GAME".tr(),
                             style: TextStyle(
                               color:
                               Theme.of(context).colorScheme.secondary,
@@ -161,7 +157,7 @@ class _GamePageState extends State<GamePage> {
                             showDialog(context: context, builder: (context) => const EndGameResultsPage(),
                             );
                           },
-                          child: const Text('End Game Results'),
+                          child: Text("GAME_PAGE.END_GAME_RESULT".tr()),
                         )
 
                             : null),
@@ -182,7 +178,7 @@ class _GamePageState extends State<GamePage> {
                           ),
                           onPressed: spectWantsToBePlayer,
                           child: Text(
-                            "Remplacer joueur virtuel",
+                            "GAME_PAGE.REPLACE_VIRTUAL_PLAYER".tr(),
                             style: TextStyle(
                               color:
                               Theme.of(context).colorScheme.secondary,
@@ -220,13 +216,13 @@ class _GamePageState extends State<GamePage> {
             AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.secondary,
               title: Text(
-                'Le joueur ${infoClientService.incomingPlayer} essaye de se connecter.\nVoulez vous l\'accepter dans la partie ?',
+                '${"GAME_PAGE.THE_PLAYER".tr()}${infoClientService.incomingPlayer}${"GAME_PAGE.TRY_CONNECT".tr()}',
                 style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
               actions: <Widget>[
                 ElevatedButton(
                   child: Text(
-                    'Refuser',
+                    "GAME_PAGE.REFUSE".tr(),
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary),
                   ),
@@ -237,7 +233,7 @@ class _GamePageState extends State<GamePage> {
                 ),
                 ElevatedButton(
                   child: Text(
-                    'Accepter',
+                    "GAME_PAGE.ACCEPT".tr(),
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.secondary),
                   ),
@@ -339,14 +335,14 @@ class _GamePageState extends State<GamePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Abandonner la partie?'),
-          content: const Text('Êtes-vous sûr de vouloir abandonner la partie?'),
+          title: Text("GAME_PAGE.GIVE_UP_GAME".tr()),
+          content: Text("GAME_PAGE.SURE_WANT_GIVE_UP".tr()),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Abandonner'),
+              child: Text("GAME_PAGE.GIVE_UP".tr()),
               onPressed: () {
                 socketService.count = 1;
                 socketService.socket.emit('giveUpGame');
@@ -357,7 +353,7 @@ class _GamePageState extends State<GamePage> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: const Text('Annuler'),
+              child: Text("GAME_PAGE.CANCEL".tr()),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -415,7 +411,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     infoClientService.isTurnOurs) ...[
                   if (infoClientService.player.powerCards.isNotEmpty) ...[
                     Text(
-                      'Cartes disponibles',
+                      "GAME_PAGE.CARDS_AVAILABLE".tr(),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
@@ -425,10 +421,10 @@ class _PowerListDialog extends State<PowerListDialog> {
                   ],
                   if (infoClientService.player.powerCards.isEmpty) ...[
                     Text(
-                        "Vous n'avez pas de pouvoir. Pour en obtenir un, vous devez placer ${3 - infoClientService.player.nbValidWordPlaced} mot(s) valide(s) sur le plateau.",
+                        "${"GAME_PAGE.NO_POWERS".tr()}${3 - infoClientService.player.nbValidWordPlaced}${"GAME_PAGE.VALID_WORDS".tr()}",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: 11,
+                            fontSize: 15,
                             decoration: TextDecoration.none)),
                   ],
                   Container(
@@ -470,7 +466,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                           10, 10, 10, 10),
                                       child: Text(
                                         infoClientService
-                                            .player.powerCards[index].name,
+                                            .player.powerCards[index].name.tr(),
                                         style: TextStyle(
                                           fontSize: 12.0,
                                           color: Theme.of(context)
@@ -493,7 +489,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                         .player.powerCards[index].name)
                                   },
                                   child: Text(
-                                    "Utiliser",
+                                    "GAME_PAGE.USE".tr(),
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
@@ -508,14 +504,14 @@ class _PowerListDialog extends State<PowerListDialog> {
                   ),
                   TextButton(
                     onPressed: () => Navigator.pop(context, 'Annuler'),
-                    child: const Text('Annuler'),
+                    child: Text("GAME_PAGE.CANCEL".tr()),
                   ),
                 ],
                 if (infoClientService.powerUsedForTurn) ...[
                   Container(
                     margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: Text(
-                      "Vous avez déjà utilisé une carte de pouvoir à ce tour-ci. Veuillez attendre le prochain tour.",
+                      "GAME_PAGE.ALREADY_USED_POWER".tr(),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 13,
@@ -528,7 +524,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     width: 210,
                     margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                     child: Text(
-                      "Ce n'est pas votre tour de jouer.",
+                      "GAME_PAGE.NOT_YOUR_TURN".tr(),
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
@@ -555,7 +551,7 @@ class _PowerListDialog extends State<PowerListDialog> {
         ),
       ),
       child: Text(
-        "Liste pouvoirs",
+        "GAME_PAGE.POWER_LIST".tr(),
         style: TextStyle(
           color: Theme.of(context).colorScheme.secondary,
         ),
@@ -572,7 +568,7 @@ class _PowerListDialog extends State<PowerListDialog> {
             context: context,
             builder: (_) => AlertDialog(
               content: Text(
-                'Veuillez entrer les coordonnées de la case à changer :',
+                "GAME_PAGE.ENTER_POSITION_OF_TILE".tr(),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                 ),
@@ -591,7 +587,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                         validator: _coordsValidator,
                         decoration: InputDecoration(
                           border: const OutlineInputBorder(),
-                          labelText: "Coordonnées",
+                          labelText: "GAME_PAGE.POSITION".tr(),
                           labelStyle: TextStyle(
                               color: Theme.of(context).colorScheme.primary),
                         ),
@@ -600,11 +596,11 @@ class _PowerListDialog extends State<PowerListDialog> {
                       ),
                       TextButton(
                         onPressed: _sendCoords,
-                        child: const Text('Soumettre'),
+                        child: Text("GAME_PAGE.SUBMIT".tr()),
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(context, 'Annuler'),
-                        child: const Text('Annuler'),
+                        child: Text("GAME_PAGE.CANCEL".tr()),
                       ),
                     ],
                   ),
@@ -631,7 +627,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                       child: Column(
                         children: [
                           Text(
-                            "Cliquez sur la lettre que vous voulez échanger :",
+                            "GAME_PAGE.CLICK_ON_TILE_EXCHANGE".tr(),
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
@@ -681,7 +677,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                           }),
                           if (chosenLetterReserve != '') ...[
                             Text(
-                              "Cliquez sur la lettre que vous voulez prendre de la reserve :",
+                              "GAME_PAGE.CLICK_ON_TILE_RESERVE".tr(),
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
@@ -736,12 +732,12 @@ class _PowerListDialog extends State<PowerListDialog> {
                             ),
                             TextButton(
                               onPressed: () => {_makeLetterExchange()},
-                              child: const Text('Confirmer'),
+                              child: Text("GAME_PAGE.CONFIRM".tr()),
                             ),
                           ],
                           if (chosenLetterReserve == '') ...[
                             Text(
-                              "Il n'y a pas de lettre disponible dans la reserve.",
+                              "GAME_PAGE.NO_LETTER_AVAILABLE".tr(),
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
@@ -751,7 +747,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                           ],
                           TextButton(
                             onPressed: () => Navigator.pop(context, 'Annuler'),
-                            child: const Text('Annuler'),
+                            child: Text("GAME_PAGE.CANCEL".tr()),
                           ),
                         ],
                       ),
@@ -781,7 +777,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Cliquer sur l'avatar du joueur avec lequel vous voulez échanger votre stand !",
+                        "GAME_PAGE.CLICK_AVATAR".tr(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
@@ -836,7 +832,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                       ),
                       TextButton(
                         onPressed: () => Navigator.pop(context, 'Annuler'),
-                        child: const Text('Annuler'),
+                        child: Text("GAME_PAGE.CANCEL".tr()),
                       ),
                     ],
                   ),
@@ -850,11 +846,12 @@ class _PowerListDialog extends State<PowerListDialog> {
         {
           if (!infoClientService.isTurnOurs) {
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              content: const Text("Ce n'est pas votre tour de jouer."),
+              content: Text("GAME_PAGE.NOT_YOUR_TURN".tr()),
               backgroundColor: Colors.red.shade300,
             ));
           } else {
             socketService.socket.emit('powerCardClick', [powerCardName, '']);
+            infoClientService.powerUsedForTurn = true;
           }
           Navigator.pop(context);
           break;
@@ -864,9 +861,9 @@ class _PowerListDialog extends State<PowerListDialog> {
 
   String? _coordsValidator(String? value) {
     if (value == null || value.isEmpty) {
-      return "Rentrez des coordonnées";
+      return "GAME_PAGE.ENTER_POSITION".tr();
     } else if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
-      return "La forme doit être ligne-colonne. Exemple: e10";
+      return "GAME_PAGE.FORM_MUST_BE".tr();
     } else {
       int idxLine = value
           .substring(0, END_POSITION_INDEX_LINE)
@@ -879,13 +876,13 @@ class _PowerListDialog extends State<PowerListDialog> {
           idxColumn <= 0 ||
           idxLine > NUMBER_SQUARE_H_AND_W ||
           idxColumn > NUMBER_SQUARE_H_AND_W) {
-        return 'Coordonnées invalides. Le format doit être (ligne-colonne). Exemple: e10';
+        return "GAME_PAGE.POSITION_INVALID".tr();
       }
       if (infoClientService.game.board[idxLine][idxColumn].letter.value != '') {
-        return "Cette case n'est pas vide. Veuillez choisir une autre case.";
+        return "GAME_PAGE.NOT_EMPTY_POSITION".tr();
       }
       if (infoClientService.game.board[idxLine][idxColumn].bonus != 'xx') {
-        return 'Cette case possède déjà un bonus. Veuillez choisir une autre case.';
+        return "GAME_PAGE.ALREADY_BONUS_POSITION".tr();
       }
       coords = value;
       return null;
@@ -895,7 +892,7 @@ class _PowerListDialog extends State<PowerListDialog> {
   void _sendCoords() {
     if (!infoClientService.isTurnOurs) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text("Ce n'est pas votre tour de jouer."),
+        content: Text("GAME_PAGE.NOT_YOUR_TURN".tr()),
         backgroundColor: Colors.red.shade300,
       ));
     } else if (_formKey.currentState!.validate()) {
@@ -923,7 +920,7 @@ class _PowerListDialog extends State<PowerListDialog> {
   void _makeLetterExchange() {
     if (!infoClientService.isTurnOurs) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text("Ce n'est pas votre tour de jouer."),
+        content: Text("GAME_PAGE.NOT_YOUR_TURN".tr()),
         backgroundColor: Colors.red.shade300,
       ));
     } else {
@@ -940,7 +937,7 @@ class _PowerListDialog extends State<PowerListDialog> {
   void _onAvatarPressed(String playerName) {
     if (!infoClientService.isTurnOurs) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: const Text("Ce n'est pas votre tour de jouer."),
+        content: Text("GAME_PAGE.NOT_YOUR_TURN".tr()),
         backgroundColor: Colors.red.shade300,
       ));
     } else {
