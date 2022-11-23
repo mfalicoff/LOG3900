@@ -15,6 +15,8 @@ class User {
   late int? gamesPlayed;
   late int? gamesWon;
   late String? id;
+  late String? language;
+  late String? theme;
   late String username;
   late Io.File avatarImage;
 
@@ -33,6 +35,8 @@ class User {
     gamesWon = parsed["data"]["gamesWon"] ?? "Failed";
     favouriteGames = parsed["data"]["favouriteGames"] ?? "Failed";
     id = parsed["data"]["_id"] ?? "Failed";
+    theme = parsed["data"]["theme"] ?? "Failed";
+    language = parsed["data"]["language"] ?? "Failed";
   }
 
 
