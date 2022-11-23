@@ -194,5 +194,6 @@
         "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.": "This card adds 1 minute to your thinking time.",
         "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "This card removes a power card from all enemy players."
     },
-    "DETACH": "Detach"
+    "DETACH": "Detach",
+    "ATTACH": "Attach"
 }

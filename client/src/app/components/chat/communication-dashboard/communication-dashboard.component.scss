@@ -25,6 +25,7 @@
 
 #titleChatDashBoard{
   padding: 5px;
+  color: #0C483F;
   text-align: center;
   padding-bottom: 0px;
   margin-bottom: -10%;
@@ -39,16 +40,17 @@
   height: 260px;
   overflow-y: scroll;
   border-top: 3px solid #0C483F;
-  padding-top: 10px;
+  padding-top: 5px;
 }
 
 .chatRoomElement{
   background-color: #0C483F;
   color: wheat;
   text-align: center;
-  margin-bottom: 10px;
+  font-size: 12px;
+  margin-bottom: 5px;
   border-radius: 5px;
-  padding: 2px;
+  padding: 1px;
 }
 
 .chatRoomElement:hover{
@@ -85,8 +87,10 @@
 .btnStyle{
   background-color: #0C483F;
   margin-top: 0px;
+  align-self: center;
+  text-align: center;
   margin-bottom: 5px;
-  font-size: 15px;
+  font-size: 12px;
   color: wheat;
   cursor: pointer;
   box-shadow: none;

@@ -1,16 +1,15 @@
 <div class="container" [ngClass]="{notInGame: this.router.url !== '/game'}">
-  <div style="position: absolute; top: 0; left: 4%;">
-    <button class="btnStyle" mat-button (click)="popoutWindow1.popOut()">{{'DETACH' | translate}}<mat-icon>keyboard_capslock</mat-icon></button>
-  </div>
   <popout-window id="pop1" #popoutWindow1>
-    <div id="main">
+    <div id="main" onload="document.getElementById('attach').style.display = 'none'">
       <div style="display: flex; flex-direction: row;">
         <div id="leftDiv">
           <div>
+            <button id="detach" style="position: absolute; top: 0; left: 0;" class="btnStyle" mat-button (click)="popoutWindow1.popOut();">{{'DETACH' | translate}}</button>
             <div id="titleChatDashBoard">
-              <h3>{{'GAME.CHAT_ROOM' | translate}}
-              </h3>
+              <h2 style="font-weight: bold;">{{'GAME.CHAT_ROOM' | translate}}
+              </h2>
             </div>
+            <button id="attach" style="position: absolute; top: 0; left: 11%;" class="btnStyle" mat-button (click)="popoutWindow1.popIn();">{{'ATTACH' | translate}}</button>
             <button mat-button class="btnStyle" (click)="openNewChatroomModal()">
                 {{'GAME.CREATE_CHAT_ROOM' | translate}}
             </button>
