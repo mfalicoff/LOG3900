@@ -68,26 +68,35 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
             addAutomaticKeepAlives: false,
             padding: const EdgeInsets.only(top: 5.0, left: 15.0, bottom: 10.0),
             children: [
-              ButtonTheme(
-                minWidth: 100.0,
-                height: 200.0,
-                child: ElevatedButton(
-                    onPressed: () => Navigator.popUntil(context, ModalRoute.withName("/home")), // passing false
-                    child: const Icon(Icons.close)),
-              ),
                 Container(
                     height: 30,
                     color: Theme.of(context).colorScheme.primary,
                     child:
 
-                    Center(
-                        child: Text("RESULTATS DE FIN DE PARTIE",
+                    Row(
+
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const SizedBox( width: 400.0,),
+                          Text("RESULTATS DE FIN DE PARTIE",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Theme.of(context).colorScheme.secondary,
                                           fontSize: 25,
                                         ),
-                                    )
+                                    ),
+
+                                    const SizedBox( width: 300.0,),
+                                    ElevatedButton(
+                                      style: ButtonStyle(shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                                                            RoundedRectangleBorder(
+                                                               borderRadius: BorderRadius.circular(120.0) ),
+                                                            ),
+
+                                        ),
+                                        onPressed: () => _leaveGame, // passing false
+                                        child: Icon(Icons.close, color: Theme.of(context).colorScheme.secondary,)),
+                                  ],
                         ),
                 ),
                 const SizedBox(
@@ -284,6 +293,12 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         }
         return lettersStillOnStand.toString();
 
+    }
+
+    void _leaveGame() {
+      socketService.count = 1;
+      socketService.socket.emit('leaveGame');
+      Navigator.popUntil(context, ModalRoute.withName("/home"));
     }
 
     void _findNumberOfTurns() {
