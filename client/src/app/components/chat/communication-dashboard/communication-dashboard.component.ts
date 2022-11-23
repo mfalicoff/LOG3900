@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { AfterContentInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoClientService } from '@app/services/info-client.service';
 import { NewChatroomModalComponent } from './new-chatroom-modal/new-chatroom-modal.component';
@@ -22,7 +22,7 @@ import { Router } from '@angular/router';
         ]),
     ],
 })
-export class CommunicationDashboardComponent implements AfterViewInit {
+export class CommunicationDashboardComponent implements AfterContentInit {
     @Input() isInGame: string;
     currSelectedChatroom: ChatRoom;
     hideChatrooms = false;
@@ -33,7 +33,7 @@ export class CommunicationDashboardComponent implements AfterViewInit {
         }
     }
 
-    ngAfterViewInit(): void {
+    ngAfterContentInit(): void {
         if (this.isInGame === 'true') {
             this.infoClientService.chatRooms.unshift({
                 name: 'game',
