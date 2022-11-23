@@ -17,7 +17,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
   final TimerService timerService = TimerService();
   final SocketService socketService = SocketService();
   final RankedService rankedService = RankedService();
-  late bool matchAccepted = false;
+
 
   @override
   void initState() {
@@ -38,6 +38,17 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     socketService.socket.on("roomChangeAccepted", (data) {
       if (mounted) {
         Navigator.pushNamed(context, "/game");
+      }
+    });
+    socketService.socket.on('closeModalOnRefuse', (data) {
+      if(mounted) {
+        log('12334');
+        if(rankedService.matchAccepted == false) {
+          log('in');
+          Navigator.pushNamed(
+              context, "/ranked-init");
+          rankedService.matchAccepted = false;
+        }
       }
     });
     socketService.socket.emit("listRoom");
@@ -141,17 +152,6 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     );
   }
 
-
-  showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = TextButton(
-      child: Text("Annuler"),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-  }
-
   Future<void> MatchFound(BuildContext context) async {
     return showDialog(
         context: context,
@@ -193,7 +193,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
   }
 
   acceptMatch() {
-    matchAccepted = true;
+    rankedService.matchAccepted = true;
     socketService.socket.emit("acceptMatch",globals.userLoggedIn);
   }
   refuseMatch() {

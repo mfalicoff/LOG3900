@@ -218,15 +218,16 @@ export class SocketService {
             await this.router.navigate(['/login']);
         });
 
-        this.socket.on('createRankedGame', async (name) => {
+        this.socket.on('createRankedGame', async (name, creatorName) => {
             const mockDict = {
                 title: 'Dictionnaire français par défaut',
                 description: 'Ce dictionnaire contient environ trente mille mots français',
             };
             this.socket.emit('dictionarySelected', mockDict);
+            console.log('creator123'+ name)
             this.socket.emit('createRoomAndGame', {
                 roomName: name,
-                playerName: name,
+                playerName: creatorName,
                 timeTurn: 1,
                 isBonusRandom: false,
                 gameMode: GlobalConstants.MODE_RANKED,

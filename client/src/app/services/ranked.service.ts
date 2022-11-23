@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { TimerService } from '@app/services/timer.service';
+
 
 @Injectable({
     providedIn: 'root',
 })
 export class RankedService {
-    matchAccepted: boolean;
+    matchAccepted: boolean= false;
     isShowModal: boolean;
-    constructor(public timerService: TimerService) {
+    constructor(public timerService: TimerService, private router: Router) {
         this.isShowModal = false;
     }
 
@@ -19,6 +21,9 @@ export class RankedService {
     closeModal() {
         this.timerService.clearTimer();
         this.isShowModal = false;
+        if(this.matchAccepted === false) {
+            this.router.navigate(['/ranked-init']);
+        }
         this.matchAccepted = false;
     }
 }

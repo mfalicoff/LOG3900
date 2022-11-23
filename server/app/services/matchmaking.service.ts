@@ -23,7 +23,7 @@ export class MatchmakingService {
             if (this.doesPlayerFitInARoom(value, eloDisparity, user.elo)) {
                 this.joinRoom(socket, value, user, eloDisparity);
                 if (value.rankedUsers.length === Constants.MAX_PERSON_PLAYING) {
-                    this.rankedMatchFound(value);
+                    this.rankedMatchFound(value, socket);
                 }
                 return;
             }
@@ -55,11 +55,11 @@ export class MatchmakingService {
         socket.join(user.name);
     }
 
-    rankedMatchFound(rankedGame: RankedGame) {
+    rankedMatchFound(rankedGame: RankedGame, socket: io.Socket) {
         const twnetyOneSecondDelay = 0.35;
         this.sio.to(rankedGame.name).emit('matchFound');
         rankedGame.startTimer(twnetyOneSecondDelay);
-        this.checkForUsersAccept(rankedGame);
+        this.checkForUsersAccept(rankedGame, socket);
     }
     onRefuse(socket: io.Socket, user: User) {
         for (const users of this.rooms.values()) {
@@ -82,7 +82,7 @@ export class MatchmakingService {
             }
         }
     }
-    checkForUsersAccept(rankedGame: RankedGame) {
+    checkForUsersAccept(rankedGame: RankedGame, socket: io.Socket) {
         const secondInterval = 1000;
         const fiveSecondDelay = 5;
         const timerInterval = setInterval(() => {
@@ -93,6 +93,9 @@ export class MatchmakingService {
                         this.matchRefused(rankedGame);
                         rankedGame.clearTimer();
                         return;
+                    }
+                    else if(user.hasAccepted !== true) {
+                        socket.leave(user.name);
                     }
                 }
                 this.createRankedGame(rankedGame);
@@ -107,7 +110,8 @@ export class MatchmakingService {
         creatorUser = rankedGame.rankedUsers[0];
         for (const user of rankedGame.rankedUsers) {
             if (user.name === creatorUser.name) {
-                await this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', rankedGame.name);
+                console.log('creator'+user.name)
+                await this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', rankedGame.name, creatorUser.name);
             }
         }
         const threeSecondDelay = 3;
@@ -116,6 +120,7 @@ export class MatchmakingService {
             if (rankedGame.secondsValue === i + 1) {
                 // for(const user of rankedGame.rankedUsers) {
                 if (rankedGame.rankedUsers[i].name !== creatorUser.name) {
+                    console.log('joiner' + rankedGame.rankedUsers[i].name)
                     this.sio.sockets.sockets
                         .get(rankedGame.rankedUsers[i].socketId)
                         ?.emit('joinRankedRoom',rankedGame.name, rankedGame.rankedUsers[i].socketId);
@@ -136,8 +141,10 @@ export class MatchmakingService {
     matchRefused(rankedGame: RankedGame) {
         for (let i = 0; i < rankedGame.rankedUsers.length; i++) {
             if (rankedGame.rankedUsers[i].hasAccepted === false) {
+                console.log(rankedGame.rankedUsers[i]);
                 rankedGame.rankedUsers.splice(i, 1);
             }
+            rankedGame.rankedUsers[i].hasAccepted = false;
         }
         this.sio.to(rankedGame.name).emit('closeModal');
     }

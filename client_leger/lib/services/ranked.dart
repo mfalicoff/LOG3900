@@ -5,6 +5,8 @@ import 'dart:developer';
 class RankedService{
   TimerService timerService = TimerService();
   bool isShowModal = false;
+  late bool matchAccepted = false;
+
 
 
   matchHasBeenFound() {
@@ -14,7 +16,10 @@ class RankedService{
   }
 
   closeModal() {
-    timerService.clearTimer();
     isShowModal = false;
+    timerService.clearTimer();
+    //provider
+    // Navigator.pushNamed(
+    //     context, "/ranked-init");
   }
 }

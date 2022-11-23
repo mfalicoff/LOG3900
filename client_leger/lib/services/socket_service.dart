@@ -88,12 +88,14 @@ class SocketService{
     rankedService.matchHasBeenFound();
     });
 
-    socket.on("createRankedGame", (name) async {
+    socket.on("createRankedGame", (data) async {
+      String gameName = data[0];
+      String playerName = data[1];
       MockDict mockDict = MockDict("Dictionnaire français par défaut","Ce dictionnaire contient environ trente mille mots français");
       socket.emit("dictionarySelected", mockDict);
       socket.emit("createRoomAndGame", [
-                name,
-                name,
+                data[0],
+                data[1],
                 1,
                 false,
                 constants.MODE_RANKED,
@@ -110,13 +112,14 @@ class SocketService{
       socket.emit("spectWantsToBePlayer",[gameName, socketId]);
     });
 
-    socket.on("closeModalOnRefuse", (_) {
-      rankedService.closeModal();
-    });
+    // socket.on("closeModalOnRefuse", (_) {
+    //   log('what')
+    //   rankedService.closeModal();
+    // });
 
-    socket.on("closeModal", (_) {
-      rankedService.closeModal();
-    });
+    // socket.on("closeModal", (_) {
+    //   rankedService.closeModal();
+    // });
 
     socket.on('messageServer', (message) {
 
