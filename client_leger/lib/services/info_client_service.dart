@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
@@ -23,7 +24,7 @@ class InfoClientService with ChangeNotifier{
 
   String playerName = 'DefaultPlayerName';
 
-  String displayTurn = "En attente d'un autre joueur...";
+  String displayTurn = "WAITING_OTHER_PLAYER".tr();
   bool isTurnOurs = false;
 
   bool powerUsedForTurn = false;

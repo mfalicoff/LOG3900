@@ -4,6 +4,7 @@ import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/services/chat-service.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -197,14 +198,14 @@ class SocketService with ChangeNotifier {
       infoClientService.powerUsedForTurn = false;
       tapService.resetVariablePlacement();
       if (currentNamePlayerPlaying == infoClientService.playerName) {
-        infoClientService.displayTurn = "C'est votre tour !";
+        infoClientService.displayTurn = "SOCKET_SERVICE.ITS_YOUR_TURN".tr();
         infoClientService.isTurnOurs = true;
         infoClientService.notifyListeners();
       } else {
         Player playerPlaying = infoClientService.actualRoom.players
             .singleWhere((player) => player.name == currentNamePlayerPlaying);
         infoClientService.displayTurn =
-            "C'est au tour de ${playerPlaying.name} de jouer !";
+            "${"SOCKET_SERVICE.ITS_THE_TURN".tr()} ${playerPlaying.name} ${"SOCKET_SERVICE.TO_PLAY".tr()}";
         infoClientService.isTurnOurs = false;
       }
 
@@ -290,14 +291,14 @@ class SocketService with ChangeNotifier {
 
   updateUiBeforeStartGame(List<Player> players) {
     if (infoClientService.actualRoom.numberRealPlayer >= MIN_PERSON_PLAYING) {
-      infoClientService.displayTurn = WAITING_FOR_CREATOR;
+      infoClientService.displayTurn = "WAITING_FOR_CREATOR".tr();
     } else {
-      infoClientService.displayTurn = WAIT_FOR_OTHER_PLAYERS;
+      infoClientService.displayTurn = "WAITING_OTHER_PLAYER".tr();
     }
   }
 
   displayChangeEndGameCallBack(String displayChange) {
-    infoClientService.displayTurn = displayChange;
+    infoClientService.displayTurn = "END_GAME".tr();
     infoClientService.notifyListeners();
   }
 

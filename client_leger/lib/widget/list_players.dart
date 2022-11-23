@@ -1,4 +1,5 @@
 import 'package:client_leger/services/info_client_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/utils.dart';
@@ -38,7 +39,7 @@ class _ListPlayersState extends State<ListPlayers> {
             child: Container(
               padding: EdgeInsets.zero,
               child: Text(
-                "Nom Joueur",
+                "INFO_PANEL.PLAYER_NAME".tr(),
                 overflow: TextOverflow.visible,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary),
@@ -52,7 +53,7 @@ class _ListPlayersState extends State<ListPlayers> {
             child: Container(
               padding: EdgeInsets.zero,
               child: Text(
-                "Score",
+                "INFO_PANEL.SCORE".tr(),
                 overflow: TextOverflow.visible,
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary),

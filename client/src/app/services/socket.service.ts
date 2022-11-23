@@ -161,12 +161,12 @@ export class SocketService {
         });
     }
 
-    private displayChangeEndGameCallBack(displayChange: string) {
-        this.infoClientService.displayTurn = displayChange;
+    private displayChangeEndGameCallBack() {
+        this.infoClientService.displayTurn = this.translate.instant('GAME.END_GAME');
     }
 
     private timerHandler() {
-        this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
+        this.socket.on('displayChangeEndGame', () => this.displayChangeEndGameCallBack());
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
             this.infoClientService.powerUsedForTurn = false;

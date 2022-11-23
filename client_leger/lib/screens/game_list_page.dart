@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:client_leger/models/room-data.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 
@@ -105,7 +106,7 @@ class _GameListPageState extends State<GameListPage> {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               Text(
-                                "${globals.userLoggedIn.username} (Vous)",
+                                "${globals.userLoggedIn.username} (${"GAME_LIST_PAGE.YOU".tr()})",
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.primary),
@@ -116,7 +117,7 @@ class _GameListPageState extends State<GameListPage> {
                           ElevatedButton(
                             onPressed: _createGame,
                             child: Text(
-                              "Créer Partie",
+                              "GAME_LIST_PAGE.CREATE_GAME".tr(),
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.secondary),
@@ -131,7 +132,7 @@ class _GameListPageState extends State<GameListPage> {
                         height: 30.0,
                       ),
                       Text(
-                        "Liste des salles de jeux",
+                        "GAME_LIST_PAGE.LIST_ROOM_GAMES".tr(),
                         style: TextStyle(
                             fontSize: 25,
                             color: Theme.of(context).colorScheme.primary),
@@ -214,7 +215,7 @@ class _gameListState extends State<gameList> {
               child: Container(
                 padding: EdgeInsets.zero,
                 child: Text(
-                  "Nom de la salle",
+                  "GAME_LIST_PAGE.ROOM_NAME".tr(),
                   overflow: TextOverflow.visible,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -227,7 +228,7 @@ class _gameListState extends State<gameList> {
             label: Expanded(
               child: Container(
                 child: Text(
-                  "Nom du créateur",
+                  "GAME_LIST_PAGE.CREATOR_NAME".tr(),
                   overflow: TextOverflow.visible,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -239,7 +240,7 @@ class _gameListState extends State<gameList> {
             label: Expanded(
               child: Container(
                 child: Text(
-                  "Nombre de joueurs réel",
+                  "GAME_LIST_PAGE.NUMBER_REAL_PLAYERS".tr(),
                   overflow: TextOverflow.visible,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -251,7 +252,7 @@ class _gameListState extends State<gameList> {
             label: Expanded(
               child: Container(
                 child: Text(
-                  "Nombre de joueurs virtuels",
+                  "GAME_LIST_PAGE.NUMBER_VIRTUAL_PLAYERS".tr(),
                   overflow: TextOverflow.visible,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -263,7 +264,7 @@ class _gameListState extends State<gameList> {
             label: Expanded(
               child: Container(
                 child: Text(
-                  "Nombre d'observateurs",
+                  "GAME_LIST_PAGE.NUMBER_SPECTATORS".tr(),
                   overflow: TextOverflow.visible,
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.secondary),
@@ -329,7 +330,7 @@ class _gameListState extends State<gameList> {
           return AlertDialog(
             backgroundColor: Theme.of(context).colorScheme.secondary,
             title: Text(
-              'Mot de passe',
+              "GAME_LIST_PAGE.PASSWORD".tr(),
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
             content: TextField(
@@ -338,11 +339,11 @@ class _gameListState extends State<gameList> {
                   password = value;
                 });
               },
-              decoration: InputDecoration(hintText: "Mot de passe"),
+              decoration: InputDecoration(hintText: "GAME_LIST_PAGE.PASSWORD".tr()),
             ),
             actions: <Widget>[
               ElevatedButton(
-                child: Text('CANCEL', style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+                child: Text("GAME_LIST_PAGE.CANCEL".tr(), style: TextStyle(color: Theme.of(context).colorScheme.secondary),
                 ),
                 onPressed: () {
                   setState(() {
@@ -351,7 +352,7 @@ class _gameListState extends State<gameList> {
                 },
               ),
               ElevatedButton(
-                child: Text('OK', style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
+                child: Text("GAME_LIST_PAGE.OK".tr(), style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
                 onPressed: () {
                   setState(() {
                     if (password == room.passwd) {
@@ -361,7 +362,7 @@ class _gameListState extends State<gameList> {
                     }
                     else{
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: const Text("Mauvais mot de passe"),
+                        content: Text("GAME_LIST_PAGE.WRONG_PASSWORD".tr()),
                         backgroundColor: Colors.red.shade300,
                       ));
                     }

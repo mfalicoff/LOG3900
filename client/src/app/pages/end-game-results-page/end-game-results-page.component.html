@@ -7,7 +7,7 @@
     <div mat-dialog-content id="roomStats">
         <ul>
             <li>{{'RESULT.ROOM' | translate}}{{roomName}}</li>
-            <li >{{'RESULT.CREATOR' | translate}}{{findCreatorOfGame()}}</li>
+            <li >{{'RESULT.CREATOR' | translate}}{{this.creator}}</li>
             <div *ngIf="this.infoClientService.actualRoom.spectators.length !== 0">
                 <li>{{'RESULT.SPECTATORS' | translate}}</li>
                 <div *ngFor="let spect of this.infoClientService.actualRoom.spectators" class="two-grid-row">

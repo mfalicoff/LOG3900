@@ -16,4 +16,12 @@ export class AppComponent {
             (document.getElementById('hideInGame') as HTMLElement).style.display = 'none';
         }
     }
+
+    goingBack() {
+        if (this.router.url === '/login') {
+            this.router.navigate(['/home']);
+        } else {
+            history.back();
+        }
+    }
 }

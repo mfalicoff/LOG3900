@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:client_leger/services/users_controller.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/chat-service.dart';
@@ -87,7 +88,7 @@ class _SearchPage extends State<SearchPage> {
                               },
                               decoration: InputDecoration(
                                 border: const OutlineInputBorder(),
-                                labelText: "Rechercher joueurs",
+                                labelText: "SEARCH_PAGE.SEARCH_PLAYERS".tr(),
                                 labelStyle: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.primary),
@@ -182,12 +183,12 @@ class _SearchPage extends State<SearchPage> {
                                   children: [
                                     TableRow(
                                       children: [
-                                        returnRowTextElement('Parties jouees'),
-                                        returnRowTextElement('Parties gagnes'),
+                                        returnRowTextElement("PROFILE_PAGE.GAMES_PLAYED".tr()),
+                                        returnRowTextElement("PROFILE_PAGE.GAMES_WON".tr()),
                                         returnRowTextElement(
-                                            'Score moyen par partie'),
+                                            "PROFILE_PAGE.AVERAGE_SCORE".tr()),
                                         returnRowTextElement(
-                                            'Temps moyen par partie'),
+                                            "PROFILE_PAGE.AVERAGE_TIME".tr()),
                                       ],
                                     ),
                                     TableRow(
@@ -217,7 +218,7 @@ class _SearchPage extends State<SearchPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   returnHistoryScrollView(
-                                      'Historique des Parties',
+                                      "PROFILE_PAGE.GAME_HISTORY".tr(),
                                       user!.gameHistory!),
                                 ],
                               )
@@ -262,7 +263,7 @@ class _SearchPage extends State<SearchPage> {
                     shrinkWrap: true,
                     itemCount: history.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Text('\u2022 ${history[index]}',
+                      return Text('\u2022 ${translateConnection(history[index])}',
                           style: const TextStyle(
                               color: Colors.black,
                               fontSize: 11,
@@ -274,5 +275,22 @@ class _SearchPage extends State<SearchPage> {
         ),
       ],
     );
+  }
+
+  String translateConnection(String text){
+    String newText = text;
+    if (context.locale.languageCode == "fr"){
+      newText = newText.replaceAll("Login:", "Connexion:");
+      newText = newText.replaceAll("Logout:", "Déconnexion");
+      newText = newText.replaceAll("Creation de compte:", "Création de compte:");
+      newText = newText.replaceAll("Partie Gagne", "Partie Gagné");
+    }
+    else {
+      newText = newText.replaceAll("Creation de compte:", "Account creation:");
+      newText = newText.replaceAll("Partie Gagne le", "Game won the");
+      newText = newText.replaceAll("Partie Perdu le ", "Game lost the ");
+      newText = newText.replaceAll("à", "at");
+    }
+    return newText;
   }
 }
