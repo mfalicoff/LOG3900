@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:client_leger/constants/constants.dart';
@@ -107,7 +108,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               Text(
-                                "${globals.userLoggedIn.username} (Vous)",
+                                "${globals.userLoggedIn.username} (${"CREATE_GAME_PAGE.YOU".tr()})",
                                 style: TextStyle(
                                     color:
                                         Theme.of(context).colorScheme.primary),
@@ -135,7 +136,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     validator: _roomNameValidator,
                                     decoration: InputDecoration(
                                       border: const OutlineInputBorder(),
-                                      labelText: "Nom de la salle",
+                                      labelText: "CREATE_GAME_PAGE.ROOM_NAME".tr(),
                                       labelStyle: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -151,10 +152,10 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                   ),
                                   Row(
                                     children: [
-                                      Text("Mode de partie:"),
+                                      Text("CREATE_GAME_PAGE.GAME_MODE".tr()),
                                       Expanded(
                                         child: ListTile(
-                                          title: const Text("Publique"),
+                                          title: Text("CREATE_GAME_PAGE.PUBLIC".tr()),
                                           leading: Radio(
                                             value: false,
                                             groupValue: _isGamePrivate,
@@ -168,7 +169,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                       ),
                                       Expanded(
                                         child: ListTile(
-                                          title: const Text("Privée"),
+                                          title: Text("CREATE_GAME_PAGE.PRIVATE".tr()),
                                           leading: Radio(
                                             value: true,
                                             groupValue: _isGamePrivate,
@@ -195,7 +196,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                               isPasswordOn = value;
                                             });
                                           }),
-                                      const Text("Mot de passe"),
+                                      Text("CREATE_GAME_PAGE.PASSWORD".tr()),
                                       const SizedBox(width: 10,),
                                       if (isPasswordOn!)
                                         Expanded(
@@ -206,7 +207,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                           validator: _roomNameValidator,
                                           decoration: InputDecoration(
                                             border: const OutlineInputBorder(),
-                                            labelText: "Mot de passe",
+                                            labelText: "CREATE_GAME_PAGE.PASSWORD".tr(),
                                             labelStyle: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
@@ -299,7 +300,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        const Text("Activer/desactiver des carte de pouvoir :"),
+                                        Text("${"CREATE_GAME_PAGE.ACTIVATE".tr()} :"),
                                         PowerListDialog(
                                           notifyParent: refresh,
                                         ),
@@ -325,7 +326,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     ),
                                     onPressed: _start,
                                     child: Text(
-                                      "Démarrer",
+                                      "CREATE_GAME_PAGE.START".tr(),
                                       style: TextStyle(
                                           fontSize: 20,
                                           color: Theme.of(context).colorScheme.secondary
@@ -352,11 +353,11 @@ class _CreateGamePageState extends State<CreateGamePage> {
   String? _roomNameValidator(String? value) {
     final validCharacters = RegExp(r'^[a-zA-Z0-9]+$');
     if (value == null || value.isEmpty) {
-      return "Rentrez un nom de salle";
+      return "CREATE_GAME_PAGE.ENTER_ROOM_NAME".tr();
     } else if (value.length < 4 ||
         value.length > 19 ||
         !validCharacters.hasMatch(value)) {
-      return "Nom de salle non valide";
+      return "CREATE_GAME_PAGE.ROOM_NAME_NOT_VALID".tr();
     } else {
       return null;
     }
@@ -432,7 +433,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Cartes disponibles',
+                        Text("CREATE_GAME_PAGE.AVAILABLE_CARD".tr(),
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.bold,
@@ -471,7 +472,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                         child: Padding(
                                           padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
                                           child: Text(
-                                            infoClientService.game.powerCards[index].name,
+                                            infoClientService.game.powerCards[index].name.tr(),
                                             style: TextStyle(
                                               fontSize: 10.0,
                                               color: Theme.of(context).colorScheme.secondary,
@@ -502,7 +503,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                         ),
                         TextButton(
                           onPressed: () => Navigator.pop(context, 'Confirmer'),
-                          child: const Text('Confirmer'),
+                          child: Text("CREATE_GAME_PAGE.CONFIRM".tr()),
                         ),
                       ],
                     ),
@@ -525,7 +526,7 @@ class _PowerListDialog extends State<PowerListDialog> {
         ),
       ),
       child: Text(
-        "Liste pouvoirs",
+        "CREATE_GAME_PAGE.POWER_LIST".tr(),
         style: TextStyle(
           color: Theme
               .of(context)

@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:client_leger/models/chatroom.dart';
 import 'package:client_leger/services/chat-service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -171,7 +170,7 @@ class _ChatPanelState extends State<ChatPanel> {
             child: Column(
               children: [
                 Text(
-                  "Rooms",
+                  "CHAT_PANEL.ROOMS".tr(),
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 30,
@@ -188,7 +187,7 @@ class _ChatPanelState extends State<ChatPanel> {
                         color: Theme.of(context).colorScheme.primary),
                   ),
                   child: Text(
-                    "Search Room",
+                    "CHAT_PANEL.SEARCH_ROOM".tr(),
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 14,
@@ -473,7 +472,7 @@ class _ChatPanelState extends State<ChatPanel> {
                           decoration: InputDecoration(
                             fillColor: Theme.of(context).colorScheme.secondary,
                             filled: true,
-                            hintText: "Write message...",
+                            hintText: "CHAT_PANEL.WRITE_MESSAGE".tr(),
                             hintStyle: const TextStyle(color: Colors.black54),
                             border: InputBorder.none,
                           ),
@@ -575,8 +574,8 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
         builder: (BuildContext context) =>
             StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-            title: const Text('Create a new chatroom'),
-            content: const Text('Enter chatroom name'),
+            title: Text("CHAT_PANEL.CREATE_NEW_CHATROOM".tr()),
+            content: Text("CHAT_PANEL.ENTER_CHATROOM".tr()),
             backgroundColor: Theme.of(context).colorScheme.secondary,
             actions: <Widget>[
               Form(
@@ -590,7 +589,7 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
                       },
                       decoration: InputDecoration(
                         border: const OutlineInputBorder(),
-                        labelText: "Name",
+                        labelText: "CHAT_PANEL.NAME".tr(),
                         labelStyle: TextStyle(
                             color: Theme.of(context).colorScheme.primary),
                       ),
@@ -598,7 +597,7 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
                           color: Theme.of(context).colorScheme.primary),
                     ),
                     CheckboxListTile(
-                      title: const Text("Password"),
+                      title: Text("CHAT_PANEL.PASSWORD".tr()),
                       checkColor: Colors.white,
                       value: passwordCheck,
                       onChanged: (bool? value) {
@@ -614,7 +613,7 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
                             },
                             decoration: InputDecoration(
                               border: const OutlineInputBorder(),
-                              labelText: "Password",
+                              labelText: "CHAT_PANEL.PASSWORD".tr(),
                               labelStyle: TextStyle(
                                   color: Theme.of(context).colorScheme.primary),
                             ),
@@ -624,13 +623,13 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
                         : Container()),
                     TextButton(
                       onPressed: () => Navigator.pop(context, 'Cancel'),
-                      child: const Text('Cancel'),
+                      child: Text("CHAT_PANEL.CANCEL".tr()),
                     ),
                     TextButton(
                       onPressed: () {
                         _onSubmitCreateRoom();
                       },
-                      child: const Text('Soumettre'),
+                      child: Text("CHAT_PANEL.SUBMIT".tr()),
                     ),
                   ],
                 ),
@@ -639,13 +638,11 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
           );
         }),
       ),
-      child: const Text('Create Room'),
+      child: Text("CHAT_PANEL.CREATE_ROOM".tr()),
     );
   }
 
   _onSubmitCreateRoom() {
-    print("name");
-    print(name);
     if (name == '') {
       return;
     }

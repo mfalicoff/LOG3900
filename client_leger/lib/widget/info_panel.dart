@@ -3,6 +3,7 @@ import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
 import 'package:client_leger/widget/list_players.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class InfoPanel extends StatefulWidget {
@@ -70,7 +71,7 @@ class _InfoPanelState extends State<InfoPanel> {
                           onPressed: _pass,
                           child: FittedBox(
                             child: Text(
-                              "Passer",
+                              "INFO_PANEL.PASS".tr(),
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.secondary),
@@ -86,7 +87,7 @@ class _InfoPanelState extends State<InfoPanel> {
                           onPressed: _trade,
                           child: FittedBox(
                             child: Text(
-                              "Échanger",
+                              "INFO_PANEL.EXCHANGE".tr(),
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.secondary),
@@ -102,7 +103,7 @@ class _InfoPanelState extends State<InfoPanel> {
                           onPressed: _cancel,
                           child: FittedBox(
                             child: Text(
-                              "Annuler",
+                              "INFO_PANEL.CANCEL".tr(),
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.secondary),
@@ -118,7 +119,7 @@ class _InfoPanelState extends State<InfoPanel> {
                           onPressed: _play,
                           child: FittedBox(
                             child: Text(
-                              "Jouer",
+                              "INFO_PANEL.PLAY".tr(),
                               style: TextStyle(
                                   color:
                                       Theme.of(context).colorScheme.secondary),
