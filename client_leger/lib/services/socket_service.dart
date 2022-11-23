@@ -297,6 +297,7 @@ class SocketService with ChangeNotifier {
       String name = nameAndAvatar[0];
       String avatar = nameAndAvatar[1];
       infoClientService.userAvatars[name] = avatar;
+      infoClientService.notifyListeners();
   });
   }
 

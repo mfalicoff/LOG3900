@@ -139,7 +139,7 @@ export class UserService {
             });
     }
 
-    async updateAvatar(newAvatarIndex: number) {
+    async updateAvatar(newAvatarIndex: number, socket: Socket) {
         return this.http
             .put<UserResponseInterface>(
                 environment.serverUrl + 'users/' + this.user._id,
@@ -153,6 +153,8 @@ export class UserService {
             .subscribe({
                 next: (res) => {
                     this.updateUserInstance(res.data);
+                    this.infoClientService.userAvatars.set(this.user.name, this.user.avatarUri as string);
+                    socket.emit('updatedAvatar', this.user.name);
                 },
                 error: (error) => {
                     this.handleErrorPOST(error);

@@ -1216,5 +1216,11 @@ export class SocketManager {
                 }
             });
         });
+
+        socket.on('updatedAvatar', async (username) => {
+            const user = await this.userService.findUserByName(username);
+            const avatar = await this.userService.populateAvatarField(user);
+            socket.broadcast.emit('sendAvatars', user.name, avatar);
+        });
     }
 }
