@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:client_leger/env/environment.dart';
-import 'package:client_leger/models/game-saved.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -181,6 +180,20 @@ class Controller {
       return user;
     } else {
       throw Exception('Failed to get username');
+    }
+  }
+
+  updateLanguage(String languageUpdated) async {
+    final user = globals.userLoggedIn;
+    final response = await http.put(Uri.parse("$serverAddress/users/language/${user.id}"),
+      headers : <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+      },
+      body: jsonEncode(<String, String>{"language": languageUpdated}),
+    );
+    if (response.statusCode != 200) {
+      throw Exception("Failed to update language");
     }
   }
 

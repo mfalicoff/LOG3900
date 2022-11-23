@@ -1,5 +1,6 @@
 import 'package:client_leger/models/vec2.dart';
 import 'package:client_leger/services/tapService.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
@@ -235,7 +236,7 @@ class _GameBoardState extends State<GameBoard> {
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: Column(children: [
                       Text(
-                        "Cliquez sur la lettre que vous voulez:",
+                        "CLICK_ON_LETTER".tr(),
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
