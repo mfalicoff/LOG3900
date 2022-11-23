@@ -62,16 +62,18 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
           backgroundColor: Theme.of(context).colorScheme.secondary,
           insetPadding: const EdgeInsets.all(65.0),
+          // insetPadding:  ,
           child: ListView(
             scrollDirection: Axis.vertical,
             addAutomaticKeepAlives: false,
+            padding: const EdgeInsets.only(top: 5.0, left: 15.0, bottom: 10.0),
             children: [
-              ElevatedButton(
-                onPressed: () => Navigator.popUntil(context, ModalRoute.withName("/home")), // passing false
-                child: const Text('Close'),
-              ),
-              const SizedBox(
-                height: 35,
+              ButtonTheme(
+                minWidth: 100.0,
+                height: 200.0,
+                child: ElevatedButton(
+                    onPressed: () => Navigator.popUntil(context, ModalRoute.withName("/home")), // passing false
+                    child: const Icon(Icons.close)),
               ),
                 Container(
                     height: 30,
@@ -91,7 +93,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Salle : $roomName",
+                Text("Salle: $roomName",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
@@ -103,7 +105,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Createur de la salle : $creator",
+                Text("Createur de la salle: $creator",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -119,7 +121,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Gagnants de la partie :",
+                Text("Gagnants de la partie: ",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -149,7 +151,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Nombre de lettres restantes dans la reserve : ${infoClientService.game.nbLetterReserve}",
+                Text("Nombre de lettres restantes dans la reserve: ${infoClientService.game.nbLetterReserve}",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -173,7 +175,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                  Text("Durée de jeu (en minutes) : $playingTime",
+                  Text("Durée de jeu (en minutes): $playingTime",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
@@ -335,13 +337,13 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 children: List.generate(infoClientService.actualRoom.spectators.length, (index) {
                                                 return Column(
                                 children: [
-                                            const Text('.Spectateurs de la partie: ',
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.normal,
-                                                fontFamily: "Times New Roman"
-                                                ),
+                                            Text('Spectateurs de la partie: ',
+                                              style: TextStyle(
+                                                  color: Theme.of(context).colorScheme.primary,
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.normal,
+                                                  fontFamily: "Times New Roman"
+                                              ),
                                     textAlign: TextAlign.left,
                                            ),
                                             Text("Nom: ${infoClientService.actualRoom.spectators[index].name}",
@@ -428,7 +430,7 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
             title: const Text('STATISTIQUES', textAlign: TextAlign.center,),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
             backgroundColor: Theme.of(context).colorScheme.secondary,
-            insetPadding: const EdgeInsets.symmetric(horizontal: 35.0, vertical: 40.0),
+            insetPadding: const EdgeInsets.all(25.0),
             actionsAlignment: MainAxisAlignment.spaceBetween,
             actions: [
                 Row(
@@ -462,6 +464,22 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
                         returnRowTextElement('Temps moyen par partie'),
                         ],
                     ),
+                    const TableRow(
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
                     TableRow(
                         children: [
                         returnRowTextElement(currentUser.gamesPlayed
@@ -470,10 +488,10 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
                             currentUser.gamesWon.toString()),
                         returnRowTextElement(currentUser.averagePointsPerGame!
                             .toStringAsFixed(2)),
-                        returnRowTextElement(Duration(
+                        averageTime(Duration(
                                 milliseconds: currentUser.averageTimePerGame!
-                                    .floor())
-                            .toString()),
+                                    .toInt())
+                            .inSeconds),
                         ],
                     ),
                     ],
@@ -494,5 +512,28 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
             decoration: TextDecoration.none,
             fontWeight: FontWeight.bold));
     }
+
+    Text averageTime(num time) {
+      const secondsInMinute = 60;
+      const displayZero = 9;
+      final minutesToDisplay = (time / secondsInMinute).floor();
+      final secondsToDisplay = (time % secondsInMinute).floor();
+      if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
+        return Text(("0$minutesToDisplay:0$secondsToDisplay"),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold));
+      } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
+        return Text(("$minutesToDisplay:0$secondsToDisplay"),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold));
+        } else if (secondsToDisplay > displayZero && minutesToDisplay <= displayZero) {
+        return Text(("0$minutesToDisplay:$secondsToDisplay"),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold));
+        } else if (secondsToDisplay > displayZero && minutesToDisplay > displayZero) {
+        return Text(("$minutesToDisplay:$secondsToDisplay"),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold));
+        }
+      return const Text('');
+    }
+
+
 
 }

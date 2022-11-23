@@ -247,7 +247,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                     return Row(
                                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                         children: [
-                                                    Text("Joueur : ${widget.favouriteGames[index].players[idx]}",
+                                                    Text("Joueur: ${widget.favouriteGames[index].players[idx]}",
                                                         style: const TextStyle (
                                                         color: Colors.black,
                                                         fontSize: 13,
