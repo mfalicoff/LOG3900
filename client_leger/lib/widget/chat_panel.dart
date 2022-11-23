@@ -364,9 +364,9 @@ class _ChatPanelState extends State<ChatPanel> {
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
                             children: [
-                              chatService.currentChatRoom
+                              (chatService.currentChatRoom
                                   .chatHistory[index].senderName !=
-                                  globals.userLoggedIn.username ?
+                                  globals.userLoggedIn.username  && infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName] != null) ?
                               Container(
                                   padding:
                                   const EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -433,9 +433,9 @@ class _ChatPanelState extends State<ChatPanel> {
                                   ),
                                 ),
                               ),
-                              chatService.currentChatRoom
+                              (chatService.currentChatRoom
                                   .chatHistory[index].senderName ==
-                                  globals.userLoggedIn.username ?
+                                  globals.userLoggedIn.username  && infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName] != null) ?
                               Container(
                                   padding:
                                   const EdgeInsets.fromLTRB(10, 0, 0, 0),
