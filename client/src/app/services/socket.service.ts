@@ -1,12 +1,14 @@
 /* eslint-disable max-lines*/
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { ChatMessage } from '@app/classes/chat-message';
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { MockDict } from '@app/classes/mock-dict';
 import { NameVP } from '@app/classes/names-vp';
 import { Player } from '@app/classes/player';
 import { RoomData } from '@app/classes/room-data';
+import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
@@ -17,8 +19,6 @@ import { NotificationService } from './notification.service';
 import { PlaceGraphicService } from './place-graphic.service';
 import { RankedService } from './ranked.service';
 import { TimerService } from './timer.service';
-import { TranslateService } from '@ngx-translate/core';
-import { ChatMessage } from '@app/classes/chat-message';
 
 @Injectable({
     providedIn: 'root',
@@ -236,11 +236,7 @@ export class SocketService {
             await this.router.navigate(['/login']);
         });
 
-<<<<<<< HEAD
         this.socket.on('createRankedGame', async (name, creatorName) => {
-=======
-        this.socket.on('createRankedGame', async (gameName, userName) => {
->>>>>>> b46a060e71cb944f6aeeebced7e15cfecd695812
             const mockDict = {
                 title: 'Dictionnaire français par défaut',
                 description: 'Ce dictionnaire contient environ trente mille mots français',
@@ -248,13 +244,8 @@ export class SocketService {
             this.socket.emit('dictionarySelected', mockDict);
             console.log('creator123'+ name)
             this.socket.emit('createRoomAndGame', {
-<<<<<<< HEAD
                 roomName: name,
                 playerName: creatorName,
-=======
-                roomName: gameName,
-                playerName: userName,
->>>>>>> b46a060e71cb944f6aeeebced7e15cfecd695812
                 timeTurn: 1,
                 isBonusRandom: false,
                 gameMode: Constants.MODE_RANKED,

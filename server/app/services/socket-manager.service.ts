@@ -818,12 +818,7 @@ export class SocketManager {
         });
     }
 
-<<<<<<< HEAD
-    private joinRoom(socket: io.Socket, userData: User, game: GameServer): void {
-        console.log(userData.name);
-=======
     private async joinRoom(socket: io.Socket, userData: User, game: GameServer): Promise<void> {
->>>>>>> b46a060e71cb944f6aeeebced7e15cfecd695812
         let isOneNamedSame = false;
 
         for (const player of game.mapPlayers.values()) {

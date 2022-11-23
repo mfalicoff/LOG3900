@@ -110,12 +110,7 @@ export class MatchmakingService {
         creatorUser = rankedGame.rankedUsers[0];
         for (const user of rankedGame.rankedUsers) {
             if (user.name === creatorUser.name) {
-<<<<<<< HEAD
-                console.log('creator'+user.name)
-                await this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', rankedGame.name, creatorUser.name);
-=======
                 await this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', rankedGame.name, user.name);
->>>>>>> b46a060e71cb944f6aeeebced7e15cfecd695812
             }
         }
         const threeSecondDelay = 3;

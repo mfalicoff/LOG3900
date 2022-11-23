@@ -66,11 +66,7 @@ class UserService {
         return await this.users.create({
             ...userData,
             password: hashedPassword,
-<<<<<<< HEAD
-            elo:2000,
-=======
             elo: 2000,
->>>>>>> b46a060e71cb944f6aeeebced7e15cfecd695812
             averagePointsPerGame: 0,
             averageTimePerGame: 0,
             gamesPlayed: 0,

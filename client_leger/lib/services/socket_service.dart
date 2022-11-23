@@ -1,34 +1,32 @@
+import 'dart:async';
+
+import 'package:client_leger/constants/constants.dart' as constants;
 import 'package:client_leger/models/chat.dart';
 import 'package:client_leger/models/chatroom.dart';
 import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/services/chat-service.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:collection/collection.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:restart_app/restart_app.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
+
 import '../constants/constants.dart';
 import '../env/environment.dart';
-import 'package:client_leger/constants/constants.dart' as constants;
-import 'package:client_leger/utils/globals.dart' as globals;
-import 'package:just_audio/just_audio.dart';
-import 'package:collection/collection.dart';
-import 'dart:async';
-import 'package:client_leger/utils/globals.dart' as globals;
-import 'dart:developer';
-
-
-import '../models/mock_dict.dart';
 import '../models/game-server.dart';
+import '../models/game.dart';
+import '../models/mock_dict.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/tile.dart';
 import '../models/vec2.dart';
-import 'users_controller.dart';
 import 'info_client_service.dart';
 import 'ranked.dart';
-import '../models/game.dart';
+import 'users_controller.dart';
 
 class SocketService with ChangeNotifier {
   static final SocketService _socketService = SocketService._internal();
@@ -90,27 +88,18 @@ class SocketService with ChangeNotifier {
     rankedService.matchHasBeenFound();
     });
 
-<<<<<<< HEAD
-=======
     socket.on('startGame', (roomName) {
       socket.emit('startGame', roomName);
     });
 
->>>>>>> b46a060e71cb944f6aeeebced7e15cfecd695812
     socket.on("createRankedGame", (data) async {
       String gameName = data[0];
       String playerName = data[1];
       MockDict mockDict = MockDict("Dictionnaire français par défaut","Ce dictionnaire contient environ trente mille mots français");
       socket.emit("dictionarySelected", mockDict);
-<<<<<<< HEAD
-      socket.emit("createRoomAndGame", [
-                data[0],
-                data[1],
-=======
       socket.emit("createRoomAndGame", CreateGameModel(
                 gameName,
                 playerName,
->>>>>>> b46a060e71cb944f6aeeebced7e15cfecd695812
                 1,
                 constants.MODE_RANKED,
                 false,
@@ -126,10 +115,9 @@ class SocketService with ChangeNotifier {
       socket.emit("spectWantsToBePlayer",[gameName, socketId]);
     });
 
-    // socket.on("closeModalOnRefuse", (_) {
-    //   log('what')
-    //   rankedService.closeModal();
-    // });
+    socket.on("closeModalOnRefuse", (_) {
+      rankedService.closeModal();
+    });
 
     // socket.on("closeModal", (_) {
     //   rankedService.closeModal();

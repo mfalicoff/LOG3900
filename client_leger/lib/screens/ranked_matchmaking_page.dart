@@ -41,7 +41,8 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
         Navigator.pushNamed(context, "/game");
       }
     });
-    socketService.socket.on('closeModalOnRefuse', (data) {
+    socketService.socket.on('closeModal', (data) {
+      log('23');
       if(mounted) {
         log('12334');
         if(rankedService.matchAccepted == false) {
@@ -52,7 +53,6 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
         }
       }
     });
-    socketService.socket.emit("listRoom");
   }
 
   Widget build(BuildContext context) {
