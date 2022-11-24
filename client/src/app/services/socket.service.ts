@@ -26,7 +26,7 @@ import { ChatMessage } from '@app/classes/chat-message';
 export class SocketService {
     socket: Socket;
     gameFinished: BehaviorSubject<boolean>;
-    gameId: string;
+    gameId: string = '';
     count: number;
     private urlString = environment.serverUrl;
 

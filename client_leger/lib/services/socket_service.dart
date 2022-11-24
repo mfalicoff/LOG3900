@@ -32,7 +32,7 @@ class SocketService with ChangeNotifier {
   TapService tapService = TapService();
   Controller controller = Controller();
   ChatService chatService = ChatService();
-  late String gameId;
+  late String gameId = '';
   int count = 1;
 
   late IO.Socket socket;
@@ -274,7 +274,8 @@ class SocketService with ChangeNotifier {
         chatService.rooms[indexRoom].chatHistory
             .add(ChatMessage.fromJson(newMsg));
         if (chatService.currentChatRoom.name !=
-            chatService.rooms[indexRoom].name || !chatService.isDrawerOpen) {
+                chatService.rooms[indexRoom].name ||
+            !chatService.isDrawerOpen) {
           chatService.rooms[indexRoom].isUnread = true;
         }
       } else {

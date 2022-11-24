@@ -66,18 +66,30 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
           child: ListView(
             scrollDirection: Axis.vertical,
             addAutomaticKeepAlives: false,
-            padding: const EdgeInsets.only(top: 5.0, left: 15.0, bottom: 10.0),
+            padding: const EdgeInsets.only(top: 5.0, left: 20.0, bottom: 10.0, right: 20.0),
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ElevatedButton(
+                      style: ButtonStyle(shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(120.0) ),
+                      ),
+
+                      ),
+                      onPressed: _leaveGame, // passing false
+                      child: Icon(Icons.close, color: Theme.of(context).colorScheme.secondary,)),
+                ],
+              ),
                 Container(
                     height: 30,
                     color: Theme.of(context).colorScheme.primary,
                     child:
 
                     Row(
-
-                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox( width: 400.0,),
                             Text("END_GAME_RESULT_PAGE.RESULT_END_GAME".tr(),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
@@ -85,24 +97,11 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                           fontSize: 25,
                                         ),
                                     ),
-
-                                    const SizedBox( width: 300.0,),
-                                    ElevatedButton(
-                                      style: ButtonStyle(shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                                            RoundedRectangleBorder(
-                                                               borderRadius: BorderRadius.circular(120.0) ),
-                                                            ),
-
-                                        ),
-                                        onPressed: () => _leaveGame, // passing false
-                                        child: Icon(Icons.close, color: Theme.of(context).colorScheme.secondary,)),
                                   ],
                         ),
                 ),
-                const SizedBox(
-                    height: 10,
-                ),
-                Text("${"END_GAME_RESULT_PAGE.ROOM".tr()} : $roomName",
+                const SizedBox(height: 20.0,),
+                Text("${"END_GAME_RESULT_PAGE.ROOM".tr()}: $roomName",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
@@ -114,7 +113,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("${"END_GAME_RESULT_PAGE.CREATOR_GAME".tr()} : $creator",
+                Text("${"END_GAME_RESULT_PAGE.CREATOR_GAME".tr()}: $creator",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -130,7 +129,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("${"END_GAME_RESULT_PAGE.GAME_WINNER".tr()} :",
+                Text("${"END_GAME_RESULT_PAGE.GAME_WINNER".tr()}: ",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -184,7 +183,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                  Text("${"END_GAME_RESULT_PAGE.GAME_LENGTH".tr()} : $playingTime",
+                  Text("${"END_GAME_RESULT_PAGE.GAME_LENGTH".tr()}: $playingTime",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
@@ -252,13 +251,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                       return
                         Column(
                             children: [
-                                Text("${"END_GAME_RESULT_PAGE.PLAYER".tr()}: ${players[index].name}",
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
-                                ),
+                              _isLinkEnabled(players[index], index),
                                 Text("${"END_GAME_RESULT_PAGE.SCORE".tr()}: ${players[index].score}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
