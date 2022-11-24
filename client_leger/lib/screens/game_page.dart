@@ -38,10 +38,10 @@ class _GamePageState extends State<GamePage> {
     }
   }
   checkEndGame() {
-    if (infoClientService.game.gameFinished && !mounted) {
+    if (infoClientService.game.gameFinished && mounted) {
         showDialog(context: context, builder: (context) => const EndGameResultsPage());
     }
-    if (mounted) setState(() {});
+    if (!mounted) setState(() {});
   }
 
   @override

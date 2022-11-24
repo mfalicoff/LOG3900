@@ -9,7 +9,6 @@ import 'package:client_leger/models/game-saved.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/models/user.dart';
-import 'package:image/image.dart';
 import 'package:http/http.dart' as http;
 
 import '../env/environment.dart';
@@ -49,7 +48,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     _findCreatorOfGame();
     _getGameStartDate();
     _displayPlayingTime();
-    _saveGame;
+    _saveGame();
   }
     refresh() async {
     setState(() {});
@@ -388,7 +387,8 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
     }
 
     void _saveGame() {
-        gameSaved = GameSaved(infoClientService.actualRoom.players,
+      print("Appel a save game light_client");
+      gameSaved = GameSaved(infoClientService.actualRoom.players,
                 infoClientService.actualRoom.name,
                 numberOfTurns,
                 playingTime,
@@ -396,9 +396,11 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 timestamp,
                 infoClientService.actualRoom.spectators,
                 infoClientService.game.winners);
-        if (socketService.socket.id == infoClientService.game.masterTimer) socketService.socket.emit('saveGame', gameSaved);
+      if (socketService.socket.id == infoClientService.game.masterTimer){
+          socketService.socket.emit('saveGame', gameSaved);
+          print("Partie sauvegardée");
+      }
 
-        print("Appel a save game light_client");
 
     }
 

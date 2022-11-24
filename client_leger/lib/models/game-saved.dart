@@ -25,33 +25,33 @@ class GameSaved {
     this.spectators = [];
     this.winners = [];
     scores = [];
-
     populateArrays(players, spectators, winners);
     populateMap(players);
   }
 
   GameSaved.fromJson(game) {
-    roomName = game["roomName"];
-    numberOfTurns = game["numberOfTurns"];
-    playingTime = game["playingTime"];
-    nbLetterReserve = game["nbLetterReserve"];
-    gameStartDate = game["gameStartDate"];
-    var playersString = game["players"];
+    _id = game["_id"] ?? "Failed";
+    roomName = game["roomName"] ?? "Failed";
+    numberOfTurns = game["numberOfTurns"] ?? "Failed";
+    playingTime = game["playingTime"] ?? "Failed";
+    nbLetterReserve = game["nbLetterReserve"] ?? "Failed";
+    gameStartDate = game["gameStartDate"] ?? "Failed";
+    var playersString = game["players"] ?? "Failed";
     players = [];
     for (var pl in playersString){
         players.add(pl);
     }
-    var winnersString = game["winners"];
+    var winnersString = game["winners"] ?? "Failed";
     winners = [];
     for (var wn in winnersString) {
         winners.add(wn);
     }
-    var spectatorsString = game["spectators"];
+    var spectatorsString = game["spectators"] ?? "Failed";
     spectators = [];
     for (var spec in spectatorsString) {
         spectators.add(spec);
     }
-    var scoresString = game["scores"];
+    var scoresString = game["scores"] ?? "Failed";
     scores = [];
     for (var sc in scoresString) {
         scores.add(sc);
@@ -59,33 +59,35 @@ class GameSaved {
   }
 
   void populateArrays(List<Player> players, List<Spectator>? spectators, List<Player>? winners){
-    for (var i = 0; i < players.length; i++) {
-      this.players[i] = players[i].name;
+    for (var pl in players){
+      this.players.add(pl.name);
     }
-    for (var index = 0; index < 4; index++) {
-      scores[index] = players[index].score;
+
+    for (var sc in players) {
+      scores.add(sc.score);
     }
+
     if (spectators != null) {
-      for (var index = 0; index < spectators.length; index++) {
-        this.spectators[index] = spectators[index].name;
+      for (var spec in spectators) {
+        this.spectators.add(spec.name);
       }
     }
     if (winners != null) {
-      for (var index = 0; index < winners.length; index++) {
-        this.winners[index] = winners[index].name;
+      for (var wn in winners) {
+       this. winners.add(wn.name);
       }
     }
   }
 
   void populateMap(List<Player> players) {
     for (var player in players) {
-      final entry = {player.name: lettersOnStand(player)};
+      var entry = {player.name: lettersOnStand(player)};
       mapLetterOnStand.addEntries(entry.entries);
     }
   }
 
   String lettersOnStand(Player player) {
-    const List<String> listLetterStillOnStand = [];
+    List<String> listLetterStillOnStand = [];
     for (var tile in player.stand) {
       if (tile.letter.value != '') {
         listLetterStillOnStand.add(tile.letter.value);

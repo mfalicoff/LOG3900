@@ -105,7 +105,7 @@ export class ChatService {
     async placeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
 
-        if (this.validator.reserveIsEmpty(game.letterBank) || this.validator.standEmpty(player)) {
+        if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
             this.pushMsgToAllPlayersWithTranslation(game, player.name, ['GAME_FINISHED'], false, 'S');
             await this.showEndGameStats(game /* , player*/);
             // game.gameFinished = true;
