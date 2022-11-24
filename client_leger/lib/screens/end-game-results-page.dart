@@ -125,6 +125,16 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
+              Text('${"END_GAME_RESULT_PAGE.GAME_SPECTATORS".tr()}: ',
+                style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 18,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: "Times New Roman"
+                ),
+                textAlign: TextAlign.left,
+              ),
+              const SizedBox( height: 5,),
               _isThereSpectators(),
                 const SizedBox(
                     height: 10,
@@ -351,15 +361,6 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 children: List.generate(infoClientService.actualRoom.spectators.length, (index) {
                                                 return Column(
                                 children: [
-                                            Text('.${"END_GAME_RESULT_PAGE.GAME_SPECTATORS".tr()}: ',
-                                            style: const TextStyle(
-                                                color: Colors.black,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.normal,
-                                                fontFamily: "Times New Roman"
-                                                ),
-                                    textAlign: TextAlign.left,
-                                           ),
                                             Text("${"END_GAME_RESULT_PAGE.NAME".tr()}: ${infoClientService.actualRoom.spectators[index].name}",
                                             style: const TextStyle(
                                                 color: Colors.black,

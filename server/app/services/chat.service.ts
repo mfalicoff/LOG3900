@@ -105,10 +105,10 @@ export class ChatService {
     async placeCommand(input: string, game: GameServer, player: Player) {
         player.passInARow = 0;
 
-        if (this.validator.reserveIsEmpty(game.letterBank) && this.validator.standEmpty(player)) {
+        if (this.validator.reserveIsEmpty(game.letterBank) || this.validator.standEmpty(player)) {
             this.pushMsgToAllPlayersWithTranslation(game, player.name, ['GAME_FINISHED'], false, 'S');
             await this.showEndGameStats(game /* , player*/);
-            game.gameFinished = true;
+            // game.gameFinished = true;
             return;
         }
         this.pushMsgToAllPlayersWithTranslation(game, player.name, [input], true, 'P');
@@ -132,9 +132,10 @@ export class ChatService {
         }
 
         if (didEveryonePass3Times) {
-            this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
+            this.pushMsgToAllPlayersWithTranslation(game, player.name, ['GAME_FINISHED'], false, 'S');
             await this.showEndGameStats(game /* , player*/);
-            game.gameFinished = true;
+            // game.gameFinished = true;
+            return;
         }
     }
 
@@ -304,6 +305,7 @@ export class ChatService {
             await this.userService.updateStatsAtEndOfGame(gameLength, playerElem);
         }
         await this.sendWinnerMessage(game, this.endGameService.chooseWinner(game, playersCpy));
+        game.gameFinished = true;
     }
 
     private async sendWinnerMessage(game: GameServer, winners: Player[]) {
