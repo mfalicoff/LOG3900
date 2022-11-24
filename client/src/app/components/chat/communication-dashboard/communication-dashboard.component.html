@@ -5,8 +5,8 @@
         <div id="leftDiv">
           <div>
             <div class="buttons">
-              <button id="detach" class="btnStyle action_btn detachButton" mat-button (click)="popoutWindow1.popOut();">{{'DETACH' | translate}}</button>
-              <button id="attach" class="btnStyle action_btn attachButton" mat-button (click)="popoutWindow1.popIn();">{{'ATTACH' | translate}}</button>
+              <button id="detach" class="btnStyle action_btn detachButton" mat-button (click)="popoutWindow1.popOut();">{{'DETACH' | translate}}<mat-icon>arrow_drop_up</mat-icon></button>
+              <button id="attach" class="btnStyle action_btn attachButton" mat-button (click)="popoutWindow1.popIn();">{{'ATTACH' | translate}}<mat-icon>arrow_drop_down</mat-icon></button>
             </div>
             <div id="titleChatDashBoard">
               <div class="title">
@@ -18,7 +18,7 @@
             </button>
           </div>
           <div class="rooms">
-            <button mat-button class="btnStyle" (click)="openJoinChatRoomModal()">
+            <button mat-button class="btnStyle mainButton" (click)="openJoinChatRoomModal()">
                 {{'GAME.JOIN_CHAT_ROOM' | translate}}
             </button>
             <div class="listChatRoom">
