@@ -24,9 +24,15 @@
     margin-bottom: 0px;
 }
 
+.wholeMessage {
+    padding-bottom: 5px;
+}
+
 .msg{
     color: #0c483f;
+    font-size: 12px;
 }
+
 .msgPlayer {
     text-align: right;
 }
@@ -49,9 +55,10 @@
 
 .senderName{
     font-weight: bold;
-    font-size: 11px;
-    margin-bottom: -5px;
+    font-size: 14px;
+    margin-bottom: -2px;
 }
+
 .timestamp{
     margin-left: 5px;
     font-size: 10px;
