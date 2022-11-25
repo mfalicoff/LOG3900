@@ -93,8 +93,7 @@ export class MatchmakingService {
                         this.matchRefused(rankedGame);
                         rankedGame.clearTimer();
                         return;
-                    }
-                    else if(user.hasAccepted !== true) {
+                    } else if (user.hasAccepted !== true) {
                         socket.leave(user.name);
                     }
                 }
@@ -106,11 +105,11 @@ export class MatchmakingService {
 
     async createRankedGame(rankedGame: RankedGame) {
         const secondInterval = 1000;
-        let creatorUser: RankedUser = rankedGame.rankedUsers[0];
-        creatorUser = rankedGame.rankedUsers[0];
+        let firstPlayer: RankedUser = rankedGame.rankedUsers[0];
+        firstPlayer = rankedGame.rankedUsers[0];
         for (const user of rankedGame.rankedUsers) {
-            if (user.name === creatorUser.name) {
-                await this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', rankedGame.name, user.name);
+            if (user.name === firstPlayer.name) {
+                await this.sio.sockets.sockets.get(user.socketId)?.emit('createRankedGame', rankedGame.name, firstPlayer.name);
             }
         }
         const threeSecondDelay = 3;
@@ -118,8 +117,7 @@ export class MatchmakingService {
         const timerInterval = setInterval(() => {
             if (rankedGame.secondsValue === i + 1) {
                 // for(const user of rankedGame.rankedUsers) {
-                if (rankedGame.rankedUsers[i].name !== creatorUser.name) {
-                    console.log('joiner' + rankedGame.rankedUsers[i].name)
+                if (rankedGame.rankedUsers[i].name !== firstPlayer.name) {
                     this.sio.sockets.sockets
                         .get(rankedGame.rankedUsers[i].socketId)
                         ?.emit('joinRankedRoom', rankedGame.name, rankedGame.rankedUsers[i].socketId);
@@ -132,7 +130,7 @@ export class MatchmakingService {
             if (rankedGame.secondsValue <= 0) {
                 clearInterval(timerInterval);
                 rankedGame.clearTimer();
-                this.sio.sockets.sockets.get(creatorUser.socketId)?.emit('startGame', creatorUser.name);
+                this.sio.sockets.sockets.get(firstPlayer.socketId)?.emit('startGame', rankedGame.name);
             }
         }, secondInterval);
     }
@@ -140,7 +138,6 @@ export class MatchmakingService {
     matchRefused(rankedGame: RankedGame) {
         for (let i = 0; i < rankedGame.rankedUsers.length; i++) {
             if (rankedGame.rankedUsers[i].hasAccepted === false) {
-                console.log(rankedGame.rankedUsers[i]);
                 rankedGame.rankedUsers.splice(i, 1);
             }
             rankedGame.rankedUsers[i].hasAccepted = false;

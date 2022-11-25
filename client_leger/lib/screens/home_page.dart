@@ -8,6 +8,7 @@ import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -141,14 +142,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     infoClientService.gameMode = CLASSIC_MODE;
                     _toGameListPage();
                   },
-                  child: const Text("Mode Classique"),
+                  child: Text("HOME_SCREEN.CLASSIC_MODE".tr()),
                 ),
                 ElevatedButton(
                   onPressed: (){
                     infoClientService.gameMode = POWER_CARDS_MODE;
                     _toGameListPage();
                   },
-                  child: const Text("Mode Carte De Pouvoir Configurable"),
+                  child: Text("HOME_SCREEN.POWER_CARDS_MODE".tr()),
                 ),
                 ElevatedButton(
                   onPressed: (){

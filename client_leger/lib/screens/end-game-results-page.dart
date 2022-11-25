@@ -4,9 +4,8 @@ import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/models/player.dart';
 import 'package:client_leger/models/game-saved.dart';
-import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:image/image.dart';
 
 import '../models/spectator.dart';
 
@@ -65,7 +64,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     child:
 
                     Center(
-                        child: Text("RESULTATS DE FIN DE PARTIE",
+                        child: Text("END_GAME_RESULT_PAGE.RESULT_END_GAME".tr(),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Theme.of(context).colorScheme.secondary,
@@ -77,7 +76,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Salle : $roomName",
+                Text("${"END_GAME_RESULT_PAGE.ROOM".tr()} : $roomName",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
@@ -89,7 +88,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Createur de la salle : $creator",
+                Text("${"END_GAME_RESULT_PAGE.CREATOR_GAME".tr()} : $creator",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -105,7 +104,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Gagnants de la partie :",
+                Text("${"END_GAME_RESULT_PAGE.GAME_WINNER".tr()} :",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -121,7 +120,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: List.generate(infoClientService.game.winners.length, (index) {
-                            return Text("Nom:  ${infoClientService.game.winners[index].name}  avec un score de ${infoClientService.game.winners[index].score} points",
+                            return Text("${"END_GAME_RESULT_PAGE.NAME".tr()}:  ${infoClientService.game.winners[index].name}  ${"END_GAME_RESULT_PAGE.SCORE_OF".tr()} ${infoClientService.game.winners[index].score} ${"END_GAME_RESULT_PAGE.POINTS".tr()}",
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontSize: 15,
@@ -135,7 +134,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Nombre de lettres restantes dans la reserve : ${infoClientService.game.nbLetterReserve}",
+                Text("${"END_GAME_RESULT_PAGE.NUMBER_LETTER_LEFT".tr()} : ${infoClientService.game.nbLetterReserve}",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -147,7 +146,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Nombre de tours total: $numberOfTurns",
+                Text("${"END_GAME_RESULT_PAGE.NUMBER_TOTAL_TURN".tr()}: $numberOfTurns",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -159,7 +158,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                  Text("Durée de la partie (en minutes) : $playingTime",
+                  Text("${"END_GAME_RESULT_PAGE.GAME_LENGTH".tr()} : $playingTime",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
@@ -171,7 +170,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("Date du début de la partie (timestamp): $timestamp",
+                Text("${"END_GAME_RESULT_PAGE.GAME_CREATION_DATE".tr()}: $timestamp",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
@@ -185,7 +184,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 ),
                 Row(
                     children: [
-                        Text("Ajouter la partie dans vos favoris: ",
+                        Text("${"END_GAME_RESULT_PAGE.ADD_GAME_IN_FAVORITE".tr()}: ",
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
@@ -207,7 +206,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     height: 30,
                     color: Theme.of(context).colorScheme.primary,
                     child: Center(
-                        child: Text("STATISTIQUES DES JOUEURS",
+                        child: Text("${"END_GAME_RESULT_PAGE.STATS".tr()}",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           color: Theme.of(context).colorScheme.secondary,
@@ -227,28 +226,28 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                       return
                         Column(
                             children: [
-                                Text("JOUEUR: ${players[index].name}",
+                                Text("${"END_GAME_RESULT_PAGE.PLAYER".tr()}: ${players[index].name}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
                                     fontSize: 18,
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                                Text("Score: ${players[index].score}",
+                                Text("${"END_GAME_RESULT_PAGE.SCORE".tr()}: ${players[index].score}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
                                     fontSize: 18,
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                                Text("Lettres restantes: ${lettersOnStand(players[index])}",
+                                Text("${"END_GAME_RESULT_PAGE.LETTER_LEFT".tr()}: ${lettersOnStand(players[index])}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
                                     fontSize: 18,
                                     fontWeight: FontWeight.normal,
                                   ),
                                 ),
-                                Text("Nombre de tours joué: ${players[index].turn}",
+                                Text("${"END_GAME_RESULT_PAGE.NUMBER_OF_TURN_PLAYED".tr()}: ${players[index].turn}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
                                     fontSize: 18,
@@ -314,8 +313,8 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 children: List.generate(infoClientService.actualRoom.spectators.length, (index) {
                                                 return Column(
                                 children: [
-                                            const Text('.Spectateurs de la partie: ',
-                                            style: TextStyle(
+                                            Text('.${"END_GAME_RESULT_PAGE.GAME_SPECTATORS".tr()}: ',
+                                            style: const TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.normal,
@@ -323,7 +322,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                                 ),
                                     textAlign: TextAlign.left,
                                            ),
-                                            Text("Nom: ${infoClientService.actualRoom.spectators[index].name}",
+                                            Text("${"END_GAME_RESULT_PAGE.NAME".tr()}: ${infoClientService.actualRoom.spectators[index].name}",
                                             style: const TextStyle(
                                                 color: Colors.black,
                                                 fontSize: 15,
@@ -338,7 +337,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [ Text("Il n'y a pas de spectateurs.", style: TextStyle( color: Colors.black, fontSize: 15))],
+            children: [ Text("END_GAME_RESULT_PAGE.NO_SPECTATORS".tr(), style: const TextStyle( color: Colors.black, fontSize: 15))],
         );
     }
 

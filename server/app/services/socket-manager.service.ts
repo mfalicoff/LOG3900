@@ -822,10 +822,6 @@ export class SocketManager {
         let isOneNamedSame = false;
 
         for (const player of game.mapPlayers.values()) {
-            console.log(player.name);
-        }
-
-        for (const player of game.mapPlayers.values()) {
             if (userData.name === player.name) {
                 isOneNamedSame = true;
                 break;

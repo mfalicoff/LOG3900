@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'dart:developer';
+
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 
 class TimerService with ChangeNotifier{
@@ -55,10 +56,10 @@ class TimerService with ChangeNotifier{
       if (secondsValue >= 0) {
         if (secondsValue % secondsInMinute <= displayZero) {
           displayTimer =
-              'Temps Restant : ${(secondsValue / secondsInMinute).floor()}:0${secondsValue % secondsInMinute}';
+              '${"TIMER_SERVICE.TIME_LEFT".tr()} : ${(secondsValue / secondsInMinute).floor()}:0${secondsValue % secondsInMinute}';
         } else {
           displayTimer =
-              'Temps Restant : ${(secondsValue / secondsInMinute).floor()}:${secondsValue % secondsInMinute}';
+              '${"TIMER_SERVICE.TIME_LEFT".tr()} : ${(secondsValue / secondsInMinute).floor()}:${secondsValue % secondsInMinute}';
         }
       }
       notifyListeners();

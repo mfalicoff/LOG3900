@@ -7,12 +7,13 @@ import 'package:client_leger/screens/ranked-init_page.dart';
 import 'package:client_leger/screens/ranked_matchmaking_page.dart';
 import 'package:client_leger/screens/signup_page.dart';
 import 'package:client_leger/utils/theme.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'env/environment.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
 
@@ -27,7 +28,14 @@ void main() {
     DeviceOrientation.landscapeRight,
     DeviceOrientation.landscapeLeft,
   ]);
-  runApp(const MyApp());
+  await EasyLocalization.ensureInitialized();
+  runApp(EasyLocalization(
+      supportedLocales: const [Locale('fr'), Locale('en')],
+      path: 'assets/translations',
+      startLocale: const Locale('fr'),
+      useOnlyLangCode: true,
+      child: const MyApp()
+  ),);
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +44,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
+      title: 'Scrabble',
       theme: appTheme,
       routes: <String, WidgetBuilder>{
         '/home': (BuildContext context) => const MyHomePage(),

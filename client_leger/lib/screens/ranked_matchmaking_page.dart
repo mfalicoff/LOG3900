@@ -42,11 +42,8 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
       }
     });
     socketService.socket.on('closeModal', (data) {
-      log('23');
       if(mounted) {
-        log('12334');
         if(rankedService.matchAccepted == false) {
-          log('in');
           Navigator.pushNamed(
               context, "/ranked-init");
           rankedService.matchAccepted = false;

@@ -162,12 +162,12 @@ export class SocketService {
         });
     }
 
-    private displayChangeEndGameCallBack(displayChange: string) {
-        this.infoClientService.displayTurn = displayChange;
+    private displayChangeEndGameCallBack() {
+        this.infoClientService.displayTurn = this.translate.instant('GAME.END_GAME');
     }
 
     private timerHandler() {
-        this.socket.on('displayChangeEndGame', (displayChange) => this.displayChangeEndGameCallBack(displayChange));
+        this.socket.on('displayChangeEndGame', () => this.displayChangeEndGameCallBack());
 
         this.socket.on('startClearTimer', ({ minutesByTurn, currentNamePlayerPlaying }) => {
             this.infoClientService.powerUsedForTurn = false;
@@ -242,7 +242,6 @@ export class SocketService {
                 description: 'Ce dictionnaire contient environ trente mille mots français',
             };
             this.socket.emit('dictionarySelected', mockDict);
-            console.log('creator123'+ name)
             this.socket.emit('createRoomAndGame', {
                 roomName: name,
                 playerName: creatorName,

@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'dart:typed_data';
 import 'dart:io' as Io;
-import 'dart:developer';
+import 'dart:typed_data';
 
 class User {
   late List<dynamic>? actionHistory;
@@ -16,6 +15,8 @@ class User {
   late int? gamesPlayed;
   late int? gamesWon;
   late String? id;
+  late String? language;
+  late String? theme;
   late String username;
   late Io.File avatarImage;
   late num? elo = 2000;
@@ -36,7 +37,8 @@ class User {
     favouriteGames = parsed["data"]["favouriteGames"] ?? "Failed";
     id = parsed["data"]["_id"] ?? "Failed";
     elo = parsed["data"]["elo"];
-    //log(elo.toString());
+    theme = parsed["data"]["theme"] ?? "Failed";
+    language = parsed["data"]["language"] ?? "Failed";
   }
 
   Map<String, dynamic> toJson() => {

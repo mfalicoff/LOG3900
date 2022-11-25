@@ -1,10 +1,10 @@
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../services/chat-service.dart';
 import '../services/socket_service.dart';
 import '../models/chatroom.dart';
-import '../widget/chat_panel.dart';
 
 
 class SearchPageChatRoom extends StatefulWidget {
@@ -88,7 +88,7 @@ class _SearchPageChatRoom extends State<SearchPageChatRoom> {
                               },
                               decoration: InputDecoration(
                                 border: const OutlineInputBorder(),
-                                labelText: "Rechercher salles",
+                                labelText: "SEARCH_PAGE_CHAT.SEARCH_CHAT".tr(),
                                 labelStyle: TextStyle(
                                 color:Theme.of(context).colorScheme.primary),
                               ),
@@ -149,7 +149,7 @@ class _SearchPageChatRoom extends State<SearchPageChatRoom> {
                       child: Column(
                         children: [
                           Text(
-                            'Nom de la salle: ${chatService.chatRoomWanted?.name}',
+                            '${"SEARCH_PAGE_CHAT.ROOM_NAME".tr()}${chatService.chatRoomWanted?.name}',
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 25,
@@ -172,7 +172,7 @@ class _SearchPageChatRoom extends State<SearchPageChatRoom> {
                                 builder: (_) => AlertDialog(
                                   backgroundColor: Theme.of(context).colorScheme.secondary,
                                   content: Text(
-                                      "Vous avez rejoint la salle.",
+                                    "SEARCH_PAGE_CHAT.YOU_HAVE_JOINED".tr(),
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.primary,
                                         fontSize: 20,
@@ -182,7 +182,7 @@ class _SearchPageChatRoom extends State<SearchPageChatRoom> {
                                 ),
                               );
                             },
-                            child: const Text("Joindre la salle"),
+                            child: Text("SEARCH_PAGE_CHAT.JOIN_ROOM".tr()),
                           ),
                         ],
                       ),
