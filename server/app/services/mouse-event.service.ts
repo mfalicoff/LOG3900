@@ -112,19 +112,27 @@ export class MouseEventService {
     }
 
     async exchangeButtonClicked(game: GameServer, player: Player): Promise<void> {
+        console.log('6');
         const exchangeCmd: string = this.createExchangeCmd(player);
         const response: boolean = (await this.chatService.sendMessage(exchangeCmd, game, player)) as boolean;
+        console.log(response);
         if (response) {
+            console.log('7');
             for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
                 if (player.stand[i].backgroundColor === '#AEB1D9') {
+                    console.log(player.stand[i].backgroundColor);
+                    console.log(player.stand[i].letter.value);
                     this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
                 }
             }
         }
-
+        console.log('9');
         this.resetExchangeTiles(player);
+        console.log('10');
         this.sendStandToClient(player);
+        console.log('11');
         this.playAreaService.changePlayer(game);
+        console.log('12');
     }
 
     cancelButtonClicked(player: Player): void {

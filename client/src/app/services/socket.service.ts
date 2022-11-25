@@ -88,6 +88,7 @@ export class SocketService {
                 return;
             }
             this.infoClientService.player = player;
+            console.log(player.stand);
             setTimeout(() => {
                 this.drawingService.reDrawStand(player.stand, this.infoClientService.letterBank);
             }, Constants.WAIT_FOR_CANVAS_INI);
