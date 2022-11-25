@@ -121,7 +121,8 @@ export class MouseEventService {
             console.log('6.5:' + player.stand[0].letter);
             for (let i = 0; i < Constants.NUMBER_SLOT_STAND; i++) {
                 if (player.stand[i].backgroundColor === '#AEB1D9') {
-                    console.log(player.stand[i].backgroundColor)
+                    console.log(player.stand[i].backgroundColor);
+                    console.log(player.stand[i].letter.value);
                     this.standService.updateStandAfterExchangeWithPos(i, player, game.letters, game.letterBank);
                 }
             }
