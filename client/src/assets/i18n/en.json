@@ -149,7 +149,8 @@
         "SCORE2": " Score: ",
         "LETTER_ON_STAND": " Letters on stand: ",
         "NUMBER_TURNS_IN_GAME": " Number of turns played in the game: ",
-        "ELO": " Elo: "
+        "ELO": " Elo: ",
+        "UPDATE_FAVOURITES_MESSAGE": "The game has been added into your favourites"
     },
     "PROFILE_READ_ONLY":{
         "STATS": "Statistics",

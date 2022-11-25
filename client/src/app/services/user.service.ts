@@ -171,6 +171,7 @@ export class UserService {
             .subscribe({
                 next: (res) => {
                     this.updateUserInstance(res.data);
+                    this.notifService.openSnackBar('La partie a été ajoutée à vos favoris', true);
                 },
                 error: (error) => {
                     this.handleErrorPOST(error);

@@ -153,7 +153,8 @@
         "SCORE2": " Score: ",
         "LETTER_ON_STAND": " Lettres sur chevalet: ",
         "NUMBER_TURNS_IN_GAME": " Nombre de tours joué dans la partie: ",
-        "ELO": " Elo: "
+        "ELO": " Elo: ",
+        "UPDATE_FAVOURITES_MESSAGE": "La partie a été ajoutée à vos favorites"
     },
     "PROFILE_READ_ONLY":{
         "STATS": "Statistiques",
