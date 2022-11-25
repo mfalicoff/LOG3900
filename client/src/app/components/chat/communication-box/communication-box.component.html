@@ -1,23 +1,24 @@
 <div id="commBox" (click)="onLeftClickComBox()">
     <div class="wrapper">
         <div class="sidebar" #scrollFrame>
-            <div *ngFor="let msg of getPlayerHistory()" #commands>
-                <p [ngClass]="chooseMsgClass(msg)" class="senderName msg">{{ msg.senderName }}</p>
-                <p [ngClass]="chooseMsgClass(msg)" class="msg">
+            <div class="wholeMessage" *ngFor="let msg of getPlayerHistory()" #commands>
+                <div [ngClass]="chooseMsgClass(msg)" class="senderName msg">{{ msg.senderName }}</div>
+                <div [ngClass]="chooseMsgClass(msg)" class="msg">
                     {{ msg.msg }}<span [ngClass]="chooseMsgClass(msg)" class="timestamp msg">{{ convertTimestamp(msg.timestamp) }}</span>
-                </p>
+                </div>
             </div>
 
-            <div *ngFor="let msg of getSpecHistory()" #commands>
-                <p [ngClass]="chooseMsgClass(msg)" class="senderName msg">{{ msg.senderName }}</p>
-                <p [ngClass]="chooseMsgClass(msg)" class="msg">
+            <div class="wholeMessage" *ngFor="let msg of getSpecHistory()" #commands>
+                <div [ngClass]="chooseMsgClass(msg)" class="senderName msg">{{ msg.senderName }}</div>
+                <div [ngClass]="chooseMsgClass(msg)" class="msg">
                     {{ msg.msg }}<span [ngClass]="chooseMsgClass(msg)" class="timestamp msg">{{ convertTimestamp(msg.timestamp) }}</span>
-                </p>
+                </div>
             </div>
         </div>
     </div>
     <div class="input">
         <input
+            [defaultValue]=""
             id="inputCommBox"
             class="inputField"
             type="text"
