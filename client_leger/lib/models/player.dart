@@ -29,7 +29,6 @@ class Player with ChangeNotifier {
   late int passInARow;
   late List<ChatMessage> chatHistory = [];
   late List<ChatMessage> oldChatHistory = [];
-  Function deepEq = const DeepCollectionEquality().equals;
 
   // MOUSE EVENT SERVICE DATA
   late int tileIndexManipulation;
@@ -86,14 +85,6 @@ class Player with ChangeNotifier {
       chatHistory.add(ChatMessage.fromJson(chatMsg));
     }
 
-    if(!deepEq(chatHistory, oldChatHistory)) {
-      if(chatService.rooms[0].name == 'game') {
-        chatService.rooms[0].isUnread = true;
-        playAudio();
-      }
-    }
-    oldChatHistory = chatHistory;
-
     notifyListeners();
   }
 
@@ -114,13 +105,6 @@ class Player with ChangeNotifier {
 
   }
 
-  Future<void> playAudio() async {
-    final player = AudioPlayer(); // Create a player
-    await player.setUrl(
-        "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
-    await player.play();
-    await player.stop();
-  }
   //tmp function to initialize the stand
   //DO NOT REUSE IT
   void initStand(){

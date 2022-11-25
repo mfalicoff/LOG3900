@@ -35,7 +35,6 @@ class _ProfileStatePage extends State<ProfilePage> {
   SocketService socketService = SocketService();
   Controller userController = Controller();
 
-
   refresh() async {
     setState(() {});
 
@@ -499,6 +498,7 @@ class AvatarChangeDialog extends StatefulWidget {
 class _AvatarChangeDialog extends State<AvatarChangeDialog> {
   late String? newName = "";
   Controller controller = Controller();
+  SocketService socketService = SocketService();
   final String? serverAddress = Environment().config?.serverURL;
   late List<dynamic> avatars;
 
@@ -630,7 +630,7 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
   Future<void> _changeAvatarFromCamera(File image) async {
     try {
       final oldCookie = globals.userLoggedIn.cookie;
-      globals.userLoggedIn = await controller.updateAvatarFromCamera(image);
+      globals.userLoggedIn = await controller.updateAvatarFromCamera(image, socketService.socket);
       globals.userLoggedIn.cookie = oldCookie;
       widget.notifyParent();
       if (!mounted) return;
@@ -647,7 +647,7 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
     try {
       final oldCookie = globals.userLoggedIn.cookie;
       globals.userLoggedIn =
-          await controller.updateAvatar('avatar${index.toString()}');
+          await controller.updateAvatar('avatar${index.toString()}', socketService.socket);
       globals.userLoggedIn.cookie = oldCookie;
       widget.notifyParent();
       if (!mounted) return;
