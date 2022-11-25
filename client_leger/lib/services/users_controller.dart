@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:client_leger/env/environment.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -167,6 +168,15 @@ class Controller {
     );
     if (response.statusCode == 200) {
         User user = User.fromJson(json.decode(response.body));
+        // const SimpleDialog( backgroundColor: Colors.lightGreen, title: Text('La partie a été ajoutée dans vos favoris', textAlign: TextAlign.center,
+        //   style: TextStyle(
+        //     color: Colors.black,
+        //     fontSize: 15,
+        //     fontWeight: FontWeight.normal,
+        //     fontFamily: "Times New Roman"
+        //     ),
+        //   ),
+        // );
         return user;
     } else {
         throw Exception('Failed update favourite games');
