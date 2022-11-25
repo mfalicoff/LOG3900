@@ -195,5 +195,7 @@
         "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "This card removes a power card from all enemy players."
     },
     "DETACH": "Detach",
-    "ATTACH": "Attach"
+    "ATTACH": "Attach",
+    "WORD": "WORD",
+    "LETTER": "LETTER"
 }

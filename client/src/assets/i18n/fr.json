@@ -199,5 +199,7 @@
         "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis."
     },
     "DETACH": "Détacher",
-    "ATTACH": "Attacher"
+    "ATTACH": "Attacher",
+    "WORD": "MOT",
+    "LETTER": "LETTRE"
 }
