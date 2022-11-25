@@ -583,6 +583,8 @@ export class SocketManager {
             if (user.language) {
                 this.translateService.addUser(user.name, user.language);
             }
+            const avatar = await this.userService.populateAvatarField(user);
+            socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
 
         socket.on('forceLogout', (name) => {
@@ -1199,6 +1201,24 @@ export class SocketManager {
         // socket to change value in map of translateService
         socket.on('changeLanguage', async (playerName, language) => {
             this.translateService.addUser(playerName, language);
+        });
+
+        socket.on('getAllAvatars', async () => {
+            const avatarUsers: Map<string, string> = new Map();
+            const users = await this.userService.findAllUser();
+            users.map(async (user) => {
+                if (!avatarUsers.has(user.name)) {
+                    const avatar = await this.userService.populateAvatarField(user);
+                    avatarUsers.set(user.name, avatar);
+                    socket.emit('sendAvatars', user.name, avatar);
+                }
+            });
+        });
+
+        socket.on('updatedAvatar', async (username) => {
+            const user = await this.userService.findUserByName(username);
+            const avatar = await this.userService.populateAvatarField(user);
+            socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
     }
 }

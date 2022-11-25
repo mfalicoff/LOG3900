@@ -2,6 +2,7 @@
     <div class="wrapper">
         <div class="sidebar" #scrollFrame>
             <div class="wholeMessage" *ngFor="let msg of getPlayerHistory()" #commands>
+                <img [ngClass]="chooseMsgClassAvatar(msg)" [src]="infoClientService.userAvatars.get(msg.senderName)" class="profile"/>
                 <div [ngClass]="chooseMsgClass(msg)" class="senderName msg">{{ msg.senderName }}</div>
                 <div [ngClass]="chooseMsgClass(msg)" class="msg">
                     {{ msg.msg }}<span [ngClass]="chooseMsgClass(msg)" class="timestamp msg">{{ convertTimestamp(msg.timestamp) }}</span>
@@ -9,6 +10,7 @@
             </div>
 
             <div class="wholeMessage" *ngFor="let msg of getSpecHistory()" #commands>
+                <img [ngClass]="chooseMsgClassAvatar(msg)" [src]="infoClientService.userAvatars.get(msg.senderName)" class="profile"/>
                 <div [ngClass]="chooseMsgClass(msg)" class="senderName msg">{{ msg.senderName }}</div>
                 <div [ngClass]="chooseMsgClass(msg)" class="msg">
                     {{ msg.msg }}<span [ngClass]="chooseMsgClass(msg)" class="timestamp msg">{{ convertTimestamp(msg.timestamp) }}</span>

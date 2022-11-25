@@ -64,6 +64,7 @@ export class InfoClientService {
     chatRooms: ChatRoom[];
     // variable to allow/block sound effects
     soundDisabled: boolean;
+    userAvatars: Map<string, string>;
 
     constructor(private translate: TranslateService, private timerService: TimerService) {
         this.gameMode = Constants.CLASSIC_MODE;
@@ -74,6 +75,7 @@ export class InfoClientService {
         this.incommingPlayerId = '';
         this.rooms = [];
         this.chatRooms = [];
+        this.userAvatars = new Map();
         this.initializeService();
     }
 

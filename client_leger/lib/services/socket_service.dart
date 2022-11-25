@@ -126,8 +126,20 @@ class SocketService with ChangeNotifier {
   }
 
   gameUpdateHandler() {
-    socket.on('playerAndStandUpdate', (player) {
+    socket.on('playerAndStandUpdate', (player) async {
+      Function deepEq = const DeepCollectionEquality().equals;
       infoClientService.updatePlayer(player);
+      if(!deepEq(infoClientService.player.chatHistory, infoClientService.player.oldChatHistory) && infoClientService.player.chatHistory.last.senderName != infoClientService.player.name) {
+        if(chatService.rooms[0].name == 'game') {
+          chatService.rooms[0].isUnread = true;
+          final player = AudioPlayer(); // Create a player
+          await player.setUrl(
+              "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+          await player.play();
+          await player.stop();
+        }
+      }
+      infoClientService.player.oldChatHistory = infoClientService.player.chatHistory;
       infoClientService.notifyListeners();
       chatService.notifyListeners();
     });
@@ -288,6 +300,13 @@ class SocketService with ChangeNotifier {
       await player.play();
       await player.stop();
     });
+
+    socket.on('sendAvatars', (nameAndAvatar) {
+      String name = nameAndAvatar[0];
+      String avatar = nameAndAvatar[1];
+      infoClientService.userAvatars[name] = avatar;
+      infoClientService.notifyListeners();
+  });
   }
 
   updateUiBeforeStartGame(List<Player> players) {

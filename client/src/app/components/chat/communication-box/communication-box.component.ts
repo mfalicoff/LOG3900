@@ -51,6 +51,16 @@ export class CommunicationBoxComponent implements AfterViewInit {
         }
     }
 
+    chooseMsgClassAvatar(msg: ChatMessage): string {
+        if (msg.senderName === this.infoClientService.playerName) {
+            return 'msgPlayerAvatar';
+        } else if (msg.senderName === Constants.SYSTEM_SENDER) {
+            return 'msgSystemAvatar';
+        } else {
+            return 'msgOpponentAvatar';
+        }
+    }
+
     convertTimestamp(timestamp: number): string {
         const date = new Date(timestamp);
         return date.toLocaleTimeString();
