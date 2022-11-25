@@ -3,7 +3,6 @@ import 'package:client_leger/models/player.dart';
 import 'package:client_leger/models/spectator.dart';
 
 class GameSaved {
-
   // fields for the game-saved model used in database
   late String roomName;
   late List<String> players;
@@ -17,9 +16,29 @@ class GameSaved {
   late Map<String, String> mapLetterOnStand;
   late String? _id;
 
-  GameSaved(List<Player> players,  this.roomName, this.numberOfTurns, this.playingTime, this.nbLetterReserve
-      , this.gameStartDate, List<Spectator>? spectators, List<Player>? winners)
-  {
+  Map<String, dynamic> toJson() {
+    return {
+        'roomName': roomName,
+        'players': players,
+        'spectators': spectators,
+        'winners': winners,
+        'scores': scores,
+        'numberOfTurns': numberOfTurns,
+        'gameStartDate': gameStartDate,
+        'playingTime': playingTime,
+        'nbLetterReserve': nbLetterReserve,
+    };
+  }
+
+  GameSaved(
+      List<Player> players,
+      this.roomName,
+      this.numberOfTurns,
+      this.playingTime,
+      this.nbLetterReserve,
+      this.gameStartDate,
+      List<Spectator>? spectators,
+      List<Player>? winners) {
     mapLetterOnStand = {};
     this.players = [];
     this.spectators = [];
@@ -38,28 +57,29 @@ class GameSaved {
     gameStartDate = game["gameStartDate"] ?? "Failed";
     var playersString = game["players"] ?? "Failed";
     players = [];
-    for (var pl in playersString){
-        players.add(pl);
+    for (var pl in playersString) {
+      players.add(pl);
     }
     var winnersString = game["winners"] ?? "Failed";
     winners = [];
     for (var wn in winnersString) {
-        winners.add(wn);
+      winners.add(wn);
     }
     var spectatorsString = game["spectators"] ?? "Failed";
     spectators = [];
     for (var spec in spectatorsString) {
-        spectators.add(spec);
+      spectators.add(spec);
     }
     var scoresString = game["scores"] ?? "Failed";
     scores = [];
     for (var sc in scoresString) {
-        scores.add(sc);
+      scores.add(sc);
     }
   }
 
-  void populateArrays(List<Player> players, List<Spectator>? spectators, List<Player>? winners){
-    for (var pl in players){
+  void populateArrays(List<Player> players, List<Spectator>? spectators,
+      List<Player>? winners) {
+    for (var pl in players) {
       this.players.add(pl.name);
     }
 
@@ -74,7 +94,7 @@ class GameSaved {
     }
     if (winners != null) {
       for (var wn in winners) {
-       this. winners.add(wn.name);
+        this.winners.add(wn.name);
       }
     }
   }
@@ -95,5 +115,4 @@ class GameSaved {
     }
     return listLetterStillOnStand.toString();
   }
-
 }

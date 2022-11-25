@@ -29,19 +29,12 @@ class _GamePageState extends State<GamePage> {
   void initState() {
     super.initState();
     infoClientService.addListener(refresh);
-    infoClientService.addListener(checkEndGame);
   }
 
   void refresh() {
     if (mounted) {
       setState(() {});
     }
-  }
-  checkEndGame() {
-    if (infoClientService.game.gameFinished && mounted) {
-        showDialog(context: context, builder: (context) => const EndGameResultsPage());
-    }
-    if (!mounted) setState(() {});
   }
 
   @override
@@ -149,7 +142,7 @@ class _GamePageState extends State<GamePage> {
                           ),
                         )
                             : null),
-                    Container(
+                      Container(
                         child: shouldSpecBeAbleToBePlayer() == true
                             ? ElevatedButton(
                           style: ButtonStyle(

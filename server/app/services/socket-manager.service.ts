@@ -481,8 +481,6 @@ export class SocketManager {
         socket.on('saveGame', async (game: GameSaved) => {
             const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
             this.sio.to(savedGame.roomName + Constants.GAME_SUFFIX).emit('savedGameId', savedGame._id);
-            // eslint-disable-next-line no-console
-            console.log('Gamed saved! : ' + savedGame._id);
         });
     }
 
