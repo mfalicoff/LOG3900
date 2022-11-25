@@ -364,6 +364,14 @@ class _ChatPanelState extends State<ChatPanel> {
                                 ? MainAxisAlignment.end
                                 : MainAxisAlignment.start,
                             children: [
+                              (chatService.currentChatRoom
+                                  .chatHistory[index].senderName !=
+                                  globals.userLoggedIn.username  && infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName] != null) ?
+                              Container(
+                                  padding:
+                                  const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                  child: getAvatarFromString(15, infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName]!))
+                                  : Container(),
                               Visibility(
                                 visible: chatService.currentChatRoom
                                         .chatHistory[index].senderName ==
@@ -424,7 +432,15 @@ class _ChatPanelState extends State<ChatPanel> {
                                     ),
                                   ),
                                 ),
-                              )
+                              ),
+                              (chatService.currentChatRoom
+                                  .chatHistory[index].senderName ==
+                                  globals.userLoggedIn.username  && infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName] != null) ?
+                              Container(
+                                  padding:
+                                  const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                  child: getAvatarFromString(15, infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName]!))
+                                  : Container(),
                             ],
                           ),
                         ],
