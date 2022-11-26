@@ -4,6 +4,7 @@ import { InfoClientService } from '@app/services/info-client.service';
 import { MouseKeyboardEventHandlerService } from '@app/services/mouse-and-keyboard-event-handler.service';
 import * as Constants from '@app/classes/global-constants';
 import { ChatRoom } from '@app/classes/chatroom.interface';
+import { SocketService } from '@app/services/socket.service';
 @Component({
     selector: 'app-communication-box',
     templateUrl: './communication-box.component.html',
@@ -17,7 +18,11 @@ export class CommunicationBoxComponent implements AfterViewInit {
     inputInComBox: string = '';
     private scrollContainer: Element;
 
-    constructor(private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService, public infoClientService: InfoClientService) {}
+    constructor(
+        private mouseKeyboardEventHandler: MouseKeyboardEventHandlerService,
+        public infoClientService: InfoClientService,
+        private socketService: SocketService,
+    ) {}
 
     ngAfterViewInit() {
         this.scrollContainer = this.scrollFrame.nativeElement;
@@ -41,6 +46,10 @@ export class CommunicationBoxComponent implements AfterViewInit {
         (document.getElementById('inputCommBox') as HTMLInputElement).value = '';
     }
 
+    isCreator() {
+        return this.infoClientService.playerName === this.actualChatRoom.creator;
+    }
+
     chooseMsgClass(msg: ChatMessage): string {
         if (msg.senderName === this.infoClientService.playerName) {
             return 'msgPlayer';
@@ -59,6 +68,10 @@ export class CommunicationBoxComponent implements AfterViewInit {
         } else {
             return 'msgOpponentAvatar';
         }
+    }
+
+    deleteChatRoom() {
+        this.socketService.socket.emit('deleteChatRoom', this.actualChatRoom.name);
     }
 
     convertTimestamp(timestamp: number): string {
