@@ -34,11 +34,12 @@ class _MyHomePageState extends State<MyHomePage> {
   final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
 
-    @override
+  @override
   void initState() {
     super.initState();
     final user = globals.userLoggedIn;
-    http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
+    http
+        .get(Uri.parse("$serverAddress/users/games/${user.id}"))
         .then((res) => parseGames(res));
   }
 
@@ -58,104 +59,112 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     socketService.socket.emit('getAllChatRooms');
-    return Scaffold(
-      endDrawer: Drawer(
-          width: 600,
-          child: ChatPanel(
-            isInGame: false,
-          )),
-      onEndDrawerChanged: (isOpen) {
-        chatService.isDrawerOpen = isOpen;
-        chatService.notifyListeners();
+    return WillPopScope(
+      onWillPop: () async {
+        _logout();
+        return false;
       },
-      body: Stack(
-        children: <Widget>[
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/background.jpg"),
-                fit: BoxFit.cover,
+      child: Scaffold(
+        endDrawer: Drawer(
+            width: 600,
+            child: ChatPanel(
+              isInGame: false,
+            )),
+        onEndDrawerChanged: (isOpen) {
+          chatService.isDrawerOpen = isOpen;
+          chatService.notifyListeners();
+        },
+        body: Stack(
+          children: <Widget>[
+            Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/background.jpg"),
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-          ),
-          const Positioned(
-              top: 10.0, right: 30.0, child: ChatPanelOpenButton()),
-          Positioned(
-              top: 100.0,
-              right: 30.0,
+            const Positioned(
+                top: 10.0, right: 30.0, child: ChatPanelOpenButton()),
+            Positioned(
+                top: 100.0,
+                right: 30.0,
+                child: ElevatedButton(
+                    style: ButtonStyle(
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              vertical: 18.0, horizontal: 0.0),
+                        ),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.circular(100.0)))),
+                    onPressed: _toSearchPage,
+                    child: const Icon(Icons.search))),
+            Positioned(
+              top: 10.0,
+              left: 30.0,
               child: ElevatedButton(
-                  style: ButtonStyle(
-                      padding: MaterialStateProperty.all(
-                        const EdgeInsets.symmetric(
-                            vertical: 18.0, horizontal: 0.0),
-                      ),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100.0)))),
-                  onPressed: _toSearchPage,
-                  child: const Icon(Icons.search))),
-          Positioned(
-            top: 10.0,
-            left: 30.0,
-            child: ElevatedButton(
-              style: ButtonStyle(
-                padding: MaterialStateProperty.all(
-                  const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
-                ),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+                style: ButtonStyle(
+                  padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
+                  ),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                   ),
                 ),
+                onPressed: _logout,
+                child: const Icon(Icons.logout),
               ),
-              onPressed: _logout,
-              child: const Icon(Icons.logout),
             ),
-          ),
-          Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: _toProfilePage,
-                  child: CircleAvatar(
-                    radius: 48,
-                    backgroundImage:
-                        MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
+            Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: _toProfilePage,
+                    child: CircleAvatar(
+                      radius: 48,
+                      backgroundImage:
+                          MemoryImage(globals.userLoggedIn.getUriFromAvatar()),
+                    ),
                   ),
-                ),
-                Text(globals.userLoggedIn.username,
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                        decoration: TextDecoration.none))
-              ],
+                  Text(globals.userLoggedIn.username,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 17,
+                          decoration: TextDecoration.none))
+                ],
+              ),
             ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    infoClientService.gameMode = CLASSIC_MODE;
-                    _toGameListPage();
-                  },
-                  child: Text("HOME_SCREEN.CLASSIC_MODE".tr()),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    infoClientService.gameMode = POWER_CARDS_MODE;
-                    _toGameListPage();
-                  },
-                  child: Text("HOME_SCREEN.POWER_CARDS_MODE".tr()),
-                ),
-              ],
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      infoClientService.gameMode = CLASSIC_MODE;
+                      _toGameListPage();
+                    },
+                    child: Text("HOME_SCREEN.CLASSIC_MODE".tr()),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      infoClientService.gameMode = POWER_CARDS_MODE;
+                      _toGameListPage();
+                    },
+                    child: Text("HOME_SCREEN.POWER_CARDS_MODE".tr()),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -169,8 +178,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _toProfilePage() {
-    Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ProfilePage(favouriteGames: games)))
+    Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProfilePage(favouriteGames: games)))
         .then((value) {
       setState(() {});
     });
