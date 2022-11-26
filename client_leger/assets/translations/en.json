@@ -193,5 +193,10 @@
     "Cette carte permet d'échanger votre chevalet avec celui d'un de vos adversaires.": "This card allows you to exchange your stand with that of one of your opponents.",
     "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.": "This card removes points from the opponent who has the most points and redistributes them to all the other players.",
     "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.": "This card adds 1 minute to your thinking time.",
-    "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "This card removes a power card from all enemy players."
+    "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "This card removes a power card from all enemy players.",
+    "xx": "",
+    "wordx3": "WORD\nx3",
+    "wordx2": "WORD\nx2",
+    "letterx3": "LETTER\nx3",
+    "letterx2": "LETTER\nx2"
 }
