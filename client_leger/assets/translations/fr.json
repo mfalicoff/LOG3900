@@ -165,7 +165,11 @@
         "PASSWORD": "Mot de passe",
         "CANCEL": "Annuler",
         "SUBMIT": "Soumettre",
-        "CREATE_ROOM": "Créer une salle"
+        "CREATE_ROOM": "Créer une salle",
+        "DELETE_CHATROOM_BTN": "Supprimer la salle",
+        "NEW_CREATOR": "Vous êtes le nouveau créateur de la salle: ",
+        "ROOM_DEL_1": "La salle ",
+        "ROOM_DEL_2": " a été supprimée pour le createur."
     },
     "CLICK_ON_LETTER": "Cliquez sur la lettre que vous voulez:",
     "INFO_PANEL": {

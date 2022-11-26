@@ -93,6 +93,7 @@
         "WAITING_FOR_CREATOR": "Waiting for the creator to start the game...",
         "WAIT_FOR_OTHER_PLAYERS": "Waiting for other players...",
         "END_GAME": "The game is finished.",
+        "DELETE_CHATROOM_BTN": "Delete chat room",
         "SIDEBAR": {
             "CONTROL": "CONTROLS",
             "GIVE_UP": "Give up",
@@ -196,6 +197,11 @@
     },
     "DETACH": "Detach",
     "ATTACH": "Attach",
+    "CHAT_ROOMS":{
+        "NEW_CREATOR": "You are the new creator of the chat room: ",
+        "ROOM_DEL_1": "The room ",
+        "ROOM_DEL_2": " has been deleted by the creator."
+    },
     "WORD": "WORD",
     "LETTER": "LETTER"
 }
