@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:client_leger/constants/constants.dart';
-import 'package:client_leger/screens/end-game-results-page.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
@@ -59,157 +58,6 @@ class _GamePageState extends State<GamePage> {
           children: [
             Row(
               children: [
-                Container(
-                  color: Theme.of(context).colorScheme.secondary,
-                  width: 100,
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      Container(
-                        child: shouldBeAbleToLeaveGame()
-                            ? ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 3.0),
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: _leaveGame,
-                                child: Text(
-                                  "GAME_PAGE.QUIT_GAME".tr(),
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                      Container(
-                        child: shouldBeAbleToGiveUpGame()
-                            ? ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 3.0),
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () => _giveUpGame(context),
-                                child: Text(
-                                  "GAME_PAGE.GIVE_UP".tr(),
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              )
-                            : null,
-                      ),
-                      if (infoClientService.gameMode == POWER_CARDS_MODE) ...[
-                        PowerListDialog(
-                          notifyParent: refresh,
-                        ),
-                      ],
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Container(
-                          child: infoClientService
-                                      .creatorShouldBeAbleToStartGame ==
-                                  true
-                              ? ElevatedButton(
-                                  style: ButtonStyle(
-                                    padding: MaterialStateProperty.all(
-                                      const EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 3.0),
-                                    ),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: _startGame,
-                                  child: Text(
-                                    "GAME_PAGE.START_GAME".tr(),
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
-                                  ),
-                                )
-                              : null),
-                      Container(
-                          child: infoClientService.game.gameFinished == true
-                              ? ElevatedButton(
-                                  style: ButtonStyle(
-                                      padding: MaterialStateProperty.all(
-                                        const EdgeInsets.symmetric(
-                                            vertical: 18.0, horizontal: 0.0),
-                                      ),
-                                      shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      100.0)))),
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          const EndGameResultsPage(),
-                                    );
-                                  },
-                                  child: Text("GAME_PAGE.END_GAME_RESULT".tr()),
-                                )
-                              : null),
-                      Container(
-                          child: shouldSpecBeAbleToBePlayer() == true
-                              ? ElevatedButton(
-                                  style: ButtonStyle(
-                                    padding: MaterialStateProperty.all(
-                                      const EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 3.0),
-                                    ),
-                                    shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ),
-                                    ),
-                                  ),
-                                  onPressed: spectWantsToBePlayer,
-                                  child: Text(
-                                    "GAME_PAGE.REPLACE_VIRTUAL_PLAYER".tr(),
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
-                                  ),
-                                )
-                              : Container())
-                    ],
-                  ),
-                ),
                 Container(
                   color: Theme.of(context).colorScheme.primary,
                   padding: const EdgeInsets.symmetric(
@@ -340,11 +188,6 @@ class _GamePageState extends State<GamePage> {
 
   spectWantsToBePlayer() {
     socketService.socket.emit('spectWantsToBePlayer');
-  }
-
-  void _startGame() {
-    socketService.socket.emit('startGame', infoClientService.game.roomName);
-    infoClientService.creatorShouldBeAbleToStartGame = false;
   }
 
   void _leaveGame() {
