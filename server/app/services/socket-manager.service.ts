@@ -1093,12 +1093,13 @@ export class SocketManager {
             if (!dbUser || !dbUser.id) {
                 return;
             }
-            const chatRoom = await this.chatRoomService.createChatRoom(dbUser.id, chatRoomName, socket);
+            const chatRoom = await this.chatRoomService.createChatRoom(user.name, dbUser.id, chatRoomName, socket);
             // if an error was thrown, the chatRoom name will be ''
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         socket.on('deleteChatRoom', async (chatRoomName: string) => {
@@ -1110,7 +1111,13 @@ export class SocketManager {
             if (!dbUser || !dbUser.id) {
                 return;
             }
-            await this.chatRoomService.deleteChatRoom(dbUser.id, chatRoomName, socket);
+            const chatRoom = await this.chatRoomService.deleteChatRoom(dbUser.id, chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
+            this.sio.to(chatRoomName + Constants.CHATROOM_SUFFIX).emit('rmChatRoom', chatRoomName);
+            this.sio.in(chatRoomName + Constants.CHATROOM_SUFFIX).socketsLeave(chatRoomName + Constants.CHATROOM_SUFFIX);
         });
 
         socket.on('joinChatRoom', async (chatRoomName: string) => {
@@ -1127,7 +1134,8 @@ export class SocketManager {
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         socket.on('leaveChatRoom', async (chatRoomName: string) => {
@@ -1169,7 +1177,8 @@ export class SocketManager {
             }
             const chatRooms: ChatRoom[] = await this.chatRoomService.getAllChatRooms(dbUser.id, socket);
             for (const chatRoom of chatRooms) {
-                socket.emit('setChatRoom', chatRoom);
+                const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+                socket.emit('setChatRoom', chatRoomPopulated);
             }
         });
 
@@ -1183,7 +1192,8 @@ export class SocketManager {
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         // socket user for the search of rooms
