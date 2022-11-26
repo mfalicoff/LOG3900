@@ -25,6 +25,7 @@ final appTheme = ThemeData(
         borderSide: BorderSide(
             width: 2, color: createMaterialColor(const Color(0xFF0c483f))),
       ),
-    )
+    ),
+  canvasColor: createMaterialColor(const Color(0xFFf5deb3)),
 );
 

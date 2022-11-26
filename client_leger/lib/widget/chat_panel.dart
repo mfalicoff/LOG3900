@@ -49,7 +49,7 @@ class _ChatPanelOpenButton extends State<ChatPanelOpenButton> {
         },
         child: Row(
           children: [
-            const Icon(Icons.chat),
+            Icon(Icons.chat, color: Theme.of(context).colorScheme.secondary),
             chatService.isThereAChatUnread() == true
                 ? Container(
                     decoration: BoxDecoration(

@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     borderRadius:
                                         BorderRadius.circular(100.0)))),
                     onPressed: _toSearchPage,
-                    child: const Icon(Icons.search))),
+                    child: Icon(Icons.search, color: Theme.of(context).colorScheme.secondary))),
             Positioned(
               top: 10.0,
               left: 30.0,
@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 onPressed: _logout,
-                child: const Icon(Icons.logout),
+                child: Icon(Icons.logout, color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             Center(
@@ -151,14 +151,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       infoClientService.gameMode = CLASSIC_MODE;
                       _toGameListPage();
                     },
-                    child: Text("HOME_SCREEN.CLASSIC_MODE".tr()),
+                    child: Text("HOME_SCREEN.CLASSIC_MODE".tr(), style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
                   ),
                   ElevatedButton(
                     onPressed: () {
                       infoClientService.gameMode = POWER_CARDS_MODE;
                       _toGameListPage();
                     },
-                    child: Text("HOME_SCREEN.POWER_CARDS_MODE".tr()),
+                    child: Text("HOME_SCREEN.POWER_CARDS_MODE".tr(), style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
                   ),
                 ],
               ),
