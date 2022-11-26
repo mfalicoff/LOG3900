@@ -47,7 +47,7 @@ export class CommunicationBoxComponent implements AfterViewInit {
     }
 
     isCreator() {
-        return this.infoClientService.playerName === this.actualChatRoom.creator;
+        return this.infoClientService.playerName === this.actualChatRoom.creator && this.actualChatRoom.name !== 'game';
     }
 
     chooseMsgClass(msg: ChatMessage): string {
