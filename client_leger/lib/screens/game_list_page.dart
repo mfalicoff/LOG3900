@@ -113,7 +113,7 @@ class _GameListPageState extends State<GameListPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(width: 300),
+                          const SizedBox(width: 240),
                           ElevatedButton(
                             onPressed: _createGame,
                             child: Text(
@@ -125,7 +125,40 @@ class _GameListPageState extends State<GameListPage> {
                           ),
                           Container(
                               margin: const EdgeInsets.all(5),
-                              child: const ChatPanelOpenButton()),
+                              child: const ChatPanelOpenButton()
+                          ),
+                          StatefulBuilder(
+                              builder: (BuildContext context, StateSetter setState) {
+                                return Positioned(
+                                  top: 190,
+                                  right: 25,
+                                  child: Container(
+                                    height: 63,
+                                    width: 63,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      borderRadius: const BorderRadius.all(Radius.circular(35.0)),
+                                    ),
+                                    child: IconButton(
+                                      iconSize: 50,
+                                      icon: CircleAvatar(
+                                        radius: 20,
+                                        backgroundColor: Theme.of(context).colorScheme.primary,
+                                        backgroundImage:
+                                        infoClientService.soundDisabled ?
+                                        const AssetImage('assets/volume-off-white.png') :
+                                        const AssetImage('assets/volume-on-white.png'),
+                                      ),
+                                      onPressed: () {
+                                        setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
+                                        infoClientService.notifyListeners();
+                                        socketService.notifyListeners();
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                          ),
                         ],
                       ),
                       const SizedBox(

@@ -155,6 +155,38 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
+          StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Positioned(
+                top: 190,
+                right: 30,
+                child: Container(
+                  height: 63,
+                  width: 63,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(35.0)),
+                  ),
+                  child: IconButton(
+                    iconSize: 50,
+                    icon: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundImage:
+                      infoClientService.soundDisabled ?
+                      const AssetImage('assets/volume-off-white.png') :
+                      const AssetImage('assets/volume-on-white.png'),
+                    ),
+                    onPressed: () {
+                      setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
+                      infoClientService.notifyListeners();
+                      socketService.notifyListeners();
+                    },
+                  ),
+                ),
+              );
+            }
+          ),
         ],
       ),
     );
