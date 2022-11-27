@@ -156,7 +156,7 @@ class Controller {
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
-      this.infoClientService.userAvatars[user.username] = user.avatarUri!;
+      infoClientService.userAvatars[user.username] = user.avatarUri!;
       socket.emit('updatedAvatar', user.username);
       return user;
     } else {
@@ -175,15 +175,6 @@ class Controller {
     );
     if (response.statusCode == 200) {
         User user = User.fromJson(json.decode(response.body));
-        // const SimpleDialog( backgroundColor: Colors.lightGreen, title: Text('La partie a été ajoutée dans vos favoris', textAlign: TextAlign.center,
-        //   style: TextStyle(
-        //     color: Colors.black,
-        //     fontSize: 15,
-        //     fontWeight: FontWeight.normal,
-        //     fontFamily: "Times New Roman"
-        //     ),
-        //   ),
-        // );
         return user;
     } else {
         throw Exception('Failed update favourite games');

@@ -6,6 +6,7 @@ import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/models/player.dart';
 import 'package:client_leger/models/game-saved.dart';
+import 'package:client_leger/utils/globals.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/models/user.dart';
@@ -379,15 +380,19 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         );
     }
 
-    Future<void> _addGameToFavourites() async {
+    _addGameToFavourites() {
         setState(() {
           isPressed = true;
         });
-        await usersController.updateFavouriteGames(socketService.gameId);
+        usersController.updateFavouriteGames(socketService.gameId);
+        print('Notif devrait se lancer');
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("FAVOURITE_GAMES_UPDATED".tr()),
+          backgroundColor: Colors.red.shade300,
+        ));
     }
 
     void _saveGame() {
-      print("Appel a save game light_client");
       gameSaved = GameSaved(infoClientService.actualRoom.players,
                 infoClientService.actualRoom.name,
                 numberOfTurns,
@@ -398,14 +403,9 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 infoClientService.game.winners);
       if (socketService.socket.id == infoClientService.game.masterTimer){
           socketService.socket.emit('saveGame', gameSaved);
-          print("Partie sauvegardée");
       }
-
-
     }
-
 }
-
 
 class ProfileReadOnlyDialog extends StatefulWidget {
   final String username;
