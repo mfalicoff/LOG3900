@@ -246,7 +246,7 @@ export class MouseKeyboardEventHandlerService {
             if (this.drawingBoardService.lettersDrawn !== '') {
                 return;
             }
-            //this.socketService.socket.emit('resetAllTilesStand');
+            // this.socketService.socket.emit('resetAllTilesStand');
         } else {
             this.isStandClicked = !this.isStandClicked;
         }
