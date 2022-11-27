@@ -198,121 +198,127 @@ class _ChatPanelState extends State<ChatPanel> {
                   child: Container(
                       decoration: const BoxDecoration(
                           border: Border(
-                              top: BorderSide(color: Colors.black, width: 1))),
-                      child: ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: chatService.rooms.length,
-                          controller: _roomScrollController,
-                          itemBuilder: (BuildContext context, int index) {
-                            return GestureDetector(
-                              onTap: () {
-                                chatService.currentChatRoom =
-                                    chatService.rooms[index];
-                                chatService.currentChatRoom.isUnread = false;
-                                refresh();
-                                scrollMessages();
-                                chatService.notifyListeners();
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 5, horizontal: 5),
-                                decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary,
-                                        width: 2),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(0)),
-                                    color: (chatService.currentChatRoom ==
-                                            chatService.rooms[index]
-                                        ? Theme.of(context).colorScheme.primary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .secondary)),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    chatService.rooms[index].isUnread == true &&
-                                            chatService.currentChatRoom.name !=
-                                                chatService.rooms[index].name
-                                        ? notificationContainer(Colors.red)
-                                        : notificationContainer(Theme.of(context).colorScheme.secondary.withOpacity(0)),
-                                    Expanded(
-                                      child: Text(
-                                        chatService.rooms[index].name,
-                                        style: TextStyle(
-                                          color: (chatService.currentChatRoom ==
-                                                  chatService.rooms[index]
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .primary),
-                                          fontSize: 27,
-                                          fontStyle: FontStyle.italic,
-                                          decoration: TextDecoration.none,
-                                        ),
-                                      ),
-                                    ),
-                                    if (chatService.rooms[index].name !=
-                                            "general" &&
-                                        chatService.rooms[index].name !=
-                                            "game") ...[
-                                      SizedBox(
-                                        width: 40,
-                                        height: 40,
-                                        child: FloatingActionButton(
-                                          heroTag: null,
-                                          onPressed: () {
-                                            socketService.socket.emit(
-                                                "leaveChatRoom",
-                                                chatService.rooms[index].name);
-                                            //deletes the room locally since the emit 'leaveChatRoom' does not return anything
-                                            chatService.rooms.removeWhere(
-                                                (element) =>
-                                                    element.name ==
-                                                    chatService
-                                                        .rooms[index].name);
-                                            refresh();
-                                          },
-                                          backgroundColor:
-                                              (chatService.currentChatRoom ==
-                                                      chatService.rooms[index]
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary
-                                                  : Theme.of(context)
-                                                      .colorScheme
-                                                      .primary),
-                                          elevation: 0,
-                                          child: Icon(
-                                            Icons.logout,
-                                            color:
-                                                (chatService.currentChatRoom ==
-                                                        chatService.rooms[index]
-                                                    ? Theme.of(context)
-                                                        .colorScheme
-                                                        .primary
-                                                    : Theme.of(context)
-                                                        .colorScheme
-                                                        .secondary),
-                                            size: 18,
+                              top: BorderSide(color: Colors.black, width: 1)
+                          ),
+                      ),
+                      child:
+                        ListView.separated(
+                            shrinkWrap: true,
+                            itemCount: chatService.rooms.length,
+                            controller: _roomScrollController,
+                            itemBuilder: (BuildContext context, int index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  chatService.currentChatRoom =
+                                  chatService.rooms[index];
+                                  chatService.currentChatRoom.isUnread = false;
+                                  refresh();
+                                  scrollMessages();
+                                  chatService.notifyListeners();
+                                },
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 5, horizontal: 5),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary,
+                                          width: 2),
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(0)),
+                                      color: (chatService.currentChatRoom ==
+                                          chatService.rooms[index]
+                                          ? Theme.of(context).colorScheme.primary
+                                          : Theme.of(context)
+                                          .colorScheme
+                                          .secondary)),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      chatService.rooms[index].isUnread == true &&
+                                          chatService.currentChatRoom.name !=
+                                              chatService.rooms[index].name
+                                          ? notificationContainer(Colors.red)
+                                          : notificationContainer(Theme.of(context).colorScheme.secondary.withOpacity(0)),
+                                      Expanded(
+                                        child: Text(
+                                          chatService.rooms[index].name,
+                                          style: TextStyle(
+                                            color: (chatService.currentChatRoom ==
+                                                chatService.rooms[index]
+                                                ? Theme.of(context)
+                                                .colorScheme
+                                                .secondary
+                                                : Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                            fontSize: 27,
+                                            fontStyle: FontStyle.italic,
+                                            decoration: TextDecoration.none,
                                           ),
                                         ),
                                       ),
+                                      if (chatService.rooms[index].name !=
+                                          "general" &&
+                                          chatService.rooms[index].name !=
+                                              "game") ...[
+                                        SizedBox(
+                                          width: 40,
+                                          height: 40,
+                                          child: FloatingActionButton(
+                                            heroTag: null,
+                                            onPressed: () {
+                                              socketService.socket.emit(
+                                                  "leaveChatRoom",
+                                                  chatService.rooms[index].name);
+                                              //deletes the room locally since the emit 'leaveChatRoom' does not return anything
+                                              chatService.rooms.removeWhere(
+                                                      (element) =>
+                                                  element.name ==
+                                                      chatService
+                                                          .rooms[index].name);
+                                              chatService.currentChatRoom = chatService.rooms[0];
+                                              refresh();
+                                            },
+                                            backgroundColor:
+                                            (chatService.currentChatRoom ==
+                                                chatService.rooms[index]
+                                                ? Theme.of(context)
+                                                .colorScheme
+                                                .secondary
+                                                : Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                            elevation: 0,
+                                            child: Icon(
+                                              Icons.logout,
+                                              color:
+                                              (chatService.currentChatRoom ==
+                                                  chatService.rooms[index]
+                                                  ? Theme.of(context)
+                                                  .colorScheme
+                                                  .primary
+                                                  : Theme.of(context)
+                                                  .colorScheme
+                                                  .secondary),
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
                                     ],
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) =>
-                              const Divider())),
-                )
+                              );
+                            },
+                            separatorBuilder: (BuildContext context, int index) =>
+                            const Divider()
+                        ),
+                      ),
+                  ),
               ],
             ),
           ),
@@ -326,110 +332,134 @@ class _ChatPanelState extends State<ChatPanel> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              if(isDelChatRoomBtn())...[
+                ElevatedButton(
+                  onPressed: (){
+                    socketService.socket.emit("deleteChatRoom", chatService.currentChatRoom.name);
+                  },
+                  child: Text("CHAT_PANEL.DELETE_CHATROOM_BTN".tr()),
+                ),
+              ],
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
                 child: Container(
-                  height: 650,
+                  height: isDelChatRoomBtn() ? 602 : 650,
                   decoration: BoxDecoration(
                       border: Border.all(),
                       color: Theme.of(context).colorScheme.secondary),
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: ListView.builder(
-                    itemCount: chatService.currentChatRoom.chatHistory.length,
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    controller: _chatScrollController,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        crossAxisAlignment: chatService.currentChatRoom
-                                    .chatHistory[index].senderName ==
+                        itemCount: chatService.currentChatRoom.chatHistory.length,
+                        shrinkWrap: true,
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        controller: _chatScrollController,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            crossAxisAlignment: chatService.currentChatRoom
+                                .chatHistory[index].senderName ==
                                 globals.userLoggedIn.username
-                            ? CrossAxisAlignment.end
-                            : CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
-                            child: Text(
-                              chatService.currentChatRoom.chatHistory[index]
-                                  .senderName,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: chatService.currentChatRoom
-                                        .chatHistory[index].senderName ==
-                                    globals.userLoggedIn.username
-                                ? MainAxisAlignment.end
-                                : MainAxisAlignment.start,
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
                             children: [
-                              Visibility(
-                                visible: chatService.currentChatRoom
-                                        .chatHistory[index].senderName ==
-                                    globals.userLoggedIn.username,
-                                child: Padding(
-                                  padding:
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+                                child: Text(
+                                  chatService.currentChatRoom.chatHistory[index]
+                                      .senderName,
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: chatService.currentChatRoom
+                                    .chatHistory[index].senderName ==
+                                    globals.userLoggedIn.username
+                                    ? MainAxisAlignment.end
+                                    : MainAxisAlignment.start,
+                                children: [
+                                  (chatService.currentChatRoom
+                                      .chatHistory[index].senderName !=
+                                      globals.userLoggedIn.username  && infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName] != null) ?
+                                  Container(
+                                      padding:
                                       const EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                  child: Text(
-                                    readableTime(chatService.currentChatRoom
-                                        .chatHistory[index].timestamp),
-                                    style: TextStyle(
-                                      color:
+                                      child: getAvatarFromString(15, infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName]!))
+                                      : Container(),
+                                  Visibility(
+                                    visible: chatService.currentChatRoom
+                                        .chatHistory[index].senderName ==
+                                        globals.userLoggedIn.username,
+                                    child: Padding(
+                                      padding:
+                                      const EdgeInsets.fromLTRB(0, 0, 10, 0),
+                                      child: Text(
+                                        readableTime(chatService.currentChatRoom
+                                            .chatHistory[index].timestamp),
+                                        style: TextStyle(
+                                          color:
                                           Theme.of(context).colorScheme.primary,
-                                      fontSize: 10.0,
+                                          fontSize: 10.0,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              Flexible(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color:
+                                  Flexible(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color:
                                         Theme.of(context).colorScheme.secondary,
-                                    border: Border.all(
-                                      color:
+                                        border: Border.all(
+                                          color:
                                           Theme.of(context).colorScheme.primary,
-                                      width: 2.0,
-                                    ),
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(5)),
-                                  ),
-                                  padding: const EdgeInsets.only(
-                                      left: 25, right: 25, top: 8, bottom: 8),
-                                  child: Text(
-                                    chatService
-                                        .currentChatRoom.chatHistory[index].msg,
-                                    style: TextStyle(
-                                      color:
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(5)),
+                                      ),
+                                      padding: const EdgeInsets.only(
+                                          left: 25, right: 25, top: 8, bottom: 8),
+                                      child: Text(
+                                        chatService
+                                            .currentChatRoom.chatHistory[index].msg,
+                                        style: TextStyle(
+                                          color:
                                           Theme.of(context).colorScheme.primary,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                              Visibility(
-                                visible: chatService.currentChatRoom
+                                  Visibility(
+                                    visible: chatService.currentChatRoom
                                         .chatHistory[index].senderName !=
-                                    globals.userLoggedIn.username,
-                                child: Padding(
-                                  padding:
+                                        globals.userLoggedIn.username,
+                                    child: Padding(
+                                      padding:
                                       const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                                  child: Text(
-                                    readableTime(chatService.currentChatRoom
-                                        .chatHistory[index].timestamp),
-                                    style: TextStyle(
-                                      color:
+                                      child: Text(
+                                        readableTime(chatService.currentChatRoom
+                                            .chatHistory[index].timestamp),
+                                        style: TextStyle(
+                                          color:
                                           Theme.of(context).colorScheme.primary,
-                                      fontSize: 10.0,
+                                          fontSize: 10.0,
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              )
+                                  (chatService.currentChatRoom
+                                      .chatHistory[index].senderName ==
+                                      globals.userLoggedIn.username  && infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName] != null) ?
+                                  Container(
+                                      padding:
+                                      const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                                      child: getAvatarFromString(15, infoClientService.userAvatars[chatService.currentChatRoom.chatHistory[index].senderName]!))
+                                      : Container(),
+                                ],
+                              ),
                             ],
-                          ),
-                        ],
-                      );
-                    },
+                          );
+                        },
                   ),
                 ),
               ),
@@ -490,6 +520,10 @@ class _ChatPanelState extends State<ChatPanel> {
         )),
       ],
     );
+  }
+
+  bool isDelChatRoomBtn(){
+    return infoClientService.playerName == chatService.currentChatRoom.creator && chatService.currentChatRoom.name != 'game';
   }
 
   Container notificationContainer(Color color) {

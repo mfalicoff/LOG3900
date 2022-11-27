@@ -97,6 +97,7 @@
         "WAITING_FOR_CREATOR": "En attente du créateur pour démarrer la partie...",
         "WAIT_FOR_OTHER_PLAYERS": "En attente d'autres joueurs...",
         "END_GAME": "La partie est terminée.",
+        "DELETE_CHATROOM_BTN": "Supprimer la salle",
         "SIDEBAR": {
             "CONTROL": "CONTRÔLES",
             "GIVE_UP": "Abandonner",
@@ -198,5 +199,11 @@
         "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.": "Cette carte permet d'ajouter 1 minute à votre temps de réflexion.",
         "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis."
     },
-    "DETACH": "Détacher"
+    "DETACH": "Détacher",
+    "ATTACH": "Attacher",
+    "CHAT_ROOMS":{
+        "NEW_CREATOR": "Vous êtes le nouveau créateur de la salle: ",
+        "ROOM_DEL_1": "La salle ",
+        "ROOM_DEL_2": " a été supprimée pour le createur."
+    }
 }

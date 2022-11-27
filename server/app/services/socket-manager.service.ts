@@ -585,6 +585,8 @@ export class SocketManager {
             if (user.language) {
                 this.translateService.addUser(user.name, user.language);
             }
+            const avatar = await this.userService.populateAvatarField(user);
+            socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
 
         socket.on('forceLogout', (name) => {
@@ -1091,12 +1093,13 @@ export class SocketManager {
             if (!dbUser || !dbUser.id) {
                 return;
             }
-            const chatRoom = await this.chatRoomService.createChatRoom(dbUser.id, chatRoomName, socket);
+            const chatRoom = await this.chatRoomService.createChatRoom(user.name, dbUser.id, chatRoomName, socket);
             // if an error was thrown, the chatRoom name will be ''
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         socket.on('deleteChatRoom', async (chatRoomName: string) => {
@@ -1108,7 +1111,13 @@ export class SocketManager {
             if (!dbUser || !dbUser.id) {
                 return;
             }
-            await this.chatRoomService.deleteChatRoom(dbUser.id, chatRoomName, socket);
+            const chatRoom = await this.chatRoomService.deleteChatRoom(dbUser.id, chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
+            this.sio.to(chatRoomName + Constants.CHATROOM_SUFFIX).emit('rmChatRoom', chatRoomName);
+            this.sio.in(chatRoomName + Constants.CHATROOM_SUFFIX).socketsLeave(chatRoomName + Constants.CHATROOM_SUFFIX);
         });
 
         socket.on('joinChatRoom', async (chatRoomName: string) => {
@@ -1125,7 +1134,8 @@ export class SocketManager {
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         socket.on('leaveChatRoom', async (chatRoomName: string) => {
@@ -1167,7 +1177,8 @@ export class SocketManager {
             }
             const chatRooms: ChatRoom[] = await this.chatRoomService.getAllChatRooms(dbUser.id, socket);
             for (const chatRoom of chatRooms) {
-                socket.emit('setChatRoom', chatRoom);
+                const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+                socket.emit('setChatRoom', chatRoomPopulated);
             }
         });
 
@@ -1181,7 +1192,8 @@ export class SocketManager {
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         // socket user for the search of rooms
@@ -1205,6 +1217,24 @@ export class SocketManager {
 
         socket.on('changeTheme', async (playerName, theme) => {
             this.translateService.addUser(playerName, theme);
+        });
+
+        socket.on('getAllAvatars', async () => {
+            const avatarUsers: Map<string, string> = new Map();
+            const users = await this.userService.findAllUser();
+            users.map(async (user) => {
+                if (!avatarUsers.has(user.name)) {
+                    const avatar = await this.userService.populateAvatarField(user);
+                    avatarUsers.set(user.name, avatar);
+                    socket.emit('sendAvatars', user.name, avatar);
+                }
+            });
+        });
+
+        socket.on('updatedAvatar', async (username) => {
+            const user = await this.userService.findUserByName(username);
+            const avatar = await this.userService.populateAvatarField(user);
+            socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
     }
 }

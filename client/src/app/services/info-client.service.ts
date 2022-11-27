@@ -62,8 +62,11 @@ export class InfoClientService {
 
     // variable used for the chat rooms
     chatRooms: ChatRoom[];
+    currSelectedChatroom: ChatRoom;
+
     // variable to allow/block sound effects
     soundDisabled: boolean;
+    userAvatars: Map<string, string>;
 
     constructor(private translate: TranslateService, private timerService: TimerService) {
         this.gameMode = Constants.CLASSIC_MODE;
@@ -74,6 +77,7 @@ export class InfoClientService {
         this.incommingPlayerId = '';
         this.rooms = [];
         this.chatRooms = [];
+        this.userAvatars = new Map();
         this.initializeService();
     }
 
@@ -95,6 +99,7 @@ export class InfoClientService {
         this.soundDisabled = false;
         this.timerService.displayTimer = this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') + '1:00';
         this.timerService.clearTimer();
+        this.currSelectedChatroom = { name: 'default', participants: [], creator: 'fake', chatHistory: [] };
 
         this.letterReserve = ['a', 'b'];
         this.letterBank = new Map([
