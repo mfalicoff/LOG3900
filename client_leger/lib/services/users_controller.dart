@@ -210,6 +210,7 @@ class Controller {
     final response = await http.get(Uri.parse("$serverAddress/users/games/${user.id}"));
     if (response.statusCode == 200) {
       List<dynamic> favouriteGames = json.decode(response.body);
+      infoClientService.updateFavouriteGames(favouriteGames);
       return favouriteGames;
     } else {
         throw Exception('Failed to get favourite games');
