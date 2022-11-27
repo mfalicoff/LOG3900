@@ -22,7 +22,7 @@ form {
     background-color: white;
     z-index: 2;
     background: #0c483f;
-    color: wheat;
+    
     font-size: large;
     border-radius: 25px;
     justify-content: center;
@@ -32,8 +32,6 @@ input {
     font-size: large;
     height: 30px;
     border-radius: 8px;
-    border-color: #0c483f;
-    background-color: wheat;
 }
 
 .center {
@@ -94,9 +92,9 @@ html {
     height: 12%;
     width: 25%;
     border-radius: 13px;
-    background-color: wheat;
+    
     margin-top: 0%;
-    color: #0c483f;
+    
     font-size: 16px;
     font-weight: bold;
     bottom: 0%;
@@ -110,13 +108,13 @@ html {
 
 #bonusButtonMulti{
     border-radius: 8px;
-    background-color: wheat;
+    
     height: 30px;
     width: 100px;
 }
 
 .multiplayerOptionsMulti{
-    background-color: wheat;
+    
     height: 66px;
     border-radius: 10px;
     position: relative;
@@ -154,7 +152,7 @@ mat-option {
 
 #dictionnaryDescriptionMulti{
     margin-top: -7%;
-    color: wheat;
+    
     position: relative;
     border-radius: 5px;
 }
@@ -164,7 +162,7 @@ mat-form-field {
 }
 
 mat-option {
-    color: #0c483f;
+    
 }
 
 //place the button on the top left corner
@@ -177,7 +175,7 @@ mat-option {
     transform: scale(1.5);
     margin-top: 2%;
     margin-left : 2%;
-    color: wheat;
+    
 }
 
 
@@ -198,10 +196,7 @@ mat-option {
 }
 
 #mdpCheckbox{
-    border-color: wheat;
     margin-right: 20px;
-    color: wheat;
-    background-color: #0c483f;
     margin-bottom: 1%;
 }
 
@@ -228,16 +223,16 @@ mat-option {
 }
 
 #tablePowers tr:hover {
-    background-color: wheat;
-    color: #0C483F;
+    
+    
 }
 
 #tablePowers th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    background-color: wheat;
-    color: #0C483F;
+    
+    
 }
 
 #tablePowers td{
@@ -256,12 +251,12 @@ mat-option {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    color: #0C483F;
+    
 }
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: wheat;
+    
     margin: 15% auto; /* 15% from the top and centered */
     padding: 30px;
     border-radius: 8px;
@@ -306,8 +301,8 @@ mat-option {
   
   /* Style the front side (fallback if image is missing) */
   .flip-card-front {
-    background-color: wheat;
-    color: #0C483F;
+    
+    
   }
   
   /* Style the back side */
@@ -318,6 +313,6 @@ mat-option {
     vertical-align: middle;
     border: 2px solid #0C483F;
     border-radius: 15px;
-    color: #0C483F;
+    
     transform: rotateY(180deg);
   }

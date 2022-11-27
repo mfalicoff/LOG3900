@@ -133,35 +133,36 @@ body {
     // background-color: wheat;
 }
 
-// body.my-dark-mode {
-//     background-color: #0c483f;
-//     color: wheat;
-// }
-
-// body.my-light-mode {
-//     background-color: wheat;
-//     color: #0c483f;
-// }
-
 body.my-dark-mode {
     background-color: #0c483f;
     color: wheat;
-}
-
-button.my-dark-mode {
-    background-color: wheat;
-    color: #0c483f;
-}
-
-
-button.my-light-mode {
-    background-color: #0c483f;
-    color: wheat;
+    border-color: wheat;
+    button {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    .mat-dialog-container{
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+    }
 }
 
 body.my-light-mode {
     background-color: wheat;
     color: #0c483f;
+    border-color: #0c483f;
+    button {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+    }
+    .mat-dialog-container{
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
 }
 
 .customDialog .mat-dialog-container {

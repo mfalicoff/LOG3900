@@ -59,7 +59,13 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         this.langList = ['Français', 'English'];
         this.langSelected = this.inverseLangMap.get(this.translate.currentLang);
         this.themeList = ['Light', 'Dark'];
-        // this.themeSelected = this.inverseThemeMap.get(this.themeService.darkMode$);
+        this.themeService.darkMode$.subscribe((data) => {
+            if (data) {
+                this.themeSelected = this.inverseThemeMap.get('dk');
+            } else {
+                this.themeSelected = this.inverseThemeMap.get('lt');
+            }
+        });
     }
 
     ngOnDestroy() {
@@ -130,11 +136,16 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     onClickTheme(theme: string): void {
         const themeSelect = this.themeMap.get(theme) as string;
         this.userService.updateTheme(themeSelect);
-        // this.socketService.socket.emit('changeTheme', this.userService.user.name, themeSelect);
-        // this.translate.use(themeSelect);
+        console.log('XXXX ' + themeSelect);
+        this.socketService.socket.emit('changeTheme', this.userService.user.name, themeSelect);
+        this.themeService.darkMode$.subscribe((data) => console.log('ISDARKMODE ', data));
+        if (theme !== this.themeSelected) {
+            this.themeService.toggle();
+        }
     }
 
     onToggle(): void {
         this.themeService.toggle();
+        this.themeService.darkMode$.subscribe((data) => console.log('ISDARKMODE ', data));
     }
 }

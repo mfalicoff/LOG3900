@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from './notification.service';
 import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
 import { MatDialog } from '@angular/material/dialog';
+import { DarkModeService } from 'angular-dark-mode';
 
 @Injectable({
     providedIn: 'root',
@@ -28,6 +29,7 @@ export class UserService {
         private notifService: NotificationService,
         private dialog: MatDialog,
         private translate: TranslateService,
+        private themeService: DarkModeService,
     ) {}
 
     getUser(user: User): Observable<UserResponseInterface> {
@@ -276,6 +278,7 @@ export class UserService {
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
         this.translate.use(response.data.language);
+        this.themeService.darkMode$.subscribe();
         this.infoClientService.playerName = response.data.name;
         this.router.navigate(['/game-mode-options']);
     }

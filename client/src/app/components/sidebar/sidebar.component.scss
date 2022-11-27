@@ -7,13 +7,13 @@
 }
 
 h1 {
-    color: wheat;
+    
     text-align: center;
     margin-top: 20px;
 }
 
 #sliderTiles {
-    color: wheat;
+    
 }
 
 #sliderTiles p {
@@ -31,7 +31,7 @@ button {
 }
 
 .optionButton {
-    background-color: wheat;
+    
 }
 
 .buttonContainer{
@@ -54,12 +54,12 @@ button {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    color: #0C483F;
+    
 }
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: wheat;
+    
     margin: 15% auto; /* 15% from the top and centered */
     padding: 30px;
     border-radius: 8px;
@@ -78,16 +78,16 @@ button {
 }
 
 .table tr:hover {
-    background-color: wheat;
-    color: #0C483F;
+    
+    
 }
 
 .table th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    background-color: wheat;
-    color: #0C483F;
+    
+    
 }
 
 .table td{
@@ -172,16 +172,16 @@ button {
   
   /* Style the front side (fallback if image is missing) */
   .flip-card-front {
-    background-color: wheat;
-    color: #0C483F;
+    
+    
   }
   
   /* Style the back side */
   .flip-card-back {
     vertical-align: middle;
     border-radius: 15px;
-    color: wheat;
-    background-color: #0C483F;
+    
+    
     transform: rotateY(180deg);
   }
 

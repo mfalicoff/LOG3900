@@ -1,6 +1,6 @@
 #main {
     border: 5px solid #0C483F;
-    background-color: wheat;
+    
     width: 600px;
     height: 460px;
     padding: 10px;
@@ -23,7 +23,7 @@
 }
 
 #timer {
-    background-color: wheat;
+    
     margin: auto;
     margin-left: 12%;
     border-radius: 10px;
@@ -34,16 +34,16 @@
 }
 
 #playerToPlay {
-    color: #0C483F;
+    
     text-align: center;
 }
 
 .btnStyle{
-    background-color: #0C483F;
+    
     display: inline;
     margin-top: 0px;
     font-size: 18px;
-    color: wheat;
+    
     cursor: pointer;
     box-shadow: none;
 }
@@ -90,24 +90,23 @@
 
 .divOpponent {
     border: 3px solid #0C483F;
-    border-right-color: wheat;
 }
 
 .name {
-    color: #0C483F;
+    
     text-align: center;
     margin-bottom: 0px;
 }
 
 .score {
-    color: #0C483F;
+    
     text-align: center;
     margin-bottom: 0px;
     // display: inline;
 }
 
 .nbLetterStand {
-    color: #0C483F;
+    
     text-align: center;
     top: 20px;
     // display: inline;
@@ -125,14 +124,14 @@
 
 #tableRoom td, #tableRoom th {
     padding: 4px;
-    color: #0C483F;
+    
     font-size: 17px;
     text-align: center;
 }
 
 #tableRoom th {
-    background-color: wheat;
-    color: #0C483F;
+    
+    
 }
 
 #tableRoom td{
@@ -151,7 +150,7 @@
 /////////////////////////////////////////////////////////
 
 #divPlayer {
-    color: wheat;
+    
     width: 50%;
     float: left;
 }
@@ -161,7 +160,7 @@
 /////////////////////////////////////////////////////////
 
 #divReserveUpdate {
-    color: wheat;
+    
     text-align: center;
     margin-top: 5px;
     margin-bottom: -10px;
@@ -176,12 +175,12 @@
 /////////////////////////////////////////////////////////
 #objectives{
     // border-top:  solid wheat;
-    color: wheat;
+    
     // padding: 10px;
 }
 
 .titleObjectives{
-    color: #0C483F;
+    
     text-decoration: underline;
     text-align: center;
     font-size: 20px;
@@ -218,8 +217,8 @@
 }
 
 .uncompleted{
-    color: #0C483F;
-    // background-color: #0C483F;
+    
+    // 
     text-decoration: none;
     font-style: normal;
 }

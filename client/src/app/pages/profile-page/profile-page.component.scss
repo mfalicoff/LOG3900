@@ -5,7 +5,7 @@
 }
 
 h1 {
-    color: #0c483f;
+    // 
 }
 
 #container {
@@ -14,7 +14,6 @@ h1 {
     margin-top: 5%;
     margin-left: 10%;
     height: 90%;
-    // background-color: wheat;
     font-size: large;
     border-radius: 25px;
     justify-content: center;
@@ -35,7 +34,6 @@ h1 {
 }
 
 #statsContainer {
-    color: #0c483f;
     z-index: 2;
     text-align: center;
     width: 80%;
@@ -56,11 +54,6 @@ h1 {
     justify-content: left;
 }
 
-.editButton {
-    // background-color: #0c483f;
-    // color: wheat;
-}
-
 .subcontainer {
     background-position: center;
     background-attachment: fixed;
@@ -77,8 +70,6 @@ h1 {
     font-size: 17px;
     padding: 20px;
     border-radius: 8px;
-    // background-color: #0c483f;
-    // color: wheat;
 }
 
 .button-grid-row{
@@ -100,12 +91,10 @@ h1 {
 
 .title-box {
     max-width: 100%;
-    color: #0c483f;
     margin-bottom: 10px;
 }
 
 .matSelect{
-    // background-color: wheat;
     height: 66px;
     border-radius: 10px;
     position: relative;
@@ -114,7 +103,5 @@ h1 {
 }
 
 mat-option {
-    // background-color: wheat !important;
-    // color: #0c483f;
     margin: 0;
 }
