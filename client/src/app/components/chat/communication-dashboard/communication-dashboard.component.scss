@@ -32,8 +32,7 @@
 #main {
   align-self: center;
   align-content: center;
-  border: 5px solid #0C483F;
-  // 
+  border: 5px solid;
   width: 600px;
   height: 450px;
   padding: 0px;
@@ -60,7 +59,7 @@
 .listChatRoom{
   height: 260px;
   overflow-y: scroll;
-  border-top: 3px solid #0C483F;
+  border-top: 3px solid;
   padding-top: 5px;
 }
 
@@ -91,9 +90,9 @@
 }
 
 .chatRoomElementPressed{
+  //   border: 2px solid #0C483F;
   // 
-  // 
-  border: 2px solid #0C483F;
+  border: 2px solid;
 }
 
 
@@ -161,9 +160,9 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: wheat;
+  // background: wheat;
 }
 ::-webkit-scrollbar-thumb {
-  background: #0c483f;
+  // background: #0c483f;
   border-radius: 8px;
 }

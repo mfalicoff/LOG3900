@@ -1,6 +1,5 @@
 #main {
-    border: 5px solid #0C483F;
-    
+    border: 5px solid;
     width: 600px;
     height: 460px;
     padding: 10px;
@@ -84,12 +83,12 @@
 /////////////////////////////////////////////////////////
 
 .divPlayer {
-    border: 3px solid #0C483F;
+    border: 3px solid;
     border-left-color:wheat;
 }
 
 .divOpponent {
-    border: 3px solid #0C483F;
+    border: 3px solid;
 }
 
 .name {
@@ -135,7 +134,7 @@
 }
 
 #tableRoom td{
-    border-bottom: 2px solid wheat;
+    border-bottom: 2px solid;
 }
 
 .profile {

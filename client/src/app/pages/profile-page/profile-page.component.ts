@@ -135,17 +135,14 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
 
     onClickTheme(theme: string): void {
         const themeSelect = this.themeMap.get(theme) as string;
+        this.themeService.darkMode$.subscribe((data) => {
+            if (data && this.themeSelected !== 'Dark') {
+                this.themeService.toggle();
+            } else if (!data && this.themeSelected !== 'Light') {
+                this.themeService.toggle();
+            }
+        });
         this.userService.updateTheme(themeSelect);
-        console.log('XXXX ' + themeSelect);
         this.socketService.socket.emit('changeTheme', this.userService.user.name, themeSelect);
-        this.themeService.darkMode$.subscribe((data) => console.log('ISDARKMODE ', data));
-        if (theme !== this.themeSelected) {
-            this.themeService.toggle();
-        }
-    }
-
-    onToggle(): void {
-        this.themeService.toggle();
-        this.themeService.darkMode$.subscribe((data) => console.log('ISDARKMODE ', data));
     }
 }

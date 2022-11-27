@@ -110,11 +110,8 @@
     // Height of horizontal scroll bar
     height: 10px;
 }
-::-webkit-scrollbar-track {
-    background: #0c483f;
-}
+
 ::-webkit-scrollbar-thumb {
-    background: wheat;
     border-radius: 8px;
 }
 
@@ -143,7 +140,7 @@
 }
 
 #tableRoom td {
-    border-bottom: 2px solid wheat;
+    border-bottom: 2px solid;
 }
 
 #buttonShowModal {
