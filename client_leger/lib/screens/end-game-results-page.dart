@@ -6,7 +6,7 @@ import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/models/player.dart';
 import 'package:client_leger/models/game-saved.dart';
-import 'package:client_leger/utils/globals.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:client_leger/models/user.dart';
@@ -381,14 +381,14 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         );
     }
 
-    _addGameToFavourites() {
+    _addGameToFavourites() async {
         setState(() {
           isPressed = true;
         });
-        usersController.updateFavouriteGames(socketService.gameId);
+        globals.userLoggedIn = await usersController.updateFavouriteGames(socketService.gameId);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("END_GAME_RESULT_PAGE.FAVOURITE_GAMES_UPDATED".tr()),
-          backgroundColor: Colors.red.shade300,
+          backgroundColor: Colors.green,
         ));
     }
 
