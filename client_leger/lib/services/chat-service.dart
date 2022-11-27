@@ -6,7 +6,7 @@ class ChatService with ChangeNotifier{
   static final ChatService _chatService = ChatService._internal();
 
   List<ChatRoom> rooms = [];
-  ChatRoom currentChatRoom = ChatRoom(name: "bugIfHere", participants: []);
+  ChatRoom currentChatRoom = ChatRoom(name: "bugIfHere", participants: [], creator:"sys");
   //chatRoom tmp for the search of rooms
   ChatRoom? chatRoomWanted;
   late bool isDrawerOpen = false;
