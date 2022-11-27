@@ -47,6 +47,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
         backgroundColor: Colors.red.shade300,
       ));
     });
+    socketService.socket.emit('ReSendDictionariesToClient');
     super.initState();
   }
 

@@ -8,7 +8,7 @@
             <mat-grid-list cols="2" rowHeight="2:1" id="statsList">
                 <mat-grid-tile class="statsElement">{{'PROFILE.GAMES_PLAYED' | translate}}{{this.userService.user.gamesPlayed}}</mat-grid-tile>
                 <mat-grid-tile class="statsElement">{{'PROFILE.GAMES_WON' | translate}}{{this.userService.user.gamesWon}}</mat-grid-tile>
-                <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_SCORE' | translate}}{{this.userService.user.averagePointsPerGame}}</mat-grid-tile>
+                <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_SCORE' | translate}}{{this.userService.user.averagePointsPerGame?.toFixed(2)}}</mat-grid-tile>
                 <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_TIMES' | translate}}{{this.millisToMinutesAndSeconds()}}</mat-grid-tile>
             </mat-grid-list>
         </div>

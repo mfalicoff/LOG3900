@@ -142,26 +142,7 @@ class _GamePageState extends State<GamePage> {
                           ),
                         )
                             : null),
-                    Container(
-                        child: infoClientService.game.gameFinished == true
-                            ? ElevatedButton(
-                          style: ButtonStyle(
-                              padding: MaterialStateProperty.all(
-                                const EdgeInsets.symmetric(
-                                    vertical: 18.0, horizontal: 0.0),
-                              ),
-                              shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(100.0)))),
-                          onPressed: () {
-                            showDialog(context: context, builder: (context) => const EndGameResultsPage(),
-                            );
-                          },
-                          child: Text("GAME_PAGE.END_GAME_RESULT".tr()),
-                        )
-
-                            : null),
-                    Container(
+                      Container(
                         child: shouldSpecBeAbleToBePlayer() == true
                             ? ElevatedButton(
                           style: ButtonStyle(
@@ -212,6 +193,9 @@ class _GamePageState extends State<GamePage> {
               ),
             ],
           ),
+          if (infoClientService.game.gameFinished == true) ... [
+                const EndGameResultsPage(),
+            ],
           if (infoClientService.incomingPlayer != "")
             AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.secondary,

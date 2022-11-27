@@ -175,12 +175,6 @@ class _GameListPageState extends State<GameListPage> {
                       ),
                       Expanded(
                         child: Container(
-                          // decoration: BoxDecoration(
-                          //   border: Border.all(
-                          //       color: Theme.of(context).colorScheme.primary,
-                          //       width: 2.0),
-                          //   borderRadius: BorderRadius.circular(10),
-                          // ),
                           child: gameList(
                             rooms: infoClientService.rooms
                                 .where((room) =>

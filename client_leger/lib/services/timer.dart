@@ -44,21 +44,6 @@ class TimerService with ChangeNotifier{
       notifyListeners();
     });
   }
-  startGameTimer() {
-    int oneSecond = 1000;
-    playingTime = 0.0;
-    timerGame = Timer.periodic(Duration(milliseconds: oneSecond), (timer) {
-        playingTime++;
-    });
- }
-
-  addSecsToTimer(num secsToAdd){
-    secondsValue += secsToAdd;
-  }
-
-  clearGameTimer() {
-    timerGame.cancel();
-  }
 
   clearTimer() {
     timerInterval.cancel();

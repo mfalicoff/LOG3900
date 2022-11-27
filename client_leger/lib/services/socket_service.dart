@@ -32,7 +32,7 @@ class SocketService with ChangeNotifier {
   TapService tapService = TapService();
   Controller controller = Controller();
   ChatService chatService = ChatService();
-  late String gameId;
+  late String gameId = '';
   int count = 1;
 
   late IO.Socket socket;
@@ -151,7 +151,6 @@ class SocketService with ChangeNotifier {
       infoClientService.notifyListeners();
       chatService.notifyListeners();
       if (GameServer.fromJson(game).gameFinished && count == 1) {
-        timerService.clearGameTimer();
         infoClientService.notifyListeners();
         count++;
       }
@@ -230,16 +229,11 @@ class SocketService with ChangeNotifier {
     socket.on('setTimeoutTimerStart', (_) {
       tapService.lettersDrawn = '';
       setTimeoutForTimer();
-      timerService.startGameTimer();
     });
 
     socket.on('stopTimer', (_) {
       tapService.lettersDrawn = '';
       timerService.clearTimer();
-    });
-
-    socket.on('addSecsToTimer', (secsToAdd){
-      timerService.addSecsToTimer(secsToAdd);
     });
 
     socket.on('askTimerStatus', (_) {
@@ -297,7 +291,8 @@ class SocketService with ChangeNotifier {
         chatService.rooms[indexRoom].chatHistory
             .add(ChatMessage.fromJson(newMsg));
         if (chatService.currentChatRoom.name !=
-            chatService.rooms[indexRoom].name || !chatService.isDrawerOpen) {
+                chatService.rooms[indexRoom].name ||
+            !chatService.isDrawerOpen) {
           chatService.rooms[indexRoom].isUnread = true;
         }
       } else {
