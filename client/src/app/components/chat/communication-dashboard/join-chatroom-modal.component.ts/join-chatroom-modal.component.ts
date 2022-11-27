@@ -34,6 +34,7 @@ export class JoinChatRoomModalComponent {
                 }
             }
         });
+        this.socketService.socket.emit('getChatRoomsNames', '');
     }
 
     onChangeInput() {

@@ -259,11 +259,13 @@ class SocketService with ChangeNotifier {
 
       //if the room is already present we delete it to set the newer one
       //it should never happened though
-      if (chatService.rooms.contains(chatRoom)) {
-        chatService.rooms
-            .removeWhere((element) => element.name == chatRoom.name);
-        print("Should never go here in SocketService:setChatRoom");
+      var idxChatRoom = chatService.rooms.indexWhere((element) => element.name == chatRoom.name);
+      var refreshRoom = false;
+      if(idxChatRoom != DEFAULT_VALUE_NUMBER){
+        chatService.rooms.removeWhere((element) => element.name == chatRoom.name);
+        refreshRoom = true;
       }
+
       //if the room received is general it means we are getting all the room
       //and this is the start of the app
       if (chatRoom.name == "general") {
@@ -272,6 +274,9 @@ class SocketService with ChangeNotifier {
       chatService.rooms.add(chatRoom);
       if (chatRoom.name == "general") {
         chatService.currentChatRoom = chatService.rooms[0];
+      }
+      if(refreshRoom){
+        chatService.currentChatRoom = chatService.rooms[chatService.rooms.length - 1];
       }
       chatService.chatRoomWanted = null;
       chatService.notifyListeners();
@@ -300,6 +305,12 @@ class SocketService with ChangeNotifier {
       await player.play();
       await player.stop();
     });
+
+  socket.on('rmChatRoom', (chatRoomName) {
+    chatService.rooms.removeWhere((element) => element.name == chatRoomName);
+    chatService.currentChatRoom = chatService.rooms[0];
+    chatService.notifyListeners();
+  });
 
     socket.on('sendAvatars', (nameAndAvatar) {
       String name = nameAndAvatar[0];

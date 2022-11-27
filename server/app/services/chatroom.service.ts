@@ -2,16 +2,17 @@ import { ChatRoom } from '@app/classes/interfaces/chatroom.interface';
 import chatRoomModel from '@app/models/chatrooms.model';
 import { Service } from 'typedi';
 import { isEmpty } from '@app/utils/utils';
-import { ObjectId } from 'bson';
 import * as io from 'socket.io';
 import { User } from '@app/classes/users.interface';
 import * as Constants from '@app/classes/global-constants';
+import UserService from '@app/services/user.service';
 
 @Service()
 class ChatRoomService {
     chatRooms = chatRoomModel;
+    private userService = new UserService();
 
-    async createChatRoom(dbUserId: string, chatRoomName: string, socket: io.Socket): Promise<ChatRoom> {
+    async createChatRoom(userName: string, dbUserId: string, chatRoomName: string, socket: io.Socket): Promise<ChatRoom> {
         if (isEmpty(chatRoomName)) {
             socket.emit('messageServer', 'Chat room name is empty.');
             return Promise.resolve({ name: '', participants: [], creator: '', chatHistory: [] });
@@ -28,7 +29,7 @@ class ChatRoomService {
         const newChatRoom = await this.chatRooms.create({
             name: chatRoomName,
             participants: [dbUserId],
-            creator: new ObjectId(dbUserId),
+            creator: dbUserId,
             chatHistory: [],
         });
         if (!newChatRoom) {
@@ -58,8 +59,7 @@ class ChatRoomService {
             socket.emit('messageServer', 'The chat room ' + chatRoomName + ' could not be deleted.');
             return Promise.resolve({ name: '', participants: [], creator: '', chatHistory: [] });
         }
-        socket.leave(chatRoomName + Constants.CHATROOM_SUFFIX);
-        return deleteChatRoom;
+        return Promise.resolve({ name: 'noReturn', participants: [], creator: '', chatHistory: [] });
     }
 
     async joinChatRoom(dbUserId: string, chatRoomName: string, socket: io.Socket): Promise<ChatRoom> {
@@ -104,14 +104,21 @@ class ChatRoomService {
             await this.deleteChatRoom(dbUserId, chatRoomName, socket);
             return Promise.resolve();
         }
+        let isNewCreator = false;
         // if the user leaving is the creator, we appoint a new one
         if (chatRoom.creator.toString() === dbUserId) {
             await this.appointNewCreator(dbUserId, chatRoom, socket);
+            isNewCreator = true;
         }
         const result = await this.chatRooms.updateOne({ name: chatRoomName }, { $pull: { participants: dbUserId } }, { new: true });
         if (!result) {
             socket.emit('messageServer', 'You could not be removed from the chat room ' + chatRoomName + '.');
             return Promise.resolve();
+        }
+        if (isNewCreator) {
+            const newChatRoom = (await this.chatRooms.findOne({ name: chatRoomName })) as ChatRoom;
+            const newChatRoomPopulated = await this.populateCreatorField(newChatRoom);
+            socket.broadcast.to(chatRoomName + Constants.CHATROOM_SUFFIX).emit('setChatRoom', newChatRoomPopulated);
         }
         socket.leave(chatRoomName + Constants.CHATROOM_SUFFIX);
     }
@@ -179,8 +186,31 @@ class ChatRoomService {
         return chatRoom;
     }
 
+    async populateCreatorField(chatRoom: ChatRoom): Promise<ChatRoom> {
+        if (chatRoom.name === 'general') {
+            return Promise.resolve(chatRoom);
+        }
+        try {
+            const creatorName = (await this.userService.findUserById(chatRoom.creator.toString())).name;
+            const chatRoomPopulated = {
+                name: chatRoom.name,
+                participants: chatRoom.participants,
+                creator: creatorName,
+                chatHistory: chatRoom.chatHistory,
+            };
+            return chatRoomPopulated;
+        } catch (error) {
+            // eslint-disable-next-line no-console
+            console.error('Error when getting creator name', error);
+        }
+        return Promise.resolve({ name: '', participants: [], creator: '', chatHistory: [] });
+    }
+
     private async appointNewCreator(dbUserId: string, chatRoom: ChatRoom, socket: io.Socket) {
-        const newCreator = chatRoom.participants.find((participant) => participant !== dbUserId);
+        const newCreator = chatRoom.participants.find((participant) => participant.toString() !== dbUserId);
+        if (!newCreator) {
+            return;
+        }
         const result = await this.chatRooms.updateOne({ name: chatRoom.name }, { $set: { creator: newCreator } }, { new: true });
         if (!result) {
             socket.emit('messageServer', 'The creator of the chat room ' + chatRoom.name + ' could not be changed.');

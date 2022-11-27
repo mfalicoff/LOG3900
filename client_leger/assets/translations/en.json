@@ -166,7 +166,11 @@
         "PASSWORD": "Password",
         "CANCEL": "Cancel",
         "SUBMIT": "Submit",
-        "CREATE_ROOM": "Create Room"
+        "CREATE_ROOM": "Create Room",
+        "DELETE_CHATROOM_BTN": "Delete chat room",
+        "NEW_CREATOR": "You are the new creator of the chat room: ",
+        "ROOM_DEL_1": "The room ",
+        "ROOM_DEL_2": " has been deleted by the creator."
     },
     "CLICK_ON_LETTER": "Click on the letter you want:",
     "INFO_PANEL": {
