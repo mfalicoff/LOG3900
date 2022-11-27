@@ -114,7 +114,7 @@ class _ChatPanelState extends State<ChatPanel> {
 
   void scrollMessages() {
     _chatScrollController.animateTo(
-      _chatScrollController.position.maxScrollExtent + 50,
+      _chatScrollController.position.maxScrollExtent,
       curve: Curves.easeOut,
       duration: const Duration(milliseconds: 500),
     );
@@ -146,7 +146,7 @@ class _ChatPanelState extends State<ChatPanel> {
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _chatScrollController
-          .jumpTo(_chatScrollController.position.maxScrollExtent + 30);
+          .jumpTo(_chatScrollController.position.maxScrollExtent);
       if (chatService.currentChatRoom.isUnread) {
         chatService.currentChatRoom.isUnread = false;
         chatService.notifyListeners();
@@ -325,7 +325,6 @@ class _ChatPanelState extends State<ChatPanel> {
         ),
         Expanded(
             child: Container(
-          alignment: Alignment.center,
           decoration: BoxDecoration(
               border: Border.all(),
               color: Theme.of(context).colorScheme.secondary),
@@ -341,9 +340,9 @@ class _ChatPanelState extends State<ChatPanel> {
                 ),
               ],
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: Container(
-                  height: isDelChatRoomBtn() ? 602 : 650,
+                  height: isDelChatRoomBtn() ? 642 : 690,
                   decoration: BoxDecoration(
                       border: Border.all(),
                       color: Theme.of(context).colorScheme.secondary),
