@@ -7,6 +7,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
+import '../screens/end-game-results-page.dart';
 import '../screens/game_page.dart';
 
 class InfoPanel extends StatefulWidget {
@@ -156,8 +157,9 @@ class _InfoPanelState extends State<InfoPanel> {
               Container(
                 child: shouldBeAbleToLeaveGame()
                     ? const SizedBox(
-                  width: 5,
-                ): null,
+                        width: 5,
+                      )
+                    : null,
               ),
               Container(
                 child: shouldBeAbleToGiveUpGame()
@@ -175,8 +177,9 @@ class _InfoPanelState extends State<InfoPanel> {
               Container(
                 child: shouldBeAbleToGiveUpGame()
                     ? const SizedBox(
-                  width: 5,
-                ): null,
+                        width: 5,
+                      )
+                    : null,
               ),
               Container(
                   child: infoClientService.creatorShouldBeAbleToStartGame ==
@@ -192,31 +195,30 @@ class _InfoPanelState extends State<InfoPanel> {
                         )
                       : null),
               Container(
-                child: infoClientService.creatorShouldBeAbleToStartGame ==
-                    true
+                child: infoClientService.creatorShouldBeAbleToStartGame == true
                     ? const SizedBox(
-                  width: 5,
-                ): null,
+                        width: 5,
+                      )
+                    : null,
               ),
               Container(
                   child: shouldSpecBeAbleToBePlayer() == true
                       ? ElevatedButton(
-                    onPressed: spectWantsToBePlayer,
-                    child: Text(
-                      "GAME_PAGE.REPLACE_VIRTUAL_PLAYER".tr(),
-                      style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary,
-                      ),
-                    ),
-                  )
+                          onPressed: spectWantsToBePlayer,
+                          child: Text(
+                            "GAME_PAGE.REPLACE_VIRTUAL_PLAYER".tr(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        )
                       : null),
               Container(
                 child: shouldSpecBeAbleToBePlayer()
                     ? const SizedBox(
-                  width: 5,
-                ): null,
+                        width: 5,
+                      )
+                    : null,
               ),
               if (infoClientService.gameMode == POWER_CARDS_MODE) ...[
                 PowerListDialog(
@@ -225,6 +227,29 @@ class _InfoPanelState extends State<InfoPanel> {
               ],
             ],
           ),
+          Container(
+            child: infoClientService.game.gameFinished == true
+                ? const SizedBox(
+                    width: 5,
+                  )
+                : null,
+          ),
+          Container(
+              child: infoClientService.game.gameFinished == true
+                  ? ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const EndGameResultsPage(),
+                        );
+                      },
+                      child: Text(
+                        "GAME_PAGE.END_GAME_RESULT".tr(),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
+                    )
+                  : null),
           const SizedBox(
             height: 5,
           ),
