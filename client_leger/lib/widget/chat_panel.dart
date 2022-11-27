@@ -98,7 +98,8 @@ class _ChatPanelState extends State<ChatPanel> {
 
     if (widget.isInGame) {
       if (chatService.rooms[0].name != 'game') {
-        ChatRoom gameChat = ChatRoom(name: 'game', participants: []);
+        //3 character creator so it doens't match any user
+        ChatRoom gameChat = ChatRoom(name: 'game', participants: [], creator: 'sys');
         gameChat.chatHistory = infoClientService.player.chatHistory;
         chatService.rooms.insert(0, gameChat);
       }
