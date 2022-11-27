@@ -7,11 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:client_leger/constants/constants.dart';
 import 'package:flip_card/flip_card.dart';
-import '../models/mock_dict.dart';
 
 List<bool> activatedPowerCards = [
-  true, true, true, true,
-  true, true, true, true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
 ];
 
 class CreateGamePage extends StatefulWidget {
@@ -24,7 +29,7 @@ class CreateGamePage extends StatefulWidget {
 class _CreateGamePageState extends State<CreateGamePage> {
   late String? roomName = "";
   late double? turnTime = 1;
-  late MockDict? dictionary;
+  late int dictionaryIndex = 0;
   late bool? _isGamePrivate = false;
   late String? password = "";
   late bool? isPasswordOn = false;
@@ -34,7 +39,6 @@ class _CreateGamePageState extends State<CreateGamePage> {
 
   @override
   void initState() {
-    dictionary = infoClientService.dictionaries[0];
     socketService.socket.on("roomChangeAccepted", (data) {
       if (mounted) {
         FocusScope.of(context).unfocus();
@@ -47,6 +51,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
         backgroundColor: Colors.red.shade300,
       ));
     });
+    socketService.socket.emit('ReSendDictionariesToClient');
     super.initState();
   }
 
@@ -136,7 +141,8 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     validator: _roomNameValidator,
                                     decoration: InputDecoration(
                                       border: const OutlineInputBorder(),
-                                      labelText: "CREATE_GAME_PAGE.ROOM_NAME".tr(),
+                                      labelText:
+                                          "CREATE_GAME_PAGE.ROOM_NAME".tr(),
                                       labelStyle: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -152,10 +158,19 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                   ),
                                   Row(
                                     children: [
-                                      Text("CREATE_GAME_PAGE.GAME_MODE".tr(), style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                      Text("CREATE_GAME_PAGE.GAME_MODE".tr(),
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary)),
                                       Expanded(
                                         child: ListTile(
-                                          title: Text("CREATE_GAME_PAGE.PUBLIC".tr(), style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                          title: Text(
+                                              "CREATE_GAME_PAGE.PUBLIC".tr(),
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary)),
                                           leading: Radio(
                                             value: false,
                                             groupValue: _isGamePrivate,
@@ -169,7 +184,12 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                       ),
                                       Expanded(
                                         child: ListTile(
-                                          title: Text("CREATE_GAME_PAGE.PRIVATE".tr(), style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                          title: Text(
+                                              "CREATE_GAME_PAGE.PRIVATE".tr(),
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .primary)),
                                           leading: Radio(
                                             value: true,
                                             groupValue: _isGamePrivate,
@@ -196,8 +216,14 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                               isPasswordOn = value;
                                             });
                                           }),
-                                      Text("CREATE_GAME_PAGE.PASSWORD".tr(), style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-                                      const SizedBox(width: 10,),
+                                      Text("CREATE_GAME_PAGE.PASSWORD".tr(),
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary)),
+                                      const SizedBox(
+                                        width: 10,
+                                      ),
                                       if (isPasswordOn!)
                                         Expanded(
                                             child: TextFormField(
@@ -207,7 +233,9 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                           validator: _roomNameValidator,
                                           decoration: InputDecoration(
                                             border: const OutlineInputBorder(),
-                                            labelText: "CREATE_GAME_PAGE.PASSWORD".tr(),
+                                            labelText:
+                                                "CREATE_GAME_PAGE.PASSWORD"
+                                                    .tr(),
                                             labelStyle: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
@@ -230,43 +258,83 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     items: [
                                       DropdownMenuItem<double>(
                                         value: 0.5,
-                                        child: Text("30sec", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("30sec",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 1,
-                                        child: Text("1min", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("1min",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 1.5,
-                                        child: Text("1min 30sec", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("1min 30sec",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 2,
-                                        child: Text("2min", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("2min",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 2.5,
-                                        child: Text("2min 30sec", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("2min 30sec",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 3,
-                                        child: Text("3min", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("3min",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 3.5,
-                                        child: Text("3min 30sec", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("3min 30sec",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 4,
-                                        child: Text("4min", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("4min",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 4.5,
-                                        child: Text("4min 30sec", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("4min 30sec",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                       DropdownMenuItem<double>(
                                         value: 5,
-                                        child: Text("5min", style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+                                        child: Text("5min",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)),
                                       ),
                                     ],
                                     onChanged: (double? value) {
@@ -276,31 +344,49 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                   const SizedBox(
                                     height: 25,
                                   ),
-                                  DropdownButtonFormField<MockDict>(
-                                    items: List<DropdownMenuItem<MockDict>>.generate(
-                                        infoClientService.dictionaries.length,
-                                        (int index) => DropdownMenuItem(
-                                              child: Text(infoClientService.dictionaries[index].title, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
-                                            )),
-                                    onChanged: (MockDict? value) {
-                                      dictionary = value;
+                                  DropdownButtonFormField<int>(
+                                    value: dictionaryIndex,
+                                    items: List<
+                                        DropdownMenuItem<int>>.generate(
+                                      infoClientService.dictionaries.length,
+                                      (int index) => DropdownMenuItem(
+                                        value: index,
+                                        child: Text(
+                                          infoClientService
+                                              .dictionaries[index].title,
+                                          style: TextStyle(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                        ),
+                                      ),
+                                    ),
+                                    onChanged: (int? value) {
+                                      dictionaryIndex = value!;
                                     },
                                   ),
                                   const SizedBox(
                                     height: 25,
                                   ),
-                                  if (dictionary != null)
-                                    Text(dictionary!.description, style: TextStyle(color: Theme.of(context).colorScheme.primary))
+                                  if (infoClientService.dictionaries[dictionaryIndex] != null)
+                                    Text(infoClientService.dictionaries[dictionaryIndex].description,
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary))
                                   else
                                     Container(),
                                   const SizedBox(
                                     height: 25,
                                   ),
-                                  if(infoClientService.gameMode == POWER_CARDS_MODE)...[
+                                  if (infoClientService.gameMode ==
+                                      POWER_CARDS_MODE) ...[
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Text("${"CREATE_GAME_PAGE.ACTIVATE".tr()} :"),
+                                        Text(
+                                            "${"CREATE_GAME_PAGE.ACTIVATE".tr()} :"),
                                         PowerListDialog(
                                           notifyParent: refresh,
                                         ),
@@ -329,8 +415,9 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                       "CREATE_GAME_PAGE.START".tr(),
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Theme.of(context).colorScheme.secondary
-                                      ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary),
                                     ),
                                   ),
                                 ],
@@ -373,9 +460,15 @@ class _CreateGamePageState extends State<CreateGamePage> {
       infoClientService.isGamePrivate = _isGamePrivate;
       socketService.socket.emit(
           "createRoomAndGame",
-          CreateGameModel(roomName!, globals.userLoggedIn.username, turnTime!,
-              infoClientService.gameMode, _isGamePrivate!, password!, activatedPowerCards));
-      socketService.socket.emit("dictionarySelected", dictionary);
+          CreateGameModel(
+              roomName!,
+              globals.userLoggedIn.username,
+              turnTime!,
+              infoClientService.gameMode,
+              _isGamePrivate!,
+              password!,
+              activatedPowerCards));
+      socketService.socket.emit("dictionarySelected", infoClientService.dictionaries[dictionaryIndex]);
     }
   }
 }
@@ -401,8 +494,7 @@ class CreateGameModel {
     };
   }
 
-  CreateGameModel(
-      this.roomName, this.playerName, this.timeTurn, this.gameMode,
+  CreateGameModel(this.roomName, this.playerName, this.timeTurn, this.gameMode,
       this.isGamePrivate, this.passwd, this.activatedPowers);
 }
 
@@ -423,101 +515,105 @@ class _PowerListDialog extends State<PowerListDialog> {
   Widget build(BuildContext context) {
     infoClientService.game.initPowerCards();
     return TextButton(
-      onPressed: () =>
-          showDialog<String>(
-            context: context,
-            builder: (BuildContext context) =>
-                AlertDialog(
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  actions: <Widget>[
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text("CREATE_GAME_PAGE.AVAILABLE_CARD".tr(),
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 17,
-                              decoration: TextDecoration.none
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                          height: 450,
-                          width: 300,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: infoClientService.game.powerCards.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                child: Row(
-                                  children: <Widget>[
-                                    FlipCard(
-                                      direction: FlipDirection.HORIZONTAL,
-                                      front: const SizedBox(
-                                        width: 50,
-                                        height: 50,
-                                        // color: Colors.red,
-                                        child: Image(image: AssetImage("assets/card.png")),
-                                      ),
-                                      back: Container(
-                                        decoration: BoxDecoration(
-                                          color: Theme.of(context).colorScheme.primary,
-                                          borderRadius: const BorderRadius.all(Radius.circular(5)),
-                                        ),
-                                        width: 200,
-                                        height: 50,
-                                        margin: const EdgeInsets.fromLTRB(0, 0, 40, 5),
-                                        // color: Theme.of(context).colorScheme.primary,
-                                        child: Padding(
-                                          padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                                          child: Text(
-                                            infoClientService.game.powerCards[index].name.tr(),
-                                            style: TextStyle(
-                                              fontSize: 10.0,
-                                              color: Theme.of(context).colorScheme.secondary,
-                                            ),
-                                            textAlign: TextAlign.justify,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    StatefulBuilder(
-                                      builder: (BuildContext context, StateSetter setState) {
-                                        return Checkbox(
-                                          value: activatedPowerCards[index],
-                                          onChanged: (bool? value) {
-                                            setState(() {
-                                              activatedPowerCards[index] =
-                                              !activatedPowerCards[index];
-                                            });
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'Confirmer'),
-                          child: Text("CREATE_GAME_PAGE.CONFIRM".tr()),
-                        ),
-                      ],
-                    ),
-                  ],
+      onPressed: () => showDialog<String>(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          actions: <Widget>[
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "CREATE_GAME_PAGE.AVAILABLE_CARD".tr(),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 17,
+                      decoration: TextDecoration.none),
                 ),
-          ),
+                Container(
+                  margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  height: 450,
+                  width: 300,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: infoClientService.game.powerCards.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                          child: Row(
+                            children: <Widget>[
+                              FlipCard(
+                                direction: FlipDirection.HORIZONTAL,
+                                front: const SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  // color: Colors.red,
+                                  child: Image(
+                                      image: AssetImage("assets/card.png")),
+                                ),
+                                back: Container(
+                                  decoration: BoxDecoration(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    borderRadius: const BorderRadius.all(
+                                        Radius.circular(5)),
+                                  ),
+                                  width: 200,
+                                  height: 50,
+                                  margin:
+                                      const EdgeInsets.fromLTRB(0, 0, 40, 5),
+                                  // color: Theme.of(context).colorScheme.primary,
+                                  child: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                    child: Text(
+                                      infoClientService
+                                          .game.powerCards[index].name
+                                          .tr(),
+                                      style: TextStyle(
+                                        fontSize: 10.0,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                      ),
+                                      textAlign: TextAlign.justify,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              StatefulBuilder(
+                                builder: (BuildContext context,
+                                    StateSetter setState) {
+                                  return Checkbox(
+                                    value: activatedPowerCards[index],
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        activatedPowerCards[index] =
+                                            !activatedPowerCards[index];
+                                      });
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Confirmer'),
+                  child: Text("CREATE_GAME_PAGE.CONFIRM".tr()),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll<Color>(Theme
-            .of(context)
-            .colorScheme
-            .primary),
+        backgroundColor: MaterialStatePropertyAll<Color>(
+            Theme.of(context).colorScheme.primary),
         padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(
-              vertical: 6.0, horizontal: 6.0),
+          const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
@@ -528,13 +624,9 @@ class _PowerListDialog extends State<PowerListDialog> {
       child: Text(
         "CREATE_GAME_PAGE.POWER_LIST".tr(),
         style: TextStyle(
-          color: Theme
-              .of(context)
-              .colorScheme
-              .secondary,
+          color: Theme.of(context).colorScheme.secondary,
         ),
       ),
     );
   }
 }
-

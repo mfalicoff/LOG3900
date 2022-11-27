@@ -90,6 +90,10 @@ class SocketService with ChangeNotifier {
       infoClientService.updateDictionaries(dictionaries);
     });
 
+    socket.on('ReSendDictionariesToClient', (dictionaries) {
+      infoClientService.updateDictionaries(dictionaries);
+    });
+
     socket.on('DictionaryDeletedMessage', (message) {});
 
     socket.on('SendBeginnerVPNamesToClient', (namesVP) {});
