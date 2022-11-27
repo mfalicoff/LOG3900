@@ -17,9 +17,9 @@ import '../widget/chat_panel.dart';
 import '../env/environment.dart';
 
 class ProfilePage extends StatefulWidget {
-  final List<GameSaved> favouriteGames;
+  late List<GameSaved> favouriteGames;
 
-  const ProfilePage({
+  ProfilePage({
       Key? key,
       required this.favouriteGames,
       }) : super(key: key);
@@ -35,10 +35,27 @@ class _ProfileStatePage extends State<ProfilePage> {
   SocketService socketService = SocketService();
   Controller userController = Controller();
 
+  @override
+  void initState() {
+    super.initState();
+    final user = globals.userLoggedIn;
+    http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
+        .then((res) => parseGames(res));
+  }
+
+  void parseGames(http.Response res) {
+    var parsed = json.decode(res.body);
+    List<GameSaved> games = [];
+    for (var game in parsed) {
+      games.add(GameSaved.fromJson(game));
+    }
+    widget.favouriteGames = games;
+  }
+
   refresh() async {
     setState(() {});
-
   }
+
 
   @override
   Widget build(BuildContext context) {
