@@ -149,6 +149,5 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
             }
         });
         this.userService.updateTheme(themeSelect);
-        this.socketService.socket.emit('changeTheme', this.userService.user.name, themeSelect);
     }
 }

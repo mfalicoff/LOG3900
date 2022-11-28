@@ -31,7 +31,6 @@ import { PowerCardsService } from './power-cards.service';
 import { PutLogicService } from './put-logic.service';
 import { StandService } from './stand.service';
 import { TranslateService } from '@app/services/translate.service';
-import { ThemeService } from './theme.service';
 
 @Service()
 export class SocketManager {
@@ -62,7 +61,6 @@ export class SocketManager {
         private letterBankService: LetterBankService,
         private chatRoomService: ChatRoomService,
         private translateService: TranslateService,
-        private themeService: ThemeService,
     ) {
         this.sio = new io.Server(server, { cors: { origin: '*', methods: ['GET', 'POST'] } });
         this.users = new Map<string, User>();
@@ -585,9 +583,6 @@ export class SocketManager {
             if (user.language) {
                 this.translateService.addUser(user.name, user.language);
             }
-            if (user.theme) {
-                this.themeService.addUser(user.name, user.language);
-            }
             const avatar = await this.userService.populateAvatarField(user);
             socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
@@ -927,9 +922,6 @@ export class SocketManager {
             if (user) {
                 this.translateService.deleteUser(user.name);
             }
-            if (user) {
-                this.themeService.deleteUser(user.name);
-            }
             this.users.delete(socket.id);
         });
 
@@ -1232,10 +1224,6 @@ export class SocketManager {
         // socket to change value in map of translateService
         socket.on('changeLanguage', async (playerName, language) => {
             this.translateService.addUser(playerName, language);
-        });
-
-        socket.on('changeTheme', async (playerName, theme) => {
-            this.themeService.addUser(playerName, theme);
         });
 
         socket.on('getAllAvatars', async () => {
