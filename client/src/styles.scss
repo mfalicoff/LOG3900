@@ -129,11 +129,23 @@ body {
     font-weight: bold;
 }
 
-#mat-dialog-container {
-    // background-color: wheat;
-}
+// .btnStyle{
+//     background-color: #0C483F;
+//     display: inline;
+//     font-size: 12px;
+//     color: wheat;
+//     cursor: pointer;
+//     box-shadow: none;
+// }
+
+// #main {
+//     background-color: wheat;
+//     color: #0c483f;
+//     border-color: #0c483f;
+// }
 
 body.my-dark-mode {
+    transition: color 2s ease;
     background-color: #0c483f;
     color: wheat;
     border-color: wheat;
@@ -215,6 +227,7 @@ body.my-dark-mode {
 }
 
 body.my-light-mode {
+    transition: color 2s ease;
     background-color: wheat;
     color: #0c483f;
     border-color: #0c483f;
@@ -297,15 +310,6 @@ body.my-light-mode {
 
 .customDialog .mat-dialog-container {
     overflow-y: hidden!important;
-}
-
-.btnStyle{
-    background-color: #0C483F;
-    display: inline;
-    font-size: 12px;
-    color: wheat;
-    cursor: pointer;
-    box-shadow: none;
 }
 
 .ngx-gallery {

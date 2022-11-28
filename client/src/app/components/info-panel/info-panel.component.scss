@@ -261,7 +261,7 @@
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    color: #0C483F;
+    // color: #0C483F;
 }
 
 /* Modal Content/Box */
@@ -300,7 +300,7 @@
     font-size: 15px;
     font-weight: bold;
     border-radius: 4px;
-    border: 2px solid #0C483F;
+    border: 2px solid;
 }
 
 #letterToChangeField{
