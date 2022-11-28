@@ -112,6 +112,7 @@ export class UserService {
                     localStorage.removeItem(`cookie-${this.user._id}`);
                     localStorage.removeItem(`user-${this.user._id}`);
                     this.infoClientService.playerName = 'DefaultPlayerName';
+                    this.themeService.disable();
                     this.router.navigate(['/home']);
                 },
                 error: (error) => {
