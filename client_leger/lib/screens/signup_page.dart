@@ -89,48 +89,6 @@ class _SignUpFormState extends State<SignUpForm> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          TextButton(
-            onPressed: () => showDialog<String>(
-              context: context,
-              builder: (BuildContext context) {
-                return StatefulBuilder(
-                  builder: (context, setState) {
-                    return AlertDialog(
-                      title: const Text('Avatar'),
-                      content: Text("SIGN_UP_PAGE.SELECT_AVATAR_WANTED".tr()),
-                      backgroundColor: Theme.of(context).colorScheme.secondary,
-                      actions: <Widget>[
-                        Container(
-                          child: Column(
-                            children: [
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    avatarPicker(0),
-                                    avatarPicker(2),
-                                    avatarPicker(4),
-                                    avatarPicker(6),
-                                  ]),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  avatarPicker(1),
-                                  avatarPicker(3),
-                                  avatarPicker(5),
-                                  avatarPicker(7),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-            child: Text("SIGN_UP_PAGE.SELECT_AVATAR".tr()),
-          ),
           Text(
             "SIGN_UP_PAGE.SIGN_UP".tr(),
             style: Theme.of(context).textTheme.headlineLarge,
@@ -177,6 +135,48 @@ class _SignUpFormState extends State<SignUpForm> {
                   TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
             style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          ),
+          TextButton(
+            onPressed: () => showDialog<String>(
+              context: context,
+              builder: (BuildContext context) {
+                return StatefulBuilder(
+                  builder: (context, setState) {
+                    return AlertDialog(
+                      title: const Text('Avatar'),
+                      content: Text("SIGN_UP_PAGE.SELECT_AVATAR_WANTED".tr()),
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      actions: <Widget>[
+                        Container(
+                          child: Column(
+                            children: [
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    avatarPicker(0),
+                                    avatarPicker(2),
+                                    avatarPicker(4),
+                                    avatarPicker(6),
+                                  ]),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  avatarPicker(1),
+                                  avatarPicker(3),
+                                  avatarPicker(5),
+                                  avatarPicker(7),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            ),
+            child: Text("SIGN_UP_PAGE.SELECT_AVATAR".tr()),
           ),
           const SizedBox(height: 30),
           ElevatedButton(

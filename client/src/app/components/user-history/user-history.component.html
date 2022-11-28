@@ -1,31 +1,31 @@
 <div *ngIf="!data.isFavouriteGames" id="historyWrapper">
-    <h1>{{this.data.title}}</h1>
-    <div class="sidebar" #scrollFrame>
-        <div *ngFor="let action of actionHistory" #commands>
-            <p class="actionHistory">
-                {{action}}
-            </p>
+        <h1>{{this.data.title}}</h1>
+        <div class="sidebar" #scrollFrame>
+            <div *ngFor="let action of actionHistory" #commands>
+                <p class="actionHistory">
+                    {{action}}
+                </p>
+            </div>
+            <button mat-raised-button class="btnStyle" (click)="closeDialog()">{{'PROFILE.CLOSE_BUTTON' | translate}}</button>
         </div>
-    </div>
-    <button (click)="closeDialog()">Fermer</button>
 </div>
 
 
 <div *ngIf="data.isFavouriteGames && data.data.length !== 0">
     <div><button mat-icon-button (click)="closeDialog()" class="closeButton"> <mat-icon> close </mat-icon></button></div>
     <div class="title-box">
-        <h1 mat-dialog-title class="title"> PARTIES FAVORITES </h1>
+        <h1 mat-dialog-title class="title"> {{'FAVORITE_GAMES.FAVORITES_CAPS' | translate}} </h1>
     </div>
 
-    <div id="favouriteGames">
-        <div *ngFor="let game of this.favouriteGames">
+    <div id="favouriteGames" class="sidebar" #scrollFrame>
+        <div *ngFor="let game of this.favouriteGames" #commands>
             <ul>
-                <li> Salle : {{game.roomName}}</li>
+                <li> {{'FAVORITE_GAMES.ROOM' | translate}} {{game.roomName}}</li>
                 <div *ngIf="game.spectators.length !== 0">
-                    <li>Spectateurs de la partie:</li>
+                    <li>{{'FAVORITE_GAMES.SPECTATORS' | translate}}</li>
                     <div *ngFor="let spect of game.spectators" class="two-grid-row">
                         <div class="two-grid-col" style="margin-right: -85%">
-                            <span> Nom: </span>
+                            <span> {{'FAVORITE_GAMES.NAME' | translate}} </span>
                         </div>
                         <div class="two-grid-col">
                             <span> {{spect}} </span>
@@ -34,27 +34,27 @@
                 </div>
                 <div class="players-grid-row">
                     <div class="players-grid-col">
-                        <li> Joueur: {{game.players[0]}}</li>
-                        <li> Score: {{game.scores[0]}}</li>
+                        <li> {{'FAVORITE_GAMES.PLAYER' | translate}} {{game.players[0]}}</li>
+                        <li> {{'FAVORITE_GAMES.SCORE' | translate}} {{game.scores[0]}}</li>
                     </div>
                     <div class="players-grid-col">
-                        <li> Joueur: {{game.players[1]}}</li>
-                        <li> Score: {{game.scores[1]}}</li>
+                        <li> {{'FAVORITE_GAMES.PLAYER' | translate}} {{game.players[1]}}</li>
+                        <li> {{'FAVORITE_GAMES.SCORE' | translate}} {{game.scores[1]}}</li>
                     </div>
                     <div class="players-grid-col">
-                        <li> Joueur: {{game.players[2]}}</li>
-                        <li> Score: {{game.scores[2]}}</li>
+                        <li> {{'FAVORITE_GAMES.PLAYER' | translate}}  {{game.players[2]}}</li>
+                        <li> {{'FAVORITE_GAMES.SCORE' | translate}} {{game.scores[2]}}</li>
                     </div>
                     <div class="players-grid-col">
-                        <li> Joueur: {{game.players[3]}}</li>
-                        <li> Score: {{game.scores[3]}}</li>
+                        <li> {{'FAVORITE_GAMES.PLAYER' | translate}}  {{game.players[3]}}</li>
+                        <li> {{'FAVORITE_GAMES.SCORE' | translate}} {{game.scores[3]}}</li>
                     </div>
                 </div>
-                <li> Gagnant de la partie: {{game.winners[0]}}</li>
-                <li> Nombre de lettres restantes dans la réserve : {{game.nbLetterReserve}}</li>
-                <li> Nombre de tours totoal: {{game.numberOfTurns}}</li>
-                <li> Durée de la partie (en minutes) : {{game.playingTime}}</li>
-                <li> Date du début de la partie (timestamp) : {{game.gameStartDate}}</li>
+                <li> {{'FAVORITE_GAMES.GAME_WINNER' | translate}} {{game.winners[0]}}</li>
+                <li> {{'FAVORITE_GAMES.REMAINING_LETTERS' | translate}} {{game.nbLetterReserve}}</li>
+                <li> {{'FAVORITE_GAMES.NB_TURNS' | translate}}  {{game.numberOfTurns}}</li>
+                <li> {{'FAVORITE_GAMES.GAME_DURATION' | translate}}  {{game.playingTime}}</li>
+                <li> {{'FAVORITE_GAMES.GAME_START_DATE' | translate}}  {{game.gameStartDate}}</li>
                 <li> ------------------------------------------------------------------------------------------------------------------------------------------------------------------ </li>
             </ul>
         </div>

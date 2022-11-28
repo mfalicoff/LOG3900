@@ -10,6 +10,7 @@ import { SocketService } from '@app/services/socket.service';
 import { JoinChatRoomModalComponent } from './join-chatroom-modal.component.ts/join-chatroom-modal.component';
 import * as Constants from '@app/classes/global-constants';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-communication-dashboard',
@@ -25,6 +26,8 @@ import { Router } from '@angular/router';
 export class CommunicationDashboardComponent implements AfterContentInit {
     @Input() isInGame: string;
     hideChatrooms = false;
+    routerSubscription: Subscription;
+
     constructor(private socketService: SocketService, public infoClientService: InfoClientService, private dialog: MatDialog, public router: Router) {
         this.infoClientService.currSelectedChatroom = {
             name: 'default',

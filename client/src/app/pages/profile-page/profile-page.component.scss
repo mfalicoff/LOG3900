@@ -35,6 +35,8 @@ h1 {
 }
 
 #statsContainer {
+    margin-top: 5%;
+    margin-bottom: 5%;
     color: #0c483f;
     z-index: 2;
     text-align: center;
@@ -42,14 +44,13 @@ h1 {
     height: 40%;
 }
 
-#statsList {
-    padding-bottom: calc(45% + 0px);
-}
-
 .statsElement {
-    overflow: visible;
+    // overflow: visible;
     font-size: 20px;
     justify-content: left;
+    background-color: #0c483f;
+    color: wheat;
+    border-radius: 5px;
 }
 
 .mat-grid-tile-content {

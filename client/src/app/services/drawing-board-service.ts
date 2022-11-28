@@ -39,6 +39,10 @@ export class DrawingBoardService {
         this.playAreaCanvas = playAreaCanvas;
         this.tmpTileCanvas = tmpTileCanvas;
         this.drawingService.canvasInit(playAreaCanvas, tmpTileCanvas);
+
+        // Init basic board and stand visual
+        this.drawBoardInit(this.infoClientService.game.bonusBoard);
+        this.drawingService.initStand(true);
     }
 
     initDefaultVariables() {
