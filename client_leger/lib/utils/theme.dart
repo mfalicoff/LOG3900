@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'utils.dart';
 
-final appTheme = ThemeData(
+final lightAppTheme = ThemeData(
     primarySwatch: createMaterialColor(const Color(0xFF0c483f)),
     colorScheme: ColorScheme.fromSwatch().copyWith(
       primary: createMaterialColor(const Color(0xFF0c483f)),
@@ -27,5 +27,31 @@ final appTheme = ThemeData(
       ),
     ),
   canvasColor: createMaterialColor(const Color(0xFFf5deb3)),
+);
+
+final darkAppTheme = ThemeData(
+    primarySwatch: createMaterialColor(const Color(0xFFf5deb3)),
+    colorScheme: ColorScheme.fromSwatch().copyWith(
+      primary: createMaterialColor(const Color(0xFFf5deb3)),
+      secondary: createMaterialColor(const Color(0xFF0c483f)),
+    ),
+    textTheme: TextTheme(
+      headlineLarge: TextStyle(
+        color: createMaterialColor(const Color(0xFFf5deb3)),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(
+            width: 2,
+            color: createMaterialColor(const Color(0xFFf5deb3)),
+
+          )
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+            width: 2, color: createMaterialColor(const Color(0xFFf5deb3))),
+      ),
+    )
 );
 

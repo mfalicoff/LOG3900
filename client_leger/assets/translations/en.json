@@ -44,7 +44,9 @@
         "ENTER_VALID_USERNAME": "Enter a nickname with alphanumeric characters",
         "ERROR": "Error",
         "MODIFY_AVATAR": "Modify Avatar",
-        "SELECT_AVATAR": "Select desired avatar or take a photo"
+        "SELECT_AVATAR": "Select desired avatar or take a photo",
+        "DARK": "Dark",
+        "LIGHT": "Light"
     },
     "SEARCH_PAGE": {
         "SEARCH_PLAYERS": "Search players"
