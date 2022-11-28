@@ -227,5 +227,7 @@
         "NEW_CREATOR": "You are the new creator of the chat room: ",
         "ROOM_DEL_1": "The room ",
         "ROOM_DEL_2": " has been deleted by the creator."
-    }
+    },
+    "WORD": "WORD",
+    "LETTER": "LETTER"
 }

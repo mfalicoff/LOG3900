@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -34,4 +35,8 @@ CircleAvatar getAvatarFromString(double radius, String uri) {
     radius: radius,
     backgroundImage: MemoryImage(base64Decode(uri.substring(22))),
   ));
+}
+
+String translateBonus(String key){
+  return key.tr();
 }

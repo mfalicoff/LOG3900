@@ -42,6 +42,7 @@ class _GameListPageState extends State<GameListPage> {
         Navigator.pushNamed(context, "/game");
       }
     });
+    infoClientService.clearRooms();
     socketService.socket.emit("listRoom");
   }
 

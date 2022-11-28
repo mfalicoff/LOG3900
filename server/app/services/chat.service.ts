@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable max-lines */
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';

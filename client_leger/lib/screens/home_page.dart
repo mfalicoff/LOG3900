@@ -29,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
 
-    @override
+  @override
   void initState() {
     super.initState();
     controller.getFavouriteGames();
@@ -44,7 +44,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     socketService.socket.emit('getAllChatRooms');
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+      _logout();
+      return false;
+    },
+    child: Scaffold(
       endDrawer: Drawer(
           width: 600,
           child: ChatPanel(
@@ -135,14 +140,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     infoClientService.gameMode = CLASSIC_MODE;
                     _toGameListPage();
                   },
-                  child: Text("HOME_SCREEN.CLASSIC_MODE".tr()),
+                  child: Text("HOME_SCREEN.CLASSIC_MODE".tr(), style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
                 ),
                 ElevatedButton(
                   onPressed: () {
                     infoClientService.gameMode = POWER_CARDS_MODE;
                     _toGameListPage();
                   },
-                  child: Text("HOME_SCREEN.POWER_CARDS_MODE".tr()),
+                  child: Text("HOME_SCREEN.POWER_CARDS_MODE".tr(), style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
                 ),
               ],
             ),
@@ -181,7 +186,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-    );
+    ),);
   }
 
   void _toSearchPage() {

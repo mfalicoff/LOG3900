@@ -227,5 +227,7 @@
         "NEW_CREATOR": "Vous êtes le nouveau créateur de la salle: ",
         "ROOM_DEL_1": "La salle ",
         "ROOM_DEL_2": " a été supprimée pour le createur."
-    }
+    },
+    "WORD": "MOT",
+    "LETTER": "LETTRE"
 }

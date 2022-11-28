@@ -6,6 +6,10 @@ import 'package:client_leger/widget/list_players.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/constants.dart';
+import '../screens/end-game-results-page.dart';
+import '../screens/game_page.dart';
+
 class InfoPanel extends StatefulWidget {
   const InfoPanel({Key? key}) : super(key: key);
 
@@ -55,11 +59,14 @@ class _InfoPanelState extends State<InfoPanel> {
             height: 5,
           ),
           Container(
-            child: infoClientService.game.gameStarted ? Text(
-              timerService.displayTimer,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary, fontSize: 20),
-            ) : null,
+            child: infoClientService.game.gameStarted
+                ? Text(
+                    timerService.displayTimer,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 20),
+                  )
+                : null,
           ),
           const SizedBox(
             height: 5,
@@ -133,6 +140,119 @@ class _InfoPanelState extends State<InfoPanel> {
                     ],
                   ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                child: shouldBeAbleToLeaveGame()
+                    ? ElevatedButton(
+                        onPressed: _leaveGame,
+                        child: FittedBox(
+                          child: Text(
+                            "GAME_PAGE.QUIT_GAME".tr(),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary),
+                          ),
+                        ),
+                      )
+                    : null,
+              ),
+              Container(
+                child: shouldBeAbleToLeaveGame()
+                    ? const SizedBox(
+                        width: 5,
+                      )
+                    : null,
+              ),
+              Container(
+                child: shouldBeAbleToGiveUpGame()
+                    ? ElevatedButton(
+                        onPressed: () => _giveUpGame(context),
+                        child: Text(
+                          "GAME_PAGE.GIVE_UP".tr(),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        ),
+                      )
+                    : null,
+              ),
+              Container(
+                child: shouldBeAbleToGiveUpGame()
+                    ? const SizedBox(
+                        width: 5,
+                      )
+                    : null,
+              ),
+              Container(
+                  child: infoClientService.creatorShouldBeAbleToStartGame ==
+                          true
+                      ? ElevatedButton(
+                          onPressed: _startGame,
+                          child: Text(
+                            "GAME_PAGE.START_GAME".tr(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        )
+                      : null),
+              Container(
+                child: infoClientService.creatorShouldBeAbleToStartGame == true
+                    ? const SizedBox(
+                        width: 5,
+                      )
+                    : null,
+              ),
+              Container(
+                  child: shouldSpecBeAbleToBePlayer() == true
+                      ? ElevatedButton(
+                          onPressed: spectWantsToBePlayer,
+                          child: Text(
+                            "GAME_PAGE.REPLACE_VIRTUAL_PLAYER".tr(),
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.secondary,
+                            ),
+                          ),
+                        )
+                      : null),
+              Container(
+                child: shouldSpecBeAbleToBePlayer()
+                    ? const SizedBox(
+                        width: 5,
+                      )
+                    : null,
+              ),
+              if (infoClientService.gameMode == POWER_CARDS_MODE) ...[
+                PowerListDialog(
+                  notifyParent: refresh,
+                ),
+              ],
+            ],
+          ),
+          Container(
+            child: infoClientService.game.gameFinished == true
+                ? const SizedBox(
+                    width: 5,
+                  )
+                : null,
+          ),
+          Container(
+              child: infoClientService.game.gameFinished == true
+                  ? ElevatedButton(
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const EndGameResultsPage(),
+                        );
+                      },
+                      child: Text(
+                        "GAME_PAGE.END_GAME_RESULT".tr(),
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.secondary),
+                      ),
+                    )
+                  : null),
           const SizedBox(
             height: 5,
           ),
@@ -142,8 +262,87 @@ class _InfoPanelState extends State<InfoPanel> {
     );
   }
 
+  spectWantsToBePlayer() {
+    print(infoClientService.isSpectator);
+    socketService.socket.emit('spectWantsToBePlayer');
+  }
+
+  Future<void> _giveUpGame(BuildContext context) {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("GAME_PAGE.GIVE_UP_GAME".tr()),
+          content: Text("GAME_PAGE.SURE_WANT_GIVE_UP".tr()),
+          actions: <Widget>[
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: Text("GAME_PAGE.GIVE_UP".tr()),
+              onPressed: () {
+                socketService.count = 1;
+                socketService.socket.emit('giveUpGame');
+                Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+              },
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                textStyle: Theme.of(context).textTheme.labelLarge,
+              ),
+              child: Text("GAME_PAGE.CANCEL".tr()),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool shouldBeAbleToGiveUpGame() {
+    if (!infoClientService.isSpectator &&
+        infoClientService.game.gameStarted &&
+        !infoClientService.game.gameFinished) {
+      return true;
+    }
+    return false;
+  }
+
+  bool shouldSpecBeAbleToBePlayer() {
+    if (infoClientService.game.gameFinished || !infoClientService.isSpectator) {
+      return false;
+    }
+    if (infoClientService.actualRoom.numberVirtualPlayer > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  bool shouldBeAbleToLeaveGame() {
+    if (infoClientService.isSpectator ||
+        !infoClientService.game.gameStarted ||
+        infoClientService.game.gameFinished) {
+      return true;
+    }
+    return false;
+  }
+
+  void _startGame() {
+    socketService.socket.emit('startGame', infoClientService.game.roomName);
+    infoClientService.creatorShouldBeAbleToStartGame = false;
+  }
+
+  void _leaveGame() {
+    socketService.count = 1;
+    socketService.socket.emit('leaveGame');
+    Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+  }
+
   void _pass() {
-    if(infoClientService.isTurnOurs && infoClientService.game.gameStarted) {
+    if (infoClientService.isTurnOurs && infoClientService.game.gameStarted) {
       socketService.socket.emit('turnFinished');
     }
   }

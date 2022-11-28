@@ -579,6 +579,7 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
   final SocketService socketService = SocketService();
   final _formKey = GlobalKey<FormState>();
   late String? name = "";
+  late String? password = "";
   bool passwordCheck = false;
 
   @override

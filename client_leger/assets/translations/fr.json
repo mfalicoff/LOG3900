@@ -81,7 +81,7 @@
         "END_GAME_RESULT": "Résultat de fin de partie",
         "REPLACE_VIRTUAL_PLAYER": "Remplacer joueur virtuel",
         "THE_PLAYER": "Le joueur ",
-        "TRY_CONNECT": " essaye de se connecter.\\nVoulez vous l\\'accepter dans la partie ?",
+        "TRY_CONNECT": " essaye de se connecter.Voulez vous l'accepter dans la partie ?",
         "REFUSE": "Refuser",
         "ACCEPT": "Accepter",
         "GIVE_UP_GAME": "Abandonner la partie?",
@@ -202,5 +202,10 @@
     "Cette carte permet d'échanger votre chevalet avec celui d'un de vos adversaires.": "Cette carte permet d'échanger votre chevalet avec celui d'un de vos adversaires.",
     "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.": "Cette carte permet de retirer des points à l'adversaire qui en a le plus et les redistribue à tous les autres joueurs.",
     "Cette carte permet d'ajouter 1 minute à votre temps de reglexion.": "Cette carte permet d'ajouter 1 minute à votre temps de réflexion.",
-    "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis."
+    "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.": "Cette carte permet de retirer une carte pouvoir à tous les joueurs ennemis.",
+    "xx": "",
+    "wordx3": "MOT\nx3",
+    "wordx2": "MOT\nx2",
+    "letterx3": "LETTRE\nx3",
+    "letterx2": "LETTRE\nx2"
 }

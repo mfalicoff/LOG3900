@@ -62,7 +62,7 @@ class _ProfileStatePage extends State<ProfilePage> {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(vertical: 70.0, horizontal: 100.0),
+                const EdgeInsets.symmetric(vertical: 50.0, horizontal: 100.0),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(

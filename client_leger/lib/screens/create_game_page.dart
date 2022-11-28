@@ -7,11 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:client_leger/constants/constants.dart';
 import 'package:flip_card/flip_card.dart';
-import '../models/mock_dict.dart';
 
 List<bool> activatedPowerCards = [
-  true, true, true, true,
-  true, true, true, true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
+  true,
 ];
 
 class CreateGamePage extends StatefulWidget {
@@ -24,7 +29,7 @@ class CreateGamePage extends StatefulWidget {
 class _CreateGamePageState extends State<CreateGamePage> {
   late String? roomName = "";
   late double? turnTime = 1;
-  late MockDict? dictionary;
+  late int dictionaryIndex = 0;
   late bool? _isGamePrivate = false;
   late String? password = "";
   late bool? isPasswordOn = false;
@@ -34,7 +39,6 @@ class _CreateGamePageState extends State<CreateGamePage> {
 
   @override
   void initState() {
-    dictionary = infoClientService.dictionaries[0];
     socketService.socket.on("roomChangeAccepted", (data) {
       if (mounted) {
         FocusScope.of(context).unfocus();
@@ -137,7 +141,8 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     validator: _roomNameValidator,
                                     decoration: InputDecoration(
                                       border: const OutlineInputBorder(),
-                                      labelText: "CREATE_GAME_PAGE.ROOM_NAME".tr(),
+                                      labelText:
+                                          "CREATE_GAME_PAGE.ROOM_NAME".tr(),
                                       labelStyle: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
@@ -221,7 +226,9 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                           validator: _roomNameValidator,
                                           decoration: InputDecoration(
                                             border: const OutlineInputBorder(),
-                                            labelText: "CREATE_GAME_PAGE.PASSWORD".tr(),
+                                            labelText:
+                                                "CREATE_GAME_PAGE.PASSWORD"
+                                                    .tr(),
                                             labelStyle: TextStyle(
                                                 color: Theme.of(context)
                                                     .colorScheme
@@ -261,11 +268,13 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                   const SizedBox(
                                     height: 25,
                                   ),
-                                  DropdownButtonFormField<MockDict>(
+                                  DropdownButtonFormField<int>(
+                                    value: dictionaryIndex,
                                     dropdownColor: Theme.of(context).colorScheme.secondary,
-                                    items: List<DropdownMenuItem<MockDict>>.generate(
+                                    items: List<DropdownMenuItem<int>>.generate(
                                         infoClientService.dictionaries.length,
                                         (int index) => DropdownMenuItem(
+                                              value: index,
                                               child: Text(
                                                   infoClientService.dictionaries[index].title,
                                                 style: TextStyle(
@@ -273,25 +282,32 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                                     Theme.of(context).colorScheme.primary),)
                                           ,
                                             )),
-                                    onChanged: (MockDict? value) {
-                                      dictionary = value;
+                                    onChanged: (int? value) {
+                                      dictionaryIndex = value!;
                                     },
                                   ),
                                   const SizedBox(
                                     height: 25,
                                   ),
-                                  if (dictionary != null)
-                                    Text(dictionary!.description)
+                                  if (infoClientService.dictionaries[dictionaryIndex] != null)
+                                    Text(infoClientService.dictionaries[dictionaryIndex].description,
+                                        style: TextStyle(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary))
                                   else
                                     Container(),
                                   const SizedBox(
                                     height: 25,
                                   ),
-                                  if(infoClientService.gameMode == POWER_CARDS_MODE)...[
+                                  if (infoClientService.gameMode ==
+                                      POWER_CARDS_MODE) ...[
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Text("${"CREATE_GAME_PAGE.ACTIVATE".tr()} :"),
+                                        Text(
+                                            "${"CREATE_GAME_PAGE.ACTIVATE".tr()} :"),
                                         PowerListDialog(
                                           notifyParent: refresh,
                                         ),
@@ -320,8 +336,9 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                       "CREATE_GAME_PAGE.START".tr(),
                                       style: TextStyle(
                                           fontSize: 20,
-                                          color: Theme.of(context).colorScheme.secondary
-                                      ),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .secondary),
                                     ),
                                   ),
                                 ],
@@ -376,9 +393,15 @@ class _CreateGamePageState extends State<CreateGamePage> {
       infoClientService.isGamePrivate = _isGamePrivate;
       socketService.socket.emit(
           "createRoomAndGame",
-          CreateGameModel(roomName!, globals.userLoggedIn.username, turnTime!,
-              infoClientService.gameMode, _isGamePrivate!, password!, activatedPowerCards));
-      socketService.socket.emit("dictionarySelected", dictionary);
+          CreateGameModel(
+              roomName!,
+              globals.userLoggedIn.username,
+              turnTime!,
+              infoClientService.gameMode,
+              _isGamePrivate!,
+              password!,
+              activatedPowerCards));
+      socketService.socket.emit("dictionarySelected", infoClientService.dictionaries[dictionaryIndex]);
     }
   }
 }
@@ -404,8 +427,7 @@ class CreateGameModel {
     };
   }
 
-  CreateGameModel(
-      this.roomName, this.playerName, this.timeTurn, this.gameMode,
+  CreateGameModel(this.roomName, this.playerName, this.timeTurn, this.gameMode,
       this.isGamePrivate, this.passwd, this.activatedPowers);
 }
 
@@ -525,13 +547,10 @@ class _PowerListDialog extends State<PowerListDialog> {
                 ),
           ),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll<Color>(Theme
-            .of(context)
-            .colorScheme
-            .primary),
+        backgroundColor: MaterialStatePropertyAll<Color>(
+            Theme.of(context).colorScheme.primary),
         padding: MaterialStateProperty.all(
-          const EdgeInsets.symmetric(
-              vertical: 6.0, horizontal: 6.0),
+          const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
         ),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
@@ -542,13 +561,9 @@ class _PowerListDialog extends State<PowerListDialog> {
       child: Text(
         "CREATE_GAME_PAGE.POWER_LIST".tr(),
         style: TextStyle(
-          color: Theme
-              .of(context)
-              .colorScheme
-              .secondary,
+          color: Theme.of(context).colorScheme.secondary,
         ),
       ),
     );
   }
 }
-

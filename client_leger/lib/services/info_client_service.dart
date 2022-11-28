@@ -66,6 +66,11 @@ class InfoClientService with ChangeNotifier{
     notifyListeners();
   }
 
+  void clearRooms(){
+    rooms = [];
+    notifyListeners();
+  }
+
   void updateGame(data){
     game = GameServer.fromJson(data);
     notifyListeners();
@@ -81,9 +86,9 @@ class InfoClientService with ChangeNotifier{
     notifyListeners();
   }
 
-  void updateDictionaries(dictionaries){
+  void updateDictionaries(dictionariesReceived){
     List<MockDict> tempDictionaries = [];
-    for(var dictionary in dictionaries){
+    for(var dictionary in dictionariesReceived){
       tempDictionaries.add(MockDict.fromJson(dictionary));
     }
     dictionaries = tempDictionaries;
