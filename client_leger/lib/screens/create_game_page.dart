@@ -75,7 +75,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(vertical: 50.0, horizontal: 200.0),
+                const EdgeInsets.symmetric(vertical: 40.0, horizontal: 200.0),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
@@ -515,100 +515,104 @@ class _PowerListDialog extends State<PowerListDialog> {
   Widget build(BuildContext context) {
     infoClientService.game.initPowerCards();
     return TextButton(
-      onPressed: () => showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.secondary,
-          actions: <Widget>[
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "CREATE_GAME_PAGE.AVAILABLE_CARD".tr(),
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 17,
-                      decoration: TextDecoration.none),
-                ),
-                Container(
-                  margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  height: 450,
-                  width: 300,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: infoClientService.game.powerCards.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          child: Row(
-                            children: <Widget>[
-                              FlipCard(
-                                direction: FlipDirection.HORIZONTAL,
-                                front: const SizedBox(
-                                  width: 50,
-                                  height: 50,
-                                  // color: Colors.red,
-                                  child: Image(
-                                      image: AssetImage("assets/card.png")),
-                                ),
-                                back: Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: const BorderRadius.all(
-                                        Radius.circular(5)),
-                                  ),
-                                  width: 200,
-                                  height: 50,
-                                  margin:
-                                      const EdgeInsets.fromLTRB(0, 0, 40, 5),
-                                  // color: Theme.of(context).colorScheme.primary,
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(5, 5, 5, 5),
-                                    child: Text(
-                                      infoClientService
-                                          .game.powerCards[index].name
-                                          .tr(),
-                                      style: TextStyle(
-                                        fontSize: 10.0,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .secondary,
-                                      ),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              StatefulBuilder(
-                                builder: (BuildContext context,
-                                    StateSetter setState) {
-                                  return Checkbox(
-                                    value: activatedPowerCards[index],
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        activatedPowerCards[index] =
-                                            !activatedPowerCards[index];
-                                      });
-                                    },
-                                  );
-                                },
-                              ),
-                            ],
+      onPressed: () =>
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) =>
+                AlertDialog(
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  actions: <Widget>[
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text("CREATE_GAME_PAGE.AVAILABLE_CARD".tr(),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 17,
+                              decoration: TextDecoration.none
                           ),
-                        );
-                      }),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                          height: 450,
+                          width: 300,
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: infoClientService.game.powerCards.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                child: Row(
+                                  children: <Widget>[
+                                    FlipCard(
+                                      direction: FlipDirection.HORIZONTAL,
+                                      front: const SizedBox(
+                                        width: 50,
+                                        height: 50,
+                                        // color: Colors.red,
+                                        child: Image(image: AssetImage("assets/card.png")),
+                                      ),
+                                      back: Container(
+                                        decoration: BoxDecoration(
+                                          color: Theme.of(context).colorScheme.primary,
+                                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                                        ),
+                                        width: 200,
+                                        height: 50,
+                                        margin: const EdgeInsets.fromLTRB(0, 0, 40, 5),
+                                        // color: Theme.of(context).colorScheme.primary,
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                          child: Text(
+                                            infoClientService.game.powerCards[index].name.tr(),
+                                            style: TextStyle(
+                                              fontSize: 10.0,
+                                              color: Theme.of(context).colorScheme.secondary,
+                                            ),
+                                            textAlign: TextAlign.justify,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    StatefulBuilder(
+                                      builder: (BuildContext context, StateSetter setState) {
+                                        return Checkbox(
+                                          value: activatedPowerCards[index],
+                                          onChanged: (bool? value) {
+                                            setState(() {
+                                              activatedPowerCards[index] =
+                                              !activatedPowerCards[index];
+                                            });
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context, 'Confirmer'),
+                            child: Text(
+                              "CREATE_GAME_PAGE.CONFIRM".tr(),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'Confirmer'),
-                  child: Text("CREATE_GAME_PAGE.CONFIRM".tr()),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+          ),
       style: ButtonStyle(
         backgroundColor: MaterialStatePropertyAll<Color>(
             Theme.of(context).colorScheme.primary),

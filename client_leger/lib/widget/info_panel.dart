@@ -41,8 +41,11 @@ class _InfoPanelState extends State<InfoPanel> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(20),
-      color: Theme.of(context).colorScheme.secondary,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.secondary,
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+      ),
+      padding: const EdgeInsets.all(20),
       child: Column(
         children: [
           FittedBox(

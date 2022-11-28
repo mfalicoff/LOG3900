@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:client_leger/models/game-saved.dart';
+import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -17,11 +18,9 @@ import '../widget/chat_panel.dart';
 import '../env/environment.dart';
 
 class ProfilePage extends StatefulWidget {
-  final List<GameSaved> favouriteGames;
 
   const ProfilePage({
       Key? key,
-      required this.favouriteGames,
       }) : super(key: key);
 
   @override
@@ -34,10 +33,10 @@ class _ProfileStatePage extends State<ProfilePage> {
   ChatService chatService = ChatService();
   SocketService socketService = SocketService();
   Controller userController = Controller();
+  InfoClientService infoClientService = InfoClientService();
 
   refresh() async {
     setState(() {});
-
   }
 
   @override
@@ -267,11 +266,11 @@ class _ProfileStatePage extends State<ProfilePage> {
                             height: 280,
                             width: 350,
                             child: ListView.builder(
-                                itemCount: widget.favouriteGames.length,
+                                itemCount: infoClientService.favouriteGames.length,
                                 itemBuilder: (BuildContext context, int index) {
                                     return Column(
                                         children: [
-                                          Text('${'PROFILE_PAGE.ROOM'.tr()}${widget.favouriteGames[index].roomName}',
+                                          Text('${'PROFILE_PAGE.ROOM'.tr()}${infoClientService.favouriteGames[index].roomName}',
                                               style: const TextStyle (
                                               color: Colors.black,
                                               fontSize: 13,
@@ -280,11 +279,11 @@ class _ProfileStatePage extends State<ProfilePage> {
                                            ),
                                            _isThereSpectators(index),
                                             Column(
-                                                children: List.generate(widget.favouriteGames[index].players.length, (idx) {
+                                                children: List.generate(infoClientService.favouriteGames[index].players.length, (idx) {
                                                     return Row(
                                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                         children: [
-                                                    Text("${'PROFILE_PAGE.PLAYER'.tr()}${widget.favouriteGames[index].players[idx]}",
+                                                    Text("${'PROFILE_PAGE.PLAYER'.tr()}${infoClientService.favouriteGames[index].players[idx]}",
                                                         style: const TextStyle (
                                                         color: Colors.black,
                                                         fontSize: 13,
@@ -292,7 +291,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                         fontWeight: FontWeight.bold),
                                                         textAlign: TextAlign.center,
                                                     ),
-                                                    Text("${'PROFILE_PAGE.SCORE'.tr()}${widget.favouriteGames[index].scores[idx]}",
+                                                    Text("${'PROFILE_PAGE.SCORE'.tr()}${infoClientService.favouriteGames[index].scores[idx]}",
                                                         style: const TextStyle (
                                                         color: Colors.black,
                                                         fontSize: 13,
@@ -304,35 +303,35 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                     );
                                                 })
                                             ),
-                                          Text('${'PROFILE_PAGE.WINNERS'.tr()}${widget.favouriteGames[index].winners[0]}',
+                                          Text('${'PROFILE_PAGE.WINNERS'.tr()}${infoClientService.favouriteGames[index].winners[0]}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
-                                          Text('${'PROFILE_PAGE.TILE_LEFT'.tr()}${widget.favouriteGames[index].nbLetterReserve}',
+                                          Text('${'PROFILE_PAGE.TILE_LEFT'.tr()}${infoClientService.favouriteGames[index].nbLetterReserve}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
-                                          Text('${'PROFILE_PAGE.TURN_PLAYED'.tr()}${widget.favouriteGames[index].numberOfTurns}',
+                                          Text('${'PROFILE_PAGE.TURN_PLAYED'.tr()}${infoClientService.favouriteGames[index].numberOfTurns}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
-                                          Text('${'PROFILE_PAGE.GAME_TIME'.tr()}${widget.favouriteGames[index].playingTime}',
+                                          Text('${'PROFILE_PAGE.GAME_TIME'.tr()}${infoClientService.favouriteGames[index].playingTime}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
-                                          Text('${'PROFILE_PAGE.GAME_CREATION_DATE'.tr()}${widget.favouriteGames[index].gameStartDate}',
+                                          Text('${'PROFILE_PAGE.GAME_CREATION_DATE'.tr()}${infoClientService.favouriteGames[index].gameStartDate}',
                                               style: const TextStyle (
                                                   color: Colors.black,
                                                   fontSize: 13,
@@ -359,11 +358,11 @@ class _ProfileStatePage extends State<ProfilePage> {
     );
   }
     Column _isThereSpectators(int index) {
-        if (widget.favouriteGames[index].spectators.isNotEmpty) {
+        if (infoClientService.favouriteGames[index].spectators.isNotEmpty) {
             return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
-                children: List.generate(widget.favouriteGames[index].spectators.length, (idx) {
+                children: List.generate(infoClientService.favouriteGames[index].spectators.length, (idx) {
                             return Column(
                                 children: [
                                             Text('PROFILE_PAGE.SPECTATORS'.tr(),
@@ -373,7 +372,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                               decoration: TextDecoration.none,
                                               fontWeight: FontWeight.bold)
                                            ),
-                                    Text("${'PROFILE_PAGE.NAME'.tr()}${widget.favouriteGames[index].spectators[idx]}",
+                                    Text("${'PROFILE_PAGE.NAME'.tr()}${infoClientService.favouriteGames[index].spectators[idx]}",
                                 style: const TextStyle (
                                     color: Colors.black,
                                     fontSize: 13,
@@ -389,7 +388,7 @@ class _ProfileStatePage extends State<ProfilePage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: TextStyle (color: Colors.black, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
+            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: const TextStyle (color: Colors.black, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
         );
     }
 
@@ -452,7 +451,18 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
           ],
         ),
       ),
-      child: Text('PROFILE_PAGE.MODIFY_NAME'.tr()),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        child: Text('PROFILE_PAGE.MODIFY_NAME'.tr(),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+      ),
     );
   }
 
@@ -615,7 +625,18 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
               );
             });
           }),
-      child: Text('PROFILE_PAGE.MODIFY_AVATAR'.tr()),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        child: Text('PROFILE_PAGE.MODIFY_AVATAR'.tr(),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+      ),
     );
   }
 

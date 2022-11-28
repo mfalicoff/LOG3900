@@ -126,7 +126,7 @@ export class SocketManager {
         await this.gameUpdateClients(game);
 
         if (game.gameFinished) {
-            this.triggerStopTimer(user.roomName);
+            this.triggerStopTimer(game);
         }
         // We update the chatHistory and the game of each client
     }
@@ -481,8 +481,6 @@ export class SocketManager {
         socket.on('saveGame', async (game: GameSaved) => {
             const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
             this.sio.to(savedGame.roomName + Constants.GAME_SUFFIX).emit('savedGameId', savedGame._id);
-            // eslint-disable-next-line no-console
-            console.log('Gamed saved! : ' + savedGame._id);
         });
     }
 
@@ -1040,9 +1038,12 @@ export class SocketManager {
         });
     }
 
-    private triggerStopTimer(roomName: string) {
-        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('stopTimer');
-        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
+    private triggerStopTimer(game: GameServer) {
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('stopTimer');
+        for (const player of game.mapPlayers.values()) {
+            const endGameMsg = this.translateService.translateMessage(player.name, 'END_GAME_DISPLAY_MSG');
+            this.sio.sockets.sockets.get(player.id)?.emit('displayChangeEndGame', endGameMsg);
+        }
     }
 
     private adminHandler(socket: io.Socket) {

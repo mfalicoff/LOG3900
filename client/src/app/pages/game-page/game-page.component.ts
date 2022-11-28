@@ -29,7 +29,7 @@ export class GamePageComponent implements OnInit, OnDestroy {
                     panelClass: 'matDialogWheat',
                     disableClose: true,
                     hasBackdrop: false,
-                    height: '80%',
+                    height: '70%',
                     width: '80%',
                 });
             }

@@ -79,6 +79,10 @@ class _GamePageState extends State<GamePage> {
                 ),
               ],
             ),
+            const Positioned(top: 500.0, right: 200.0, child: ChatPanelOpenButton()),
+            if (infoClientService.game.gameFinished == true) ... [
+              const EndGameResultsPage(),
+            ],
             if (infoClientService.incomingPlayer != "")
               AlertDialog(
                 backgroundColor: Theme.of(context).colorScheme.secondary,

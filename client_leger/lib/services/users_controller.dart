@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:client_leger/env/environment.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -155,7 +156,7 @@ class Controller {
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
-      this.infoClientService.userAvatars[user.username] = user.avatarUri!;
+      infoClientService.userAvatars[user.username] = user.avatarUri!;
       socket.emit('updatedAvatar', user.username);
       return user;
     } else {
@@ -180,8 +181,8 @@ class Controller {
     }
   }
 
-  Future<User> getUserByName(String id) async {
-    final response = await http.get(Uri.parse("$serverAddress/users/id/$id"));
+  Future<User> getUserByName(String name) async {
+    final response = await http.get(Uri.parse("$serverAddress/users/$name"));
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       return user;
@@ -209,6 +210,7 @@ class Controller {
     final response = await http.get(Uri.parse("$serverAddress/users/games/${user.id}"));
     if (response.statusCode == 200) {
       List<dynamic> favouriteGames = json.decode(response.body);
+      infoClientService.updateFavouriteGames(favouriteGames);
       return favouriteGames;
     } else {
         throw Exception('Failed to get favourite games');
