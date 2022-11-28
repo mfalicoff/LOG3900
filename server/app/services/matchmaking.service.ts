@@ -139,8 +139,7 @@ export class MatchmakingService {
         for (let i = 0; i < rankedGame.rankedUsers.length; i++) {
             if (rankedGame.rankedUsers[i].hasAccepted === false) {
                 rankedGame.rankedUsers.splice(i, 1);
-            }
-            else {
+            } else {
                 rankedGame.rankedUsers[i].hasAccepted = false;
             }
         }
