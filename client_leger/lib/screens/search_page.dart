@@ -167,7 +167,6 @@ class _SearchPage extends State<SearchPage> {
                                   const SizedBox(
                                     width: 100.0,
                                   ),
-                                  const ChatPanelOpenButton(),
                                 ],
                               ),
                               Text(user!.username,
@@ -225,6 +224,12 @@ class _SearchPage extends State<SearchPage> {
                             ],
                           ),
                         ),
+                ), Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(10, 3, 0, 3),
+                      child: const ChatPanelOpenButton())
+                  ],
                 ),
               ],
             ),

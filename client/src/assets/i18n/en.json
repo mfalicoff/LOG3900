@@ -12,12 +12,27 @@
         "GAMES_PLAYED": "Games played: ",
         "GAMES_WON": "Games won: ",
         "AVERAGE_SCORE": "Average score: ",
-        "AVERAGE_TIMES": "Average time: "
+        "AVERAGE_TIMES": "Average time: ",
+        "CLOSE_BUTTON": "Close"
+    },
+    "FAVORITE_GAMES":{
+        "FAVORITES_CAPS": "FAVORITE GAMES",
+        "SPECTATORS": "Game spectators: ",
+        "ROOM":"Room: ",
+        "NAME": "Name: ",
+        "PLAYER": "Player: ",
+        "SCORE":" Score: ",
+        "GAME_WINNER": "Winner of the game: ",
+        "REMAINING_LETTERS": "Number of letters remaining in the reserve: ",
+        "NB_TURNS": "Total number of turns: ",
+        "GAME_DURATION": "Duration of the game (in minutes): ",
+        "GAME_START_DATE": "Game start date: "
     },
     "EDIT_PROFILE": {
         "ACTUAL_NAME": "Actual name: ",
         "EDIT_NAME": "Edit name: ",
-        "SAVE": "Save",
+        "NEW_NAME": "New name: ",
+        "SAVE_NAME": "Save name",
         "EDIT_AVATAR": "Edit avatar",
         "SAVE_AVATAR": "Save avatar",
         "CLOSE": "Close"
@@ -26,6 +41,9 @@
         "CLASSIC_MODE": "Classic mode",
         "RANKED_MODE": "Ranked mode",
         "POWER_CARD_MODE": "Configurable power cards mode",
+        "CLASSIC_MODE_DESCRIPTION": "Classic mode is the default game mode. It respects the official rules of the game. In this mode, 4 players compete against each other with at least 2 real players and the rest made up of virtual players.",
+        "RANKED_MODE_DESCRIPTION": "Ranked game mode is a game mode where players compete against each other to earn ranking points. In this mode, 4 real players compete and there is no virtual player.",
+        "POWER_CARD_MODE_DESCRIPTION": "Configurable power cards mode is a game mode where players can choose which power cards they want to use (example card: add 1 minute to its thinking time). In this mode, 4 players compete against each other with at least 2 real players and the rest made up of virtual players.",
         "LOGOUT": "Logout",
         "HIGH_SCORES": "High scores",
         "ERROR": "Error: ",
@@ -47,10 +65,10 @@
         "BUTTON_ENTER_PASSWORD": "Ok",
         "WRONG_PASSWORD": "Incorrect password",
         "NO_PLAYERS": "There is no player in this room.",
-        "CREATOR_GAME": "The creator of the game is:",
+        "CREATOR_GAME": "The creator of the game is: ",
         "THERE_ARE": "There are",
-        "REAL_PLAYERS2": " joueur(s) reel(s) :",
-        "VIRTUAL_PLAYERS2": " joueur(s) virtuel(s) :",
+        "REAL_PLAYERS2": " joueur(s) reel(s): ",
+        "VIRTUAL_PLAYERS2": " joueur(s) virtuel(s): ",
         "NO_ROOMS": "Il n'y a pas de salle disponible."
     },
     "PARAMETERS_SELECTION": {
@@ -69,14 +87,20 @@
         "DICTIONARY_DESCRIPTION": "Dictionary description",
         "START": "Start",
         "POWER_DESCRIPTION": "Description of power",
-        "ACTIVE": "Active"
+        "ACTIVE": "Active",
+        "THERE_IS": "There is ",
+        "REAL_PLAYERS2": " real player(s) :",
+        "VIRTUAL_PLAYERS2": " virtual player(s) :",
+        "NO_ROOMS": "No room available.",
+        "CONFIRM": "Confirm"
     },
     "GAME": {
         "THE_PLAYER": "The player ",
         "TRYING_CONNECT": " try to log in. Do you want to accept him in the game?",
         "YES": "Yes",
         "NO": "No",
-        "DO_YOU_WANT_QUIT": "Do you really want to leave this page?\nThat would be equivalent to abandoning the game!",
+        "DO_YOU_WANT_QUIT_ABANDON": "Do you really want to leave this page?\nThat would be equivalent to abandoning the game!",
+        "DO_YOU_WANT_QUIT": "Do you really want to leave this page?",
         "PLACEHOLDER_CHAT": "Write a command with ! or a message",
         "SEND": "Send",
         "CHAT_ROOM": "Chat rooms",
@@ -125,7 +149,8 @@
             "CANCEL": "Cancel",
             "PLAY": "Play",
             "PLAYER_NAME": "Player name",
-            "SCORE": "Score"
+            "SCORE": "Score",
+            "AVATAR": "Avatar"
         },
         "TIMER_SERVICE": {
             "TIME_LEFT": "Time left : ",
@@ -134,24 +159,25 @@
     },
     "RESULT": {
         "RESULT_GAME": "GAME RESULTS",
-        "ROOM": "ROOM :",
-        "CREATOR": "Room creator:",
-        "SPECTATORS": "Game spectators:",
+        "ROOM": "ROOM: ",
+        "CREATOR": "Room creator: ",
+        "SPECTATORS": "Game spectators: ",
         "NAME": " Name: ",
-        "WINNER": " Winner(s) of the game :",
+        "WINNER": " Winner(s) of the game: ",
         "SCORE": " score: ",
         "NUMBER_OF_LETTERS_LEFT": " Number of letters remaining in the reserve: ",
         "NUMBER_TURNS": " Total number of turns: ",
-        "GAME_LENGTH": " Duration of the game (in minutes) : ",
-        "GAME_START_TIME": " Game start date (timestamp) : ",
-        "ADD_GAME_FAVORITE_QUESTION": " Add this game to your favorites ? : ",
+        "GAME_LENGTH": " Duration of the game (in minutes): ",
+        "GAME_START_TIME": " Game start date (timestamp): ",
+        "ADD_GAME_FAVORITE_QUESTION": " Add this game to your favorites ? ",
         "ADD_GAME_FAVORITE": " Add to Favorites ",
         "STATS": " PLAYER STATS ",
         "PLAYER": " PLAYER: ",
         "SCORE2": " Score: ",
         "LETTER_ON_STAND": " Letters on stand: ",
         "NUMBER_TURNS_IN_GAME": " Number of turns played in the game: ",
-        "ELO": " Elo: "
+        "ELO": " Elo: ",
+        "UPDATE_FAVOURITES_MESSAGE": "The game has been added into your favourites"
     },
     "PROFILE_READ_ONLY":{
         "STATS": "Statistics",

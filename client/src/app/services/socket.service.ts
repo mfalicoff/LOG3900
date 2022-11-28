@@ -26,7 +26,7 @@ import { ChatMessage } from '@app/classes/chat-message';
 export class SocketService {
     socket: Socket;
     gameFinished: BehaviorSubject<boolean>;
-    gameId: string;
+    gameId: string = '';
     count: number;
     private urlString = environment.serverUrl;
 
@@ -101,7 +101,6 @@ export class SocketService {
                 }, Constants.WAIT_FOR_CANVAS_INI);
             }
             if (game.gameFinished && this.count === 1) {
-                this.timerService.clearGameTimer();
                 this.gameFinished.next(true);
                 this.count++;
             }
@@ -189,7 +188,6 @@ export class SocketService {
         this.socket.on('setTimeoutTimerStart', () => {
             this.drawingBoardService.lettersDrawn = '';
             this.setTimeoutForTimer();
-            this.timerService.startGameTimer();
         });
 
         this.socket.on('stopTimer', () => {
@@ -328,8 +326,6 @@ export class SocketService {
                     isRefreshNeccecary = true;
                 }
                 this.infoClientService.chatRooms.splice(idxChatRoom, 1);
-                // eslint-disable-next-line no-console
-                console.log('Should never go here in SocketService:setChatRoom');
             }
             // if the room received is general it means we are getting all the room
             // and this is the start of the app

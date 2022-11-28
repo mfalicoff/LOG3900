@@ -32,7 +32,7 @@ class SocketService with ChangeNotifier {
   TapService tapService = TapService();
   Controller controller = Controller();
   ChatService chatService = ChatService();
-  late String gameId;
+  late String gameId = '';
   int count = 1;
 
   late IO.Socket socket;
@@ -130,7 +130,7 @@ class SocketService with ChangeNotifier {
       Function deepEq = const DeepCollectionEquality().equals;
       infoClientService.updatePlayer(player);
       if(!deepEq(infoClientService.player.chatHistory, infoClientService.player.oldChatHistory) && infoClientService.player.chatHistory.last.senderName != infoClientService.player.name) {
-        if(chatService.rooms[0].name == 'game') {
+        if(chatService.rooms[0].name == 'game' && !infoClientService.soundDisabled) {
           chatService.rooms[0].isUnread = true;
           final player = AudioPlayer(); // Create a player
           await player.setUrl(
@@ -151,7 +151,6 @@ class SocketService with ChangeNotifier {
       infoClientService.notifyListeners();
       chatService.notifyListeners();
       if (GameServer.fromJson(game).gameFinished && count == 1) {
-        timerService.clearGameTimer();
         infoClientService.notifyListeners();
         count++;
       }
@@ -230,16 +229,11 @@ class SocketService with ChangeNotifier {
     socket.on('setTimeoutTimerStart', (_) {
       tapService.lettersDrawn = '';
       setTimeoutForTimer();
-      timerService.startGameTimer();
     });
 
     socket.on('stopTimer', (_) {
       tapService.lettersDrawn = '';
       timerService.clearTimer();
-    });
-
-    socket.on('addSecsToTimer', (secsToAdd){
-      timerService.addSecsToTimer(secsToAdd);
     });
 
     socket.on('askTimerStatus', (_) {
@@ -297,18 +291,21 @@ class SocketService with ChangeNotifier {
         chatService.rooms[indexRoom].chatHistory
             .add(ChatMessage.fromJson(newMsg));
         if (chatService.currentChatRoom.name !=
-            chatService.rooms[indexRoom].name || !chatService.isDrawerOpen) {
+                chatService.rooms[indexRoom].name ||
+            !chatService.isDrawerOpen) {
           chatService.rooms[indexRoom].isUnread = true;
         }
       } else {
         print("error in SocketService:addMsgToChatRoom");
       }
       chatService.notifyListeners();
-      final player = AudioPlayer(); // Create a player
-      await player.setUrl(
-          "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
-      await player.play();
-      await player.stop();
+      if(!infoClientService.soundDisabled){
+        final player = AudioPlayer(); // Create a player
+        await player.setUrl(
+            "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+        await player.play();
+        await player.stop();
+      }
     });
 
   socket.on('rmChatRoom', (chatRoomName) {

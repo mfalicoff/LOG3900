@@ -1,24 +1,33 @@
-<div if="container">
-    <!-- canvas for actual board and mooves -->
-    <canvas 
-    #canvasPlayArea
-    id="canvasPlayArea"
-    class="canvas"
-    [attr.width]="playAreaConvasSize.x" 
-    [attr.height]="playAreaConvasSize.y" 
-    (contextmenu)="$event.preventDefault()"
-    ></canvas>
-    <!-- canvas for drag and drop and drawing of every arrows 
-    border on hover placement -->
-    <canvas 
-    #tmpTileCanvas
-    id="tmpTileCanvas"
-    class="canvas"
-    [attr.width]="playAreaConvasSize.x" 
-    [attr.height]="playAreaConvasSize.y" 
-    (contextmenu)="$event.preventDefault()"
-    ></canvas>
+<div id="canvasContainer">
+    <div *ngIf="infoClientService.game.gameStarted">
+        <h1 id="playerB" class="playerName">{{playerNameDynamic('B')}}</h1>
+        <h1 id="playerT" class="playerName">{{playerNameDynamic('T')}}</h1>
+        <h1 id="playerL" class="playerName">{{playerNameDynamic('L')}}</h1>
+        <h1 id="playerR" class="playerName">{{playerNameDynamic('R')}}</h1>
+    </div>
+    <div id="container">
+        <!-- canvas for actual board and mooves -->
+        <canvas 
+        #canvasPlayArea
+        id="canvasPlayArea"
+        class="canvas"
+        [attr.width]="playAreaConvasSize.x" 
+        [attr.height]="playAreaConvasSize.y" 
+        (contextmenu)="$event.preventDefault()"
+        ></canvas>
+        <!-- canvas for drag and drop and drawing of every arrows 
+        border on hover placement -->
+        <canvas 
+        #tmpTileCanvas
+        id="tmpTileCanvas"
+        class="canvas"
+        [attr.width]="playAreaConvasSize.x" 
+        [attr.height]="playAreaConvasSize.y" 
+        (contextmenu)="$event.preventDefault()"
+        ></canvas>
+    </div>
 </div>
+
 
 
 <!-- the modal to choose the target player in case the player uses the card "EXCHANGE_STAND" -->

@@ -138,7 +138,8 @@
         "LETTER_LEFT": "Letters left",
         "NUMBER_OF_TURN_PLAYED": "Number of turns played",
         "GAME_SPECTATORS": "Game spectators",
-        "NO_SPECTATORS": "There are no spectators."
+        "NO_SPECTATORS": "There are no spectators.",
+        "FAVOURITE_GAMES_UPDATED": "The game has been successfully added to yours favourites."
     },
     "CREATE_GAME_PAGE": {
         "YOU": "You",

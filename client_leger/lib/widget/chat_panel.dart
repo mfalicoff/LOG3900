@@ -49,7 +49,10 @@ class _ChatPanelOpenButton extends State<ChatPanelOpenButton> {
         },
         child: Row(
           children: [
-            const Icon(Icons.chat),
+            Icon(
+              Icons.chat,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
             chatService.isThereAChatUnread() == true
                 ? Container(
                     decoration: BoxDecoration(
@@ -98,7 +101,8 @@ class _ChatPanelState extends State<ChatPanel> {
 
     if (widget.isInGame) {
       if (chatService.rooms[0].name != 'game') {
-        ChatRoom gameChat = ChatRoom(name: 'game', participants: []);
+        //3 character creator so it doens't match any user
+        ChatRoom gameChat = ChatRoom(name: 'game', participants: [], creator: 'sys');
         gameChat.chatHistory = infoClientService.player.chatHistory;
         chatService.rooms.insert(0, gameChat);
       }
@@ -114,7 +118,7 @@ class _ChatPanelState extends State<ChatPanel> {
 
   void scrollMessages() {
     _chatScrollController.animateTo(
-      _chatScrollController.position.maxScrollExtent + 50,
+      _chatScrollController.position.maxScrollExtent,
       curve: Curves.easeOut,
       duration: const Duration(milliseconds: 500),
     );
@@ -146,7 +150,7 @@ class _ChatPanelState extends State<ChatPanel> {
   Widget build(BuildContext context) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
       _chatScrollController
-          .jumpTo(_chatScrollController.position.maxScrollExtent + 30);
+          .jumpTo(_chatScrollController.position.maxScrollExtent);
       if (chatService.currentChatRoom.isUnread) {
         chatService.currentChatRoom.isUnread = false;
         chatService.notifyListeners();
@@ -325,7 +329,6 @@ class _ChatPanelState extends State<ChatPanel> {
         ),
         Expanded(
             child: Container(
-          alignment: Alignment.center,
           decoration: BoxDecoration(
               border: Border.all(),
               color: Theme.of(context).colorScheme.secondary),
@@ -341,9 +344,9 @@ class _ChatPanelState extends State<ChatPanel> {
                 ),
               ],
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                 child: Container(
-                  height: isDelChatRoomBtn() ? 602 : 650,
+                  height: isDelChatRoomBtn() ? 642 : 690,
                   decoration: BoxDecoration(
                       border: Border.all(),
                       color: Theme.of(context).colorScheme.secondary),
@@ -576,7 +579,6 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
   final SocketService socketService = SocketService();
   final _formKey = GlobalKey<FormState>();
   late String? name = "";
-  late String? password = "";
   bool passwordCheck = false;
 
   @override
@@ -614,40 +616,25 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
-                    CheckboxListTile(
-                      title: Text("CHAT_PANEL.PASSWORD".tr()),
-                      checkColor: Colors.white,
-                      value: passwordCheck,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          passwordCheck = !passwordCheck;
-                        });
-                      },
-                    ),
-                    (passwordCheck == true
-                        ? TextFormField(
-                            onSaved: (String? value) {
-                              password = value;
-                            },
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: "CHAT_PANEL.PASSWORD".tr(),
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
-                          )
-                        : Container()),
                     TextButton(
+                      style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.primary)),
                       onPressed: () => Navigator.pop(context, 'Cancel'),
-                      child: Text("CHAT_PANEL.CANCEL".tr()),
+                      child: Text("CHAT_PANEL.CANCEL".tr(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                     ),
                     TextButton(
+                      style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.primary)),
                       onPressed: () {
                         _onSubmitCreateRoom();
                       },
-                      child: Text("CHAT_PANEL.SUBMIT".tr()),
+                      child: Text("CHAT_PANEL.SUBMIT".tr(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                     ),
                   ],
                 ),

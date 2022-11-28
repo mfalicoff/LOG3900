@@ -2,8 +2,13 @@
     <div class="nameEdit">
         <h1>{{'EDIT_PROFILE.ACTUAL_NAME' | translate}}{{this.getUsername()}}</h1>
         <label>{{'EDIT_PROFILE.EDIT_NAME' | translate}}</label>
-        <input matInput [(ngModel)]="name">
-        <button mat-button (click)="updateUsername()" class="saveButton">{{'EDIT_PROFILE.SAVE' | translate}}</button>
+        <div>
+            <mat-form-field>
+                <mat-label style="color:#0C483F">{{'EDIT_PROFILE.NEW_NAME' | translate}}</mat-label>
+                <input matInput [(ngModel)]="name">
+              </mat-form-field>
+            <button mat-button (click)="updateUsername()" class="saveButton">{{'EDIT_PROFILE.SAVE_NAME' | translate}}</button>
+        </div>
     </div>
     <div class="avatarEdit">
         <h2>{{'EDIT_PROFILE.EDIT_AVATAR' | translate}}</h2>

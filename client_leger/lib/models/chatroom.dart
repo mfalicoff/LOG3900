@@ -9,7 +9,7 @@ class ChatRoom{
   late String creator;
   late bool isUnread = false;
 
-  ChatRoom({required this.name, required this.participants});
+  ChatRoom({required this.name, required this.participants, required this.creator});
 
   ChatRoom.fromJson(Map json){
     name = json['name'];

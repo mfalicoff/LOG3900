@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:client_leger/models/game-saved.dart';
 import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/screens/search_page.dart';
 import 'package:client_leger/services/users_controller.dart';
@@ -12,7 +9,6 @@ import '../constants/constants.dart';
 
 import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
-import 'package:http/http.dart' as http;
 
 import '../services/chat-service.dart';
 import '../env/environment.dart';
@@ -30,23 +26,13 @@ class _MyHomePageState extends State<MyHomePage> {
   final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
   final TapService tapService = TapService();
-  late List<GameSaved> games = [];
   final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
 
     @override
   void initState() {
     super.initState();
-    final user = globals.userLoggedIn;
-    http.get(Uri.parse("$serverAddress/users/games/${user.id}"))
-        .then((res) => parseGames(res));
-  }
-
-  void parseGames(http.Response res) {
-    var parsed = json.decode(res.body);
-    for (var game in parsed) {
-      games.add(GameSaved.fromJson(game));
-    }
+    controller.getFavouriteGames();
   }
 
   refresh() {
@@ -155,6 +141,38 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
             ),
           ),
+          StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Positioned(
+                top: 190,
+                right: 30,
+                child: Container(
+                  height: 63,
+                  width: 63,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(35.0)),
+                  ),
+                  child: IconButton(
+                    iconSize: 50,
+                    icon: CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      backgroundImage:
+                      infoClientService.soundDisabled ?
+                      const AssetImage('assets/volume-off-white.png') :
+                      const AssetImage('assets/volume-on-white.png'),
+                    ),
+                    onPressed: () {
+                      setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
+                      infoClientService.notifyListeners();
+                      socketService.notifyListeners();
+                    },
+                  ),
+                ),
+              );
+            }
+          ),
         ],
       ),
     );
@@ -170,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toProfilePage() {
     Navigator.push(context,
-            MaterialPageRoute(builder: (context) => ProfilePage(favouriteGames: games)))
+            MaterialPageRoute(builder: (context) => ProfilePage()))
         .then((value) {
       setState(() {});
     });

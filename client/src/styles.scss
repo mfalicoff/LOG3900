@@ -291,6 +291,15 @@ body.my-light-mode {
     overflow-y: hidden!important;
 }
 
+.btnStyle{
+    background-color: #0C483F;
+    display: inline;
+    font-size: 12px;
+    color: wheat;
+    cursor: pointer;
+    box-shadow: none;
+}
+
 .ngx-gallery {
     display: inline-block;
     margin-bottom: 20px;

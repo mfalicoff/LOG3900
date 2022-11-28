@@ -67,7 +67,7 @@ export class PlayAreaService {
         // is the game is finished we stop the game
         if (game.gameFinished && playerThatJustPlayed) {
             this.sendGameToAllClientInRoom(game);
-            this.triggerStopTimer(game.roomName);
+            this.triggerStopTimer(game);
             return;
         }
 
@@ -310,9 +310,12 @@ export class PlayAreaService {
         }
     }
 
-    private triggerStopTimer(roomName: string) {
-        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('stopTimer');
-        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
+    private triggerStopTimer(game: GameServer) {
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('stopTimer');
+        for (const player of game.mapPlayers.values()) {
+            const endGameMsg = this.translateService.translateMessage(player.name, 'END_GAME_DISPLAY_MSG');
+            this.sio.sockets.sockets.get(player.id)?.emit('displayChangeEndGame', endGameMsg);
+        }
     }
 
     private giveRandomNbOpponent(sizeArrayVPOptions: number): number {
