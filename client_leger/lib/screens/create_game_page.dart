@@ -274,6 +274,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     items: List<DropdownMenuItem<int>>.generate(
                                         infoClientService.dictionaries.length,
                                         (int index) => DropdownMenuItem(
+                                              value: index,
                                               child: Text(
                                                   infoClientService.dictionaries[index].title,
                                                 style: TextStyle(
