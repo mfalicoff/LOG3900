@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AfterContentInit, Component, HostListener, Input } from '@angular/core';
+import { AfterContentInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InfoClientService } from '@app/services/info-client.service';
 import { NewChatroomModalComponent } from './new-chatroom-modal/new-chatroom-modal.component';
@@ -45,16 +45,6 @@ export class CommunicationDashboardComponent implements AfterContentInit {
         if (this.infoClientService.chatRooms.length > 0) {
             this.infoClientService.currSelectedChatroom = this.infoClientService.chatRooms[0];
         }
-        setInterval(() => {
-            this.beforeunloadHandler();
-        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-        }, 500);
-    }
-
-    @HostListener('window:onload')
-    private beforeunloadHandler(): void {
-        console.log('XXXXXXX');
-        this.themeService.darkMode$.subscribe();
     }
 
     ngAfterContentInit(): void {

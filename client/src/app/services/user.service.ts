@@ -279,7 +279,11 @@ export class UserService {
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
         this.translate.use(response.data.language);
-        this.themeService.darkMode$.subscribe();
+        if (response.data.theme === 'dk') {
+            this.themeService.enable();
+        } else {
+            this.themeService.disable();
+        }
         this.infoClientService.playerName = response.data.name;
         this.router.navigate(['/game-mode-options']);
     }

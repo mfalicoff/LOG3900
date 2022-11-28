@@ -101,16 +101,12 @@ body {
 
 .editForm input{
     border-radius: 10px;
-    // border-color: #0c483f;
     height: 25px;
-    // color: #0c483f;
     margin-bottom: 10px;
 }
 
 #mat-dialog-0{
-    // background: wheat;
     font-weight: bold;
-    // color: #0c483f;
     font-family: Arial, Helvetica, sans-serif;
     font-size: large;
     border-spacing: 2px;
@@ -122,27 +118,106 @@ body {
     top: 10px;
     // position: fixed;
     border-radius: 5px;
-    // background-color: #0c483f;
-    // color: wheat;
     align-self: center;
     margin-top: 50px;
     font-weight: bold;
 }
 
-// .btnStyle{
-//     background-color: #0C483F;
-//     display: inline;
-//     font-size: 12px;
-//     color: wheat;
-//     cursor: pointer;
-//     box-shadow: none;
-// }
-
-// #main {
-//     background-color: wheat;
-//     color: #0c483f;
-//     border-color: #0c483f;
-// }
+body {
+    background-color: wheat;
+    // color: #0c483f;
+    border-color: #0c483f;
+    #container {
+        background-color: wheat;
+    }
+    #main {
+        background-color: wheat;
+    }
+    button {
+        background-color: #0C483F;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    .mat-button {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    input {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    .mat-raised-button {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    mat-button {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    .card {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    .mat-dialog-container{
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    #timer {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    mat-form-field {
+        color: #0c483f;
+    }
+    mat-label {
+        color: #0c483f;
+    }
+    .mat-select-arrow {
+        color: #0c483f;
+    }
+    .mat-select-value {
+        color: #0c483f;
+    }
+    td {
+        border: wheat;
+        border-color: wheat;
+    }
+    .flip-card-front {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .flip-card-back {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .material-symbols-outlined {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    .MPButton {
+        color: #0c483f;
+    }
+    mat-grid-list {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    ::-webkit-scrollbar-track {
+        background: wheat;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #0C483F;
+    }    
+}
 
 body.my-dark-mode {
     transition: color 2s ease;
@@ -172,7 +247,7 @@ body.my-dark-mode {
         color: wheat;
         border-color: wheat;
     }
-    .mat-dialog-container{
+    .mat-dialog-container {
         background-color: #0c483f;
         color: wheat;
         border-color: wheat;
@@ -201,6 +276,9 @@ body.my-dark-mode {
     }
     mat-grid-list {
         background-color: wheat;
+        color: #0c483f;
+    }
+    .MPButton {
         color: #0c483f;
     }
     .mat-select-arrow {
@@ -238,7 +316,7 @@ body.my-light-mode {
         background-color: wheat;
     }
     button {
-        background-color: #0c483f;
+        background-color: #0C483F;
         color: wheat;
         border-color: wheat;
         border: wheat;
@@ -278,6 +356,9 @@ body.my-light-mode {
         color: #0c483f;
     }
     .mat-select-value {
+        color: #0c483f;
+    }
+    .MPButton {
         color: #0c483f;
     }
     td {

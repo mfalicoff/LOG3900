@@ -14,21 +14,17 @@ export class AppComponent {
         private translate: TranslateService,
         public infoClientService: InfoClientService,
         public router: Router,
-        private themeService: DarkModeService,
+        public themeService: DarkModeService,
     ) {
         this.translate.setDefaultLang('fr');
         this.translate.use('fr');
-        this.themeService.darkMode$.subscribe();
+        this.themeService.disable();
         if (this.router.url === '/game') {
             (document.getElementById('hideInGame') as HTMLElement).style.display = 'none';
         }
     }
 
     goingBack() {
-        if (this.router.url === '/login') {
-            this.router.navigate(['/home']);
-        } else {
-            history.back();
-        }
+        history.back();
     }
 }
