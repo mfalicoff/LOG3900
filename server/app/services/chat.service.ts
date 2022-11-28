@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable max-lines */
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
@@ -305,6 +306,13 @@ export class ChatService {
             await this.userService.updateStatsAtEndOfGame(gameLength, playerElem);
         }
         await this.sendWinnerMessage(game, this.endGameService.chooseWinner(game, playersCpy));
+        this.removeGameFromList(game);
+    }
+
+    private removeGameFromList(game: GameServer) {
+        game.mapPlayers.forEach((player: Player) => {
+            this.sio.sockets.sockets.get(player.id)?.emit('removeElementListRoom', game.roomName);
+        });
     }
 
     private async sendWinnerMessage(game: GameServer, winners: Player[]) {
