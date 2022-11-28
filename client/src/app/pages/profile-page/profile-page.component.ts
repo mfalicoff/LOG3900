@@ -21,8 +21,6 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     langSelected: string | undefined;
     themeList: string[];
     themeSelected: string | undefined;
-    // eslint-disable-next-line no-invalid-this
-    darkMode$: Observable<boolean> = this.themeService.darkMode$;
 
     langMap = new Map<string, string>([
         ['Français', 'fr'],
