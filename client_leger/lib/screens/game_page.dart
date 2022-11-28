@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:client_leger/constants/constants.dart';
-import 'package:client_leger/screens/end-game-results-page.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
@@ -13,6 +12,7 @@ import 'package:flip_card/flip_card.dart';
 import '../models/player.dart';
 import '../services/socket_service.dart';
 import '../widget/chat_panel.dart';
+import 'end-game-results-page.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({Key? key}) : super(key: key);
@@ -39,223 +39,109 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      endDrawer: Drawer(
-          width: 600,
-          child: ChatPanel(
-            isInGame: true,
-          )),
-      body: Stack(
-        children: [
-          Row(
-            children: [
-              Container(
-                color: Theme.of(context).colorScheme.secondary,
-                width: 100,
-                child: Column(
-                  children: [
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Container(
-                      child: shouldBeAbleToLeaveGame()
-                          ? ElevatedButton(
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 3.0),
-                                ),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              ),
-                              onPressed: _leaveGame,
-                              child: Text(
-                                "GAME_PAGE.QUIT_GAME".tr(),
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                            )
-                          : null,
-                    ),
-                    Container(
-                      child: shouldBeAbleToGiveUpGame()
-                          ? ElevatedButton(
-                              style: ButtonStyle(
-                                padding: MaterialStateProperty.all(
-                                  const EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 3.0),
-                                ),
-                                shape: MaterialStateProperty.all<
-                                    RoundedRectangleBorder>(
-                                  RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                              ),
-                              onPressed: () => _giveUpGame(context),
-                              child: Text(
-                                "GAME_PAGE.GIVE_UP".tr(),
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary,
-                                ),
-                              ),
-                            )
-                          : null,
-                    ),
-                    if (infoClientService.gameMode == POWER_CARDS_MODE && infoClientService.game.gameStarted && !infoClientService.game.gameFinished) ...[
-                      PowerListDialog(
-                        notifyParent: refresh,
-                      ),
-                    ],
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Container(
-                        child: infoClientService
-                                    .creatorShouldBeAbleToStartGame ==
-                                true
-                            ? ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 3.0),
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: _startGame,
-                                child: Text(
-                                  "GAME_PAGE.START_GAME".tr(),
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              )
-                            : null),
-                      Container(
-                        child: shouldSpecBeAbleToBePlayer() == true
-                            ? ElevatedButton(
-                                style: ButtonStyle(
-                                  padding: MaterialStateProperty.all(
-                                    const EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 3.0),
-                                  ),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: spectWantsToBePlayer,
-                                child: Text(
-                                  "GAME_PAGE.REPLACE_VIRTUAL_PLAYER".tr(),
-                                  style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                  ),
-                                ),
-                              )
-                            : Container())
-                  ],
-                ),
-              ),
-              Container(
-                color: Theme.of(context).colorScheme.primary,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 20.0, horizontal: 20.0),
-                child: const GameBoard(),
-              ),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(0, 100, 50, 100),
+    return WillPopScope(
+      onWillPop: () async {
+        if (shouldBeAbleToLeaveGame()) {
+          _leaveGame();
+        } else if (shouldBeAbleToGiveUpGame()) {
+          _giveUpGame(context);
+        }
+        return false;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        endDrawer: Drawer(
+            width: 600,
+            child: ChatPanel(
+              isInGame: true,
+            )),
+        body: Stack(
+          children: [
+            Row(
+              children: [
+                Container(
                   color: Theme.of(context).colorScheme.primary,
-                  child: Column(
-                    children: const [
-                      InfoPanel(),
-                    ],
-                  ),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 20.0, horizontal: 20.0),
+                  child: const GameBoard(),
                 ),
-              ),
-            ],
-          ),
-          const Positioned(top: 500.0, right: 200.0, child: ChatPanelOpenButton()),
-          if (infoClientService.game.gameFinished == true) ... [
-                const EndGameResultsPage(),
-            ],
-          if (infoClientService.incomingPlayer != "")
-            AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              title: Text(
-                '${"GAME_PAGE.THE_PLAYER".tr()}${infoClientService.incomingPlayer}${"GAME_PAGE.TRY_CONNECT".tr()}',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-              actions: <Widget>[
-                ElevatedButton(
-                  child: Text(
-                    "GAME_PAGE.REFUSE".tr(),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(0, 100, 50, 100),
+                    color: Theme.of(context).colorScheme.primary,
+                    child: Column(
+                      children: const [
+                        InfoPanel(),
+                      ],
+                    ),
                   ),
-                  onPressed: () {
-                    acceptPlayer(false);
-                    Navigator.pop(context);
-                  },
-                ),
-                ElevatedButton(
-                  child: Text(
-                    "GAME_PAGE.ACCEPT".tr(),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary),
-                  ),
-                  onPressed: () {
-                    acceptPlayer(true);
-                    Navigator.pop(context);
-                  },
                 ),
               ],
-            )
-          else
-            Container(),
-          StatefulBuilder(
-              builder: (BuildContext context, StateSetter setState) {
-            return Positioned(
-              top: 20,
-              right: 30,
-              child: IconButton(
-                iconSize: 50,
-                icon: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  backgroundImage: infoClientService.soundDisabled
-                      ? const AssetImage('assets/volume-off.png')
-                      : const AssetImage('assets/volume-on.png'),
+            ),
+            const Positioned(top: 550.0, right: 225.0, child: ChatPanelOpenButton()),
+            if (infoClientService.game.gameFinished == true) ... [
+              const EndGameResultsPage(),
+            ],
+            if (infoClientService.incomingPlayer != "")
+              AlertDialog(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                title: Text(
+                  '${"GAME_PAGE.THE_PLAYER".tr()}${infoClientService.incomingPlayer}${"GAME_PAGE.TRY_CONNECT".tr()}',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.primary),
                 ),
-                onPressed: () {
-                  setState(() => {
-                        infoClientService.soundDisabled =
-                            !infoClientService.soundDisabled
-                      });
-                  infoClientService.notifyListeners();
-                  socketService.notifyListeners();
-                },
-              ),
-            );
-          }),
-        ],
+                actions: <Widget>[
+                  ElevatedButton(
+                    child: Text(
+                      "GAME_PAGE.REFUSE".tr(),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
+                    onPressed: () {
+                      acceptPlayer(false);
+                    },
+                  ),
+                  ElevatedButton(
+                    child: Text(
+                      "GAME_PAGE.ACCEPT".tr(),
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
+                    onPressed: () {
+                      acceptPlayer(true);
+                    },
+                  ),
+                ],
+              )
+            else
+              Container(),
+            StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return Positioned(
+                top: 20,
+                right: 30,
+                child: IconButton(
+                  iconSize: 50,
+                  icon: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    backgroundImage: infoClientService.soundDisabled
+                        ? const AssetImage('assets/volume-off.png')
+                        : const AssetImage('assets/volume-on.png'),
+                  ),
+                  onPressed: () {
+                    setState(() => {
+                          infoClientService.soundDisabled =
+                              !infoClientService.soundDisabled
+                        });
+                    infoClientService.notifyListeners();
+                    socketService.notifyListeners();
+                  },
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -268,8 +154,7 @@ class _GamePageState extends State<GamePage> {
       socketService.socket
           .emit('acceptPlayer', [false, infoClientService.incomingPlayerId]);
     }
-    infoClientService.incomingPlayer = '';
-    infoClientService.incomingPlayerId = '';
+    infoClientService.clearIncomingPlayer();
   }
 
   bool shouldBeAbleToLeaveGame() {
@@ -303,11 +188,6 @@ class _GamePageState extends State<GamePage> {
 
   spectWantsToBePlayer() {
     socketService.socket.emit('spectWantsToBePlayer');
-  }
-
-  void _startGame() {
-    socketService.socket.emit('startGame', infoClientService.game.roomName);
-    infoClientService.creatorShouldBeAbleToStartGame = false;
   }
 
   void _leaveGame() {

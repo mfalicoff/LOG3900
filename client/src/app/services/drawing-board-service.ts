@@ -7,6 +7,7 @@ import { Vec2 } from '@app/classes/vec2';
 import { Socket } from 'socket.io-client';
 import { DrawingService } from './drawing.service';
 import { InfoClientService } from './info-client.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Injectable({
     providedIn: 'root',
@@ -24,7 +25,7 @@ export class DrawingBoardService {
     coordsLettersDrawn: Vec2[];
     private mapTileColours: Map<string, string>;
 
-    constructor(private drawingService: DrawingService, private infoClientService: InfoClientService) {
+    constructor(private drawingService: DrawingService, private infoClientService: InfoClientService, private translateService: TranslateService) {
         this.initDefaultVariables();
         this.mapTileColours = new Map([
             ['xx', '#BEB9A6'],
@@ -328,14 +329,16 @@ export class DrawingBoardService {
             }
             if (bonusBoard[idxLine][idxColumn].includes('letter')) {
                 this.playAreaCanvas.fillText(
-                    'LETTRE',
+                    this.translateService.instant('LETTER'),
                     xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText('LETTRE').width) / 2 + marginForRoundedNumberAndLook / 2,
                     yPosPx + Constants.WIDTH_EACH_SQUARE / 2 + marginForRoundedNumberAndLook / 2,
                 );
             } else {
                 this.playAreaCanvas.fillText(
-                    'MOT',
-                    xPosPx + (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText('MOT').width) / 2 + marginForRoundedNumberAndLook / 2,
+                    this.translateService.instant('WORD'),
+                    xPosPx +
+                        (Constants.WIDTH_EACH_SQUARE - this.playAreaCanvas.measureText(this.translateService.instant('WORD')).width) / 2 +
+                        marginForRoundedNumberAndLook / 2,
                     yPosPx + Constants.WIDTH_EACH_SQUARE / 2 + marginForRoundedNumberAndLook / 2,
                 );
             }

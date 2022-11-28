@@ -181,8 +181,8 @@ class Controller {
     }
   }
 
-  Future<User> getUserByName(String name) async {
-    final response = await http.get(Uri.parse("$serverAddress/users/$name"));
+  Future<User> getUserById(String id) async {
+    final response = await http.get(Uri.parse("$serverAddress/users/id/$id"));
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       return user;
@@ -202,6 +202,25 @@ class Controller {
     );
     if (response.statusCode != 200) {
       throw Exception("Failed to update language");
+    }
+  }
+
+  updateTheme(String newTheme) async {
+    final user = globals.userLoggedIn;
+    String? cookie = user.cookie;
+    final response = await http.put(Uri.parse("$serverAddress/users/theme/${user.id}"),
+      headers : <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+      },
+      body: jsonEncode(<String, String>{"theme": newTheme}),
+    );
+    if (response.statusCode == 200) {
+      User user = User.fromJson(json.decode(response.body));
+      user.cookie = cookie;
+      return user;
+    } else if (response.statusCode != 200) {
+      throw Exception("Failed to update theme");
     }
   }
 

@@ -93,6 +93,9 @@ class _SearchPage extends State<SearchPage> {
                                     color:
                                         Theme.of(context).colorScheme.primary),
                               ),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary
+                              ),
                             ),
                             Expanded(
                               child: ListView.builder(
@@ -103,7 +106,7 @@ class _SearchPage extends State<SearchPage> {
                                     return GestureDetector(
                                         onTap: () async {
                                           var userWanted =
-                                              await controller.getUserByName(
+                                              await controller.getUserById(
                                                   usersFound[index]['_id']);
                                           FocusScope.of(context).unfocus();
                                           user = userWanted;
@@ -112,8 +115,8 @@ class _SearchPage extends State<SearchPage> {
                                         child: Center(
                                             child: Text(
                                                 '${usersFound[index]['name']}',
-                                                style: const TextStyle(
-                                                    color: Colors.black,
+                                                style: TextStyle(
+                                                    color: Theme.of(context).colorScheme.primary,
                                                     fontSize: 25,
                                                     decoration:
                                                         TextDecoration.none))));
@@ -170,8 +173,8 @@ class _SearchPage extends State<SearchPage> {
                                 ],
                               ),
                               Text(user!.username,
-                                  style: const TextStyle(
-                                      color: Colors.black,
+                                  style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 17,
                                       decoration: TextDecoration.none)),
@@ -196,9 +199,6 @@ class _SearchPage extends State<SearchPage> {
                                             user!.gamesPlayed.toString()),
                                         returnRowTextElement(
                                             user!.gamesWon.toString()),
-                                        // returnRowTextElement(user!
-                                        //     .averagePointsPerGame
-                                        //     .toString()),
                                         returnRowTextElement(user!
                                                 .averagePointsPerGame!
                                                 .toStringAsFixed(2)),
@@ -243,8 +243,8 @@ class _SearchPage extends State<SearchPage> {
 
   Text returnRowTextElement(String textData) {
     return Text((textData),
-        style: const TextStyle(
-            color: Colors.black,
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
             fontSize: 11,
             decoration: TextDecoration.none));
   }
@@ -256,8 +256,8 @@ class _SearchPage extends State<SearchPage> {
           child: Column(
             children: [
               Text(title,
-                  style: const TextStyle(
-                      color: Colors.black,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 11,
                       decoration: TextDecoration.none)),
               Container(
@@ -269,8 +269,8 @@ class _SearchPage extends State<SearchPage> {
                     itemCount: history.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Text('\u2022 ${translateConnection(history[index])}',
-                          style: const TextStyle(
-                              color: Colors.black,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
                               fontSize: 11,
                               decoration: TextDecoration.none));
                     }),
