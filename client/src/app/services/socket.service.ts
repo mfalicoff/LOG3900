@@ -326,8 +326,6 @@ export class SocketService {
                     isRefreshNeccecary = true;
                 }
                 this.infoClientService.chatRooms.splice(idxChatRoom, 1);
-                // eslint-disable-next-line no-console
-                console.log('Should never go here in SocketService:setChatRoom');
             }
             // if the room received is general it means we are getting all the room
             // and this is the start of the app

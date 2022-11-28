@@ -1,16 +1,42 @@
 #container { 
-    position: relative; 
+    position: relative;
+    margin-left: 50px;
 }
 .canvas { 
     position: absolute; 
-    top: 0; 
-    left: 14%; 
+    top: 10%; 
+    left: 14%;
 }
 
 .validateBtn{
     background-color: #0C483F;
     color: wheat;
 }
+
+.playerName{
+    position: absolute;
+    background-color: wheat;
+    border-radius: 10px;
+    padding: 5px;
+    // width: 150px;
+}
+#playerL{
+    top: 21%;
+    right: 91.2%;
+}
+#playerT{
+    top: 2%;
+    left: 38%;
+}
+#playerR{
+    top: 66%;
+    left: 49%;
+}
+#playerB{
+    top: 87%;
+    right: 80.5%;
+}
+
 
 /* The Modal (background) */
 .modal {

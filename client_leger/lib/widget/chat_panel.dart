@@ -49,7 +49,10 @@ class _ChatPanelOpenButton extends State<ChatPanelOpenButton> {
         },
         child: Row(
           children: [
-            const Icon(Icons.chat),
+            Icon(
+              Icons.chat,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
             chatService.isThereAChatUnread() == true
                 ? Container(
                     decoration: BoxDecoration(
@@ -576,7 +579,6 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
   final SocketService socketService = SocketService();
   final _formKey = GlobalKey<FormState>();
   late String? name = "";
-  late String? password = "";
   bool passwordCheck = false;
 
   @override
@@ -614,40 +616,25 @@ class _CreateRoomDialog extends State<CreateRoomDialog> {
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary),
                     ),
-                    CheckboxListTile(
-                      title: Text("CHAT_PANEL.PASSWORD".tr()),
-                      checkColor: Colors.white,
-                      value: passwordCheck,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          passwordCheck = !passwordCheck;
-                        });
-                      },
-                    ),
-                    (passwordCheck == true
-                        ? TextFormField(
-                            onSaved: (String? value) {
-                              password = value;
-                            },
-                            decoration: InputDecoration(
-                              border: const OutlineInputBorder(),
-                              labelText: "CHAT_PANEL.PASSWORD".tr(),
-                              labelStyle: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary),
-                            ),
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
-                          )
-                        : Container()),
                     TextButton(
+                      style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.primary)),
                       onPressed: () => Navigator.pop(context, 'Cancel'),
-                      child: Text("CHAT_PANEL.CANCEL".tr()),
+                      child: Text("CHAT_PANEL.CANCEL".tr(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                     ),
                     TextButton(
+                      style: ButtonStyle(backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.primary)),
                       onPressed: () {
                         _onSubmitCreateRoom();
                       },
-                      child: Text("CHAT_PANEL.SUBMIT".tr()),
+                      child: Text("CHAT_PANEL.SUBMIT".tr(),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                      ),
                     ),
                   ],
                 ),

@@ -68,7 +68,7 @@ class _GameListPageState extends State<GameListPage> {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 200.0),
+                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 100.0),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(

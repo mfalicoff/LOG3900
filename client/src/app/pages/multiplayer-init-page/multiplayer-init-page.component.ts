@@ -50,7 +50,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
     askForPasswd() {
         this.passwdModalStyle = 'none';
         if (this.passwordText !== this.actualPassword) {
-            this.notifService.openSnackBar(this.translate.instant('WRONG_PASSWORD'), false);
+            this.notifService.openSnackBar(this.translate.instant('MULTIPLAYER_INIT.WRONG_PASSWORD'), false);
         } else {
             this.joinRoom(this.roomNameClicked);
         }
@@ -71,7 +71,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
 
         if (nbPlayer <= 0) {
             const titleList = document.createElement('li');
-            titleList.innerHTML = this.translate.instant('NO_PLAYERS');
+            titleList.innerHTML = this.translate.instant('MULTIPLAYER_INIT.NO_PLAYERS');
             titleList.style.fontWeight = 'bold';
             listPlayer?.appendChild(titleList);
             return;
@@ -88,18 +88,20 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
         });
 
         const creatorOfGame = this.infoClientService.rooms[idxExistingRoom].players.find((player) => player.isCreatorOfGame);
-        creatorOfGameUi!.innerHTML = this.translate.instant('CREATOR_GAME') + creatorOfGame?.name;
+        creatorOfGameUi!.innerHTML = this.translate.instant('MULTIPLAYER_INIT.CREATOR_GAME') + creatorOfGame?.name;
         creatorOfGameUi!.style.fontWeight = 'bold';
 
         if (nbRealPlayer > 0) {
             const titleList = document.createElement('li');
-            titleList.innerHTML = this.translate.instant('THERE_ARE') + nbRealPlayer + this.translate.instant('REAL_PLAYERS2');
+            titleList.innerHTML =
+                this.translate.instant('MULTIPLAYER_INIT.THERE_ARE') + nbRealPlayer + this.translate.instant('MULTIPLAYER_INIT.REAL_PLAYERS2');
             titleList.style.fontWeight = 'bold';
             listPlayer?.appendChild(titleList);
         }
         if (nbVirtualPlayer > 0) {
             const titleList = document.createElement('li');
-            titleList.innerHTML = this.translate.instant('THERE_ARE') + nbVirtualPlayer + this.translate.instant('VIRTUAL_PLAYERS2');
+            titleList.innerHTML =
+                this.translate.instant('MULTIPLAYER_INIT.THERE_ARE') + nbVirtualPlayer + this.translate.instant('MULTIPLAYER_INIT.VIRTUAL_PLAYERS2');
             titleList.style.fontWeight = 'bold';
             listVP?.appendChild(titleList);
         }
@@ -128,7 +130,7 @@ export class MultiplayerInitPageComponent implements AfterViewInit {
             // join room
             this.joinRoom(roomName);
         } else {
-            this.notifService.openSnackBar(this.translate.instant('NO_ROOMS'), false);
+            this.notifService.openSnackBar(this.translate.instant('MULTIPLAYER_INIT.NO_ROOMS'), false);
         }
     }
 

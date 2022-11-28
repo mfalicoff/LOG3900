@@ -451,7 +451,18 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
           ],
         ),
       ),
-      child: Text('PROFILE_PAGE.MODIFY_NAME'.tr()),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        child: Text('PROFILE_PAGE.MODIFY_NAME'.tr(),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+      ),
     );
   }
 
@@ -614,7 +625,18 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
               );
             });
           }),
-      child: Text('PROFILE_PAGE.MODIFY_AVATAR'.tr()),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        child: Text('PROFILE_PAGE.MODIFY_AVATAR'.tr(),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ),
+      ),
     );
   }
 

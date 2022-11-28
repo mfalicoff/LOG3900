@@ -71,7 +71,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(vertical: 50.0, horizontal: 200.0),
+                const EdgeInsets.symmetric(vertical: 40.0, horizontal: 200.0),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
@@ -502,9 +502,20 @@ class _PowerListDialog extends State<PowerListDialog> {
                             }
                           ),
                         ),
-                        TextButton(
-                          onPressed: () => Navigator.pop(context, 'Confirmer'),
-                          child: Text("CREATE_GAME_PAGE.CONFIRM".tr()),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          child: TextButton(
+                            onPressed: () => Navigator.pop(context, 'Confirmer'),
+                            child: Text(
+                              "CREATE_GAME_PAGE.CONFIRM".tr(),
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
