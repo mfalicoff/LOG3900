@@ -99,13 +99,8 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                       ),
                     ],
                   ),
-
                 ),
-
-
               ),
-
-
             ),
           ),
           timerService.secondsValue!=0?

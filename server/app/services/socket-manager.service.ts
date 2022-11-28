@@ -945,6 +945,12 @@ export class SocketManager {
             this.matchmakingService.onRefuse(socket, user);
         });
 
+        socket.on('removePlayerFromGame', (userName) => {
+            this.matchmakingService.removePlayerFromGame(socket, userName);
+        });
+
+        
+
         socket.on('acceptMatch', (user) => {
             this.matchmakingService.onAccept(socket, user);
         });

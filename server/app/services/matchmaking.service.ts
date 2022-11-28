@@ -62,12 +62,12 @@ export class MatchmakingService {
         this.checkForUsersAccept(rankedGame, socket);
     }
     onRefuse(socket: io.Socket, user: User) {
-        for (const users of this.rooms.values()) {
-            for (const rankedUser of users.rankedUsers) {
+        for (const rankedGame of this.rooms.values()) {
+            for (const rankedUser of rankedGame.rankedUsers) {
                 if (rankedUser.name === user.name) {
                     rankedUser.hasAccepted = false;
                     this.sio.sockets.sockets.get(socket.id)?.emit('closeModalOnRefuse');
-                    socket.leave(users.name + Constants.RANKED_SUFFIX);
+                    socket.leave(rankedGame.name + Constants.RANKED_SUFFIX);
                 }
             }
         }
@@ -144,5 +144,20 @@ export class MatchmakingService {
             }
         }
         this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('closeModal');
+    }
+    removePlayerFromGame( socket: io.Socket , userName:string) {
+        console.log(userName);
+        for(const room of this.rooms.values()) {
+            console.log('room'+ room.rankedUsers);
+            for(let i =0; i< room.rankedUsers.length; i++){
+                console.log('user'+ (room.rankedUsers[i].name));
+                if(room.rankedUsers[i].name === userName) {
+                    console.log(i);
+                    room.rankedUsers.splice(i,1);
+                    socket.leave(room.name + Constants.RANKED_SUFFIX);
+                }
+            }
+        }
+        console.log(this.rooms);
     }
 }
