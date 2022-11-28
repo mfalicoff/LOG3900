@@ -18,7 +18,7 @@ export class AppComponent {
     ) {
         this.translate.setDefaultLang('fr');
         this.translate.use('fr');
-        this.themeService.toggle();
+        this.themeService.darkMode$.subscribe();
         if (this.router.url === '/game') {
             (document.getElementById('hideInGame') as HTMLElement).style.display = 'none';
         }
