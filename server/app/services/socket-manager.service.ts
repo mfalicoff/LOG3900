@@ -647,9 +647,9 @@ export class SocketManager {
             }
 
             if (game.isGamePrivate) {
-                userData.roomName = game.roomName;
                 for (const creatorOfGame of game.mapPlayers.values()) {
                     if (creatorOfGame.isCreatorOfGame) {
+                        socket.emit('messageServer', this.translateService.translateMessage(userData.name, 'ASK_ENTRANCE_SENT'));
                         this.sio.sockets.sockets.get(creatorOfGame.id)?.emit('askForEntrance', userData.name, playerId);
                         return;
                     }
@@ -678,12 +678,22 @@ export class SocketManager {
         });
 
         socket.on('acceptPlayer', async (isAccepted, newPlayerId) => {
-            const userData = this.users.get(newPlayerId);
-            if (!userData) {
+            const userDataPlayerInGame = this.users.get(socket.id);
+            if (!userDataPlayerInGame) {
+                return;
+            }
+            const roomName = userDataPlayerInGame.roomName;
+            const userDataNewPlayer = this.users.get(newPlayerId);
+            if (!userDataNewPlayer) {
                 return;
             }
 
-            const game = this.rooms.get(userData.roomName);
+            // if the player is already in a room we do not add him
+            if (userDataNewPlayer.roomName !== '') {
+                return;
+            }
+
+            const game = this.rooms.get(roomName);
             if (!game) {
                 return;
             }
@@ -694,9 +704,9 @@ export class SocketManager {
             }
 
             if (isAccepted) {
-                await this.joinRoom(socketNewPlayer, userData, game);
+                await this.joinRoom(socketNewPlayer, userDataNewPlayer, game);
             } else {
-                userData.roomName = '';
+                userDataNewPlayer.roomName = '';
                 this.sio.sockets.sockets.get(newPlayerId)?.emit('messageServer', "Vous n'avez pas été accepté dans la salle.");
             }
         });

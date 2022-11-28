@@ -67,5 +67,6 @@
     "POWER9": "Le temps est divisé par deux due à l'utilisation d'une carte de pouvoir !",
     "HAS_GIVEN_UP": " a abandonné la partie.",
     "HAS_USED": " a utilisé une carte pouvoir et le tour de ",
-    "HAS_BEEN_JUMPED": " a été sauté."
+    "HAS_BEEN_JUMPED": " a été sauté.",
+    "ASK_ENTRANCE_SENT": "Votre demande pour rentrer dans la salle a été envoyée !"
 }

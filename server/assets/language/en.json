@@ -48,7 +48,7 @@
     "GAME_FINISHED": "Game over !",
     "INVALID_COMMAND": "Invalid command",
     "THE_PLAYER": "The player ",
-    "NO_SOLUTION": "Pas de solution trouvée pour cette plage de pointage.",
+    "NO_SOLUTION": "No solution found for this range of points",
     "PASS": "!pass",
     "PLACE": "!place",
     "POWER1": " used a power card to skip the next player's turn!",
@@ -66,6 +66,7 @@
     "POWER8": " used a power card to add 1 minute to his thinking time!",
     "POWER9": "The time is halved due to the use of a power card!",
     "HAS_GIVEN_UP": " gave up the game.",
-    "HAS_USED": " a utilisé une carte pouvoir et le tour de ",
-    "HAS_BEEN_JUMPED": " a été sauté."
+    "HAS_USED": " used a power card and the turn of ",
+    "HAS_BEEN_JUMPED": " has been skipped.",
+    "ASK_ENTRANCE_SENT": "Your request to enter the room has been sent !"
 }
