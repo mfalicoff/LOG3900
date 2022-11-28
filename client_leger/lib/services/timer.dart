@@ -87,7 +87,7 @@ class TimerService with ChangeNotifier{
   }
 
   clearMatchmakingTimer() {
-    matchmakingSecondsValue = 0;
     matchmakingTimerInterval.cancel();
+    matchmakingSecondsValue = 0;
   }
 }

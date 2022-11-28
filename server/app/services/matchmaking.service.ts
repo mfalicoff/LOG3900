@@ -140,7 +140,9 @@ export class MatchmakingService {
             if (rankedGame.rankedUsers[i].hasAccepted === false) {
                 rankedGame.rankedUsers.splice(i, 1);
             }
-            rankedGame.rankedUsers[i].hasAccepted = false;
+            else {
+                rankedGame.rankedUsers[i].hasAccepted = false;
+            }
         }
         this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('closeModal');
     }

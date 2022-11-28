@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'dart:developer';
-
 
 import 'package:client_leger/constants/constants.dart';
 import 'package:client_leger/screens/end-game-results-page.dart';
@@ -9,8 +7,8 @@ import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:flutter/material.dart';
 
 import '../models/player.dart';
 import '../services/socket_service.dart';
@@ -292,10 +290,8 @@ class _GamePageState extends State<GamePage> {
     if (infoClientService.isSpectator ||
         !infoClientService.game.gameStarted ||
         infoClientService.game.gameFinished) {
-      log('true');
       return true;
     }
-    log('false');
     return false;
   }
 
@@ -329,7 +325,6 @@ class _GamePageState extends State<GamePage> {
   }
 
   void _leaveGame() {
-    log('leave');
     socketService.count = 1;
     socketService.socket.emit('leaveGame');
     // Navigator.pushNamed(

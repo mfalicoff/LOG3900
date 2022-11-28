@@ -1,11 +1,10 @@
-import 'dart:io';
-//import 'dart:math';
-import 'dart:developer';
-import 'package:client_leger/env/environment.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:client_leger/utils/globals.dart' as globals;
+import 'dart:io';
+
+import 'package:client_leger/env/environment.dart';
 import 'package:client_leger/models/user.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:http/http.dart' as http;
 
 class Controller {
   final String? serverAddress = Environment().config?.serverURL;
@@ -22,7 +21,6 @@ class Controller {
       }),
     );
     if (response.statusCode == 200) {
-      // log(response.body);
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
       socket.emit("new-user", user.username);
