@@ -187,8 +187,24 @@ body.my-dark-mode {
     mat-label {
         color: wheat;
     }
+    mat-grid-list {
+        background-color: wheat;
+        color: #0c483f;
+    }
     .mat-select-arrow {
         color: wheat;
+    }
+    .flip-card-front {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    .flip-card-back {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    .material-symbols-outlined {
+        background-color: wheat;
+        color: #0c483f;
     }
     ::-webkit-scrollbar-track {
         background: #0c483f;
@@ -255,6 +271,22 @@ body.my-light-mode {
         border: wheat;
         border-color: wheat;
     }
+    .flip-card-front {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .flip-card-back {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .material-symbols-outlined {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    mat-grid-list {
+        background-color: #0c483f;
+        color: wheat;
+    }
     ::-webkit-scrollbar-track {
         background: wheat;
     }
@@ -262,30 +294,6 @@ body.my-light-mode {
         background: #0C483F;
     }    
 }
-
-// popup-window.my-dark-mode {
-//     background-color: #0c483f;
-//     color: wheat;
-//     border-color: wheat;
-//     #container {
-//         background-color: #0c483f;
-//     }
-//     #main {
-//         background-color: #0c483f;
-//     }
-// }
-
-// popup-window.my-light-mode {
-//     background-color: wheat;
-//     color: #0c483f;
-//     border-color: #0c483f;
-//     #container {
-//         background-color: wheat;
-//     }
-//     #main {
-//         background-color: wheat;
-//     }
-// }
 
 .customDialog .mat-dialog-container {
     overflow-y: hidden!important;

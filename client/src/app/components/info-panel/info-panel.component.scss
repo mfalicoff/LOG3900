@@ -20,9 +20,10 @@
 #optionButtonDiv{
     margin-bottom: 0px;
 }
+
 .optionButton {
-    background-color: #0C483F;
-    color: wheat;
+    // background-color: #0C483F;
+    // color: wheat;
     margin-right: 10px;
 }
 
@@ -265,7 +266,7 @@
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: wheat;
+    // background-color: wheat;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 30px;
     border-radius: 8px;
@@ -345,16 +346,16 @@
   
   /* Style the front side (fallback if image is missing) */
   .flip-card-front {
-    background-color: wheat;
-    color: #0C483F;
+    // background-color: wheat;
+    // color: #0C483F;
   }
   
   /* Style the back side */
   .flip-card-back {
     vertical-align: middle;
     border-radius: 15px;
-    color: wheat;
-    background-color: #0C483F;
+    // color: wheat;
+    // background-color: #0C483F;
     transform: rotateY(180deg);
   }
 
