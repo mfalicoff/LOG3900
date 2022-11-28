@@ -153,10 +153,16 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                   ),
                                   Row(
                                     children: [
-                                      Text("CREATE_GAME_PAGE.GAME_MODE".tr()),
+                                      Text(
+                                          "CREATE_GAME_PAGE.GAME_MODE".tr(),
+                                          style: TextStyle(color: Theme.of(context).colorScheme.primary)
+                                      ),
                                       Expanded(
                                         child: ListTile(
-                                          title: Text("CREATE_GAME_PAGE.PUBLIC".tr()),
+                                          title: Text(
+                                              "CREATE_GAME_PAGE.PUBLIC".tr(),
+                                              style: TextStyle(color: Theme.of(context).colorScheme.primary)
+                                          ),
                                           leading: Radio(
                                             value: false,
                                             groupValue: _isGamePrivate,
@@ -170,7 +176,10 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                       ),
                                       Expanded(
                                         child: ListTile(
-                                          title: Text("CREATE_GAME_PAGE.PRIVATE".tr()),
+                                          title: Text(
+                                              "CREATE_GAME_PAGE.PRIVATE".tr(),
+                                              style: TextStyle(color: Theme.of(context).colorScheme.primary)
+                                          ),
                                           leading: Radio(
                                             value: true,
                                             groupValue: _isGamePrivate,
@@ -192,12 +201,16 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     children: [
                                       Checkbox(
                                           value: isPasswordOn,
+                                          activeColor: Theme.of(context).primaryColor,
                                           onChanged: (bool? value) {
                                             setState(() {
                                               isPasswordOn = value;
                                             });
                                           }),
-                                      Text("CREATE_GAME_PAGE.PASSWORD".tr()),
+                                      Text(
+                                          "CREATE_GAME_PAGE.PASSWORD".tr(),
+                                          style: TextStyle(color: Theme.of(context).colorScheme.primary)
+                                      ),
                                       const SizedBox(width: 10,),
                                       if (isPasswordOn!)
                                         Expanded(
@@ -228,47 +241,18 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                   ),
                                   DropdownButtonFormField<double>(
                                     value: turnTime,
-                                    items: const [
-                                      DropdownMenuItem<double>(
-                                        value: 0.5,
-                                        child: Text("30sec"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 1,
-                                        child: Text("1min"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 1.5,
-                                        child: Text("1min 30sec"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 2,
-                                        child: Text("2min"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 2.5,
-                                        child: Text("2min 30sec"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 3,
-                                        child: Text("3min"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 3.5,
-                                        child: Text("3min 30sec"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 4,
-                                        child: Text("4min"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 4.5,
-                                        child: Text("4min 30sec"),
-                                      ),
-                                      DropdownMenuItem<double>(
-                                        value: 5,
-                                        child: Text("5min"),
-                                      ),
+                                    dropdownColor: Theme.of(context).colorScheme.secondary,
+                                    items: [
+                                      returnDropMenuItem(0.5, "30sec"),
+                                      returnDropMenuItem(1, "1min"),
+                                      returnDropMenuItem(1.5, "1min 30sec"),
+                                      returnDropMenuItem(2, "2min"),
+                                      returnDropMenuItem(2.5, "2min 30sec"),
+                                      returnDropMenuItem(3, "3min"),
+                                      returnDropMenuItem(3.5, "3min 30sec"),
+                                      returnDropMenuItem(4, "4min"),
+                                      returnDropMenuItem(4.5, "4min 30sec"),
+                                      returnDropMenuItem(5, "5min"),
                                     ],
                                     onChanged: (double? value) {
                                       turnTime = value;
@@ -278,10 +262,16 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                     height: 25,
                                   ),
                                   DropdownButtonFormField<MockDict>(
+                                    dropdownColor: Theme.of(context).colorScheme.secondary,
                                     items: List<DropdownMenuItem<MockDict>>.generate(
                                         infoClientService.dictionaries.length,
                                         (int index) => DropdownMenuItem(
-                                              child: Text(infoClientService.dictionaries[index].title),
+                                              child: Text(
+                                                  infoClientService.dictionaries[index].title,
+                                                style: TextStyle(
+                                                    color:
+                                                    Theme.of(context).colorScheme.primary),)
+                                          ,
                                             )),
                                     onChanged: (MockDict? value) {
                                       dictionary = value;
@@ -347,6 +337,18 @@ class _CreateGamePageState extends State<CreateGamePage> {
             ),
           )
         ],
+      ),
+    );
+  }
+
+  DropdownMenuItem<double> returnDropMenuItem(double value, String text) {
+    return DropdownMenuItem<double>(
+      value: value,
+      child: Text(
+          text,
+        style: TextStyle(
+            color:
+            Theme.of(context).colorScheme.primary),
       ),
     );
   }

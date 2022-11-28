@@ -44,7 +44,10 @@
         "ENTER_VALID_USERNAME": "Rentrez un pseudonyme avec des charactères alphanumériques",
         "ERROR": "Erreur",
         "MODIFY_AVATAR": "Modifier Avatar",
-        "SELECT_AVATAR": "Selectionner avatar voulu ou prenez une photo"
+        "SELECT_AVATAR": "Selectionner avatar voulu ou prenez une photo",
+        "DARK": "Sombre",
+        "LIGHT": "Clair"
+
     },
     "SEARCH_PAGE": {
         "SEARCH_PLAYERS": "Rechercher joueurs"

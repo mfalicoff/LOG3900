@@ -79,7 +79,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100.0)))),
                   onPressed: _toSearchPage,
-                  child: const Icon(Icons.search))),
+                  child: Icon(
+                    Icons.search,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ))),
           Positioned(
             top: 10.0,
             left: 30.0,
@@ -95,7 +98,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               onPressed: _logout,
-              child: const Icon(Icons.logout),
+              child: Icon(
+                Icons.logout,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
             ),
           ),
           Center(

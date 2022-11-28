@@ -194,7 +194,7 @@ class UserService {
         const updateUserById: User = (await this.users.findByIdAndUpdate(userId, { theme: themeUpdated }, { new: true })) as User;
 
         if (!updateUserById) throw new HttpException(HTTPStatusCode.NotFound, 'User not found');
-
+        updateUserById.avatarUri = await this.populateAvatarField(updateUserById);
         return updateUserById;
     }
 

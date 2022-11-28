@@ -32,13 +32,29 @@ Future<void> main() async {
       path: 'assets/translations',
       startLocale: const Locale('fr'),
       useOnlyLangCode: true,
-      child: const MyApp()
+      child: MyApp()
   ),);
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+
+  @override
+  _MyAppState createState() => _MyAppState();
+
+  static _MyAppState? of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>();
+}
+
+class _MyAppState extends State<MyApp> {
+
+  ThemeData _theme = lightAppTheme;
+
+  void changeTheme(String theme) {
+    ThemeData newTheme = theme == 'light' ? lightAppTheme : darkAppTheme;
+    setState(() {
+      _theme = newTheme;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -46,7 +62,7 @@ class MyApp extends StatelessWidget {
       supportedLocales: context.supportedLocales,
       locale: context.locale,
       title: 'Scrabble',
-      theme: appTheme,
+      theme: _theme,
       routes: <String, WidgetBuilder>{
         '/home': (BuildContext context) => const MyHomePage(),
         '/login': (BuildContext context) => const LoginPage(),

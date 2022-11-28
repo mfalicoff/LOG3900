@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:image_picker/image_picker.dart';
 import 'package:client_leger/utils/utils.dart';
+import '../main.dart';
 import '../services/chat-service.dart';
 import '../widget/chat_panel.dart';
 
@@ -104,8 +105,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                                 notifyParent: refresh,
                             ),
                             Text(globals.userLoggedIn.username,
-                                style: const TextStyle(
-                                color: Colors.black,
+                                style: TextStyle(
+                                color: Theme.of(context).primaryColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
                                 decoration: TextDecoration.none)),
@@ -157,23 +158,52 @@ class _ProfileStatePage extends State<ProfilePage> {
                             returnFavouriteGamesScrollView('PROFILE_PAGE.GAME_FAVORITE'.tr()),
                         ],
                       ),
-                      DropdownButton(
-                          value: context.locale.languageCode,
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'fr',
-                                child: Text("Français"),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          DropdownButton(
+                              value: context.locale.languageCode,
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 'fr',
+                                    child: Text("Français"),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'en',
+                                  child: Text("English"),
+                                ),
+                              ],
+                              dropdownColor: Theme.of(context).colorScheme.secondary,
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary
+                              ),
+                              onChanged: (String? value){
+                                userController.updateLanguage(value!);
+                                context.setLocale(Locale(value));
+                                socketService.socket.emit("changeLanguage", {globals.userLoggedIn.username, value});
+                              },),
+                          DropdownButton(
+                            value:  globals.userLoggedIn.theme,
+                            items: [
+                              DropdownMenuItem(
+                                value: 'light',
+                                child: Text('PROFILE_PAGE.LIGHT'.tr()),
+                              ),
+                              DropdownMenuItem(
+                                value: 'dark',
+                                child: Text('PROFILE_PAGE.DARK'.tr()),
+                              ),
+                            ],
+                            dropdownColor: Theme.of(context).colorScheme.secondary,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary
                             ),
-                            DropdownMenuItem(
-                              value: 'en',
-                              child: Text("English"),
-                            ),
-                          ],
-                          onChanged: (String? value){
-                            userController.updateLanguage(value!);
-                            context.setLocale(Locale(value));
-                            socketService.socket.emit("changeLanguage", {globals.userLoggedIn.username, value});
-                          },),
+                            onChanged: (String? value) async {
+                              MyApp.of(context)!.changeTheme(value!);
+                              globals.userLoggedIn = await userController.updateTheme(value);
+                            },),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -190,8 +220,8 @@ class _ProfileStatePage extends State<ProfilePage> {
 
   Text returnRowTextElement(String textData) {
     return Text((textData),
-        style: const TextStyle(
-            color: Colors.black,
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,
             fontSize: 13,
             decoration: TextDecoration.none,
             fontWeight: FontWeight.bold));
@@ -204,8 +234,8 @@ class _ProfileStatePage extends State<ProfilePage> {
           child: Column(
             children: [
               Text(title,
-                  style: const TextStyle(
-                      color: Colors.black,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 13,
                       decoration: TextDecoration.none,
                       fontWeight: FontWeight.bold)),
@@ -218,8 +248,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                     itemCount: history.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Text('\u2022 ${translateConnection(history[index])}',
-                          style: const TextStyle(
-                              color: Colors.black,
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
                               fontSize: 13,
                               decoration: TextDecoration.none,
                               fontWeight: FontWeight.bold));
@@ -256,8 +286,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                 child: Column(
                     children: [
                         Text(title,
-                            style: const TextStyle(
-                            color: Colors.black,
+                            style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 13,
                             decoration: TextDecoration.none,
                             fontWeight: FontWeight.bold)),
@@ -271,8 +301,8 @@ class _ProfileStatePage extends State<ProfilePage> {
                                     return Column(
                                         children: [
                                           Text('${'PROFILE_PAGE.ROOM'.tr()}${infoClientService.favouriteGames[index].roomName}',
-                                              style: const TextStyle (
-                                              color: Colors.black,
+                                              style: TextStyle (
+                                                  color: Theme.of(context).colorScheme.primary,
                                               fontSize: 13,
                                               decoration: TextDecoration.none,
                                               fontWeight: FontWeight.bold)
@@ -284,16 +314,16 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                         children: [
                                                     Text("${'PROFILE_PAGE.PLAYER'.tr()}${infoClientService.favouriteGames[index].players[idx]}",
-                                                        style: const TextStyle (
-                                                        color: Colors.black,
+                                                        style: TextStyle (
+                                                        color: Theme.of(context).colorScheme.primary,
                                                         fontSize: 13,
                                                         decoration: TextDecoration.none,
                                                         fontWeight: FontWeight.bold),
                                                         textAlign: TextAlign.center,
                                                     ),
                                                     Text("${'PROFILE_PAGE.SCORE'.tr()}${infoClientService.favouriteGames[index].scores[idx]}",
-                                                        style: const TextStyle (
-                                                        color: Colors.black,
+                                                        style: TextStyle (
+                                                        color: Theme.of(context).colorScheme.primary,
                                                         fontSize: 13,
                                                         decoration: TextDecoration.none,
                                                         fontWeight: FontWeight.bold),
@@ -304,44 +334,44 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                 })
                                             ),
                                           Text('${'PROFILE_PAGE.WINNERS'.tr()}${infoClientService.favouriteGames[index].winners[0]}',
-                                              style: const TextStyle (
-                                                  color: Colors.black,
+                                              style: TextStyle (
+                                                  color: Theme.of(context).colorScheme.primary,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
                                           Text('${'PROFILE_PAGE.TILE_LEFT'.tr()}${infoClientService.favouriteGames[index].nbLetterReserve}',
-                                              style: const TextStyle (
-                                                  color: Colors.black,
+                                              style: TextStyle (
+                                                  color: Theme.of(context).colorScheme.primary,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
                                           Text('${'PROFILE_PAGE.TURN_PLAYED'.tr()}${infoClientService.favouriteGames[index].numberOfTurns}',
-                                              style: const TextStyle (
-                                                  color: Colors.black,
+                                              style: TextStyle (
+                                                  color: Theme.of(context).colorScheme.primary,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
                                           Text('${'PROFILE_PAGE.GAME_TIME'.tr()}${infoClientService.favouriteGames[index].playingTime}',
-                                              style: const TextStyle (
-                                                  color: Colors.black,
+                                              style: TextStyle (
+                                                  color: Theme.of(context).colorScheme.primary,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
                                           Text('${'PROFILE_PAGE.GAME_CREATION_DATE'.tr()}${infoClientService.favouriteGames[index].gameStartDate}',
-                                              style: const TextStyle (
-                                                  color: Colors.black,
+                                              style: TextStyle (
+                                                  color: Theme.of(context).colorScheme.primary,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center
                                           ),
-                                          const Text('-------------------------------------------',
+                                          Text('-------------------------------------------',
                                               style: TextStyle (
-                                                  color: Colors.black,
+                                                  color: Theme.of(context).colorScheme.primary,
                                                   fontSize: 13,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
@@ -366,15 +396,15 @@ class _ProfileStatePage extends State<ProfilePage> {
                             return Column(
                                 children: [
                                             Text('PROFILE_PAGE.SPECTATORS'.tr(),
-                                              style: const TextStyle (
-                                              color: Colors.black,
+                                              style: TextStyle (
+                                              color: Theme.of(context).colorScheme.primary,
                                               fontSize: 13,
                                               decoration: TextDecoration.none,
                                               fontWeight: FontWeight.bold)
                                            ),
                                     Text("${'PROFILE_PAGE.NAME'.tr()}${infoClientService.favouriteGames[index].spectators[idx]}",
-                                style: const TextStyle (
-                                    color: Colors.black,
+                                style: TextStyle (
+                                    color: Theme.of(context).colorScheme.primary,
                                     fontSize: 13,
                                     decoration: TextDecoration.none,
                                     fontWeight: FontWeight.bold),
@@ -388,7 +418,7 @@ class _ProfileStatePage extends State<ProfilePage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: const TextStyle (color: Colors.black, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
+            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: TextStyle (color: Theme.of(context).primaryColor, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
         );
     }
 
@@ -414,8 +444,13 @@ class _UsernameChangeDialog extends State<UsernameChangeDialog> {
       onPressed: () => showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          title: Text('PROFILE_PAGE.MODIFY_NAME'.tr()),
-          content: Text('PROFILE_PAGE.ENTER_NAME'.tr()),
+          title: Text(
+            'PROFILE_PAGE.MODIFY_NAME'.tr(),
+            style: TextStyle(color: Theme.of(context).colorScheme.primary),),
+          content: Text(
+              'PROFILE_PAGE.ENTER_NAME'.tr(),
+              style: TextStyle(color: Theme.of(context).colorScheme.primary)
+          ),
           backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: <Widget>[
             Form(
@@ -536,9 +571,15 @@ class _AvatarChangeDialog extends State<AvatarChangeDialog> {
             File? cameraImageFile;
             return StatefulBuilder(builder: (context, setState) {
               return AlertDialog(
-                title: Text('PROFILE_PAGE.MODIFY_AVATAR'.tr()),
+                title: Text(
+                  'PROFILE_PAGE.MODIFY_AVATAR'.tr(),
+                    style: TextStyle(color: Theme.of(context).colorScheme.primary)
+                ),
                 content:
-                    Text('PROFILE_PAGE.SELECT_AVATAR'.tr()),
+                    Text(
+                        'PROFILE_PAGE.SELECT_AVATAR'.tr(),
+                        style: TextStyle(color: Theme.of(context).colorScheme.primary)
+                    ),
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 actions: <Widget>[
                   Row(
