@@ -78,7 +78,7 @@
         "END_GAME_RESULT": "Résultat de fin de partie",
         "REPLACE_VIRTUAL_PLAYER": "Remplacer joueur virtuel",
         "THE_PLAYER": "Le joueur ",
-        "TRY_CONNECT": " essaye de se connecter.\\nVoulez vous l\\'accepter dans la partie ?",
+        "TRY_CONNECT": " essaye de se connecter.Voulez vous l'accepter dans la partie ?",
         "REFUSE": "Refuser",
         "ACCEPT": "Accepter",
         "GIVE_UP_GAME": "Abandonner la partie?",

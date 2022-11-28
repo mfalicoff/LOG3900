@@ -12,6 +12,7 @@ import 'package:flip_card/flip_card.dart';
 import '../models/player.dart';
 import '../services/socket_service.dart';
 import '../widget/chat_panel.dart';
+import 'end-game-results-page.dart';
 
 class GamePage extends StatefulWidget {
   const GamePage({Key? key}) : super(key: key);
@@ -71,15 +72,13 @@ class _GamePageState extends State<GamePage> {
                     child: Column(
                       children: const [
                         InfoPanel(),
-                        SizedBox(
-                            width: 50, height: 50, child: ChatPanelOpenButton())
                       ],
                     ),
                   ),
                 ),
               ],
             ),
-            const Positioned(top: 500.0, right: 200.0, child: ChatPanelOpenButton()),
+            const Positioned(top: 550.0, right: 225.0, child: ChatPanelOpenButton()),
             if (infoClientService.game.gameFinished == true) ... [
               const EndGameResultsPage(),
             ],
@@ -100,7 +99,6 @@ class _GamePageState extends State<GamePage> {
                     ),
                     onPressed: () {
                       acceptPlayer(false);
-                      Navigator.pop(context);
                     },
                   ),
                   ElevatedButton(
@@ -111,7 +109,6 @@ class _GamePageState extends State<GamePage> {
                     ),
                     onPressed: () {
                       acceptPlayer(true);
-                      Navigator.pop(context);
                     },
                   ),
                 ],
@@ -157,8 +154,7 @@ class _GamePageState extends State<GamePage> {
       socketService.socket
           .emit('acceptPlayer', [false, infoClientService.incomingPlayerId]);
     }
-    infoClientService.incomingPlayer = '';
-    infoClientService.incomingPlayerId = '';
+    infoClientService.clearIncomingPlayer();
   }
 
   bool shouldBeAbleToLeaveGame() {
