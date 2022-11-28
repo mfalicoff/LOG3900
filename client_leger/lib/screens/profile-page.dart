@@ -183,7 +183,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                 socketService.socket.emit("changeLanguage", {globals.userLoggedIn.username, value});
                               },),
                           DropdownButton(
-                            value:  'light',
+                            value:  globals.userLoggedIn.theme,
                             items: [
                               DropdownMenuItem(
                                 value: 'light',
@@ -198,9 +198,10 @@ class _ProfileStatePage extends State<ProfilePage> {
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary
                             ),
-                            onChanged: (String? value){
+                            onChanged: (String? value) async {
                               print(value);
                               MyApp.of(context)!.changeTheme(value!);
+                              globals.userLoggedIn = await userController.updateTheme(value);
                             },),
                         ],
                       ),
@@ -418,7 +419,7 @@ class _ProfileStatePage extends State<ProfilePage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: const TextStyle (color: Colors.black, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
+            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: TextStyle (color: Theme.of(context).primaryColor, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
         );
     }
 
