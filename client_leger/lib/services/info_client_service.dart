@@ -66,6 +66,11 @@ class InfoClientService with ChangeNotifier{
     notifyListeners();
   }
 
+  void clearRooms(){
+    rooms = [];
+    notifyListeners();
+  }
+
   void updateGame(data){
     game = GameServer.fromJson(data);
     notifyListeners();

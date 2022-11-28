@@ -306,13 +306,6 @@ export class ChatService {
             await this.userService.updateStatsAtEndOfGame(gameLength, playerElem);
         }
         await this.sendWinnerMessage(game, this.endGameService.chooseWinner(game, playersCpy));
-        this.removeGameFromList(game);
-    }
-
-    private removeGameFromList(game: GameServer) {
-        game.mapPlayers.forEach((player: Player) => {
-            this.sio.sockets.sockets.get(player.id)?.emit('removeElementListRoom', game.roomName);
-        });
     }
 
     private async sendWinnerMessage(game: GameServer, winners: Player[]) {
