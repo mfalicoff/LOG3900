@@ -282,7 +282,7 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                           ,
                                             )),
                                     onChanged: (int? value) {
-                                      dictionaryIndex = value;
+                                      dictionaryIndex = value!;
                                     },
                                   ),
                                   const SizedBox(
