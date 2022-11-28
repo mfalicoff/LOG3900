@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:image_picker/image_picker.dart';
 import 'package:client_leger/utils/utils.dart';
+import '../main.dart';
 import '../services/chat-service.dart';
 import '../widget/chat_panel.dart';
 
@@ -157,23 +158,43 @@ class _ProfileStatePage extends State<ProfilePage> {
                             returnFavouriteGamesScrollView('PROFILE_PAGE.GAME_FAVORITE'.tr()),
                         ],
                       ),
-                      DropdownButton(
-                          value: context.locale.languageCode,
-                          items: const [
-                            DropdownMenuItem(
-                              value: 'fr',
-                                child: Text("Français"),
-                            ),
-                            DropdownMenuItem(
-                              value: 'en',
-                              child: Text("English"),
-                            ),
-                          ],
-                          onChanged: (String? value){
-                            userController.updateLanguage(value!);
-                            context.setLocale(Locale(value));
-                            socketService.socket.emit("changeLanguage", {globals.userLoggedIn.username, value});
-                          },),
+                      Row(
+                        children: [
+                          DropdownButton(
+                              value: context.locale.languageCode,
+                              items: const [
+                                DropdownMenuItem(
+                                  value: 'fr',
+                                    child: Text("Français"),
+                                ),
+                                DropdownMenuItem(
+                                  value: 'en',
+                                  child: Text("English"),
+                                ),
+                              ],
+                              onChanged: (String? value){
+                                userController.updateLanguage(value!);
+                                context.setLocale(Locale(value));
+                                socketService.socket.emit("changeLanguage", {globals.userLoggedIn.username, value});
+                              },),
+                          DropdownButton(
+                            value:  'light',
+                            items: [
+                              DropdownMenuItem(
+                                value: 'light',
+                                child: Text('PROFILE_PAGE.LIGHT'.tr()),
+                              ),
+                              DropdownMenuItem(
+                                value: 'dark',
+                                child: Text('PROFILE_PAGE.DARK'.tr()),
+                              ),
+                            ],
+                            onChanged: (String? value){
+                              print(value);
+                              MyApp.of(context)!.changeTheme(value!);
+                            },),
+                        ],
+                      ),
                     ],
                   ),
                 ),
