@@ -50,7 +50,7 @@ export class GameModeOptionsPageComponent {
                         localStorage.removeItem(`cookie-${this.userService.user._id}`);
                         localStorage.removeItem(`user-${this.userService.user._id}`);
                         this.infoClientService.playerName = 'DefaultPlayerName';
-                        this.themeService.disable();
+                        this.themeService?.disable();
                         this.router.navigate(['/home']);
                     },
                     error: (error) => {

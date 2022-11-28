@@ -11,7 +11,6 @@ import { JoinChatRoomModalComponent } from './join-chatroom-modal.component.ts/j
 import * as Constants from '@app/classes/global-constants';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { DarkModeService } from 'angular-dark-mode';
 
 @Component({
     selector: 'app-communication-dashboard',
@@ -29,13 +28,7 @@ export class CommunicationDashboardComponent implements AfterContentInit {
     hideChatrooms = false;
     routerSubscription: Subscription;
 
-    constructor(
-        private socketService: SocketService,
-        public infoClientService: InfoClientService,
-        private dialog: MatDialog,
-        public themeService: DarkModeService,
-        public router: Router,
-    ) {
+    constructor(private socketService: SocketService, public infoClientService: InfoClientService, private dialog: MatDialog, public router: Router) {
         this.infoClientService.currSelectedChatroom = {
             name: 'default',
             participants: [],

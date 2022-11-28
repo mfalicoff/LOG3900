@@ -57,7 +57,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         this.langList = ['Français', 'English'];
         this.langSelected = this.inverseLangMap.get(this.translate.currentLang);
         this.themeList = ['Light', 'Dark'];
-        this.themeService.darkMode$.subscribe((data) => {
+        this.themeService?.darkMode$?.subscribe((data) => {
             if (data) {
                 this.themeSelected = this.inverseThemeMap.get('dk');
             } else {

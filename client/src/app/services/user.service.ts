@@ -112,7 +112,7 @@ export class UserService {
                     localStorage.removeItem(`cookie-${this.user._id}`);
                     localStorage.removeItem(`user-${this.user._id}`);
                     this.infoClientService.playerName = 'DefaultPlayerName';
-                    this.themeService.disable();
+                    this.themeService?.disable();
                     this.router.navigate(['/home']);
                 },
                 error: (error) => {
@@ -281,9 +281,9 @@ export class UserService {
         socket.emit('new-user', response.data.name);
         this.translate.use(response.data.language);
         if (response.data.theme === 'dk') {
-            this.themeService.enable();
+            this.themeService?.enable();
         } else {
-            this.themeService.disable();
+            this.themeService?.disable();
         }
         this.infoClientService.playerName = response.data.name;
         this.router.navigate(['/game-mode-options']);

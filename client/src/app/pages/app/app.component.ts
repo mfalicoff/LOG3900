@@ -18,8 +18,8 @@ export class AppComponent {
     ) {
         this.translate.setDefaultLang('fr');
         this.translate.use('fr');
-        this.themeService.disable();
-        if (this.router.url === '/game') {
+        this.themeService?.disable();
+        if (this.router.url === '/game' && (document.getElementById('hideInGame') as HTMLElement) !== undefined) {
             (document.getElementById('hideInGame') as HTMLElement).style.display = 'none';
         }
     }
