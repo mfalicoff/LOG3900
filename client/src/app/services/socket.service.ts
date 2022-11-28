@@ -26,7 +26,7 @@ import { TimerService } from './timer.service';
 export class SocketService {
     socket: Socket;
     gameFinished: BehaviorSubject<boolean>;
-    gameId: string;
+    gameId: string = '';
     count: number;
     private urlString = environment.serverUrl;
 
@@ -101,7 +101,6 @@ export class SocketService {
                 }, Constants.WAIT_FOR_CANVAS_INI);
             }
             if (game.gameFinished && this.count === 1) {
-                this.timerService.clearGameTimer();
                 this.gameFinished.next(true);
                 this.count++;
             }
@@ -189,7 +188,6 @@ export class SocketService {
         this.socket.on('setTimeoutTimerStart', () => {
             this.drawingBoardService.lettersDrawn = '';
             this.setTimeoutForTimer();
-            this.timerService.startGameTimer();
         });
 
         this.socket.on('stopTimer', () => {
@@ -316,12 +314,19 @@ export class SocketService {
     private chatRoomsHandler() {
         this.socket.on('setChatRoom', (chatRoom) => {
             const idxChatRoom = this.infoClientService.chatRooms.findIndex((room) => room.name === chatRoom.name);
+            // variable used to know if we have to refresh the currSelectedChatroom variable for the ngIfs in the html
+            let isRefreshNeccecary = false;
             // if the room is already present we delete it to set the newer one
             // it should never happened though
             if (idxChatRoom !== Constants.DEFAULT_VALUE_NUMBER) {
+                // checks if the creator has changed
+                if (
+                    this.infoClientService.currSelectedChatroom.name === this.infoClientService.chatRooms[idxChatRoom].name &&
+                    this.infoClientService.currSelectedChatroom.creator !== chatRoom.creator
+                ) {
+                    isRefreshNeccecary = true;
+                }
                 this.infoClientService.chatRooms.splice(idxChatRoom, 1);
-                // eslint-disable-next-line no-console
-                console.log('Should never go here in SocketService:setChatRoom');
             }
             // if the room received is general it means we are getting all the room
             // and this is the start of the app
@@ -329,6 +334,10 @@ export class SocketService {
                 this.infoClientService.chatRooms = [];
             }
             this.infoClientService.chatRooms.push(chatRoom);
+            if (isRefreshNeccecary) {
+                this.infoClientService.currSelectedChatroom = this.infoClientService.chatRooms[this.infoClientService.chatRooms.length - 1];
+                this.notifService.openSnackBar(this.translate.instant('CHAT_ROOMS.NEW_CREATOR') + chatRoom.name, true);
+            }
         });
         this.socket.on('addMsgToChatRoom', (chatRoomName: string, msg: ChatMessage) => {
             const idxChatRoom = this.infoClientService.chatRooms.findIndex((room) => room.name === chatRoomName);
@@ -338,6 +347,25 @@ export class SocketService {
                 return;
             }
             this.infoClientService.chatRooms[idxChatRoom].chatHistory.push(msg);
+        });
+
+        this.socket.on('rmChatRoom', (chatRoomName) => {
+            const idxChatRoom = this.infoClientService.chatRooms.findIndex((room) => room.name === chatRoomName);
+            if (idxChatRoom === Constants.DEFAULT_VALUE_NUMBER) {
+                // eslint-disable-next-line no-console
+                console.log('error in SocketService:rmChatRoom');
+                return;
+            }
+            this.infoClientService.chatRooms.splice(idxChatRoom, 1);
+            this.infoClientService.currSelectedChatroom = this.infoClientService.chatRooms[0];
+            this.notifService.openSnackBar(
+                this.translate.instant('CHAT_ROOMS.ROOM_DEL_1') + chatRoomName + this.translate.instant('CHAT_ROOMS.ROOM_DEL_2'),
+                true,
+            );
+        });
+
+        this.socket.on('sendAvatars', (name, avatar) => {
+            this.infoClientService.userAvatars.set(name, avatar);
         });
     }
 

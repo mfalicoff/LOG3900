@@ -6,6 +6,7 @@ import '../models/game-server.dart';
 import '../models/mock_dict.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
+import '../models/game-saved.dart';
 
 class InfoClientService with ChangeNotifier{
 
@@ -39,6 +40,10 @@ class InfoClientService with ChangeNotifier{
   List<MockDict> dictionaries = [];
 
   bool soundDisabled = false;
+
+  Map<String, String> userAvatars = {};
+
+  List<GameSaved> favouriteGames = [];
 
   factory InfoClientService(){
     return _gameService;
@@ -83,6 +88,15 @@ class InfoClientService with ChangeNotifier{
       tempDictionaries.add(MockDict.fromJson(dictionary));
     }
     dictionaries = tempDictionaries;
+    notifyListeners();
+  }
+
+  void updateFavouriteGames(games) {
+    List<GameSaved> tempGames = [];
+    for (var game in games) {
+      tempGames.add(GameSaved.fromJson(game));
+    }
+    favouriteGames = tempGames;
     notifyListeners();
   }
 

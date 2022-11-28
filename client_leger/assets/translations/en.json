@@ -138,7 +138,8 @@
         "LETTER_LEFT": "Letters left",
         "NUMBER_OF_TURN_PLAYED": "Number of turns played",
         "GAME_SPECTATORS": "Game spectators",
-        "NO_SPECTATORS": "There are no spectators."
+        "NO_SPECTATORS": "There are no spectators.",
+        "FAVOURITE_GAMES_UPDATED": "The game has been successfully added to yours favourites."
     },
     "CREATE_GAME_PAGE": {
         "YOU": "You",
@@ -165,7 +166,11 @@
         "PASSWORD": "Password",
         "CANCEL": "Cancel",
         "SUBMIT": "Submit",
-        "CREATE_ROOM": "Create Room"
+        "CREATE_ROOM": "Create Room",
+        "DELETE_CHATROOM_BTN": "Delete chat room",
+        "NEW_CREATOR": "You are the new creator of the chat room: ",
+        "ROOM_DEL_1": "The room ",
+        "ROOM_DEL_2": " has been deleted by the creator."
     },
     "CLICK_ON_LETTER": "Click on the letter you want:",
     "INFO_PANEL": {

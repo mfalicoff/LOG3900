@@ -5,9 +5,13 @@ import 'package:client_leger/env/environment.dart';
 import 'package:client_leger/models/user.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
+
+import 'info_client_service.dart';
 
 class Controller {
   final String? serverAddress = Environment().config?.serverURL;
+  final InfoClientService infoClientService = InfoClientService();
 
   Future<User> login({email = String, password = String, socket = Socket}) async {
     final response = await http.post(
@@ -24,6 +28,7 @@ class Controller {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
       socket.emit("new-user", user.username);
+      socket.emit('getAllAvatars');
       return user;
     } else {
       if(response.statusCode == 409) {
@@ -118,7 +123,7 @@ class Controller {
     }
   }
 
-  updateAvatarFromCamera(File image) async {
+  updateAvatarFromCamera(File image, IO.Socket socket) async {
     final bytes = await image.readAsBytes();
     final response = await http.post(
       Uri.parse("$serverAddress/avatar/send"),
@@ -132,13 +137,13 @@ class Controller {
     );
 
     if (response.statusCode == 200) {
-      return await updateAvatar('customAvatar');
+      return await updateAvatar('customAvatar', socket);
     } else {
       throw Exception('Failed to update avater from camera');
     }
   }
 
-  updateAvatar(String avatarPath) async {
+  updateAvatar(String avatarPath, socket) async {
     final user = globals.userLoggedIn;
     final response = await http.put(
       Uri.parse("$serverAddress/users/${user.id}"),
@@ -150,6 +155,8 @@ class Controller {
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
+      infoClientService.userAvatars[user.username] = user.avatarUri!;
+      socket.emit('updatedAvatar', user.username);
       return user;
     } else {
       throw Exception('Failed to update avatar');
@@ -173,8 +180,8 @@ class Controller {
     }
   }
 
-  Future<User> getUserByName(String id) async {
-    final response = await http.get(Uri.parse("$serverAddress/users/id/$id"));
+  Future<User> getUserByName(String name) async {
+    final response = await http.get(Uri.parse("$serverAddress/users/$name"));
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       return user;
@@ -202,6 +209,7 @@ class Controller {
     final response = await http.get(Uri.parse("$serverAddress/users/games/${user.id}"));
     if (response.statusCode == 200) {
       List<dynamic> favouriteGames = json.decode(response.body);
+      infoClientService.updateFavouriteGames(favouriteGames);
       return favouriteGames;
     } else {
         throw Exception('Failed to get favourite games');

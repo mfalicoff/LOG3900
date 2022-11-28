@@ -1,29 +1,31 @@
 <div class="container" [ngClass]="{notInGame: this.router.url !== '/game'}">
-  <div style="position: absolute; top: 0; left: 4%;">
-    <button class="btnStyle" mat-button (click)="popoutWindow1.popOut()">{{'DETACH' | translate}}<mat-icon>keyboard_capslock</mat-icon></button>
-  </div>
-  <popout-window id="pop1" #popoutWindow1>
+  <popout-window #popoutWindow1>
     <div id="main">
-      <div style="display: flex; flex-direction: row;">
+      <div class="mainDiv">
         <div id="leftDiv">
           <div>
-            <div id="titleChatDashBoard">
-              <h3>{{'GAME.CHAT_ROOM' | translate}}
-              </h3>
+            <div class="buttons">
+              <button id="detach" class="btnStyle action_btn detachButton" mat-button (click)="popoutWindow1.popOut();">{{'DETACH' | translate}}<mat-icon>arrow_drop_up</mat-icon></button>
+              <button id="attach" class="btnStyle action_btn attachButton" mat-button (click)="popoutWindow1.popIn();">{{'ATTACH' | translate}}<mat-icon>arrow_drop_down</mat-icon></button>
             </div>
-            <button mat-button class="btnStyle" (click)="openNewChatroomModal()">
+            <div id="titleChatDashBoard">
+              <div class="title">
+                {{'GAME.CHAT_ROOM' | translate}}
+              </div>
+            </div>
+            <button mat-button class="btnStyle mainButton" (click)="openNewChatroomModal()">
                 {{'GAME.CREATE_CHAT_ROOM' | translate}}
             </button>
           </div>
           <div class="rooms">
-            <button mat-button class="btnStyle" (click)="openJoinChatRoomModal()">
+            <button mat-button class="btnStyle mainButton" (click)="openJoinChatRoomModal()">
                 {{'GAME.JOIN_CHAT_ROOM' | translate}}
             </button>
             <div class="listChatRoom">
               <div *ngFor="let chatroom of infoClientService.chatRooms">
-                <h3
+                <div
                   [ngClass]="classChatRoomElement(chatroom.name)"
-                  class="chatRoomElement"
+                  class="chatRoomElement mainButton"
                   (click)="onChatRoomSelect(chatroom)"
                 >{{chatroom.name}}
                   <mat-icon
@@ -32,13 +34,13 @@
                     (click)="onLeaveChatRoomClick(chatroom.name)"
                     >exit_to_app
                   </mat-icon>
-                </h3>
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div class="chatroom">
-          <app-communication-box [actualChatRoom]="currSelectedChatroom"></app-communication-box>
+          <app-communication-box [actualChatRoom]="infoClientService.currSelectedChatroom"></app-communication-box>
         </div>
       </div>
     </div>

@@ -138,7 +138,8 @@
         "LETTER_LEFT": "Lettres restantes",
         "NUMBER_OF_TURN_PLAYED": "Nombre de tours joué",
         "GAME_SPECTATORS": "Spectateurs de la partie",
-        "NO_SPECTATORS": "Il n'y a pas de spectateurs."
+        "NO_SPECTATORS": "Il n'y a pas de spectateurs.",
+        "FAVOURITE_GAMES_UPDATED": "La partie a été ajoutée dans vos favoris avec succès."
     },
     "CREATE_GAME_PAGE": {
         "YOU": "Vous",
@@ -165,7 +166,11 @@
         "PASSWORD": "Mot de passe",
         "CANCEL": "Annuler",
         "SUBMIT": "Soumettre",
-        "CREATE_ROOM": "Créer une salle"
+        "CREATE_ROOM": "Créer une salle",
+        "DELETE_CHATROOM_BTN": "Supprimer la salle",
+        "NEW_CREATOR": "Vous êtes le nouveau créateur de la salle: ",
+        "ROOM_DEL_1": "La salle ",
+        "ROOM_DEL_2": " a été supprimée pour le createur."
     },
     "CLICK_ON_LETTER": "Cliquez sur la lettre que vous voulez:",
     "INFO_PANEL": {

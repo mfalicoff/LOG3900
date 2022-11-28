@@ -16,8 +16,26 @@
     transform: translate(-50%, -50%);
 }
 
+.historyContainer{
+    background-color: #0C483F;
+}
+
+#historyWrapper h1{
+    text-align: center;
+    color: #0C483F;
+}
+.btnStyle{
+    background-color: wheat;
+    left: 50%;
+    display: inline;
+    margin-top: 0px;
+    font-size: 18px;
+    color: #0c483f;
+    cursor: pointer;
+    box-shadow: none;
+}
+
 .actionHistory{
-    padding: 1%;
     color: wheat;
     font-size: large;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
@@ -28,10 +46,10 @@
     position: static bottom;
     height: 90%;
     background-color: #0c483f;
-    border-top-left-radius: 20px;
+    border-radius: 15px;
     overflow-x: auto;
     overflow-y: scroll;
-    padding: 10px;
+    padding: 2%;
 }
 
 .title-box {
@@ -85,7 +103,19 @@
     color: #0c483f;
     font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+    margin-top: 2%;
+    background-color: wheat;
+    width: 60%;
+    height: 65%;
+    position: absolute;
+    border-top-left-radius: 20px;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 }
+
 
 #favouriteGames ul {
     list-style: none;

@@ -35,27 +35,25 @@ class GameSavedService {
 
         const findSavedGame: GameSaved = (await this.gamesSaved.findOne({
             roomName: gameData.roomName,
-            players: { $in: gameData.players },
-            scores: { $in: gameData.scores },
-            spectators: { $in: gameData.spectators },
-            winners: { $in: gameData.winners },
-            numberOfTurns: gameData.numberOfTurns,
             gameStartDate: gameData.gameStartDate,
-            nbLetterReserve: gameData.nbLetterReserve,
         })) as GameSaved;
-        if (findSavedGame) return findSavedGame;
 
-        return await this.gamesSaved.create({
-            roomName: gameData.roomName,
-            players: gameData.players,
-            scores: gameData.scores,
-            spectators: gameData.spectators,
-            winners: gameData.winners,
-            numberOfTurns: gameData.numberOfTurns,
-            gameStartDate: gameData.gameStartDate,
-            playingTime: gameData.playingTime,
-            nbLetterReserve: gameData.nbLetterReserve,
-        });
+        if (!findSavedGame) {
+            // eslint-disable-next-line no-console
+            console.log('Game saved!');
+            return await this.gamesSaved.create({
+                roomName: gameData.roomName,
+                players: gameData.players,
+                scores: gameData.scores,
+                spectators: gameData.spectators,
+                winners: gameData.winners,
+                numberOfTurns: gameData.numberOfTurns,
+                gameStartDate: gameData.gameStartDate,
+                playingTime: gameData.playingTime,
+                nbLetterReserve: gameData.nbLetterReserve,
+            });
+        }
+        return findSavedGame;
     }
 }
 

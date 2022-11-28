@@ -39,7 +39,7 @@ class SocketService with ChangeNotifier {
   TapService tapService = TapService();
   Controller controller = Controller();
   ChatService chatService = ChatService();
-  late String gameId;
+  late String gameId = '';
   int count = 1;
 
   late IO.Socket socket;
@@ -173,8 +173,20 @@ class SocketService with ChangeNotifier {
   }
 
   gameUpdateHandler() {
-    socket.on('playerAndStandUpdate', (player) {
+    socket.on('playerAndStandUpdate', (player) async {
+      Function deepEq = const DeepCollectionEquality().equals;
       infoClientService.updatePlayer(player);
+      if(!deepEq(infoClientService.player.chatHistory, infoClientService.player.oldChatHistory) && infoClientService.player.chatHistory.last.senderName != infoClientService.player.name) {
+        if(chatService.rooms[0].name == 'game' && !infoClientService.soundDisabled) {
+          chatService.rooms[0].isUnread = true;
+          final player = AudioPlayer(); // Create a player
+          await player.setUrl(
+              "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+          await player.play();
+          await player.stop();
+        }
+      }
+      infoClientService.player.oldChatHistory = infoClientService.player.chatHistory;
       infoClientService.notifyListeners();
       chatService.notifyListeners();
     });
@@ -186,7 +198,6 @@ class SocketService with ChangeNotifier {
       infoClientService.notifyListeners();
       chatService.notifyListeners();
       if (GameServer.fromJson(game).gameFinished && count == 1) {
-        timerService.clearGameTimer();
         infoClientService.notifyListeners();
         count++;
       }
@@ -265,16 +276,11 @@ class SocketService with ChangeNotifier {
     socket.on('setTimeoutTimerStart', (_) {
       tapService.lettersDrawn = '';
       setTimeoutForTimer();
-      timerService.startGameTimer();
     });
 
     socket.on('stopTimer', (_) {
       tapService.lettersDrawn = '';
       timerService.clearTimer();
-    });
-
-    socket.on('addSecsToTimer', (secsToAdd){
-      timerService.addSecsToTimer(secsToAdd);
     });
 
     socket.on('askTimerStatus', (_) {
@@ -300,11 +306,13 @@ class SocketService with ChangeNotifier {
 
       //if the room is already present we delete it to set the newer one
       //it should never happened though
-      if (chatService.rooms.contains(chatRoom)) {
-        chatService.rooms
-            .removeWhere((element) => element.name == chatRoom.name);
-        print("Should never go here in SocketService:setChatRoom");
+      var idxChatRoom = chatService.rooms.indexWhere((element) => element.name == chatRoom.name);
+      var refreshRoom = false;
+      if(idxChatRoom != DEFAULT_VALUE_NUMBER){
+        chatService.rooms.removeWhere((element) => element.name == chatRoom.name);
+        refreshRoom = true;
       }
+
       //if the room received is general it means we are getting all the room
       //and this is the start of the app
       if (chatRoom.name == "general") {
@@ -313,6 +321,9 @@ class SocketService with ChangeNotifier {
       chatService.rooms.add(chatRoom);
       if (chatRoom.name == "general") {
         chatService.currentChatRoom = chatService.rooms[0];
+      }
+      if(refreshRoom){
+        chatService.currentChatRoom = chatService.rooms[chatService.rooms.length - 1];
       }
       chatService.chatRoomWanted = null;
       chatService.notifyListeners();
@@ -327,19 +338,35 @@ class SocketService with ChangeNotifier {
         chatService.rooms[indexRoom].chatHistory
             .add(ChatMessage.fromJson(newMsg));
         if (chatService.currentChatRoom.name !=
-            chatService.rooms[indexRoom].name || !chatService.isDrawerOpen) {
+                chatService.rooms[indexRoom].name ||
+            !chatService.isDrawerOpen) {
           chatService.rooms[indexRoom].isUnread = true;
         }
       } else {
         print("error in SocketService:addMsgToChatRoom");
       }
       chatService.notifyListeners();
-      final player = AudioPlayer(); // Create a player
-      await player.setUrl(
-          "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
-      await player.play();
-      await player.stop();
+      if(!infoClientService.soundDisabled){
+        final player = AudioPlayer(); // Create a player
+        await player.setUrl(
+            "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+        await player.play();
+        await player.stop();
+      }
     });
+
+  socket.on('rmChatRoom', (chatRoomName) {
+    chatService.rooms.removeWhere((element) => element.name == chatRoomName);
+    chatService.currentChatRoom = chatService.rooms[0];
+    chatService.notifyListeners();
+  });
+
+    socket.on('sendAvatars', (nameAndAvatar) {
+      String name = nameAndAvatar[0];
+      String avatar = nameAndAvatar[1];
+      infoClientService.userAvatars[name] = avatar;
+      infoClientService.notifyListeners();
+  });
   }
 
   updateUiBeforeStartGame(List<Player> players) {

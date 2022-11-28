@@ -1,7 +1,5 @@
 .container {
   display: flex;
-  align-items: center;
-  justify-content: center;
   align-self: center;
   position: fixed;
   bottom: 0;
@@ -14,41 +12,77 @@
   align-self: center;
 }
 
+.detachButton {
+  top: 0;
+  text-align: center;
+  padding: 0;
+}
+
+.attachButton {
+  top: 0;
+  text-align: center;
+  padding: 0;
+}
+
+.mainDiv {
+  display: flex;
+  flex-direction: row;
+}
+
 #main {
+  align-self: center;
+  align-content: center;
   border: 5px solid #0C483F;
   background-color: wheat;
   width: 600px;
   height: 450px;
-  padding: 10px;
+  padding: 0px;
   padding-top: 0;
 }
 
+.title {
+  font-weight: bold;
+  font-size: large;
+  margin-bottom: 5px;
+}
+
 #titleChatDashBoard{
-  padding: 5px;
+  padding: 2px;
+  color: #0C483F;
   text-align: center;
   padding-bottom: 0px;
-  margin-bottom: -10%;
-  margin-top: 17%;
 }
 
 #leftDiv{
-  width: 25%;
+  width: 28%;
 }
 
 .listChatRoom{
   height: 260px;
   overflow-y: scroll;
   border-top: 3px solid #0C483F;
-  padding-top: 10px;
+  padding-top: 5px;
 }
 
 .chatRoomElement{
   background-color: #0C483F;
   color: wheat;
   text-align: center;
-  margin-bottom: 10px;
+  font-size: 15px;
+  margin-bottom: 5px;
   border-radius: 5px;
-  padding: 2px;
+  padding: 1px;
+}
+
+.btnStyle{
+  background-color: #0C483F;
+  margin-top: 0px;
+  text-align: center;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: wheat;
+  cursor: pointer;
+  box-shadow: none;
 }
 
 .chatRoomElement:hover{
@@ -82,14 +116,26 @@
 .rooms {
 }
 
-.btnStyle{
-  background-color: #0C483F;
-  margin-top: 0px;
-  margin-bottom: 5px;
-  font-size: 15px;
-  color: wheat;
-  cursor: pointer;
-  box-shadow: none;
+.buttons {
+  width: 102%;
+  margin: 0px 0px 2px 2px;
+}
+
+.action_btn {
+  display: inline-block;
+  width: 47%;
+  padding: 0px;
+  margin: 0px 2px 0px;
+}
+
+.mainButton {
+  padding: 2px;
+  width: 90%;
+  align-self: center;
+  font-size: 16px;
+  justify-content: center;
+  margin-left: 7%;
+  margin-right: 7%;
 }
 
 .defaultMode{
@@ -99,7 +145,7 @@
 }
 
 .button {
-  margin-top: 20px;
+  margin-top: 10px;
   text-align: center;
   font-size: 40px;
   padding: 20px;

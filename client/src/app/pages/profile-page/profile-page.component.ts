@@ -48,12 +48,20 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         this.favourtieGamesSubscription.unsubscribe();
     }
 
+    roundNum(num: number | undefined): number | undefined {
+        if (!num) {
+            return num;
+        }
+        const oneHundred = 100;
+        return Math.round(num * oneHundred) / oneHundred;
+    }
+
     openActionHistoryComponent(): void {
         this.dialog.open(UserHistoryComponent, {
             height: '75%',
             width: '75%',
             data: {
-                title: 'Historique des connections',
+                title: this.translate.instant('PROFILE.HISTORY_CONNECTIONS'),
                 data: this.userService.user.actionHistory,
                 isFavouriteGames: false,
             },
@@ -66,7 +74,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
             height: '75%',
             width: '75%',
             data: {
-                title: 'Historique des Parties',
+                title: this.translate.instant('PROFILE.HISTORY_GAMES'),
                 data: this.userService.user.gameHistory,
                 isFavouriteGames: false,
             },
@@ -79,7 +87,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
             height: '75%',
             width: '60%',
             data: {
-                title: 'Parties favorites',
+                title: this.translate.instant('PROFILE.FAVORITES'),
                 data: this.favouriteGames,
                 isFavouriteGames: true,
             },
@@ -90,7 +98,7 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
     openEditProfileComponent(): void {
         this.dialog.open(ProfileEditComponent, {
             height: '90%',
-            width: '50%',
+            width: '25%',
             panelClass: 'matDialogWheat',
         });
     }

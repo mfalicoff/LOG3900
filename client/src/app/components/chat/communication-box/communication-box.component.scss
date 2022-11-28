@@ -24,9 +24,15 @@
     margin-bottom: 0px;
 }
 
+.wholeMessage {
+    padding-bottom: 5px;
+}
+
 .msg{
     color: #0c483f;
+    font-size: 12px;
 }
+
 .msgPlayer {
     text-align: right;
 }
@@ -37,16 +43,32 @@
     text-align: left;
 }
 
+.msgPlayerAvatar {
+    float: right;
+}
+.msgSystemAvatar {
+    text-align: center;
+}
+.msgOpponentAvatar {
+    float: left;
+}
+
 .senderName{
     font-weight: bold;
-    font-size: 11px;
-    margin-bottom: -5px;
+    font-size: 14px;
+    margin-bottom: -2px;
 }
+
 .timestamp{
     margin-left: 5px;
     font-size: 10px;
 }
 
+.profile {
+    border-radius: 50%;
+    background: transparent;
+    height: 20px;
+}
 
 .input {
     display: inline;
@@ -84,6 +106,14 @@
     color: wheat;
     cursor: pointer;
     box-shadow: none;
+}
+
+#delChatRoomBtn{
+    top: 1%;
+    right: 35%;
+    position: absolute;
+    padding-right: 5px;
+    padding-left: 5px;
 }
   
 
