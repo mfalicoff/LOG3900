@@ -126,7 +126,7 @@ export class SocketManager {
         await this.gameUpdateClients(game);
 
         if (game.gameFinished) {
-            this.triggerStopTimer(user.roomName);
+            this.triggerStopTimer(game);
         }
         // We update the chatHistory and the game of each client
     }
@@ -481,8 +481,6 @@ export class SocketManager {
         socket.on('saveGame', async (game: GameSaved) => {
             const savedGame: GameSaved = (await this.gameSavedService.saveGame(game)) as GameSaved;
             this.sio.to(savedGame.roomName + Constants.GAME_SUFFIX).emit('savedGameId', savedGame._id);
-            // eslint-disable-next-line no-console
-            console.log('Gamed saved! : ' + savedGame._id);
         });
     }
 
@@ -641,9 +639,9 @@ export class SocketManager {
             }
 
             if (game.isGamePrivate) {
-                userData.roomName = game.roomName;
                 for (const creatorOfGame of game.mapPlayers.values()) {
                     if (creatorOfGame.isCreatorOfGame) {
+                        socket.emit('messageServer', this.translateService.translateMessage(userData.name, 'ASK_ENTRANCE_SENT'));
                         this.sio.sockets.sockets.get(creatorOfGame.id)?.emit('askForEntrance', userData.name, playerId);
                         return;
                     }
@@ -672,12 +670,22 @@ export class SocketManager {
         });
 
         socket.on('acceptPlayer', async (isAccepted, newPlayerId) => {
-            const userData = this.users.get(newPlayerId);
-            if (!userData) {
+            const userDataPlayerInGame = this.users.get(socket.id);
+            if (!userDataPlayerInGame) {
+                return;
+            }
+            const roomName = userDataPlayerInGame.roomName;
+            const userDataNewPlayer = this.users.get(newPlayerId);
+            if (!userDataNewPlayer) {
                 return;
             }
 
-            const game = this.rooms.get(userData.roomName);
+            // if the player is already in a room we do not add him
+            if (userDataNewPlayer.roomName !== '') {
+                return;
+            }
+
+            const game = this.rooms.get(roomName);
             if (!game) {
                 return;
             }
@@ -688,9 +696,9 @@ export class SocketManager {
             }
 
             if (isAccepted) {
-                await this.joinRoom(socketNewPlayer, userData, game);
+                await this.joinRoom(socketNewPlayer, userDataNewPlayer, game);
             } else {
-                userData.roomName = '';
+                userDataNewPlayer.roomName = '';
                 this.sio.sockets.sockets.get(newPlayerId)?.emit('messageServer', "Vous n'avez pas été accepté dans la salle.");
             }
         });
@@ -1032,9 +1040,12 @@ export class SocketManager {
         });
     }
 
-    private triggerStopTimer(roomName: string) {
-        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('stopTimer');
-        this.sio.to(roomName + Constants.GAME_SUFFIX).emit('displayChangeEndGame', Constants.END_GAME_DISPLAY_MSG);
+    private triggerStopTimer(game: GameServer) {
+        this.sio.to(game.roomName + Constants.GAME_SUFFIX).emit('stopTimer');
+        for (const player of game.mapPlayers.values()) {
+            const endGameMsg = this.translateService.translateMessage(player.name, 'END_GAME_DISPLAY_MSG');
+            this.sio.sockets.sockets.get(player.id)?.emit('displayChangeEndGame', endGameMsg);
+        }
     }
 
     private adminHandler(socket: io.Socket) {
@@ -1085,12 +1096,13 @@ export class SocketManager {
             if (!dbUser || !dbUser.id) {
                 return;
             }
-            const chatRoom = await this.chatRoomService.createChatRoom(dbUser.id, chatRoomName, socket);
+            const chatRoom = await this.chatRoomService.createChatRoom(user.name, dbUser.id, chatRoomName, socket);
             // if an error was thrown, the chatRoom name will be ''
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         socket.on('deleteChatRoom', async (chatRoomName: string) => {
@@ -1102,7 +1114,13 @@ export class SocketManager {
             if (!dbUser || !dbUser.id) {
                 return;
             }
-            await this.chatRoomService.deleteChatRoom(dbUser.id, chatRoomName, socket);
+            const chatRoom = await this.chatRoomService.deleteChatRoom(dbUser.id, chatRoomName, socket);
+            // if an error was thrown, the chatRoom name will be ''
+            if (chatRoom.name === '') {
+                return;
+            }
+            this.sio.to(chatRoomName + Constants.CHATROOM_SUFFIX).emit('rmChatRoom', chatRoomName);
+            this.sio.in(chatRoomName + Constants.CHATROOM_SUFFIX).socketsLeave(chatRoomName + Constants.CHATROOM_SUFFIX);
         });
 
         socket.on('joinChatRoom', async (chatRoomName: string) => {
@@ -1119,7 +1137,8 @@ export class SocketManager {
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         socket.on('leaveChatRoom', async (chatRoomName: string) => {
@@ -1161,7 +1180,8 @@ export class SocketManager {
             }
             const chatRooms: ChatRoom[] = await this.chatRoomService.getAllChatRooms(dbUser.id, socket);
             for (const chatRoom of chatRooms) {
-                socket.emit('setChatRoom', chatRoom);
+                const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+                socket.emit('setChatRoom', chatRoomPopulated);
             }
         });
 
@@ -1175,7 +1195,8 @@ export class SocketManager {
             if (chatRoom.name === '') {
                 return;
             }
-            socket.emit('setChatRoom', chatRoom);
+            const chatRoomPopulated = await this.chatRoomService.populateCreatorField(chatRoom);
+            socket.emit('setChatRoom', chatRoomPopulated);
         });
 
         // socket user for the search of rooms

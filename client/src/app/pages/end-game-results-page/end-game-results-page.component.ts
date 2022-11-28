@@ -9,7 +9,6 @@ import { EloChangeService } from '@app/services/elo-change.service';
 import { InfoClientService } from '@app/services/info-client.service';
 import { NotificationService } from '@app/services/notification.service';
 import { SocketService } from '@app/services/socket.service';
-import { TimerService } from '@app/services/timer.service';
 import { UserService } from '@app/services/user.service';
 import { Subscription } from 'rxjs';
 
@@ -20,6 +19,7 @@ import { Subscription } from 'rxjs';
 })
 export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     roomName: string;
+    creator: string;
     numberOfTurns: number = 0;
     gameStartDate: string;
     playingTime: string;
@@ -28,6 +28,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     gameSaved: GameSaved;
     openProfileSubscription: Subscription;
     newPlayersElo: Player[];
+    clicked = false;
 
     constructor(
         private matDialogRefEndGame: MatDialogRef<EndGameResultsPageComponent>,
@@ -37,7 +38,6 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private eloChangeService: EloChangeService,
         private socketService: SocketService,
         private notifService: NotificationService,
-        private timerService: TimerService,
     ) {}
 
     ngOnInit() {
@@ -45,6 +45,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.players = this.infoClientService.actualRoom.players.copyWithin(0, 0, 3);
         this.orderPlayerByScore();
         this.findNumberOfTurns();
+        this.findCreatorOfGame();
         this.getGameStartDate();
         this.displayPlayingTime();
         this.saveGame();
@@ -106,16 +107,20 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
     displayPlayingTime(): void {
         const secondsInMinute = 60;
         const displayZero = 9;
-        const minutesToDisplay = this.timerService.playingTime / secondsInMinute;
-        const secondsToDisplay = this.timerService.playingTime % secondsInMinute;
+        const end = this.infoClientService.game.endTime;
+        const begin = this.infoClientService.game.startTime;
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        const timeInSeconds = (end - begin) / 1000;
+        const minutesToDisplay = Math.floor(timeInSeconds / secondsInMinute);
+        const secondsToDisplay = Math.floor(timeInSeconds % secondsInMinute);
         if (secondsToDisplay <= displayZero && minutesToDisplay <= displayZero) {
-            this.playingTime = `0${Math.floor(minutesToDisplay)}:0${secondsToDisplay}`;
+            this.playingTime = `0${minutesToDisplay}:0${secondsToDisplay}`;
         } else if (secondsToDisplay <= displayZero && minutesToDisplay > displayZero) {
-            this.playingTime = `${Math.floor(minutesToDisplay)}:0${secondsToDisplay}`;
+            this.playingTime = `${minutesToDisplay}:0${secondsToDisplay}`;
         } else if (secondsToDisplay > displayZero && minutesToDisplay <= displayZero) {
-            this.playingTime = `0${Math.floor(minutesToDisplay)}:${secondsToDisplay}`;
+            this.playingTime = `0${minutesToDisplay}:${secondsToDisplay}`;
         } else if (secondsToDisplay > displayZero && minutesToDisplay > displayZero) {
-            this.playingTime = `${Math.floor(minutesToDisplay)}:${secondsToDisplay}`;
+            this.playingTime = `${minutesToDisplay}:${secondsToDisplay}`;
         }
     }
 
@@ -131,9 +136,9 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.gameStartDate = this.infoClientService.game.gameStart;
     }
 
-    findCreatorOfGame(): string | undefined {
+    findCreatorOfGame(): void {
         // @ts-ignore
-        return this.infoClientService.actualRoom.players.find((player: Player) => {
+        this.creator = this.infoClientService.actualRoom.players.find((player: Player) => {
             if (player.isCreatorOfGame) return player.name;
         }).name;
     }

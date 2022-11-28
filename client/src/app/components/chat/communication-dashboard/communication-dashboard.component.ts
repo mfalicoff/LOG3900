@@ -10,6 +10,7 @@ import { SocketService } from '@app/services/socket.service';
 import { JoinChatRoomModalComponent } from './join-chatroom-modal.component.ts/join-chatroom-modal.component';
 import * as Constants from '@app/classes/global-constants';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-communication-dashboard',
@@ -24,12 +25,18 @@ import { Router } from '@angular/router';
 })
 export class CommunicationDashboardComponent implements AfterContentInit {
     @Input() isInGame: string;
-    currSelectedChatroom: ChatRoom;
     hideChatrooms = false;
+    routerSubscription: Subscription;
+
     constructor(private socketService: SocketService, public infoClientService: InfoClientService, private dialog: MatDialog, public router: Router) {
-        this.currSelectedChatroom = { name: 'default', participants: [], creator: '', chatHistory: [new ChatMessage('system', 'defaultMsg')] };
+        this.infoClientService.currSelectedChatroom = {
+            name: 'default',
+            participants: [],
+            creator: '',
+            chatHistory: [new ChatMessage('system', 'defaultMsg')],
+        };
         if (this.infoClientService.chatRooms.length > 0) {
-            this.currSelectedChatroom = this.infoClientService.chatRooms[0];
+            this.infoClientService.currSelectedChatroom = this.infoClientService.chatRooms[0];
         }
     }
 
@@ -48,14 +55,14 @@ export class CommunicationDashboardComponent implements AfterContentInit {
                 this.infoClientService.chatRooms.splice(idxGameRoom, 1);
             }
         }
-        this.currSelectedChatroom = this.infoClientService.chatRooms[0];
+        this.infoClientService.currSelectedChatroom = this.infoClientService.chatRooms[0];
     }
 
     onChatRoomSelect(selectedChatRoom: ChatRoom) {
         if (!selectedChatRoom) {
             return;
         }
-        this.currSelectedChatroom = selectedChatRoom;
+        this.infoClientService.currSelectedChatroom = selectedChatRoom;
     }
 
     onLeaveChatRoomClick(chatRoomName: string) {
@@ -68,7 +75,7 @@ export class CommunicationDashboardComponent implements AfterContentInit {
     }
 
     classChatRoomElement(chatRoomName: string): string {
-        if (this.currSelectedChatroom.name === chatRoomName) {
+        if (this.infoClientService.currSelectedChatroom.name === chatRoomName) {
             return 'chatRoomElementPressed';
         }
         return '';

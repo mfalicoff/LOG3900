@@ -34,7 +34,7 @@ export class LoginPageComponent {
     isSuccessful = false;
     isSignUpFailed = false;
     errorMessage = '';
-    showSignup: boolean = true;
+    showSignup: boolean = false;
 
     serverUrl = environment.serverUrl;
     avatars: Avatar[] = [];

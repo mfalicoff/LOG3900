@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:client_leger/env/environment.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:client_leger/utils/globals.dart' as globals;
@@ -157,7 +158,7 @@ class Controller {
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
-      this.infoClientService.userAvatars[user.username] = user.avatarUri!;
+      infoClientService.userAvatars[user.username] = user.avatarUri!;
       socket.emit('updatedAvatar', user.username);
       return user;
     } else {
@@ -170,7 +171,7 @@ class Controller {
     final response = await http.patch(Uri.parse("$serverAddress/users/${user.id}"),
         headers : <String, String> {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+            'Authorization': splitCookie(user.cookie as String),
         },
         body: jsonEncode(<String, String>{"gameId": idOfGame}),
     );
@@ -182,7 +183,7 @@ class Controller {
     }
   }
 
-  Future<User> getUserByName(String id) async {
+  Future<User> getUserById(String id) async {
     final response = await http.get(Uri.parse("$serverAddress/users/id/$id"));
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
@@ -197,7 +198,7 @@ class Controller {
     final response = await http.put(Uri.parse("$serverAddress/users/language/${user.id}"),
       headers : <String, String> {
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{"language": languageUpdated}),
     );
@@ -206,16 +207,35 @@ class Controller {
     }
   }
 
-String splitCookie(String fullCookie) {
-    return fullCookie.split("=")[1].split(";")[0];
-}
-   
+  String splitCookie(String fullCookie) {
+      return fullCookie.split("=")[1].split(";")[0];
+  }
+
+  updateTheme(String newTheme) async {
+    final user = globals.userLoggedIn;
+    String? cookie = user.cookie;
+    final response = await http.put(Uri.parse("$serverAddress/users/theme/${user.id}"),
+      headers : <String, String> {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': splitCookie(user.cookie as String),
+      },
+      body: jsonEncode(<String, String>{"theme": newTheme}),
+    );
+    if (response.statusCode == 200) {
+      User user = User.fromJson(json.decode(response.body));
+      user.cookie = cookie;
+      return user;
+    } else if (response.statusCode != 200) {
+      throw Exception("Failed to update theme");
+    }
+  }
 
   Future<List<dynamic>> getFavouriteGames() async {
     final user = globals.userLoggedIn;
     final response = await http.get(Uri.parse("$serverAddress/users/games/${user.id}"));
     if (response.statusCode == 200) {
       List<dynamic> favouriteGames = json.decode(response.body);
+      infoClientService.updateFavouriteGames(favouriteGames);
       return favouriteGames;
     } else {
         throw Exception('Failed to get favourite games');

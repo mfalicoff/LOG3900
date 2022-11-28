@@ -1,6 +1,6 @@
 import { ChatMessage } from '@app/classes/chat-message';
 
-export interface ChatRoom {
+export class ChatRoom {
     name: string;
     participants: string[];
     creator: string;

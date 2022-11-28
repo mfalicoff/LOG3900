@@ -42,6 +42,7 @@ class _GameListPageState extends State<GameListPage> {
         Navigator.pushNamed(context, "/game");
       }
     });
+    infoClientService.clearRooms();
     socketService.socket.emit("listRoom");
   }
 
@@ -68,7 +69,7 @@ class _GameListPageState extends State<GameListPage> {
               ),
             ),
             padding:
-                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 200.0),
+                const EdgeInsets.symmetric(vertical: 100.0, horizontal: 100.0),
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
               child: Container(
@@ -113,7 +114,7 @@ class _GameListPageState extends State<GameListPage> {
                               ),
                             ],
                           ),
-                          const SizedBox(width: 300),
+                          const SizedBox(width: 240),
                           ElevatedButton(
                             onPressed: _createGame,
                             child: Text(
@@ -125,7 +126,40 @@ class _GameListPageState extends State<GameListPage> {
                           ),
                           Container(
                               margin: const EdgeInsets.all(5),
-                              child: const ChatPanelOpenButton()),
+                              child: const ChatPanelOpenButton()
+                          ),
+                          StatefulBuilder(
+                              builder: (BuildContext context, StateSetter setState) {
+                                return Positioned(
+                                  top: 190,
+                                  right: 25,
+                                  child: Container(
+                                    height: 63,
+                                    width: 63,
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      borderRadius: const BorderRadius.all(Radius.circular(35.0)),
+                                    ),
+                                    child: IconButton(
+                                      iconSize: 50,
+                                      icon: CircleAvatar(
+                                        radius: 20,
+                                        backgroundColor: Theme.of(context).colorScheme.primary,
+                                        backgroundImage:
+                                        infoClientService.soundDisabled ?
+                                        const AssetImage('assets/volume-off-white.png') :
+                                        const AssetImage('assets/volume-on-white.png'),
+                                      ),
+                                      onPressed: () {
+                                        setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
+                                        infoClientService.notifyListeners();
+                                        socketService.notifyListeners();
+                                      },
+                                    ),
+                                  ),
+                                );
+                              }
+                          ),
                         ],
                       ),
                       const SizedBox(
@@ -142,12 +176,6 @@ class _GameListPageState extends State<GameListPage> {
                       ),
                       Expanded(
                         child: Container(
-                          // decoration: BoxDecoration(
-                          //   border: Border.all(
-                          //       color: Theme.of(context).colorScheme.primary,
-                          //       width: 2.0),
-                          //   borderRadius: BorderRadius.circular(10),
-                          // ),
                           child: gameList(
                             rooms: infoClientService.rooms
                                 .where((room) =>

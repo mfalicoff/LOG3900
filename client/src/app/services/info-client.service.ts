@@ -62,9 +62,14 @@ export class InfoClientService {
 
     // variable used for the chat rooms
     chatRooms: ChatRoom[];
+    currSelectedChatroom: ChatRoom;
+
     // variable to allow/block sound effects
     soundDisabled: boolean;
     userAvatars: Map<string, string>;
+
+    // variable used to know if the user left the game or not
+    hasAskedForLeave: boolean;
 
     constructor(private translate: TranslateService, private timerService: TimerService) {
         this.gameMode = Constants.CLASSIC_MODE;
@@ -95,8 +100,10 @@ export class InfoClientService {
         this.displayExchLetterModal = 'none';
         this.displayTransformTileModal = 'none';
         this.soundDisabled = false;
+        this.hasAskedForLeave = false;
         this.timerService.displayTimer = this.translate.instant('GAME.TIMER_SERVICE.TIME_LEFT') + '1:00';
         this.timerService.clearTimer();
+        this.currSelectedChatroom = { name: 'default', participants: [], creator: 'fake', chatHistory: [] };
 
         this.letterReserve = ['a', 'b'];
         this.letterBank = new Map([

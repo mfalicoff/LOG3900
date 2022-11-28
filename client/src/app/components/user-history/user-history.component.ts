@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Inject, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { GameSaved } from '@app/classes/game-saved';
+import { TranslateService } from '@ngx-translate/core';
 
 interface Data {
     title: string;
@@ -28,7 +29,7 @@ export class UserHistoryComponent implements AfterViewInit, OnInit {
     favouriteGames: GameSaved[];
     private scrollContainer: Element;
 
-    constructor(@Inject(MAT_DIALOG_DATA) public data: Data | Games, private dialog: MatDialog) {}
+    constructor(@Inject(MAT_DIALOG_DATA) public data: Data | Games, private dialog: MatDialog, public translate: TranslateService) {}
 
     ngOnInit() {
         this.favouriteGames = this.data.data as GameSaved[];

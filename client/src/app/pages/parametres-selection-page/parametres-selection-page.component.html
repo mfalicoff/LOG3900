@@ -35,7 +35,7 @@
         </mat-checkbox>
             <input
                     id="passwdInput"
-                    placeholder="mot de passe"
+                    placeholder="{{'PARAMETERS_SELECTION.PASSWORD' | translate}}"
                     #mdp="ngModel"
                     required
                     minlength="1"
@@ -94,8 +94,8 @@
 </div>
 
 <!-- The Modal to show the powers available to the player -->
-<div class="modal" [style.display]="displayPowerModal">
-    <div class="modal-content" >
+<div id="powerModalContainer" class="modal" [style.display]="displayPowerModal">
+    <div id="powerModal" class="modal-content">
         <span id="closeModalX" (click)="hidePowerModal()">X</span>
         <table id="tablePowers">
             <thead>
@@ -108,14 +108,14 @@
                 <tr *ngFor="let powerCard of infoClientService.game.powerCards">
                 <td>
                     <div class="flip-card">
-                    <div class="flip-card-inner">
-                        <div class="flip-card-front">
-                        <img src="./assets/card.png" alt="Avatar" class="cardImg">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                            <img src="./assets/card.png" alt="Avatar" class="cardImg">
+                            </div>
+                            <div class="flip-card-back">
+                                {{translateCardName(powerCard.name)}}
+                            </div>
                         </div>
-                        <div class="flip-card-back">
-                            {{translateCardName(powerCard.name)}}
-                        </div>
-                    </div>
                     </div>
                 </td>
                 <td>
@@ -128,6 +128,14 @@
                 </td>
                 </tr>
             </tbody>
-            </table>
+        </table>
+        <button
+            mat-raised-button
+            id="cancelBtn"
+            class="btnStyle"
+            (click)="this.hidePowerModal()"
+        >
+        {{'PARAMETERS_SELECTION.CONFIRM' | translate}}
+        </button>
     </div>
 </div>

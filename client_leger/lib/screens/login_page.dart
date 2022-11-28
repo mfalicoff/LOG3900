@@ -7,6 +7,7 @@ import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../main.dart';
 import '../services/info_client_service.dart';
 
 class LoginPage extends StatelessWidget {
@@ -190,6 +191,8 @@ class _LoginFormState extends State<LoginForm> {
         infoClientService.playerName = globals.userLoggedIn.username;
         if (mounted) {
           context.setLocale(Locale(globals.userLoggedIn.language!));
+          print(globals.userLoggedIn.theme);
+          MyApp.of(context)!.changeTheme(globals.userLoggedIn.theme as String);
           Navigator.pushNamed(context, "/home");
         }
       } on Exception {

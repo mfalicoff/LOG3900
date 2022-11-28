@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+/* eslint-disable max-lines */
 import { GameServer } from '@app/classes/game-server';
 import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
@@ -132,9 +133,10 @@ export class ChatService {
         }
 
         if (didEveryonePass3Times) {
-            this.pushMsgToAllPlayers(game, player.name, 'Fin de la partie !', false, 'S');
+            this.pushMsgToAllPlayersWithTranslation(game, player.name, ['GAME_FINISHED'], false, 'S');
             await this.showEndGameStats(game /* , player*/);
             game.gameFinished = true;
+            return;
         }
     }
 

@@ -9,7 +9,6 @@ import { CommunicationDashboardComponent } from '@app/components/chat/communicat
 import { NewChatroomModalComponent } from '@app/components/chat/communication-dashboard/new-chatroom-modal/new-chatroom-modal.component';
 import { JoinChatRoomModalComponent } from './components/chat/communication-dashboard/join-chatroom-modal.component.ts/join-chatroom-modal.component';
 import { InfoPanelComponent } from '@app/components/info-panel/info-panel.component';
-import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { TimerComponent } from '@app/components/timer/timer.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
@@ -52,7 +51,6 @@ export function HttpLoaderFactory(http: HttpClient) {
         AppComponent,
         GamePageComponent,
         MainPageComponent,
-        SidebarComponent,
         MaterialPageComponent,
         BoardStandComponent,
         ParametresSelectionPageComponent,
