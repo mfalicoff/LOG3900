@@ -199,7 +199,6 @@ class _ProfileStatePage extends State<ProfilePage> {
                               color: Theme.of(context).colorScheme.primary
                             ),
                             onChanged: (String? value) async {
-                              print(value);
                               MyApp.of(context)!.changeTheme(value!);
                               globals.userLoggedIn = await userController.updateTheme(value);
                             },),

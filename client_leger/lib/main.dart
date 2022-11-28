@@ -52,8 +52,6 @@ class _MyAppState extends State<MyApp> {
     ThemeData newTheme = theme == 'light' ? lightAppTheme : darkAppTheme;
     setState(() {
       _theme = newTheme;
-      print("changed Theme");
-      print(_theme.primaryColor);
     });
   }
 
