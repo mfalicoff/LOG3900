@@ -280,7 +280,7 @@ export class UserService {
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
         this.translate.use(response.data.language);
-        if (response.data.theme === 'dk') {
+        if (response.data.theme.toLowerCase() === 'dark') {
             this.themeService?.enable();
         } else {
             this.themeService?.disable();

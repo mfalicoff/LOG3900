@@ -174,7 +174,7 @@ body {
         color: #0c483f;
         border-color: #0c483f;
     }
-    .mat-dialog-container{
+    .mat-dialog-container, .modal{
         background-color: wheat;
         color: #0c483f;
         border-color: #0c483f;
@@ -227,6 +227,9 @@ body {
         background-color: #0c483f;
         color: wheat;
     }
+    .mat-progress-spinner circle, .mat-spinner circle{
+        stroke: #0c483f;
+    }
     ::-webkit-scrollbar-track {
         background: wheat;
     }
@@ -263,7 +266,7 @@ body.my-dark-mode {
         color: wheat;
         border-color: wheat;
     }
-    .mat-dialog-container {
+    .mat-dialog-container, .modal {
         background-color: #0c483f;
         color: wheat;
         border-color: wheat;
@@ -317,6 +320,9 @@ body.my-dark-mode {
     .playerName {
         color: #0c483f;
     }
+    .mat-progress-spinner circle, .mat-spinner circle {
+        stroke: wheat;
+    }
     .material-symbols-outlined {
         background-color: wheat;
         color: #0c483f;
@@ -362,7 +368,7 @@ body.my-light-mode {
         color: #0c483f;
         border-color: #0c483f;
     }
-    .mat-dialog-container{
+    .mat-dialog-container, .modal{
         background-color: wheat;
         color: #0c483f;
         border-color: #0c483f;
@@ -414,6 +420,9 @@ body.my-light-mode {
     }
     .playerName {
         color: wheat;
+    }
+    .mat-progress-spinner circle, .mat-spinner circle {
+        stroke: #0c483f;
     }
     #containerBoard {
         background-color: #0c483f;

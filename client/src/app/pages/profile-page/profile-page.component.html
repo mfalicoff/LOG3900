@@ -38,7 +38,7 @@
             <mat-form-field appearance="fill" class="matSelect">
                 <mat-label>{{'PROFILE.THEMES' | translate}}</mat-label>
                 <mat-select [(ngModel)]="themeSelected">
-                    <mat-option *ngFor="let theme of themeList" [value]="theme" (click)="onClickTheme(theme)">
+                    <mat-option *ngFor="let theme of themeList" [value]="theme" (click)="onClickTheme()">
                         <h2 >{{ theme }}</h2>
                     </mat-option>
                 </mat-select>

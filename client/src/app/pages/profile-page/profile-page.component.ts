@@ -32,16 +32,6 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         ['en', 'English'],
     ]);
 
-    themeMap = new Map<string, string>([
-        ['Light', 'lt'],
-        ['Dark', 'dk'],
-    ]);
-
-    inverseThemeMap = new Map<string, string>([
-        ['lt', 'Light'],
-        ['dk', 'Dark'],
-    ]);
-
     constructor(
         private dialog: MatDialog,
         public userService: UserService,
@@ -59,9 +49,9 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         this.themeList = ['Light', 'Dark'];
         this.themeService?.darkMode$?.subscribe((data) => {
             if (data) {
-                this.themeSelected = this.inverseThemeMap.get('dk');
+                this.themeSelected = 'Dark';
             } else {
-                this.themeSelected = this.inverseThemeMap.get('lt');
+                this.themeSelected = 'Light';
             }
         });
     }
@@ -139,15 +129,12 @@ export class ProfilePageComponent implements OnInit, OnDestroy {
         this.translate.use(language);
     }
 
-    onClickTheme(theme: string): void {
-        const themeSelect = this.themeMap.get(theme) as string;
-        this.themeService.darkMode$.subscribe((data) => {
-            if (data && this.themeSelected !== 'Dark') {
-                this.themeService.toggle();
-            } else if (!data && this.themeSelected !== 'Light') {
-                this.themeService.toggle();
-            }
-        });
-        this.userService.updateTheme(themeSelect);
+    onClickTheme(): void {
+        if (this.themeSelected === 'Dark') {
+            this.themeService.enable();
+        } else {
+            this.themeService.disable();
+        }
+        this.userService.updateTheme((this.themeSelected as string).toLowerCase());
     }
 }

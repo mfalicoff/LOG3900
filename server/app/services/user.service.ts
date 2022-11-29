@@ -188,7 +188,7 @@ class UserService {
     async updateTheme(userId: string, themeUpdated: string): Promise<User> {
         if (userId === '' || userId === undefined) throw new HttpException(HTTPStatusCode.BadRequest, 'No user id sent');
 
-        if ((themeUpdated !== 'lt' && themeUpdated !== 'dk') || themeUpdated === undefined)
+        if ((themeUpdated !== 'light' && themeUpdated !== 'dark') || themeUpdated === undefined)
             throw new HttpException(HTTPStatusCode.NotFound, 'Bad Body');
 
         const updateUserById: User = (await this.users.findByIdAndUpdate(userId, { theme: themeUpdated }, { new: true })) as User;

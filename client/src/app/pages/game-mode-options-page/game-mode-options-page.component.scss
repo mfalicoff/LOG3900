@@ -39,8 +39,8 @@
     font-size: 40px;
     cursor: pointer;
     user-select: none;
-    // background-color: wheat;
-    // color: #0c483f;
+
+
     border-radius: 20px;
     padding: 10px;
 }
@@ -107,14 +107,14 @@
 .flip-card-front {
     font-size: 40px;
     vertical-align: middle;
-    // background-color: #0C483F;
-    // color: wheat;
+
+
 }
 
 /* Style the back side */
 .flip-card-back {
     font-size: 17px;
-    // color: wheat;
-    // background-color: #0C483F;
+
+
     transform: rotateY(180deg);
 }

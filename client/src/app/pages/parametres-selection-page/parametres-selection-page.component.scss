@@ -53,11 +53,11 @@ input {
 }
 
 .btnStyle{
-    // background-color: #0C483F;
+
     display: inline;
     margin-top: 0px;
     font-size: 18px;
-    // color: wheat;
+
     cursor: pointer;
     box-shadow: none;
 }
@@ -317,8 +317,7 @@ mat-option {
 
 /* Style the front side (fallback if image is missing) */
 .flip-card-front {
-    // background-color: wheat;
-    // color: #0C483F;
+
 }
 
 /* Style the back side */
@@ -328,7 +327,7 @@ mat-option {
     font-size: 10px;
     vertical-align: middle;
     border-radius: 10px;
-    // background-color: #0C483F;
-    // color: wheat;
+
+
     transform: rotateY(180deg);
 }
