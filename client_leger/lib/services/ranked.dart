@@ -10,6 +10,7 @@ class RankedService{
 
 
   matchHasBeenFound() {
+    matchAccepted = false;
     const timerTime = 0.25;
     isShowModal = true;
     timerService.startTimer(timerTime);
@@ -17,9 +18,7 @@ class RankedService{
 
   closeModal() {
     isShowModal = false;
+    timerService.secondsValue = 0;
     timerService.clearTimer();
-    //provider
-    // Navigator.pushNamed(
-    //     context, "/ranked-init");
   }
 }

@@ -1,3 +1,4 @@
+import 'package:client_leger/services/info_client_service.dart';
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'dart:developer';
@@ -17,6 +18,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
   final TimerService timerService = TimerService();
   final SocketService socketService = SocketService();
   final RankedService rankedService = RankedService();
+  final InfoClientService infoClientService = InfoClientService();
 
 
   @override
@@ -83,6 +85,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+
                       Text (
                         "Matchmaking en cours",
                         style: TextStyle(
@@ -104,86 +107,98 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
             ),
           ),
           timerService.secondsValue!=0?
-            AlertDialog(
-                title:
-                Center(child: Text('Partie trouvée')),
-                actions: [
-                  Center(child: Text(
-                    timerService.displayTimer,
-                    style: TextStyle(
-                        fontSize: 35,
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .primary),
-                  )),
-                  Center(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment
-                            .spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment
-                            .center,
-                        children: [
-
-                          TextButton(
-                              child: Text('Accepter'),
-                              onPressed: () => acceptMatch()
+          AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+              title:
+              Center(child: Text('Partie trouvée')),
+              actions: [
+                Center(child:Text(
+                  timerService.displayTimer,
+                  style: TextStyle(
+                      fontSize: 35,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .primary),
+                )),
+                Center(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 13.0, horizontal: 30.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(10.0),
+                              ),
+                            ),
                           ),
-                          TextButton(
-                              child: Text('Refuser'),
-                              onPressed: () => refuseMatch()
+                          onPressed: () => acceptMatch(),
+                          child: Text(
+                            "Accepter",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Theme.of(context).colorScheme.secondary
+                            ),
                           ),
-                        ]
-                    ),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 13.0, horizontal: 30.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () => refuseMatch(),
+                          child: Text(
+                            "Refuser",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Theme.of(context).colorScheme.secondary
+                            ),
+                          ),
+                        ),
+                      ]
                   ),
-                ]
-            )
+                ),
+              ]
+          )
               :Container(),
+          IconButton(
+            onPressed: _goBackToRankedInitPage,
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
         ],
       ),
 
     );
   }
 
-  Future<void> MatchFound(BuildContext context) async {
-    return showDialog(
-        context: context,
-        builder: (context) =>
-            AlertDialog(
-                title:
-                Center(child: Text('Partie trouvée')),
-                actions: [
-                  Center(child:Text(
-                    timerService.displayTimer,
-                    style: TextStyle(
-                        fontSize: 35,
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .primary),
-                  )),
-                  Center(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-
-                          TextButton(
-                              child: Text('Accepter'),
-                              onPressed: () => acceptMatch()
-                          ),
-                          TextButton(
-                              child: Text('Refuser'),
-                              onPressed: () => refuseMatch()
-                          ),
-                        ]
-                    ),
-                  ),
-                ]
-            )
-
-    );
+  void _goBackToRankedInitPage() {
+    socketService.socket.emit('removePlayerFromGame', infoClientService.playerName);
+    Future.delayed(Duration.zero, () {
+      log('pop');
+      Navigator.pop(context);
+    });
   }
+
 
   acceptMatch() {
     rankedService.matchAccepted = true;
