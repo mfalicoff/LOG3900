@@ -10,6 +10,7 @@ class RankedService{
 
 
   matchHasBeenFound() {
+    log('matchFound1');
     const timerTime = 0.25;
     isShowModal = true;
     timerService.startTimer(timerTime);

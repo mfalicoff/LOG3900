@@ -86,7 +86,8 @@ class SocketService with ChangeNotifier {
   otherSocketOn() {
 
     socket.on('matchFound', (_) {
-    rankedService.matchHasBeenFound();
+      log('matchFound');
+      rankedService.matchHasBeenFound();
     });
 
     socket.on('startGame', (roomName) {
