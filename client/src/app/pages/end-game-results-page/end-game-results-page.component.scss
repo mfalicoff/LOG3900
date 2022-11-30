@@ -10,11 +10,11 @@
     top: 15%;
     right: 10%;
     margin-bottom: 0%;
+    color: black;
 }
 
 .closeButton:hover {
     color: red;
-    
 }
 
 .title-box {
@@ -29,14 +29,12 @@
     justify-content: center;
     margin-top: 2%;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    
     margin-right: 50px;
 }
 
 // General stats of the game
 #roomStats {
     margin-bottom: 5px;
-    
     font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     overflow-y: auto;

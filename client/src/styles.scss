@@ -179,10 +179,6 @@ body {
         color: #0c483f;
         border-color: #0c483f;
     }
-    #timer {
-        background-color: wheat;
-        color: #0c483f;
-    }
     mat-form-field {
         color: #0c483f;
     }
@@ -235,7 +231,7 @@ body {
     }
     ::-webkit-scrollbar-thumb {
         background: #0C483F;
-    }    
+    }
 }
 
 body.my-dark-mode {
@@ -266,10 +262,17 @@ body.my-dark-mode {
         color: wheat;
         border-color: wheat;
     }
-    .mat-dialog-container, .modal {
+    .mat-dialog-container {
         background-color: #0c483f;
         color: wheat;
         border-color: wheat;
+    }
+    .modal{
+        color: #0c483f;
+    }
+    .modal-content{
+        background-color: wheat;
+        color: #0c483f;
     }
     .card {
         background-color: #0c483f;
@@ -281,6 +284,10 @@ body.my-dark-mode {
         border-color: #0c483f;
     }
     #timer {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    #align{
         background-color: #0c483f;
         color: wheat;
     }
@@ -332,7 +339,43 @@ body.my-dark-mode {
     }
     ::-webkit-scrollbar-thumb {
         background: wheat;
+    }
+    #playerToPlay{
+        color: wheat;
+    }
+    .playerName{
+        color: wheat;
+        background-color: #0C483F;
+    }
+    #tableRoom tr:hover {
+        background-color: wheat;
+        color: #0C483F;
     } 
+    #tableRoom th{
+        background-color: wheat;
+        color: #0C483F;
+    }
+    #buttonShowModal{
+        background-color: wheat;
+        color: #0C483F;
+    }
+    #buttonShowModal:hover{
+        background-color: #0C483F;
+        color: wheat;
+    }
+    .chatRoomElement{
+        background-color: wheat;
+        color: #0C483F;
+    }
+    .chatRoomElementPressed{
+        background-color: #0C483F;
+        color: wheat;
+        border-color: wheat;
+    }
+    #cancelBtnPowerModal{
+        background-color: #0C483F;
+        color: wheat;
+    }
 }
 
 body.my-light-mode {
@@ -368,12 +411,23 @@ body.my-light-mode {
         color: #0c483f;
         border-color: #0c483f;
     }
-    .mat-dialog-container, .modal{
+    .mat-dialog-container{
         background-color: wheat;
         color: #0c483f;
         border-color: #0c483f;
     }
+    .modal{
+        color: wheat;
+    }
+    .modal-content{
+        background-color: #0c483f;
+        color: wheat;
+    }
     #timer {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    #align{
         background-color: wheat;
         color: #0c483f;
     }
@@ -432,7 +486,43 @@ body.my-light-mode {
     }
     ::-webkit-scrollbar-thumb {
         background: #0C483F;
-    }    
+    }
+    #playerToPlay{
+        color: #0C483F;
+    }
+    .playerName{
+        color: #0C483F;
+        background-color: wheat;
+    }
+    #tableRoom tr:hover {
+        background-color: #0C483F;
+        color: wheat;
+    }
+    #tableRoom th{
+        background-color: #0C483F;
+        color: wheat;
+    }
+    #buttonShowModal{
+        background-color: #0C483F;
+        color: wheat;
+    }
+    #buttonShowModal:hover{
+        background-color: wheat;
+        color: #0C483F;
+    }
+    .chatRoomElement{
+        background-color: #0C483F;
+        color: wheat;
+    }
+    .chatRoomElementPressed{
+        background-color: wheat;
+        color: #0C483F;
+        border-color: #0C483F;
+    }
+    #cancelBtnPowerModal{
+        background-color: wheat;
+        color: #0C483F;
+    }
 }
 
 .customDialog .mat-dialog-container {

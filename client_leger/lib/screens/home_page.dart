@@ -165,15 +165,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     borderRadius: const BorderRadius.all(Radius.circular(35.0)),
                   ),
                   child: IconButton(
-                    iconSize: 50,
-                    icon: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      backgroundImage:
-                      infoClientService.soundDisabled ?
-                      const AssetImage('assets/volume-off-white.png') :
-                      const AssetImage('assets/volume-on-white.png'),
-                    ),
+                    iconSize: 35,
+                    icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp) : Icon(Icons.volume_up_outlined),
+                    color: Theme.of(context).colorScheme.secondary,
                     onPressed: () {
                       setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
                       infoClientService.notifyListeners();
