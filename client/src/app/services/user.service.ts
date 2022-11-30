@@ -13,6 +13,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from './notification.service';
 import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
 import { MatDialog } from '@angular/material/dialog';
+import { DarkModeService } from 'angular-dark-mode';
 
 @Injectable({
     providedIn: 'root',
@@ -28,6 +29,7 @@ export class UserService {
         private notifService: NotificationService,
         private dialog: MatDialog,
         private translate: TranslateService,
+        private themeService: DarkModeService,
     ) {}
 
     getUser(user: User): Observable<UserResponseInterface> {
@@ -110,6 +112,7 @@ export class UserService {
                     localStorage.removeItem(`cookie-${this.user._id}`);
                     localStorage.removeItem(`user-${this.user._id}`);
                     this.infoClientService.playerName = 'DefaultPlayerName';
+                    this.themeService?.disable();
                     this.router.navigate(['/home']);
                 },
                 error: (error) => {
@@ -213,6 +216,26 @@ export class UserService {
             });
     }
 
+    async updateTheme(themeUpdated: string) {
+        return this.http
+            .put<UserResponseInterface>(
+                environment.serverUrl + 'users/theme/' + this.user._id,
+                { theme: themeUpdated },
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    // eslint-disable-next-line no-console
+                    console.log(res);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse, socket?: Socket, email?: string, password?: string) {
         if (error.error instanceof ErrorEvent) {
             this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
@@ -257,6 +280,11 @@ export class UserService {
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
         this.translate.use(response.data.language);
+        if (response.data.theme.toLowerCase() === 'dark') {
+            this.themeService?.enable();
+        } else {
+            this.themeService?.disable();
+        }
         this.infoClientService.playerName = response.data.name;
         this.router.navigate(['/game-mode-options']);
     }

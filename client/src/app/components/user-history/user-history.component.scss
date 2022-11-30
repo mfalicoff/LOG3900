@@ -5,7 +5,7 @@
 }
 
 #historyWrapper {
-    background-color: wheat;
+    
     width: 70%;
     height: 65%;
     position: absolute;
@@ -17,26 +17,28 @@
 }
 
 .historyContainer{
-    background-color: #0C483F;
+
 }
 
 #historyWrapper h1{
     text-align: center;
-    color: #0C483F;
+
 }
+
 .btnStyle{
-    background-color: wheat;
+
     left: 50%;
     display: inline;
     margin-top: 0px;
     font-size: 18px;
-    color: #0c483f;
+
     cursor: pointer;
     box-shadow: none;
 }
 
 .actionHistory{
-    color: wheat;
+    padding: 1%;
+    
     font-size: large;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     text-align: left;
@@ -45,7 +47,6 @@
 .sidebar {
     position: static bottom;
     height: 90%;
-    background-color: #0c483f;
     border-radius: 15px;
     overflow-x: auto;
     overflow-y: scroll;
@@ -54,8 +55,8 @@
 
 .title-box {
     max-width: 100%;
-    background-color: #0c483f;
-    color: wheat;
+    
+    
     margin-bottom: 10px;
 }
 
@@ -65,13 +66,13 @@
     justify-content: center;
     margin-top: 2%;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    color: wheat;
+    
     margin-right: 50px;
 }
 
 .closeButton {
-    color: #0c483f;
-    background-color: wheat;
+    
+    
     position: fixed;
     top: 13%;
     right: 20%;
@@ -100,12 +101,12 @@
 
 #favouriteGames {
     margin-bottom: 5px;
-    color: #0c483f;
+    
     font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
     margin-top: 2%;
-    background-color: wheat;
+
     width: 60%;
     height: 65%;
     position: absolute;
@@ -147,10 +148,9 @@
     height: 10px;
 }
 ::-webkit-scrollbar-track {
-    background: wheat;
-    border-color: #0C483F;
+    // background: wheat;
 }
 ::-webkit-scrollbar-thumb {
-    background: #0C483F;
+    // background: #0C483F;
     border-radius: 10px;
 }

@@ -490,7 +490,7 @@ class _ChatPanelState extends State<ChatPanel> {
                             fillColor: Theme.of(context).colorScheme.secondary,
                             filled: true,
                             hintText: "CHAT_PANEL.WRITE_MESSAGE".tr(),
-                            hintStyle: const TextStyle(color: Colors.black54),
+                            hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
                             border: InputBorder.none,
                           ),
                           onChanged: (String value) {

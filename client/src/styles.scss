@@ -84,6 +84,13 @@ body {
     height: 350px;
     width: 500px;
 }
+
+#containerBoard {
+    border-radius: 100px;
+    height: 350px;
+    width: 500px;
+}
+
 .modalTitle{
     text-align: center;
 }
@@ -101,16 +108,12 @@ body {
 
 .editForm input{
     border-radius: 10px;
-    border-color: #0c483f;
     height: 25px;
-    color: #0c483f;
     margin-bottom: 10px;
 }
 
 #mat-dialog-0{
-    background: wheat;
     font-weight: bold;
-    color: #0c483f;
     font-family: Arial, Helvetica, sans-serif;
     font-size: large;
     border-spacing: 2px;
@@ -122,34 +125,318 @@ body {
     top: 10px;
     // position: fixed;
     border-radius: 5px;
-    background-color: #0c483f;
-    color: wheat;
     align-self: center;
     margin-top: 50px;
     font-weight: bold;
 }
 
-#mat-dialog-container {
+body {
     background-color: wheat;
+    // color: #0c483f;
+    border-color: #0c483f;
+    #container {
+        background-color: wheat;
+    }
+    #main {
+        background-color: wheat;
+    }
+    button {
+        background-color: #0C483F;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    .mat-button {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    input {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    .mat-raised-button {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    mat-button {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    .card {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    .mat-dialog-container, .modal{
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    #timer {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    mat-form-field {
+        color: #0c483f;
+    }
+    mat-label {
+        color: #0c483f;
+    }
+    .mat-select-arrow {
+        color: #0c483f;
+    }
+    .mat-select-value {
+        color: #0c483f;
+    }
+    td {
+        border: wheat;
+        border-color: wheat;
+    }
+    .flip-card-front {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .flip-card-back {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .material-symbols-outlined {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    .gridContainerInGame {
+        background-color: #0c483f;
+    }
+    #containerBoard {
+        background-color: #0c483f;
+    }
+    .playerName {
+        color: wheat;
+    }
+    .MPButton {
+        color: #0c483f;
+    }
+    mat-grid-list {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    .mat-progress-spinner circle, .mat-spinner circle{
+        stroke: #0c483f;
+    }
+    ::-webkit-scrollbar-track {
+        background: wheat;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #0C483F;
+    }    
+}
+
+body.my-dark-mode {
+    transition: color 1s ease;
+    background-color: #0c483f;
+    color: wheat;
+    border-color: wheat;
+    #container {
+        background-color: #0c483f;
+    }
+    #main {
+        background-color: #0c483f;
+    }
+    button {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+        border: #0C483F;
+    }
+    mat-button {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+        border: #0C483F;
+    }
+    input {
+        background-color:#0c483f;
+        color: wheat;
+        border-color: wheat;
+    }
+    .mat-dialog-container, .modal {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+    }
+    .card {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+    }
+    td {
+        border: #0c483f;
+        border-color: #0c483f;
+    }
+    #timer {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    mat-form-field {
+        color: wheat;
+    }
+    .mat-select-value {
+        color: wheat;
+    }
+    mat-label {
+        color: wheat;
+    }
+    mat-grid-list {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .MPButton {
+        color: #0c483f;
+    }
+    .mat-select-arrow {
+        color: wheat;
+    }
+    .flip-card-front {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    .flip-card-back {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    .gridContainerInGame {
+        background-color: wheat;
+    }
+    #containerBoard {
+        background-color: wheat;
+    }
+    .playerName {
+        color: #0c483f;
+    }
+    .mat-progress-spinner circle, .mat-spinner circle {
+        stroke: wheat;
+    }
+    .material-symbols-outlined {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    ::-webkit-scrollbar-track {
+        background: #0c483f;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: wheat;
+    } 
+}
+
+body.my-light-mode {
+    transition: color 1s ease;
+    background-color: wheat;
+    color: #0c483f;
+    border-color: #0c483f;
+    #container {
+        background-color: wheat;
+    }
+    #main {
+        background-color: wheat;
+    }
+    button {
+        background-color: #0C483F;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    mat-button {
+        background-color: #0c483f;
+        color: wheat;
+        border-color: wheat;
+        border: wheat;
+    }
+    input {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    .card {
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    .mat-dialog-container, .modal{
+        background-color: wheat;
+        color: #0c483f;
+        border-color: #0c483f;
+    }
+    #timer {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    mat-form-field {
+        color: #0c483f;
+    }
+    mat-label {
+        color: #0c483f;
+    }
+    .mat-select-arrow {
+        color: #0c483f;
+    }
+    .mat-select-value {
+        color: #0c483f;
+    }
+    .MPButton {
+        color: #0c483f;
+    }
+    td {
+        border: wheat;
+        border-color: wheat;
+    }
+    .flip-card-front {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .flip-card-back {
+        background-color: wheat;
+        color: #0c483f;
+    }
+    .material-symbols-outlined {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    mat-grid-list {
+        background-color: #0c483f;
+        color: wheat;
+    }
+    .gridContainerInGame {
+        background-color: #0c483f;
+    }
+    .play-area-container {
+        background-color: #0c483f;
+    }
+    .playerName {
+        color: wheat;
+    }
+    .mat-progress-spinner circle, .mat-spinner circle {
+        stroke: #0c483f;
+    }
+    #containerBoard {
+        background-color: #0c483f;
+    }
+    ::-webkit-scrollbar-track {
+        background: wheat;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #0C483F;
+    }    
 }
 
 .customDialog .mat-dialog-container {
     overflow-y: hidden!important;
-    background-color: wheat ;
-  }
-
-.matDialogWheat .mat-dialog-container{
-    background-color: wheat ;
-
-}
-
-.btnStyle{
-    background-color: #0C483F;
-    display: inline;
-    font-size: 12px;
-    color: wheat;
-    cursor: pointer;
-    box-shadow: none;
 }
 
 .ngx-gallery {

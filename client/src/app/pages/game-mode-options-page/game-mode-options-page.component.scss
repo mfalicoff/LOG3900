@@ -16,8 +16,8 @@
     font-size: 40px;
     padding: 20px;
     border-radius: 8px;
-    background-color: #0c483f;
-    color: wheat;
+    
+    
 }
 
 .profile {
@@ -33,13 +33,14 @@
     top: 2%;
     left: 3%;
 }
+
 .material-symbols-outlined {
     position: absolute;
     font-size: 40px;
     cursor: pointer;
     user-select: none;
-    background-color: wheat;
-    color: #0c483f;
+
+
     border-radius: 20px;
     padding: 10px;
 }
@@ -106,14 +107,14 @@
 .flip-card-front {
     font-size: 40px;
     vertical-align: middle;
-    background-color: #0C483F;
-    color: wheat;
+
+
 }
 
 /* Style the back side */
 .flip-card-back {
     font-size: 17px;
-    color: wheat;
-    background-color: #0C483F;
+
+
     transform: rotateY(180deg);
 }

@@ -5,7 +5,6 @@
 }
 
 .closeButton {
-    color: #0c483f;
     background-color: transparent;
     position: fixed;
     top: 15%;
@@ -15,12 +14,12 @@
 
 .closeButton:hover {
     color: red;
-    background-color: wheat;
+    
 }
 
 .title-box {
     max-width: 100%;
-    background-color: #0c483f;
+    
     margin-bottom: 10px;
 }
 
@@ -30,14 +29,14 @@
     justify-content: center;
     margin-top: 2%;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-    color: wheat;
+    
     margin-right: 50px;
 }
 
 // General stats of the game
 #roomStats {
     margin-bottom: 5px;
-    color: #0c483f;
+    
     font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     overflow-y: auto;
@@ -73,18 +72,17 @@
     height: 10px;
 }
 #roomStats::-webkit-scrollbar-track {
-    background: wheat;
-    border-color: #0C483F;
+    // background: wheat;
 }
 #roomStats::-webkit-scrollbar-thumb {
-    background: #0C483F;
+    // background: #0C483F;
     border-radius: 8px;
 }
 
 // Stats specific to one player
 #playersStats {
     margin-bottom: 5px;
-    color: #0c483f;
+    
     font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     overflow-y: auto;
@@ -121,10 +119,9 @@
     height: 10px;
 }
 #playersStats::-webkit-scrollbar-track {
-    background: wheat;
-    border-color: #0C483F;
+    // background: wheat;
 }
 #playersStats::-webkit-scrollbar-thumb {
-    background: #0C483F;
+    // background: #0C483F;
     border-radius: 8px;
 }

@@ -3,6 +3,7 @@
     "PROFILE": {
         "STATS": "Statistics",
         "LANGUAGE": "Languages",
+        "THEMES": "Themes",
         "EDIT": "Edit profile",
         "HISTORY_ACTIONS": "Actions history",
         "HISTORY_CONNECTIONS": "Connection history",
