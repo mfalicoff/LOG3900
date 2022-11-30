@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 import { Socket } from 'socket.io-client';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificationService } from './notification.service';
+import { DarkModeService } from 'angular-dark-mode';
 
 @Injectable({
     providedIn: 'root',
@@ -25,6 +26,7 @@ export class UserService {
         private router: Router,
         private notifService: NotificationService,
         private translate: TranslateService,
+        private themeService: DarkModeService,
     ) {}
 
     getUser(user: User): Observable<UserResponseInterface> {
@@ -125,6 +127,7 @@ export class UserService {
                     localStorage.removeItem('cookie');
                     localStorage.removeItem('user');
                     this.infoClientService.playerName = 'DefaultPlayerName';
+                    this.themeService?.disable();
                     this.router.navigate(['/home']);
                 },
                 error: (error) => {
@@ -228,6 +231,26 @@ export class UserService {
             });
     }
 
+    async updateTheme(themeUpdated: string) {
+        return this.http
+            .put<UserResponseInterface>(
+                environment.serverUrl + 'users/theme/' + this.user._id,
+                { theme: themeUpdated },
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            .subscribe({
+                next: (res) => {
+                    // eslint-disable-next-line no-console
+                    console.log(res);
+                },
+                error: (error) => {
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
     private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
             this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
@@ -241,6 +264,11 @@ export class UserService {
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
         this.translate.use(response.data.language);
+        if (response.data.theme.toLowerCase() === 'dark') {
+            this.themeService?.enable();
+        } else {
+            this.themeService?.disable();
+        }
         this.infoClientService.playerName = response.data.name;
         this.router.navigate(['/game-mode-options']);
     }

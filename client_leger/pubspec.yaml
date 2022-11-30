@@ -81,10 +81,6 @@ flutter:
   assets:
     - assets/background.jpg
     - assets/card.png
-    - assets/volume-off.png
-    - assets/volume-on.png
-    - assets/volume-off-white.png
-    - assets/volume-on-white.png
     - assets/audios/game-lost.mp3
     - assets/audios/game-won.mp3
     - assets/audios/letter-placement.mp3

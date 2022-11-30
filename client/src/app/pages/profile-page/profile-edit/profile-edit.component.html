@@ -3,8 +3,8 @@
         <h1>{{'EDIT_PROFILE.ACTUAL_NAME' | translate}}{{this.getUsername()}}</h1>
         <label>{{'EDIT_PROFILE.EDIT_NAME' | translate}}</label>
         <div>
-            <mat-form-field>
-                <mat-label style="color:#0C483F">{{'EDIT_PROFILE.NEW_NAME' | translate}}</mat-label>
+            <mat-form-field style="transition: color 2s ease;">
+                <mat-label>{{'EDIT_PROFILE.NEW_NAME' | translate}}</mat-label>
                 <input matInput [(ngModel)]="name">
               </mat-form-field>
             <button mat-button (click)="updateUsername()" class="saveButton">{{'EDIT_PROFILE.SAVE_NAME' | translate}}</button>

@@ -3,6 +3,7 @@
     "PROFILE": {
         "STATS": "Statistics",
         "LANGUAGE": "Languages",
+        "THEMES": "Themes",
         "EDIT": "Edit profile",
         "HISTORY_ACTIONS": "Actions history",
         "HISTORY_CONNECTIONS": "Connection history",
@@ -189,7 +190,7 @@
         "AVATAR": "Avatar",
         "USERNAME": "Username",
         "REQUIRED_USERNAME": "Username is required",
-        "MIN_USERNAME": "Username must be at least 3 characters",
+        "MIN_USERNAME": "Username must be at least 4 characters",
         "MAX_USERNAME": "Username must be at most 20 characters",
         "EMAIL": "Email",
         "REQUIRED_EMAIL": "Email is required",

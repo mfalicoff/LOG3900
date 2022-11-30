@@ -236,7 +236,11 @@ class _SignUpFormState extends State<SignUpForm> {
       return "SIGN_UP_PAGE.ENTER_USERNAME".tr();
     } else if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
       return "SIGN_UP_PAGE.ENTER_VALID_USERNAME".tr();
-    } else {
+    } else if(value.length < 4){
+      return "SIGN_UP_PAGE.MIN_USERNAME".tr();
+    }else if(value.length > 20){
+      return "SIGN_UP_PAGE.MAX_USERNAME".tr();
+    }else {
       return null;
     }
   }

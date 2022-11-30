@@ -128,8 +128,8 @@ class SocketService with ChangeNotifier {
       Function deepEq = const DeepCollectionEquality().equals;
       infoClientService.updatePlayer(player);
       if(!deepEq(infoClientService.player.chatHistory, infoClientService.player.oldChatHistory) && infoClientService.player.chatHistory.last.senderName != infoClientService.player.name) {
+        chatService.rooms[0].isUnread = true;
         if(chatService.rooms[0].name == 'game' && !infoClientService.soundDisabled) {
-          chatService.rooms[0].isUnread = true;
           final player = AudioPlayer(); // Create a player
           await player.setUrl(
               "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )

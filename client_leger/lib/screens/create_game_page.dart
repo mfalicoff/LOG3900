@@ -307,7 +307,12 @@ class _CreateGamePageState extends State<CreateGamePage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                            "${"CREATE_GAME_PAGE.ACTIVATE".tr()} :"),
+                                            "${"CREATE_GAME_PAGE.ACTIVATE".tr()} :",
+                                            style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary)
+                                        ),
                                         PowerListDialog(
                                           notifyParent: refresh,
                                         ),

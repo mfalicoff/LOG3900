@@ -60,15 +60,15 @@ class _GamePageState extends State<GamePage> {
             Row(
               children: [
                 Container(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
                   padding: const EdgeInsets.symmetric(
                       vertical: 20.0, horizontal: 20.0),
                   child: const GameBoard(),
                 ),
                 Expanded(
                   child: Container(
-                    padding: const EdgeInsets.fromLTRB(0, 100, 50, 100),
-                    color: Theme.of(context).colorScheme.primary,
+                    padding: const EdgeInsets.fromLTRB(50, 100, 50, 100),
+                    color: Theme.of(context).colorScheme.secondary,
                     child: Column(
                       children: const [
                         InfoPanel(),
@@ -78,13 +78,117 @@ class _GamePageState extends State<GamePage> {
                 ),
               ],
             ),
+            if(infoClientService.isSpectator && infoClientService.game.gameStarted && !infoClientService.game.gameFinished)...[
+              Positioned(
+                top: 170,
+                left: 8,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  width: 65,
+                  child: Text(
+                    infoClientService.actualRoom.players[(infoClientService.game.idxPlayerPlaying.toInt() + 1) % 4].name,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 7,
+                left: 525,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  width: 65,
+                  child: Text(
+                    infoClientService.actualRoom.players[(infoClientService.game.idxPlayerPlaying.toInt() + 2) % 4].name,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 520,
+                left: 690,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  width: 65,
+                  child: Text(
+                    infoClientService.actualRoom.players[(infoClientService.game.idxPlayerPlaying.toInt() + 3) % 4].name,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 680,
+                left: 170,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  width: 65,
+                  child: Text(
+                    infoClientService.actualRoom.players[infoClientService.game.idxPlayerPlaying.toInt()].name,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+            if(!infoClientService.isSpectator && infoClientService.game.gameStarted && !infoClientService.game.gameFinished)...[
+              Positioned(
+                top: 680,
+                left: 170,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                  ),
+                  padding: const EdgeInsets.all(5),
+                  width: 65,
+                  child: Text(
+                    infoClientService.playerName,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.secondary,
+                      fontSize: 12,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
             const Positioned(top: 550.0, right: 225.0, child: ChatPanelOpenButton()),
             if (infoClientService.game.gameFinished == true) ... [
               const EndGameResultsPage(),
             ],
             if (infoClientService.incomingPlayer != "")
               AlertDialog(
-                backgroundColor: Theme.of(context).colorScheme.secondary,
+                backgroundColor: Theme.of(context).colorScheme.primary,
                 title: Text(
                   '${"GAME_PAGE.THE_PLAYER".tr()}${infoClientService.incomingPlayer}${"GAME_PAGE.TRY_CONNECT".tr()}',
                   style:
@@ -95,7 +199,7 @@ class _GamePageState extends State<GamePage> {
                     child: Text(
                       "GAME_PAGE.REFUSE".tr(),
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     onPressed: () {
                       acceptPlayer(false);
@@ -105,7 +209,7 @@ class _GamePageState extends State<GamePage> {
                     child: Text(
                       "GAME_PAGE.ACCEPT".tr(),
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary),
+                          color: Theme.of(context).colorScheme.primary),
                     ),
                     onPressed: () {
                       acceptPlayer(true);
@@ -117,29 +221,21 @@ class _GamePageState extends State<GamePage> {
               Container(),
             StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState) {
-              return Positioned(
-                top: 20,
-                right: 30,
-                child: IconButton(
-                  iconSize: 50,
-                  icon: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    backgroundImage: infoClientService.soundDisabled
-                        ? const AssetImage('assets/volume-off.png')
-                        : const AssetImage('assets/volume-on.png'),
-                  ),
-                  onPressed: () {
-                    setState(() => {
-                          infoClientService.soundDisabled =
-                              !infoClientService.soundDisabled
-                        });
-                    infoClientService.notifyListeners();
-                    socketService.notifyListeners();
-                  },
-                ),
-              );
-            }),
+                  return Positioned(
+                    top: 20,
+                    right: 30,
+                    child: IconButton(
+                      iconSize: 35,
+                      icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp) : Icon(Icons.volume_up_outlined),
+                      color: Theme.of(context).colorScheme.primary,
+                      onPressed: () {
+                        setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
+                        infoClientService.notifyListeners();
+                        socketService.notifyListeners();
+                      },
+                    ),
+                  );
+                }),
           ],
         ),
       ),
@@ -268,7 +364,7 @@ class _PowerListDialog extends State<PowerListDialog> {
       onPressed: () => showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.secondary,
+          backgroundColor: Theme.of(context).colorScheme.primary,
           actions: <Widget>[
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -279,7 +375,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     Text(
                       "GAME_PAGE.CARDS_AVAILABLE".tr(),
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
                           decoration: TextDecoration.none),
@@ -289,7 +385,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     Text(
                         "${"GAME_PAGE.NO_POWERS".tr()}${3 - infoClientService.player.nbValidWordPlaced}${"GAME_PAGE.VALID_WORDS".tr()}",
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).colorScheme.secondary,
                             fontSize: 15,
                             decoration: TextDecoration.none)),
                   ],
@@ -318,7 +414,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                   back: Container(
                                     decoration: BoxDecoration(
                                       color:
-                                          Theme.of(context).colorScheme.primary,
+                                          Theme.of(context).colorScheme.secondary,
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(5)),
                                     ),
@@ -338,7 +434,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                           fontSize: 12.0,
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .secondary,
+                                              .primary,
                                         ),
                                         textAlign: TextAlign.justify,
                                       ),
@@ -349,7 +445,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStatePropertyAll<
                                             Color>(
-                                        Theme.of(context).colorScheme.primary),
+                                        Theme.of(context).colorScheme.secondary),
                                   ),
                                   onPressed: () => {
                                     _onPowerCardClick(infoClientService
@@ -360,7 +456,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .secondary,
+                                          .primary,
                                     ),
                                   ),
                                 ),
@@ -380,7 +476,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     child: Text(
                       "GAME_PAGE.ALREADY_USED_POWER".tr(),
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 13,
                           decoration: TextDecoration.none),
                     ),
@@ -394,7 +490,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                       "GAME_PAGE.NOT_YOUR_TURN".tr(),
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           fontSize: 13,
                           decoration: TextDecoration.none),
                     ),
@@ -407,7 +503,7 @@ class _PowerListDialog extends State<PowerListDialog> {
       ),
       style: ButtonStyle(
         backgroundColor: MaterialStatePropertyAll<Color>(
-            Theme.of(context).colorScheme.primary),
+            Theme.of(context).colorScheme.secondary),
         padding: MaterialStateProperty.all(
           const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
         ),
@@ -420,7 +516,7 @@ class _PowerListDialog extends State<PowerListDialog> {
       child: Text(
         "GAME_PAGE.POWER_LIST".tr(),
         style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.primary,
         ),
       ),
     );
@@ -437,10 +533,10 @@ class _PowerListDialog extends State<PowerListDialog> {
               content: Text(
                 "GAME_PAGE.ENTER_POSITION_OF_TILE".tr(),
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               actions: <Widget>[
                 Form(
                   key: _formKey,
@@ -456,10 +552,10 @@ class _PowerListDialog extends State<PowerListDialog> {
                           border: const OutlineInputBorder(),
                           labelText: "GAME_PAGE.POSITION".tr(),
                           labelStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.primary),
+                              color: Theme.of(context).colorScheme.secondary),
                         ),
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary),
+                            color: Theme.of(context).colorScheme.secondary),
                       ),
                       TextButton(
                         onPressed: _sendCoords,
@@ -484,7 +580,7 @@ class _PowerListDialog extends State<PowerListDialog> {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               actions: <Widget>[
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -496,7 +592,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                           Text(
                             "GAME_PAGE.CLICK_ON_TILE_EXCHANGE".tr(),
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.secondary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
                                 decoration: TextDecoration.none),
@@ -546,7 +642,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                             Text(
                               "GAME_PAGE.CLICK_ON_TILE_RESERVE".tr(),
                               style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).colorScheme.secondary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17,
                                   decoration: TextDecoration.none),
@@ -606,7 +702,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                             Text(
                               "GAME_PAGE.NO_LETTER_AVAILABLE".tr(),
                               style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).colorScheme.secondary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17,
                                   decoration: TextDecoration.none),
@@ -634,7 +730,7 @@ class _PowerListDialog extends State<PowerListDialog> {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               actions: <Widget>[
                 Container(
                   margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -647,7 +743,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                         "GAME_PAGE.CLICK_AVATAR".tr(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
+                            color: Theme.of(context).colorScheme.secondary,
                             fontWeight: FontWeight.bold,
                             fontSize: 17,
                             decoration: TextDecoration.none),
@@ -688,7 +784,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                         style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .primary,
+                                              .secondary,
                                         ),
                                       ),
                                     ),

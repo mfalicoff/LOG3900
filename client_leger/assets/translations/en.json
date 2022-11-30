@@ -71,7 +71,9 @@
         "ENTER_USERNAME": "Enter a username",
         "ENTER_VALID_USERNAME": "Enter a username with alphanumeric characters",
         "ENTER_PASSWORD": "Enter a password",
-        "UNABLE_TO_CREATE_ACCOUNT": "Unable to create an account"
+        "UNABLE_TO_CREATE_ACCOUNT": "Unable to create an account",
+        "MIN_USERNAME": "Username must be at least 4 characters",
+        "MAX_USERNAME": "Username must be at most 20 characters"
     },
     "GAME_PAGE": {
         "QUIT_GAME": "Quit Game",

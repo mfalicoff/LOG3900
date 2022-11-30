@@ -10,10 +10,7 @@
     margin-top: 10%;
     margin-left: 10%;
     height: 80%;
-    background-color: white;
     z-index: 2;
-    background: #0c483f;
-    color: wheat;
     font-size: large;
     border-radius: 25px;
     justify-content: center;
@@ -56,7 +53,7 @@
     height: 10%;
     width: 20%;
     border-radius: 15px;
-    background-color: wheat;
+    
 }
 
 .createButton {
@@ -64,8 +61,6 @@
     width: 120px;
     top: 10px;
     border-radius: 5px;
-    background-color: wheat;
-    color: #0c483f;
 }
 
 // Les boutons ne répondent pas, aucun idée pourquoi
@@ -88,11 +83,11 @@
 
 .roomList {
     border: solid 3px;
-    color: wheat;
-    height: 50%;
+    
+    height: 65%;
     width: 80%;
     border-radius: 3px;
-    margin-top: 5%;
+    margin-top: 0;
     margin-left: 10%;
     margin-right: 10%;
     align-self: center;
@@ -105,7 +100,7 @@
 //center the roomListTitle
 #roomListTitle {
     text-align: center;
-    margin-top: 2%;
+    margin-top: 4%;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
@@ -114,11 +109,8 @@
     // Height of horizontal scroll bar
     height: 10px;
 }
-::-webkit-scrollbar-track {
-    background: #0c483f;
-}
+
 ::-webkit-scrollbar-thumb {
-    background: wheat;
     border-radius: 8px;
 }
 
@@ -131,7 +123,7 @@
     transform: scale(1.5);
     margin-top: 2%;
     margin-left : 2%;
-    color: wheat;
+    
 }
 
 #tableRoom {
@@ -144,35 +136,21 @@
     padding: 8px;
 }
 
-#tableRoom tr:hover {
-    background-color: wheat;
-    color: #0C483F;
-}
-
 #tableRoom th {
     padding-top: 12px;
     padding-bottom: 10px;
     text-align: left;
-    background-color: wheat;
-    color: #0C483F;
 }
 
 #tableRoom td{
-    border-bottom: 2px solid wheat;
+    border-bottom: 2px solid;
 }
 
 #buttonShowModal{
-    background-color: wheat;
-    color: #0C483F;
     font-size: 16px;
     border-radius: 3px;
     border: none;
     padding: 5px;
-}
-
-#buttonShowModal:hover{
-    background-color: #0C483F;
-    color: wheat;
 }
 
 /* The Modal (background) */
@@ -187,12 +165,10 @@
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    color: #0C483F;
 }
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: wheat;
     margin: 15% auto; /* 15% from the top and centered */
     padding: 10px;
     border-radius: 10px;
