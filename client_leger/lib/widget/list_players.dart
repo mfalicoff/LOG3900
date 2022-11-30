@@ -42,7 +42,7 @@ class _ListPlayersState extends State<ListPlayers> {
                 "INFO_PANEL.PLAYER_NAME".tr(),
                 overflow: TextOverflow.visible,
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.secondary),
                 // textAlign: TextAlign.center,
               ),
             ),
@@ -56,7 +56,7 @@ class _ListPlayersState extends State<ListPlayers> {
                 "INFO_PANEL.SCORE".tr(),
                 overflow: TextOverflow.visible,
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.secondary),
                 // textAlign: TextAlign.center,
               ),
             ),
@@ -73,14 +73,14 @@ class _ListPlayersState extends State<ListPlayers> {
               Text(
                 infoClientService.actualRoom.players[index].name,
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             DataCell(
               Text(
                 infoClientService.actualRoom.players[index].score.toString(),
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary),
+                    color: Theme.of(context).colorScheme.secondary),
               ),
             ),
           ],

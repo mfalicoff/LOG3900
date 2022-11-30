@@ -170,10 +170,6 @@ mat-form-field {
     margin-top: 60px;
 }
 
-mat-option {
-    
-}
-
 //place the button on the top left corner
 //give the button the same configuration as the Demarrer button
 .MPButton {
@@ -230,21 +226,10 @@ mat-option {
     padding: 8px;
 }
 
-#tablePowers tr:hover {
-    
-    
-}
-
 #tablePowers th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: left;
-    
-    
-}
-
-#tablePowers td{
-    border-bottom: 2px solid;
 }
 
 /* The Modal (background) */
@@ -259,12 +244,10 @@ mat-option {
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    
 }
 
 /* Modal Content/Box */
 .modal-content {
-    
     margin: 15% auto; /* 15% from the top and centered */
     padding: 30px;
     border-radius: 8px;
@@ -278,7 +261,6 @@ mat-option {
 #powerModal{
     margin: 10% auto !important;
 }
-
 
 .cardImg{
     height: 50px;
@@ -317,7 +299,7 @@ mat-option {
 
 /* Style the front side (fallback if image is missing) */
 .flip-card-front {
-
+    border-radius: 10px;
 }
 
 /* Style the back side */
@@ -327,7 +309,5 @@ mat-option {
     font-size: 10px;
     vertical-align: middle;
     border-radius: 10px;
-
-
     transform: rotateY(180deg);
 }

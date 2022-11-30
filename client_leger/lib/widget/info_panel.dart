@@ -42,7 +42,7 @@ class _InfoPanelState extends State<InfoPanel> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: const BorderRadius.all(Radius.circular(10.0)),
       ),
       padding: const EdgeInsets.all(20),
@@ -52,7 +52,7 @@ class _InfoPanelState extends State<InfoPanel> {
             child: Text(
               infoClientService.displayTurn,
               style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary, fontSize: 20),
+                  color: Theme.of(context).colorScheme.secondary, fontSize: 20),
             ),
           ),
           const SizedBox(
@@ -63,7 +63,7 @@ class _InfoPanelState extends State<InfoPanel> {
                 ? Text(
                     timerService.displayTimer,
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 20),
                   )
                 : null,
@@ -78,13 +78,16 @@ class _InfoPanelState extends State<InfoPanel> {
                     children: [
                       Expanded(
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: shouldButtonBeActive() ? MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary) : const MaterialStatePropertyAll<Color>(Colors.grey),
+                          ),
                           onPressed: _pass,
                           child: FittedBox(
                             child: Text(
                               "INFO_PANEL.PASS".tr(),
                               style: TextStyle(
                                   color:
-                                      Theme.of(context).colorScheme.secondary),
+                                      Theme.of(context).colorScheme.primary),
                             ),
                           ),
                         ),
@@ -94,13 +97,16 @@ class _InfoPanelState extends State<InfoPanel> {
                       ),
                       Expanded(
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: shouldButtonBeActive() ? MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary) : const MaterialStatePropertyAll<Color>(Colors.grey),
+                          ),
                           onPressed: _trade,
                           child: FittedBox(
                             child: Text(
                               "INFO_PANEL.EXCHANGE".tr(),
                               style: TextStyle(
                                   color:
-                                      Theme.of(context).colorScheme.secondary),
+                                      Theme.of(context).colorScheme.primary),
                             ),
                           ),
                         ),
@@ -110,13 +116,16 @@ class _InfoPanelState extends State<InfoPanel> {
                       ),
                       Expanded(
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: shouldButtonBeActive() ? MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary) : const MaterialStatePropertyAll<Color>(Colors.grey),
+                          ),
                           onPressed: _cancel,
                           child: FittedBox(
                             child: Text(
                               "INFO_PANEL.CANCEL".tr(),
                               style: TextStyle(
                                   color:
-                                      Theme.of(context).colorScheme.secondary),
+                                      Theme.of(context).colorScheme.primary),
                             ),
                           ),
                         ),
@@ -126,13 +135,16 @@ class _InfoPanelState extends State<InfoPanel> {
                       ),
                       Expanded(
                         child: ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: shouldButtonBeActive() ? MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary) : const MaterialStatePropertyAll<Color>(Colors.grey),
+                          ),
                           onPressed: _play,
                           child: FittedBox(
                             child: Text(
                               "INFO_PANEL.PLAY".tr(),
                               style: TextStyle(
                                   color:
-                                      Theme.of(context).colorScheme.secondary),
+                                      Theme.of(context).colorScheme.primary),
                             ),
                           ),
                         ),
@@ -146,12 +158,15 @@ class _InfoPanelState extends State<InfoPanel> {
               Container(
                 child: shouldBeAbleToLeaveGame()
                     ? ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary),
+                        ),
                         onPressed: _leaveGame,
                         child: FittedBox(
                           child: Text(
                             "GAME_PAGE.QUIT_GAME".tr(),
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary),
+                                color: Theme.of(context).colorScheme.primary),
                           ),
                         ),
                       )
@@ -167,11 +182,14 @@ class _InfoPanelState extends State<InfoPanel> {
               Container(
                 child: shouldBeAbleToGiveUpGame()
                     ? ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary),
+                        ),
                         onPressed: () => _giveUpGame(context),
                         child: Text(
                           "GAME_PAGE.GIVE_UP".tr(),
                           style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       )
@@ -188,11 +206,14 @@ class _InfoPanelState extends State<InfoPanel> {
                   child: infoClientService.creatorShouldBeAbleToStartGame ==
                           true
                       ? ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary),
+                          ),
                           onPressed: _startGame,
                           child: Text(
                             "GAME_PAGE.START_GAME".tr(),
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         )
@@ -207,11 +228,14 @@ class _InfoPanelState extends State<InfoPanel> {
               Container(
                   child: shouldSpecBeAbleToBePlayer() == true
                       ? ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary),
+                          ),
                           onPressed: spectWantsToBePlayer,
                           child: Text(
                             "GAME_PAGE.REPLACE_VIRTUAL_PLAYER".tr(),
                             style: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary,
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                           ),
                         )
@@ -223,7 +247,7 @@ class _InfoPanelState extends State<InfoPanel> {
                       )
                     : null,
               ),
-              if (infoClientService.gameMode == POWER_CARDS_MODE) ...[
+              if (infoClientService.gameMode == POWER_CARDS_MODE && infoClientService.game.gameStarted && !infoClientService.game.gameFinished) ...[
                 PowerListDialog(
                   notifyParent: refresh,
                 ),
@@ -249,7 +273,7 @@ class _InfoPanelState extends State<InfoPanel> {
                       child: Text(
                         "GAME_PAGE.END_GAME_RESULT".tr(),
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                     )
                   : null),
@@ -262,6 +286,10 @@ class _InfoPanelState extends State<InfoPanel> {
     );
   }
 
+  bool shouldButtonBeActive() {
+    return infoClientService.isTurnOurs && infoClientService.game.gameStarted;
+  }
+
   spectWantsToBePlayer() {
     print(infoClientService.isSpectator);
     socketService.socket.emit('spectWantsToBePlayer');
@@ -272,8 +300,11 @@ class _InfoPanelState extends State<InfoPanel> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("GAME_PAGE.GIVE_UP_GAME".tr()),
-          content: Text("GAME_PAGE.SURE_WANT_GIVE_UP".tr()),
+          title: Text("GAME_PAGE.GIVE_UP_GAME".tr(), style:
+          TextStyle(color: Theme.of(context).colorScheme.primary)),
+          content: Text("GAME_PAGE.SURE_WANT_GIVE_UP".tr(), style:
+          TextStyle(color: Theme.of(context).colorScheme.primary)),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(

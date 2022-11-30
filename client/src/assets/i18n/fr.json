@@ -190,7 +190,7 @@
         "AVATAR": "Avatar",
         "USERNAME": "Nom d'utilisateur",
         "REQUIRED_USERNAME": "Nom d'utilisateur est nécessaire",
-        "MIN_USERNAME": "Le nom d'utilisateur doit comporter au moins 3 caractères",
+        "MIN_USERNAME": "Le nom d'utilisateur doit comporter au moins 4 caractères",
         "MAX_USERNAME": "Le nom d'utilisateur doit comporter au maximum 20 caractères",
         "EMAIL": "E-mail",
         "REQUIRED_EMAIL": "L'e-mail est requis",

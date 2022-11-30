@@ -84,10 +84,10 @@
 .roomList {
     border: solid 3px;
     
-    height: 50%;
+    height: 65%;
     width: 80%;
     border-radius: 3px;
-    margin-top: 5%;
+    margin-top: 0;
     margin-left: 10%;
     margin-right: 10%;
     align-self: center;
@@ -100,7 +100,7 @@
 //center the roomListTitle
 #roomListTitle {
     text-align: center;
-    margin-top: 2%;
+    margin-top: 4%;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
@@ -110,8 +110,6 @@
     height: 10px;
 }
 
-::-webkit-scrollbar-track {
-}
 ::-webkit-scrollbar-thumb {
     border-radius: 8px;
 }
@@ -138,17 +136,10 @@
     padding: 8px;
 }
 
-#tableRoom tr:hover {
-    
-    
-}
-
 #tableRoom th {
     padding-top: 12px;
     padding-bottom: 10px;
     text-align: left;
-    
-    
 }
 
 #tableRoom td{
@@ -156,17 +147,10 @@
 }
 
 #buttonShowModal{
-    
-    
     font-size: 16px;
     border-radius: 3px;
     border: none;
     padding: 5px;
-}
-
-#buttonShowModal:hover{
-    
-    
 }
 
 /* The Modal (background) */
@@ -181,12 +165,10 @@
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    
 }
 
 /* Modal Content/Box */
 .modal-content {
-    
     margin: 15% auto; /* 15% from the top and centered */
     padding: 10px;
     border-radius: 10px;
