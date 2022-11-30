@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'dart:developer';
-import '../services/timer.dart';
-import 'package:client_leger/utils/globals.dart' as globals;
-import 'package:client_leger/services/socket_service.dart';
+import 'dart:ui';
+
+import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/ranked.dart';
+import 'package:client_leger/services/socket_service.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:flutter/material.dart';
+
+import '../services/timer.dart';
 
 class RankedMatchmakingPage extends StatefulWidget {
   const RankedMatchmakingPage({Key? key}) : super(key: key);
@@ -17,6 +20,8 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
   final TimerService timerService = TimerService();
   final SocketService socketService = SocketService();
   final RankedService rankedService = RankedService();
+  final InfoClientService infoClientService = InfoClientService();
+  bool isShowModal = false;
 
 
   @override
@@ -24,6 +29,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     timerService.clearTimer();
     timerService.clearMatchmakingTimer();
     timerService.startMatchmakingTimer();
+    rankedService.addListener(refresh);
     timerService.addListener(refresh);
     initSockets();
     super.initState();
@@ -35,19 +41,23 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     }
   }
 
+  void change() {
+    if (mounted) {
+      this.isShowModal = !this.isShowModal;
+    }
+  }
+
   void initSockets() {
     socketService.socket.on("roomChangeAccepted", (data) {
       if (mounted) {
         Navigator.pushNamed(context, "/game");
       }
     });
-    socketService.socket.on('closeModal', (data) {
-      if(mounted) {
-        if(rankedService.matchAccepted == false) {
-          Navigator.pushNamed(
-              context, "/ranked-init");
-          rankedService.matchAccepted = false;
-        }
+    socketService.socket.on("closeModalOnRefuse", (data) {
+      if (mounted) {
+        timerService.clearTimer();
+        rankedService.closeModal();
+        Navigator.pushNamed(context, "/ranked-init");
       }
     });
   }
@@ -83,6 +93,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+
                       Text (
                         "Matchmaking en cours",
                         style: TextStyle(
@@ -103,93 +114,106 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
               ),
             ),
           ),
-          timerService.secondsValue!=0?
-            AlertDialog(
-                title:
-                Center(child: Text('Partie trouvée')),
-                actions: [
-                  Center(child: Text(
-                    timerService.displayTimer,
-                    style: TextStyle(
-                        fontSize: 35,
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .primary),
-                  )),
-                  Center(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment
-                            .spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment
-                            .center,
-                        children: [
-
-                          TextButton(
-                              child: Text('Accepter'),
-                              onPressed: () => acceptMatch()
+          rankedService.isShowModal == true?
+          AlertDialog(
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+              title:
+              Center(child: Text('Partie trouvée')),
+              actions: [
+                Center(child:Text(
+                  timerService.displayTimer,
+                  style: TextStyle(
+                      fontSize: 35,
+                      color: Theme
+                          .of(context)
+                          .colorScheme
+                          .primary),
+                )),
+                Center(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 13.0, horizontal: 30.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(10.0),
+                              ),
+                            ),
                           ),
-                          TextButton(
-                              child: Text('Refuser'),
-                              onPressed: () => refuseMatch()
+                          onPressed: () => acceptMatch(),
+                          child: Text(
+                            "Accepter",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Theme.of(context).colorScheme.secondary
+                            ),
                           ),
-                        ]
-                    ),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            padding: MaterialStateProperty.all(
+                              const EdgeInsets.symmetric(
+                                  vertical: 13.0, horizontal: 30.0),
+                            ),
+                            shape: MaterialStateProperty.all<
+                                RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius:
+                                BorderRadius.circular(10.0),
+                              ),
+                            ),
+                          ),
+                          onPressed: () => refuseMatch(),
+                          child: Text(
+                            "Refuser",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Theme.of(context).colorScheme.secondary
+                            ),
+                          ),
+                        ),
+                      ]
                   ),
-                ]
-            )
+                ),
+              ]
+          )
               :Container(),
+          IconButton(
+            onPressed: _goBackToRankedInitPage,
+            icon: Icon(
+              Icons.arrow_back,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
         ],
       ),
 
     );
   }
 
-  Future<void> MatchFound(BuildContext context) async {
-    return showDialog(
-        context: context,
-        builder: (context) =>
-            AlertDialog(
-                title:
-                Center(child: Text('Partie trouvée')),
-                actions: [
-                  Center(child:Text(
-                    timerService.displayTimer,
-                    style: TextStyle(
-                        fontSize: 35,
-                        color: Theme
-                            .of(context)
-                            .colorScheme
-                            .primary),
-                  )),
-                  Center(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-
-                          TextButton(
-                              child: Text('Accepter'),
-                              onPressed: () => acceptMatch()
-                          ),
-                          TextButton(
-                              child: Text('Refuser'),
-                              onPressed: () => refuseMatch()
-                          ),
-                        ]
-                    ),
-                  ),
-                ]
-            )
-
-    );
+  void _goBackToRankedInitPage() {
+    socketService.socket.emit('removePlayerFromGame', infoClientService.playerName);
+    Future.delayed(Duration.zero, () {
+      Navigator.pop(context);
+    });
   }
+
 
   acceptMatch() {
     rankedService.matchAccepted = true;
     socketService.socket.emit("acceptMatch",globals.userLoggedIn);
   }
   refuseMatch() {
+    timerService.clearTimer();
+    timerService.clearMatchmakingTimer();
     socketService.socket.emit("refuseMatch",globals.userLoggedIn);
     Navigator.pushNamed(
         context, "/ranked-init");

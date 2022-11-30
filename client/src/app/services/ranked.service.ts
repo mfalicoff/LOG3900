@@ -6,13 +6,14 @@ import { TimerService } from '@app/services/timer.service';
     providedIn: 'root',
 })
 export class RankedService {
-    matchAccepted: boolean = false;
+    matchAccepted: boolean;
     isShowModal: boolean;
     constructor(public timerService: TimerService, private router: Router) {
         this.isShowModal = false;
     }
 
     matchHasBeenFound() {
+        this.matchAccepted = false;
         const timerTime = 0.25;
         this.isShowModal = true;
         this.timerService.startTimer(timerTime);
@@ -20,9 +21,10 @@ export class RankedService {
     closeModal() {
         this.timerService.clearTimer();
         this.isShowModal = false;
+        console.log(this.matchAccepted);
         if (this.matchAccepted === false) {
             this.router.navigate(['/ranked-init']);
         }
-        this.matchAccepted = false;
+        //this.matchAccepted = false;
     }
 }

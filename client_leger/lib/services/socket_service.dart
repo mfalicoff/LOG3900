@@ -86,7 +86,6 @@ class SocketService with ChangeNotifier {
   otherSocketOn() {
 
     socket.on('matchFound', (_) {
-      log('matchFound');
       rankedService.matchHasBeenFound();
     });
 
@@ -117,13 +116,13 @@ class SocketService with ChangeNotifier {
       socket.emit("spectWantsToBePlayer",[gameName, socketId]);
     });
 
-    socket.on("closeModalOnRefuse", (_) {
-      rankedService.closeModal();
-    });
-
-    // socket.on("closeModal", (_) {
+    // socket.on("closeModalOnRefuse", (_) {
     //   rankedService.closeModal();
     // });
+
+    socket.on("closeModal", (_) {
+       rankedService.closeModal();
+    });
 
     socket.on('messageServer', (message) {
       print(message);

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
@@ -40,6 +41,7 @@ class TimerService with ChangeNotifier{
   }
 
   startTimer(num minutesByTurn) {
+    log('start');
     if (minutesByTurn < 0) {
       return;
     }

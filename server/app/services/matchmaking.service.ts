@@ -19,40 +19,47 @@ export class MatchmakingService {
     }
 
     findARoomForPlayer(socket: io.Socket, eloDisparity: number, user: User) {
-        for (const value of this.rooms.values()) {
-            if (this.doesPlayerFitInARoom(value, eloDisparity, user.elo)) {
-                this.joinRoom(socket, value, user, eloDisparity);
-                if (value.rankedUsers.length === Constants.MAX_PERSON_PLAYING) {
-                    this.rankedMatchFound(value, socket);
+        for (const rankedGame of this.rooms.values()) {
+            if (this.doesPlayerFitInARoom(rankedGame, eloDisparity, user.elo)) {
+                if(rankedGame.matchFound === false){
+                    console.log('allo');
+                    this.joinRoom(socket, rankedGame, user, eloDisparity);
+                    if (rankedGame.rankedUsers.length === Constants.MAX_PERSON_PLAYING) {
+                        this.rankedMatchFound(rankedGame, socket);
+                    }
+                    return;
                 }
-                return;
             }
         }
         this.createRoom(socket, user, eloDisparity);
     }
 
-    doesPlayerFitInARoom(value: RankedGame, eloDisparity: number, playerElo: number): boolean {
-        for (const rankedUser of value.rankedUsers) {
+    doesPlayerFitInARoom(rankedGame: RankedGame, eloDisparity: number, playerElo: number): boolean {
+        for (const rankedUser of rankedGame.rankedUsers) {
             const eloDiff: number = Math.abs(playerElo - rankedUser.elo);
-            if (eloDiff > rankedUser.eloDisparity || eloDiff > eloDisparity || value.rankedUsers.length >= Constants.MAX_PERSON_PLAYING) {
+            if (eloDiff > rankedUser.eloDisparity || eloDiff > eloDisparity || rankedGame.rankedUsers.length >= Constants.MAX_PERSON_PLAYING) {
                 return false;
             }
         }
         return true;
     }
 
-    joinRoom(socket: io.Socket, game: RankedGame, user: User, eloDisparity: number) {
-        socket.join(game.name + Constants.RANKED_SUFFIX);
+    joinRoom(socket: io.Socket, rankedGame: RankedGame, user: User, eloDisparity: number) {
+        socket.join(rankedGame.name + Constants.RANKED_SUFFIX);
         const rankedUser = new RankedUser(user, eloDisparity);
-        this.rooms.get(game.name)?.rankedUsers.push(rankedUser);
+        let room = this.rooms.get(rankedGame.name);
+        console.log(room);
+        this.rooms.get(rankedGame.name)?.rankedUsers.push(rankedUser);
+        console.log(rankedGame.rankedUsers);
     }
 
     createRoom(socket: io.Socket, user: User, eloDisparity: number) {
         const rankedUser = new RankedUser(user, eloDisparity);
         const rankedUsers: RankedUser[] = [rankedUser];
-        const users: RankedGame = new RankedGame(user.name, rankedUsers);
-        this.rooms.set(user.name, users);
-        socket.join(user.name + Constants.RANKED_SUFFIX);
+        let randomNumber = Math.floor((Math.random() * 100) + 1);
+        const rankedGame: RankedGame = new RankedGame(user.name + randomNumber.toString() + Constants.RANKED_SUFFIX, rankedUsers);
+        this.rooms.set(rankedGame.name, rankedGame);
+        socket.join(rankedGame.name + Constants.RANKED_SUFFIX);
     }
 
     rankedMatchFound(rankedGame: RankedGame, socket: io.Socket) {
@@ -60,13 +67,15 @@ export class MatchmakingService {
         this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('matchFound');
         rankedGame.startTimer(twnetyOneSecondDelay);
         this.checkForUsersAccept(rankedGame, socket);
+        rankedGame.matchFound = true;
     }
     onRefuse(socket: io.Socket, user: User) {
         for (const rankedGame of this.rooms.values()) {
-            for (const rankedUser of rankedGame.rankedUsers) {
-                if (rankedUser.name === user.name) {
-                    rankedUser.hasAccepted = false;
+            for(let i =0; i< rankedGame.rankedUsers.length; i++){
+                if(rankedGame.rankedUsers[i].name === user.name) {
+                    console.log(rankedGame.rankedUsers[i].name);
                     this.sio.sockets.sockets.get(socket.id)?.emit('closeModalOnRefuse');
+                    rankedGame.rankedUsers.splice(i,1);
                     socket.leave(rankedGame.name + Constants.RANKED_SUFFIX);
                 }
             }
@@ -88,14 +97,21 @@ export class MatchmakingService {
         const timerInterval = setInterval(() => {
             if (rankedGame.secondsValue === fiveSecondDelay) {
                 clearInterval(timerInterval);
-                for (const user of rankedGame.rankedUsers) {
-                    if (user.hasAccepted === false) {
-                        this.matchRefused(rankedGame);
+                for (let i = 0; i < rankedGame.rankedUsers.length; i++) {
+                    if (rankedGame.rankedUsers[i].hasAccepted === false) {
+                        this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('closeModalOnRefuse');
                         rankedGame.clearTimer();
-                        return;
-                    } else if (user.hasAccepted !== true) {
-                        socket.leave(user.name);
+                        socket.leave(rankedGame.name + Constants.RANKED_SUFFIX);
+                        rankedGame.rankedUsers.splice(i, 1);
+                    } else {
+                        rankedGame.rankedUsers[i].hasAccepted = false;
                     }
+                }
+                if(rankedGame.rankedUsers.length < Constants.MAX_PERSON_PLAYING) {
+                    rankedGame.clearTimer();
+                    this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('closeModal');
+                    rankedGame.matchFound = false;
+                    return;
                 }
                 this.createRankedGame(rankedGame);
                 this.rooms.delete(rankedGame.name);
@@ -116,13 +132,11 @@ export class MatchmakingService {
         let i = threeSecondDelay;
         const timerInterval = setInterval(() => {
             if (rankedGame.secondsValue === i + 1) {
-                // for(const user of rankedGame.rankedUsers) {
                 if (rankedGame.rankedUsers[i].name !== firstPlayer.name) {
                     this.sio.sockets.sockets
                         .get(rankedGame.rankedUsers[i].socketId)
                         ?.emit('joinRankedRoom', rankedGame.name, rankedGame.rankedUsers[i].socketId);
                 }
-                // }
                 if (i !== 0) {
                     i -= 1;
                 }
@@ -135,29 +149,14 @@ export class MatchmakingService {
         }, secondInterval);
     }
 
-    matchRefused(rankedGame: RankedGame) {
-        for (let i = 0; i < rankedGame.rankedUsers.length; i++) {
-            if (rankedGame.rankedUsers[i].hasAccepted === false) {
-                rankedGame.rankedUsers.splice(i, 1);
-            } else {
-                rankedGame.rankedUsers[i].hasAccepted = false;
-            }
-        }
-        this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('closeModal');
-    }
     removePlayerFromGame( socket: io.Socket , userName:string) {
-        console.log(userName);
-        for(const room of this.rooms.values()) {
-            console.log('room'+ room.rankedUsers);
-            for(let i =0; i< room.rankedUsers.length; i++){
-                console.log('user'+ (room.rankedUsers[i].name));
-                if(room.rankedUsers[i].name === userName) {
-                    console.log(i);
-                    room.rankedUsers.splice(i,1);
-                    socket.leave(room.name + Constants.RANKED_SUFFIX);
+        for(const rankedGame of this.rooms.values()) {
+            for(let i =0; i< rankedGame.rankedUsers.length; i++){
+                if(rankedGame.rankedUsers[i].name === userName) {
+                    rankedGame.rankedUsers.splice(i,1);
+                    socket.leave(rankedGame.name + Constants.RANKED_SUFFIX);
                 }
             }
         }
-        console.log(this.rooms);
     }
 }

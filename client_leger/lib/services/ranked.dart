@@ -1,26 +1,33 @@
-import '../services/timer.dart';
-import 'package:flutter/cupertino.dart';
 import 'dart:developer';
 
-class RankedService{
+import '../services/timer.dart';
+import 'package:flutter/cupertino.dart';
+
+class RankedService extends ChangeNotifier{
   TimerService timerService = TimerService();
   bool isShowModal = false;
   late bool matchAccepted = false;
 
+  static final RankedService _rankedService = RankedService._internal();
+
+  factory RankedService() {
+    return _rankedService;
+  }
+
+  RankedService._internal();
 
 
   matchHasBeenFound() {
-    log('matchFound1');
+    notifyListeners();
+    matchAccepted= false;
     const timerTime = 0.25;
     isShowModal = true;
     timerService.startTimer(timerTime);
   }
 
   closeModal() {
-    isShowModal = false;
     timerService.clearTimer();
-    //provider
-    // Navigator.pushNamed(
-    //     context, "/ranked-init");
+    isShowModal = false;
+    notifyListeners();
   }
 }
