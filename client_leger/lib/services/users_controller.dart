@@ -56,6 +56,7 @@ class Controller {
       user.cookie = json.decode(response.body)["token"];
       await storage.write(key: 'token', value: user.cookie);
       socket.emit("new-user", user.username);
+      socket.emit('getAllAvatars');
       return user;
     } else {
       if(response.statusCode == 409) {

@@ -104,6 +104,7 @@ export class UserService {
             .subscribe({
                 next: (response) => {
                     this.saveUserInfo(response, socket);
+                    socket.emit('getAllAvatars');
                 },
             });
     }
