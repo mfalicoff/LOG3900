@@ -335,10 +335,10 @@ export class ChatService {
         for (const playerElem of game.mapPlayers.values()) {
             if (winnerNames.indexOf(playerElem.name) === DEFAULT_VALUE_NUMBER) {
                 await this.userService.updateGameHistory(playerElem, false, game.startTime);
-                this.sio.sockets.sockets.get(playerElem.id)?.emit('soundPlay', Constants.GAME_WON_SOUND);
+                this.sio.sockets.sockets.get(playerElem.id)?.emit('soundPlay', Constants.GAME_LOST_SOUND);
             } else {
                 await this.userService.updateGameHistory(playerElem, true, game.startTime);
-                this.sio.sockets.sockets.get(playerElem.id)?.emit('soundPlay', Constants.GAME_LOST_SOUND);
+                this.sio.sockets.sockets.get(playerElem.id)?.emit('soundPlay', Constants.GAME_WON_SOUND);
             }
         }
     }

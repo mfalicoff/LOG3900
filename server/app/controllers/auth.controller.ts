@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from 'express';
-import { CreateUserValidator } from '@app/utils/validators';
+import { HTTPStatusCode } from '@app/classes/constants/http-codes';
 import { User } from '@app/classes/users.interface';
 import AuthService from '@app/services/auth.service';
-import { HTTPStatusCode } from '@app/classes/constants/http-codes';
+import { CreateUserValidator } from '@app/utils/validators';
+import { NextFunction, Request, Response } from 'express';
 import { RequestWithUser } from '@app/classes/auth.interface';
 
 /* eslint-disable no-invalid-this */
@@ -17,6 +17,8 @@ class AuthController {
 
             res.status(HTTPStatusCode.Created).json({ data: signUpUserData, message: 'signup' });
         } catch (error) {
+            // eslint-disable-next-line no-console
+            console.log('erreur: ' + error);
             next(error);
         }
     };

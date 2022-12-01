@@ -12,6 +12,7 @@ import { Spectator } from '@app/classes/spectator';
 import { Tile } from '@app/classes/tile';
 import { User } from '@app/classes/users.interface';
 import avatarService from '@app/services/avatar.service';
+import { TranslateService } from '@app/services/translate.service';
 import UserService from '@app/services/user.service';
 import * as http from 'http';
 import * as io from 'socket.io';
@@ -30,7 +31,6 @@ import { PlayAreaService } from './play-area.service';
 import { PowerCardsService } from './power-cards.service';
 import { PutLogicService } from './put-logic.service';
 import { StandService } from './stand.service';
-import { TranslateService } from '@app/services/translate.service';
 
 @Service()
 export class SocketManager {
@@ -496,7 +496,8 @@ export class SocketManager {
     ) {
         // We create the game and add it to the rooms map
         const newGame: GameServer = new GameServer(timeTurn, gameMode, roomName, isGamePrivate, passwd);
-        const newPlayer = new Player(playerName, true);
+        const user = await this.userService.findUserByName(playerName);
+        const newPlayer = new Player(playerName, true, user.elo);
         newPlayer.id = socket.id;
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(playerName));
         this.boardService.initBoardArray(newGame);
@@ -529,7 +530,9 @@ export class SocketManager {
         this.matchmakingService.initSioMatchmaking(this.sio);
 
         // create button for creator to start the game if enough reel player are in the game
-        this.shouldCreatorBeAbleToStartGame(newGame);
+        if (gameMode !== Constants.MODE_RANKED) {
+            this.shouldCreatorBeAbleToStartGame(newGame);
+        }
     }
     private shouldCreatorBeAbleToStartGame(game: GameServer) {
         let creatorCanStart = true;
@@ -553,7 +556,8 @@ export class SocketManager {
 
     private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
-        const newPlayer = new Player(userData.name, false);
+        const user = await this.userService.findUserByName(userData.name);
+        const newPlayer = new Player(userData.name, false, user.elo);
         game?.mapPlayers.set(socket.id, newPlayer); // dont delete this even if its duplicate code
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.id = socket.id;
@@ -578,11 +582,11 @@ export class SocketManager {
 
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', async (name) => {
-            this.users.set(socket.id, { name, roomName: '', elo: 2000 });
             const user = await this.userService.findUserByName(name);
             if (user.language) {
                 this.translateService.addUser(user.name, user.language);
             }
+            this.users.set(socket.id, { name, roomName: '', elo: user.elo });
             const avatar = await this.userService.populateAvatarField(user);
             socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
@@ -729,6 +733,7 @@ export class SocketManager {
             for (const player of game.mapPlayers.values()) {
                 if (player.id === 'virtualPlayer') {
                     oldVirtualPlayer = player;
+                    oldVirtualPlayer.elo = user.elo;
                     break;
                 }
             }
@@ -777,9 +782,10 @@ export class SocketManager {
                 players: Array.from(game.mapPlayers.values()),
                 spectators: Array.from(game.mapSpectators.values()),
             });
-
             await this.gameUpdateClients(game);
-            this.shouldCreatorBeAbleToStartGame(game);
+            if (game.gameMode !== Constants.MODE_RANKED) {
+                this.shouldCreatorBeAbleToStartGame(game);
+            }
         });
 
         // called when the creator of a multiplayer game wants to start the game
@@ -819,6 +825,7 @@ export class SocketManager {
 
     private async joinRoom(socket: io.Socket, userData: User, game: GameServer): Promise<void> {
         let isOneNamedSame = false;
+
         for (const player of game.mapPlayers.values()) {
             if (userData.name === player.name) {
                 isOneNamedSame = true;
@@ -860,7 +867,9 @@ export class SocketManager {
         await this.gameUpdateClients(game);
 
         // create button for creator to start the game if enough reel player are in the game
-        this.shouldCreatorBeAbleToStartGame(game);
+        if (game.gameMode !== Constants.MODE_RANKED) {
+            this.shouldCreatorBeAbleToStartGame(game);
+        }
 
         // emit to change page on client after verification
         socket.emit('roomChangeAccepted', '/game');
@@ -932,16 +941,20 @@ export class SocketManager {
             this.userService.changeEloUser(player);
         });
 
-        socket.on('startMatchmaking', ({ eloDisparity, user }) => {
+        socket.on('startMatchmaking', (eloDisparity, user) => {
             this.matchmakingService.findARoomForPlayer(socket, eloDisparity, user);
             // socket.emit('matchFound', player);
         });
 
-        socket.on('refuseMatch', ({ user }) => {
+        socket.on('refuseMatch', (user) => {
             this.matchmakingService.onRefuse(socket, user);
         });
 
-        socket.on('acceptMatch', ({ user }) => {
+        socket.on('removePlayerFromGame', (userName) => {
+            this.matchmakingService.removePlayerFromGame(socket, userName);
+        });
+
+        socket.on('acceptMatch', (user) => {
             this.matchmakingService.onAccept(socket, user);
         });
     }

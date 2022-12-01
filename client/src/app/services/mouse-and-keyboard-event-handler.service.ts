@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Tile } from '@app/classes/tile';
 import { Vec2 } from '@app/classes/vec2';
 import { PlaceGraphicService } from '@app/services/place-graphic.service';
 import { SocketService } from '@app/services/socket.service';
 import { DrawingBoardService } from './drawing-board-service';
-import { InfoClientService } from './info-client.service';
-import { Tile } from '@app/classes/tile';
 import { DrawingService } from './drawing.service';
+import { InfoClientService } from './info-client.service';
 
 @Injectable({
     providedIn: 'root',
@@ -246,7 +246,7 @@ export class MouseKeyboardEventHandlerService {
             if (this.drawingBoardService.lettersDrawn !== '') {
                 return;
             }
-            this.socketService.socket.emit('resetAllTilesStand');
+            // this.socketService.socket.emit('resetAllTilesStand');
         } else {
             this.isStandClicked = !this.isStandClicked;
         }

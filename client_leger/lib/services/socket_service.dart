@@ -1,31 +1,38 @@
+import 'dart:async';
+import 'dart:developer';
+
+import 'package:client_leger/constants/constants.dart' as constants;
 import 'package:client_leger/models/chat.dart';
 import 'package:client_leger/models/chatroom.dart';
 import 'package:client_leger/models/spectator.dart';
 import 'package:client_leger/services/chat-service.dart';
 import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/timer.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
+
 import '../constants/constants.dart';
 import '../env/environment.dart';
-import 'package:client_leger/utils/globals.dart' as globals;
-import 'package:just_audio/just_audio.dart';
-import 'package:collection/collection.dart';
-import 'dart:async';
-
 import '../models/game-server.dart';
+import '../models/game.dart';
+import '../models/mock_dict.dart';
 import '../models/player.dart';
 import '../models/room-data.dart';
 import '../models/tile.dart';
 import '../models/vec2.dart';
-import 'users_controller.dart';
 import 'info_client_service.dart';
+import 'ranked.dart';
+import 'users_controller.dart';
 
 class SocketService with ChangeNotifier {
   static final SocketService _socketService = SocketService._internal();
 
+  RankedService rankedService = RankedService();
   InfoClientService infoClientService = InfoClientService();
   TimerService timerService = TimerService();
   TapService tapService = TapService();
@@ -76,6 +83,46 @@ class SocketService with ChangeNotifier {
   }
 
   otherSocketOn() {
+
+    socket.on('matchFound', (_) {
+      rankedService.matchHasBeenFound();
+    });
+
+    socket.on('startGame', (roomName) {
+      socket.emit('startGame', roomName);
+    });
+
+    socket.on("createRankedGame", (data) async {
+      String gameName = data[0];
+      String playerName = data[1];
+      MockDict mockDict = MockDict("Dictionnaire français par défaut","Ce dictionnaire contient environ trente mille mots français");
+      socket.emit("dictionarySelected", mockDict);
+      socket.emit("createRoomAndGame", CreateGameModel(
+                gameName,
+                playerName,
+                1,
+                constants.MODE_RANKED,
+                false,
+                '',
+      ));
+      rankedService.closeModal();
+    });
+
+    socket.on("joinRankedRoom", (data){
+      String socketId = data[1];
+      String gameName = data[0];
+      socket.emit("joinRoom",[gameName, socketId]);
+      socket.emit("spectWantsToBePlayer",[gameName, socketId]);
+    });
+
+    // socket.on("closeModalOnRefuse", (_) {
+    //   rankedService.closeModal();
+    // });
+
+    socket.on("closeModal", (_) {
+       rankedService.closeModal();
+    });
+
     socket.on('messageServer', (message) {
       print(message);
     });
@@ -128,13 +175,15 @@ class SocketService with ChangeNotifier {
       Function deepEq = const DeepCollectionEquality().equals;
       infoClientService.updatePlayer(player);
       if(!deepEq(infoClientService.player.chatHistory, infoClientService.player.oldChatHistory) && infoClientService.player.chatHistory.last.senderName != infoClientService.player.name) {
-        chatService.rooms[0].isUnread = true;
-        if(chatService.rooms[0].name == 'game' && !infoClientService.soundDisabled) {
-          final player = AudioPlayer(); // Create a player
-          await player.setUrl(
-              "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
-          await player.play();
-          await player.stop();
+        if(chatService.rooms[0].name == 'game') {
+          chatService.rooms[0].isUnread = true;
+          if(!infoClientService.soundDisabled){
+            final player = AudioPlayer(); // Create a player
+            await player.setUrl(
+                "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+            await player.play();
+            await player.stop();
+          }
         }
       }
       infoClientService.player.oldChatHistory = infoClientService.player.chatHistory;
@@ -236,6 +285,10 @@ class SocketService with ChangeNotifier {
 
     socket.on('askTimerStatus', (_) {
       socket.emit('timerStatus', timerService.secondsValue);
+    });
+
+    socket.on('addSecsToTimer', (timeToAdd){
+      timerService.secondsValue += timeToAdd;
     });
   }
 
@@ -347,3 +400,4 @@ class SocketService with ChangeNotifier {
     });
   }
 }
+

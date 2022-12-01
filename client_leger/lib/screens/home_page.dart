@@ -1,17 +1,17 @@
 import 'package:client_leger/screens/profile-page.dart';
 import 'package:client_leger/screens/search_page.dart';
-import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/services/tapService.dart';
-import 'package:easy_localization/easy_localization.dart';
-import '../constants/constants.dart';
-
-import 'package:flutter/material.dart';
+import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:easy_localization/easy_localization.dart';
+import 'package:flip_card/flip_card.dart';
+import 'package:flutter/material.dart';
 
-import '../services/chat-service.dart';
+import '../constants/constants.dart';
 import '../env/environment.dart';
+import '../services/chat-service.dart';
 import '../widget/chat_panel.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -76,6 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
               right: 30.0,
               child: ElevatedButton(
                   style: ButtonStyle(
+                      backgroundColor: MaterialStateColor.resolveWith(
+                              (states) => Theme.of(context).colorScheme.secondary),
                       padding: MaterialStateProperty.all(
                         const EdgeInsets.symmetric(
                             vertical: 18.0, horizontal: 0.0),
@@ -86,13 +88,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: _toSearchPage,
                   child: Icon(
                     Icons.search,
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.primary,
                   ))),
           Positioned(
             top: 10.0,
             left: 30.0,
             child: ElevatedButton(
               style: ButtonStyle(
+                backgroundColor: MaterialStateColor.resolveWith(
+                        (states) => Theme.of(context).colorScheme.secondary),
                 padding: MaterialStateProperty.all(
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
                 ),
@@ -105,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: _logout,
               child: Icon(
                 Icons.logout,
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -131,23 +135,486 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Center(
-            child: Column(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    infoClientService.gameMode = CLASSIC_MODE;
-                    _toGameListPage();
-                  },
-                  child: Text("HOME_SCREEN.CLASSIC_MODE".tr(), style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
+              children: <Widget>[
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    FlipCard(
+                      direction: FlipDirection.HORIZONTAL,
+                      front: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        ),
+                        width: 200,
+                        height: 300,
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Text(
+                                "HOME_SCREEN.CLASSIC_MODE".tr(),
+                                style: TextStyle(
+                                  color:
+                                  Theme.of(context).colorScheme.primary,
+                                  fontSize: 20,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.sentiment_satisfied,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.sentiment_satisfied,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.sentiment_satisfied,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.sentiment_satisfied,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      back: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        ),
+                        width: 200,
+                        height: 300,
+                        margin: const EdgeInsets.fromLTRB(0, 0, 40, 5),
+                        // color: Theme.of(context).colorScheme.primary,
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: Center(
+                                child: Text(
+                                  "HOME_SCREEN.CLASSIC_MODE_DESCRIPTION".tr(),
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  textAlign: TextAlign.justify,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.sentiment_satisfied,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.sentiment_satisfied,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.sentiment_satisfied,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.sentiment_satisfied,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Theme.of(context).colorScheme.secondary),
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10.0),
+                        ),
+                        shape: MaterialStateProperty.all<
+                            RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      onPressed: (){
+                        infoClientService.gameMode = CLASSIC_MODE;
+                        _toGameListPage();
+                      },
+                      child: Text(
+                        "HOME_SCREEN.GO_IN_BTN".tr(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).colorScheme.primary
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    infoClientService.gameMode = POWER_CARDS_MODE;
-                    _toGameListPage();
-                  },
-                  child: Text("HOME_SCREEN.POWER_CARDS_MODE".tr(), style: TextStyle(color: Theme.of(context).colorScheme.secondary),),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    FlipCard(
+                      direction: FlipDirection.HORIZONTAL,
+                      front: Container(
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.secondary,
+                              borderRadius: const BorderRadius.all(Radius.circular(5)),
+                            ),
+                            width: 200,
+                            height: 300,
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Text(
+                                    "HOME_SCREEN.RANKED_MODE".tr(),
+                                    style: TextStyle(
+                                      color:
+                                      Theme.of(context).colorScheme.primary,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 10,
+                                  top: 10,
+                                  child: Icon(
+                                    Icons.gavel,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 35,
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 10,
+                                  top: 10,
+                                  child: Icon(
+                                    Icons.gavel,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 35,
+                                  ),
+                                ),
+                                Positioned(
+                                  left: 10,
+                                  bottom: 10,
+                                  child: Icon(
+                                    Icons.gavel,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 35,
+                                  ),
+                                ),
+                                Positioned(
+                                  right: 10,
+                                  bottom: 10,
+                                  child: Icon(
+                                    Icons.gavel,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 35,
+                                  ),
+                                ),
+                              ],
+                          ),
+                        ),
+                      back: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        ),
+                        width: 200,
+                        height: 300,
+                        margin: const EdgeInsets.fromLTRB(0, 0, 40, 5),
+                        // color: Theme.of(context).colorScheme.primary,
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: Center(
+                                child: Text(
+                                    "HOME_SCREEN.RANKED_MODE_DESCRIPTION".tr(),
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  textAlign: TextAlign.justify,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.gavel,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.gavel,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.gavel,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.gavel,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Theme.of(context).colorScheme.secondary),
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10.0),
+                        ),
+                        shape: MaterialStateProperty.all<
+                            RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      onPressed: (){
+                        infoClientService.gameMode = MODE_RANKED;
+                        _toRankedInitPage();
+                      },
+                      child: Text(
+                        "HOME_SCREEN.GO_IN_BTN".tr(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).colorScheme.primary
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    FlipCard(
+                      direction: FlipDirection.HORIZONTAL,
+                      front: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        ),
+                        width: 200,
+                        height: 300,
+                        child: Stack(
+                          children: [
+                            Center(
+                              child: Text(
+                                "HOME_SCREEN.POWER_CARDS_MODE".tr(),
+                                style: TextStyle(
+                                  color:
+                                  Theme.of(context).colorScheme.primary,
+                                  fontSize: 20,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.auto_fix_normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.auto_fix_normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.auto_fix_normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.auto_fix_normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      back: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.secondary,
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        ),
+                        width: 200,
+                        height: 300,
+                        margin: const EdgeInsets.fromLTRB(0, 0, 40, 5),
+                        // color: Theme.of(context).colorScheme.primary,
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              child: Center(
+                                child: Text(
+                                  "HOME_SCREEN.POWER_CARD_MODE_DESCRIPTION".tr(),
+                                  style: TextStyle(
+                                    fontSize: 12.0,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  textAlign: TextAlign.justify,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.auto_fix_normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+
+                            Positioned(
+                              right: 10,
+                              top: 10,
+                              child: Icon(
+                                Icons.auto_fix_normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              left: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.auto_fix_normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                            Positioned(
+                              right: 10,
+                              bottom: 10,
+                              child: Icon(
+                                Icons.auto_fix_normal,
+                                color: Theme.of(context).colorScheme.primary,
+                                size: 35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Theme.of(context).colorScheme.secondary),
+                        padding: MaterialStateProperty.all(
+                          const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10.0),
+                        ),
+                        shape: MaterialStateProperty.all<
+                            RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius:
+                            BorderRadius.circular(10.0),
+                          ),
+                        ),
+                      ),
+                      onPressed: (){
+                        infoClientService.gameMode = POWER_CARDS_MODE;
+                        _toGameListPage();
+                      },
+                      child: Text(
+                        "HOME_SCREEN.GO_IN_BTN".tr(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: Theme.of(context).colorScheme.primary
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -161,12 +628,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 63,
                   width: 63,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: const BorderRadius.all(Radius.circular(35.0)),
                   ),
                   child: IconButton(
                     iconSize: 35,
-                    icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp) : Icon(Icons.volume_up_outlined),
+                    icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp, color: Theme.of(context).colorScheme.primary) : Icon(Icons.volume_up_outlined, color: Theme.of(context).colorScheme.primary),
                     color: Theme.of(context).colorScheme.secondary,
                     onPressed: () {
                       setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
@@ -182,6 +649,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     ),);
   }
+
 
   void _toSearchPage() {
     Navigator.push(context,
@@ -201,8 +669,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _toGameListPage() {
     tapService.initDefaultVariables();
-    Navigator.pushNamed(context, "/game-list");
-  }
+    print("GameModeIs: " + infoClientService.gameMode);
+    Navigator.pushNamed(context, "/game-list"); // best way to change page
+  } // context is the information of the widget
+
+  void _toRankedInitPage() {
+    print("GameModeIs: " + infoClientService.gameMode);
+    Navigator.pushNamed(context, "/ranked-init"); // best way to change page
+  } // context is the information of the widget
 
   void _logout() {
     controller.logout(globals.userLoggedIn);

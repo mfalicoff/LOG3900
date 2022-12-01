@@ -166,12 +166,12 @@ class _GameListPageState extends State<GameListPage> {
                               height: 63,
                               width: 63,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.primary,
+                                color: Theme.of(context).colorScheme.secondary,
                                 borderRadius: const BorderRadius.all(Radius.circular(35.0)),
                               ),
                               child: IconButton(
                                 iconSize: 35,
-                                icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp) : Icon(Icons.volume_up_outlined),
+                                icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp, color: Theme.of(context).colorScheme.primary) : Icon(Icons.volume_up_outlined, color: Theme.of(context).colorScheme.primary),
                                 color: Theme.of(context).colorScheme.secondary,
                                 onPressed: () {
                                   setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
@@ -360,12 +360,15 @@ class _gameListState extends State<gameList> {
               style: TextStyle(color: Theme.of(context).colorScheme.primary),
             ),
             content: TextField(
+              style: TextStyle(color: Theme.of(context).colorScheme.primary),
               onChanged: (value) {
                 setState(() {
                   password = value;
                 });
               },
-              decoration: InputDecoration(hintText: "GAME_LIST_PAGE.PASSWORD".tr()),
+              decoration: InputDecoration(
+                  hintText: "GAME_LIST_PAGE.PASSWORD".tr(),
+                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary)),
             ),
             actions: <Widget>[
               ElevatedButton(

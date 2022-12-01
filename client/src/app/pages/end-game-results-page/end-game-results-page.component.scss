@@ -7,7 +7,7 @@
 .closeButton {
     background-color: transparent;
     position: fixed;
-    top: 15%;
+    top: 10%;
     right: 10%;
     margin-bottom: 0%;
     color: black;
@@ -15,12 +15,6 @@
 
 .closeButton:hover {
     color: red;
-}
-
-.title-box {
-    max-width: 100%;
-    
-    margin-bottom: 10px;
 }
 
 .title {
@@ -35,7 +29,7 @@
 // General stats of the game
 #roomStats {
     margin-bottom: 5px;
-    font-size: large;
+    //font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     overflow-y: auto;
 }
@@ -80,8 +74,8 @@
 // Stats specific to one player
 #playersStats {
     margin-bottom: 5px;
-    
-    font-size: large;
+
+    //font-size: large;
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     overflow-y: auto;
 }
@@ -100,6 +94,7 @@
     flex: 50%;
     margin-bottom: 10px;
     margin-right: 15px;
+    justify-content: center;
 }
 
 #playersStats ul {

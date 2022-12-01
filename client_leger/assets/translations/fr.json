@@ -15,7 +15,12 @@
     },
     "HOME_SCREEN": {
         "CLASSIC_MODE": "Mode Classique",
-        "POWER_CARDS_MODE": "Mode Carte De Pouvoir Configurable"
+        "POWER_CARDS_MODE": "Mode Carte De Pouvoir Configurable",
+        "RANKED_MODE": "Mode Classé",
+        "GO_IN_BTN": "Entrer",
+        "CLASSIC_MODE_DESCRIPTION": "Le mode classique est le mode de jeu par défaut. Il respecte les règles officielles du jeu. Dans ce mode, 4 joueurs s'affrontent entre eux avec au minimum 2 joueurs réels et le reste composé de joueurs virtuels.",
+        "RANKED_MODE_DESCRIPTION": "Le mode de jeu classé est un mode de jeu où les joueurs s'affrontent entre eux pour gagner des points de classement. Dans ce mode, 4 joueurs réels s'affrontent et il n'y a pas de joueur virtuel.",
+        "POWER_CARD_MODE_DESCRIPTION": "Le mode cartes de pouvoir configurables est un mode de jeu où les joueurs peuvent choisir les cartes de pouvoir qu'ils veulent utiliser (exemple de carte: ajouter 1 minute à son temps de reflexion). Dans ce mode, 4 joueurs s'affrontent entre eux avec au minimum 2 joueurs réels et le reste composé de joueurs virtuels."
     },
     "PROFILE_PAGE": {
         "GAMES_PLAYED": "Parties jouées",
@@ -159,7 +164,10 @@
         "ROOM_NAME_NOT_VALID": "Nom de salle non valide",
         "AVAILABLE_CARD": "Cartes disponibles",
         "CONFIRM": "Confirmer",
-        "POWER_LIST": "Liste pouvoirs"
+        "POWER_LIST": "Liste pouvoirs",
+        "MAX_ELO_DIFF": "Écart d'elo maximal",
+        "MATCHMAKING_IN_PROGRESS" : "Matchmaking en cours",
+        "MATCH_FOUND" : "Partie trouvée"
     },
     "CHAT_PANEL": {
         "ROOMS": "Salles",

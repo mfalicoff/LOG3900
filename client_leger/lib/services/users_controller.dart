@@ -1,13 +1,12 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:client_leger/env/environment.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:client_leger/models/user.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'info_client_service.dart';
 
@@ -53,6 +52,7 @@ class Controller {
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
+      socket.emit("new-user", user.username);
       user.cookie = json.decode(response.body)["token"];
       await storage.write(key: 'token', value: user.cookie);
       socket.emit("new-user", user.username);

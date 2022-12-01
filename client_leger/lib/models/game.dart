@@ -1,27 +1,26 @@
-// import 'package:client_leger/models/player.dart';
-// import 'package:flutter/cupertino.dart';
-//
-// class Game with ChangeNotifier{
-//   List<PlayerOld> players = [];
-//   int timer = 0;
-//   bool waitingPlayers = true;
-//   bool gameFinished = false;
-//
-//   Game.fromJSON(data){
-//     for(int i = 0; i < 4; i++){
-//       players.add(PlayerOld.fromJSON(data["players"][i]));
-//     }
-//     notifyListeners();
-//   }
-//
-//   Game(){}
-//
-//   updateFromJSON(data){
-//     List<PlayerOld> playersTemp = [];
-//     for(int i = 0; i < 4; i++){
-//       playersTemp.add(PlayerOld.fromJSON(data["players"][i]));
-//     }
-//     players = playersTemp;
-//     notifyListeners();
-//   }
-// }
+import 'package:client_leger/models/power-cards.dart';
+
+class CreateGameModel {
+  late String roomName;
+  late String playerName;
+  late double timeTurn;
+  late String gameMode;
+  late bool isGamePrivate = false;
+  late String passwd = "";
+  final List<PowerCard> activatedPowers = [];
+
+  Map<String, dynamic> toJson() {
+    return {
+      'roomName': roomName,
+      'playerName': playerName,
+      'timeTurn': timeTurn,
+      'gameMode': gameMode,
+      'isGamePrivate': isGamePrivate,
+      'passwd': passwd,
+      'activatedPowers': activatedPowers,
+    };
+  }
+
+  CreateGameModel(this.roomName, this.playerName, this.timeTurn, this.gameMode,
+      this.isGamePrivate, this.passwd);
+}
