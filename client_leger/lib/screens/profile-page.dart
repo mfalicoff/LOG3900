@@ -241,8 +241,9 @@ class _ProfileStatePage extends State<ProfilePage> {
                       fontWeight: FontWeight.bold)),
               Container(
                 decoration: BoxDecoration(border: Border.all()),
-                height: 280,
-                width: 300,
+                height: 320,
+                width: 320,
+                padding: const EdgeInsets.only(left: 15.0, right: 10.0),
                 child: ListView.builder(
                     shrinkWrap: true,
                     itemCount: history.length,
@@ -250,7 +251,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                       return Text('\u2022 ${translateConnection(history[index])}',
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
-                              fontSize: 13,
+                              fontSize: 16,
                               decoration: TextDecoration.none,
                               fontWeight: FontWeight.bold));
                     }),
@@ -293,8 +294,9 @@ class _ProfileStatePage extends State<ProfilePage> {
                             fontWeight: FontWeight.bold)),
                         Container(
                             decoration: BoxDecoration(border: Border.all()),
-                            height: 280,
-                            width: 350,
+                          padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                            height: 320,
+                            width: 360,
                             child: ListView.builder(
                                 itemCount: infoClientService.favouriteGames.length,
                                 itemBuilder: (BuildContext context, int index) {
@@ -303,7 +305,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                           Text('${'PROFILE_PAGE.ROOM'.tr()}${infoClientService.favouriteGames[index].roomName}',
                                               style: TextStyle (
                                                   color: Theme.of(context).colorScheme.primary,
-                                              fontSize: 13,
+                                              fontSize: 16,
                                               decoration: TextDecoration.none,
                                               fontWeight: FontWeight.bold)
                                            ),
@@ -316,7 +318,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                     Text("${'PROFILE_PAGE.PLAYER'.tr()}${infoClientService.favouriteGames[index].players[idx]}",
                                                         style: TextStyle (
                                                         color: Theme.of(context).colorScheme.primary,
-                                                        fontSize: 13,
+                                                        fontSize: 16,
                                                         decoration: TextDecoration.none,
                                                         fontWeight: FontWeight.bold),
                                                         textAlign: TextAlign.center,
@@ -324,7 +326,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                                     Text("${'PROFILE_PAGE.SCORE'.tr()}${infoClientService.favouriteGames[index].scores[idx]}",
                                                         style: TextStyle (
                                                         color: Theme.of(context).colorScheme.primary,
-                                                        fontSize: 13,
+                                                        fontSize: 16,
                                                         decoration: TextDecoration.none,
                                                         fontWeight: FontWeight.bold),
                                                         textAlign: TextAlign.center,
@@ -336,35 +338,35 @@ class _ProfileStatePage extends State<ProfilePage> {
                                           Text('${'PROFILE_PAGE.WINNERS'.tr()}${infoClientService.favouriteGames[index].winners[0]}',
                                               style: TextStyle (
                                                   color: Theme.of(context).colorScheme.primary,
-                                                  fontSize: 13,
+                                                  fontSize: 16,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
                                           Text('${'PROFILE_PAGE.TILE_LEFT'.tr()}${infoClientService.favouriteGames[index].nbLetterReserve}',
                                               style: TextStyle (
                                                   color: Theme.of(context).colorScheme.primary,
-                                                  fontSize: 13,
+                                                  fontSize: 16,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
                                           Text('${'PROFILE_PAGE.TURN_PLAYED'.tr()}${infoClientService.favouriteGames[index].numberOfTurns}',
                                               style: TextStyle (
                                                   color: Theme.of(context).colorScheme.primary,
-                                                  fontSize: 13,
+                                                  fontSize: 16,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
                                           Text('${'PROFILE_PAGE.GAME_TIME'.tr()}${infoClientService.favouriteGames[index].playingTime}',
                                               style: TextStyle (
                                                   color: Theme.of(context).colorScheme.primary,
-                                                  fontSize: 13,
+                                                  fontSize: 16,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
                                           Text('${'PROFILE_PAGE.GAME_CREATION_DATE'.tr()}${infoClientService.favouriteGames[index].gameStartDate}',
                                               style: TextStyle (
                                                   color: Theme.of(context).colorScheme.primary,
-                                                  fontSize: 13,
+                                                  fontSize: 16,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold),
                                               textAlign: TextAlign.center
@@ -372,7 +374,7 @@ class _ProfileStatePage extends State<ProfilePage> {
                                           Text('-------------------------------------------',
                                               style: TextStyle (
                                                   color: Theme.of(context).colorScheme.primary,
-                                                  fontSize: 13,
+                                                  fontSize: 16,
                                                   decoration: TextDecoration.none,
                                                   fontWeight: FontWeight.bold)
                                           ),
@@ -398,14 +400,14 @@ class _ProfileStatePage extends State<ProfilePage> {
                                             Text('PROFILE_PAGE.SPECTATORS'.tr(),
                                               style: TextStyle (
                                               color: Theme.of(context).colorScheme.primary,
-                                              fontSize: 13,
+                                              fontSize: 16,
                                               decoration: TextDecoration.none,
                                               fontWeight: FontWeight.bold)
                                            ),
                                     Text("${'PROFILE_PAGE.NAME'.tr()}${infoClientService.favouriteGames[index].spectators[idx]}",
                                 style: TextStyle (
                                     color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 13,
+                                    fontSize: 16,
                                     decoration: TextDecoration.none,
                                     fontWeight: FontWeight.bold),
                                     ),
@@ -418,7 +420,7 @@ class _ProfileStatePage extends State<ProfilePage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: TextStyle (color: Theme.of(context).primaryColor, fontSize: 13, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
+            children: [ Text('PROFILE_PAGE.NO_SPECTATORS'.tr(), style: TextStyle (color: Theme.of(context).primaryColor, fontSize: 16, decoration: TextDecoration.none, fontWeight: FontWeight.bold))],
         );
     }
 
