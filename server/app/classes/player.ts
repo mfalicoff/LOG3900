@@ -61,6 +61,8 @@ export class Player {
         if (elo === undefined) {
             const startingElo = 2000;
             this.elo = startingElo;
+        } else {
+            this.elo = elo;
         }
     }
 }

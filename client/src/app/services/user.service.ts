@@ -1,19 +1,19 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { User } from '@app/classes/user.interface';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
-import { UserResponseInterface } from '@app/classes/response.interface';
-import { GameSaved } from '@app/classes/game-saved';
-import { InfoClientService } from '@app/services/info-client.service';
-import { Router } from '@angular/router';
-import { Socket } from 'socket.io-client';
-import { TranslateService } from '@ngx-translate/core';
-import { NotificationService } from './notification.service';
-import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
+import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { GameSaved } from '@app/classes/game-saved';
+import { UserResponseInterface } from '@app/classes/response.interface';
+import { User } from '@app/classes/user.interface';
+import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
+import { InfoClientService } from '@app/services/info-client.service';
+import { TranslateService } from '@ngx-translate/core';
 import { DarkModeService } from 'angular-dark-mode';
+import { Observable } from 'rxjs';
+import { Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
+import { NotificationService } from './notification.service';
 
 @Injectable({
     providedIn: 'root',
