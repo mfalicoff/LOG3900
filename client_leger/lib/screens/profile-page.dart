@@ -152,9 +152,9 @@ class _ProfileStatePage extends State<ProfilePage> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                             returnHistoryScrollView('PROFILE_PAGE.CONNECTION_HISTORY'.tr(),
-                                    globals.userLoggedIn.actionHistory!),
+                                    globals.userLoggedIn.actionHistory!.reversed.toList()),
                             returnHistoryScrollView('PROFILE_PAGE.GAME_HISTORY'.tr(),
-                                    globals.userLoggedIn.gameHistory!),
+                                    globals.userLoggedIn.gameHistory!.reversed.toList()),
                             returnFavouriteGamesScrollView('PROFILE_PAGE.GAME_FAVORITE'.tr()),
                         ],
                       ),
