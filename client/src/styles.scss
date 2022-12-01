@@ -350,7 +350,7 @@ body.my-dark-mode {
     #tableRoom tr:hover {
         background-color: wheat;
         color: #0C483F;
-    } 
+    }
     #tableRoom th{
         background-color: wheat;
         color: #0C483F;
@@ -375,6 +375,27 @@ body.my-dark-mode {
     #cancelBtnPowerModal{
         background-color: #0C483F;
         color: wheat;
+    }
+    .result {
+        color: #ffffff;
+        font-size: large;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        overflow-y: auto;
+        margin-bottom: 5px;
+    }
+    .title-box {
+        max-width: 100%;
+        background-color: wheat;
+        margin-bottom: 10px;
+    }
+    .title {
+        font-size: x-large;
+        text-align: center;
+        justify-content: center;
+        margin-top: 2%;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        margin-right: 50px;
+        color: #0C483F;
     }
 }
 
@@ -522,6 +543,27 @@ body.my-light-mode {
     #cancelBtnPowerModal{
         background-color: wheat;
         color: #0C483F;
+    }
+    .result {
+        color: black;
+        font-size: large;
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        overflow-y: auto;
+        margin-bottom: 5px;
+    }
+    .title-box {
+        max-width: 100%;
+        background-color: #0C483F;
+        margin-bottom: 10px;
+    }
+    .title {
+        font-size: x-large;
+        text-align: center;
+        justify-content: center;
+        margin-top: 2%;
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        margin-right: 50px;
+        color: wheat;
     }
 }
 

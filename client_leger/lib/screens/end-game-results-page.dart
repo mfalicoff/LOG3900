@@ -101,26 +101,54 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                         ),
                 ),
                 const SizedBox(height: 20.0,),
-                Text("${"END_GAME_RESULT_PAGE.ROOM".tr()}: $roomName",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontSize: 18,
-                        fontWeight: FontWeight.normal,
-                        fontFamily: "Times New Roman"
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${"END_GAME_RESULT_PAGE.ROOM".tr()}: ",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Times New Roman"
+                      ),
                     ),
+                    Text(roomName,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.tertiary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Times New Roman"
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                     height: 10,
                 ),
-                Text("${"END_GAME_RESULT_PAGE.CREATOR_GAME".tr()}: $creator",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                        fontFamily: "Times New Roman"
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${"END_GAME_RESULT_PAGE.CREATOR_GAME".tr()}: ",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Times New Roman"
+                      ),
                     ),
+                    Text(creator,
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.tertiary,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Times New Roman"
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(
                     height: 10,
@@ -129,7 +157,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontSize: 18,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.bold,
                     fontFamily: "Times New Roman"
                 ),
                 textAlign: TextAlign.left,
@@ -144,7 +172,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontSize: 18,
-                      fontWeight: FontWeight.normal,
+                      fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
                 ),
@@ -156,10 +184,10 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: List.generate(infoClientService.game.winners.length, (index) {
                             return Text("${"END_GAME_RESULT_PAGE.NAME".tr()}:  ${infoClientService.game.winners[index].name}  ${"END_GAME_RESULT_PAGE.SCORE_OF".tr()} ${infoClientService.game.winners[index].score} ${"END_GAME_RESULT_PAGE.POINTS".tr()}",
-                                    style: const TextStyle(
-                                      color: Colors.black,
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.tertiary,
                                       fontSize: 15,
-                                      fontWeight: FontWeight.normal,
+                                      fontWeight: FontWeight.bold,
                                       fontFamily: "Times New Roman"
                                     ),
                                     textAlign: TextAlign.left,
@@ -169,51 +197,108 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
-                Text("${"END_GAME_RESULT_PAGE.NUMBER_LETTER_LEFT".tr()} : ${infoClientService.game.nbLetterReserve}",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                        fontFamily: "Times New Roman"
-                    ),
-                ),
-                const SizedBox(
-                    height: 10,
-                ),
-                Text("${"END_GAME_RESULT_PAGE.NUMBER_TOTAL_TURN".tr()}: $numberOfTurns",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                        fontFamily: "Times New Roman"
-                    ),
-                ),
-                const SizedBox(
-                    height: 10,
-                ),
-                  Text("${"END_GAME_RESULT_PAGE.GAME_LENGTH".tr()}: $playingTime",
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${"END_GAME_RESULT_PAGE.NUMBER_LETTER_LEFT".tr()}: ",
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 18,
-                        fontWeight: FontWeight.normal,
+                        fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
-                ),
+                  ),
+                  Text("${infoClientService.game.nbLetterReserve}",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Times New Roman"
+                    ),
+                  ),
+                ],
+              ),
                 const SizedBox(
                     height: 10,
                 ),
-                Text("${"END_GAME_RESULT_PAGE.GAME_CREATION_DATE".tr()}: $timestamp",
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${"END_GAME_RESULT_PAGE.NUMBER_TOTAL_TURN".tr()}: ",
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
+                  ),
+                  Text("$numberOfTurns",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Times New Roman"
+                    ),
+                  ),
+                ],
+              ),
+                const SizedBox(
+                    height: 10,
                 ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${"END_GAME_RESULT_PAGE.GAME_LENGTH".tr()}: ",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Times New Roman"
+                    ),
+                  ),
+                  Text(playingTime,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Times New Roman"
+                    ),
+                  ),
+                ],
+              ),
+                const SizedBox(
+                    height: 10,
+                ),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("${"END_GAME_RESULT_PAGE.GAME_CREATION_DATE".tr()}: ",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Times New Roman"
+                    ),
+                  ),
+                  Text(timestamp,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Times New Roman"
+                    ),
+                  ),
+                ],
+              ),
                 const SizedBox(
                     height: 10,
                 ),
@@ -224,7 +309,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
                             fontSize: 18,
-                            fontWeight: FontWeight.normal,
+                            fontWeight: FontWeight.bold,
                               fontFamily: "Times New Roman"
                           ),
                         ),
@@ -261,29 +346,73 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                       return
                         Column(
                             children: [
-                              _isLinkEnabled(players[index], index),
-                                Text("${"END_GAME_RESULT_PAGE.SCORE".tr()}: ${players[index].score}",
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
-                                  ),
+                              Center(
+                                child: _isLinkEnabled(players[index], index),
+                              ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text("${"END_GAME_RESULT_PAGE.SCORE".tr()}: ",
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text("${players[index].score}",
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                          color: Theme.of(context).colorScheme.tertiary,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: "Times New Roman"
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                Text("${"END_GAME_RESULT_PAGE.LETTER_LEFT".tr()}: ${lettersOnStand(players[index])}",
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("${"END_GAME_RESULT_PAGE.LETTER_LEFT".tr()}: ",
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                ),
-                                Text("${"END_GAME_RESULT_PAGE.NUMBER_OF_TURN_PLAYED".tr()}: ${players[index].turn}",
-                                  style: TextStyle(
-                                    color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.normal,
+                                  Text(lettersOnStand(players[index]),
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        color: Theme.of(context).colorScheme.tertiary,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: "Times New Roman"
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text("${"END_GAME_RESULT_PAGE.NUMBER_OF_TURN_PLAYED".tr()}: ",
+                                    style: TextStyle(
+                                      color: Theme.of(context).colorScheme.primary,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
 
+                                    ),
                                   ),
-                                ),
+                                  Text("${players[index].turn}",
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                        color: Theme.of(context).colorScheme.tertiary,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        fontFamily: "Times New Roman"
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                         );
                     }),
@@ -348,9 +477,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         if (player.id != 'virtualPlayer') {
             return ProfileReadOnlyDialog(username: players[index].name, notifyParent: refresh);
         }
-        return TextButton(onPressed: (() {
-
-        }), child: Text(player.name, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontWeight: FontWeight.normal,)));
+        return TextButton(onPressed: (() {}), child: Text(player.name, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontSize: 18, fontWeight: FontWeight.bold,)));
     }
 
     Column _isThereSpectators() {
@@ -362,11 +489,10 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                                 return Column(
                                 children: [
                                             Text("${"END_GAME_RESULT_PAGE.NAME".tr()}: ${infoClientService.actualRoom.spectators[index].name}",
-                                            style: const TextStyle(
-                                                color: Colors.black,
+                                            style: TextStyle(
+                                                color: Theme.of(context).colorScheme.tertiary,
                                                 fontSize: 15,
-                                                fontWeight: FontWeight.normal,
-                                                fontFamily: "Times New Roman"
+                                                fontWeight: FontWeight.bold,
                                                 ),
                                             ),
                                 ],
@@ -376,7 +502,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
         }
         return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [ Text("END_GAME_RESULT_PAGE.NO_SPECTATORS".tr(), style: const TextStyle( color: Colors.black, fontSize: 15))],
+            children: [ Text("END_GAME_RESULT_PAGE.NO_SPECTATORS".tr(), style: TextStyle( color: Theme.of(context).colorScheme.tertiary, fontSize: 15, fontWeight: FontWeight.bold))],
         );
     }
 
@@ -517,7 +643,7 @@ class _ProfileReadOnlyStateDialog extends State<ProfileReadOnlyDialog> {
             ],
         ),
       ),
-      child: Text(widget.username, style: TextStyle( color: Theme.of(context).colorScheme.primary),),
+      child: Text(widget.username, style: TextStyle( color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold, fontSize: 18),),
      );
 
   }

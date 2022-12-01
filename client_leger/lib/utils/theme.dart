@@ -7,6 +7,7 @@ final lightAppTheme = ThemeData(
     colorScheme: ColorScheme.fromSwatch().copyWith(
       primary: createMaterialColor(const Color(0xFF0c483f)),
       secondary: createMaterialColor(const Color(0xFFf5deb3)),
+      tertiary: createMaterialColor(const Color(0xFF000000)),
     ),
     textTheme: TextTheme(
       headlineLarge: TextStyle(
@@ -34,6 +35,7 @@ final darkAppTheme = ThemeData(
     colorScheme: ColorScheme.fromSwatch().copyWith(
       primary: createMaterialColor(const Color(0xFFf5deb3)),
       secondary: createMaterialColor(const Color(0xFF0c483f)),
+      tertiary: createMaterialColor(const Color(0xFFFFFFFF)),
     ),
     textTheme: TextTheme(
       headlineLarge: TextStyle(
