@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -82,7 +83,7 @@ class _LoginFormState extends State<LoginForm> {
             token: value, socket: socketService.socket);
         infoClientService.playerName = globals.userLoggedIn.username;
         MyApp.of(context)!.changeTheme(globals.userLoggedIn.theme as String);
-        Navigator.pushNamed(context, "/home");
+        Timer(Duration(milliseconds: 500), () => Navigator.pushNamed(context, "/home"));
         return true;
       } on Exception {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

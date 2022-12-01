@@ -263,13 +263,16 @@ export class UserService {
         localStorage.setItem('cookie', response.token);
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
-        this.translate.use(response.data.language);
-        if (response.data.theme.toLowerCase() === 'dark') {
-            this.themeService?.enable();
-        } else {
-            this.themeService?.disable();
-        }
-        this.infoClientService.playerName = response.data.name;
-        this.router.navigate(['/game-mode-options']);
+        setTimeout(() => {
+            this.translate.use(response.data.language);
+            if (response.data.theme.toLowerCase() === 'dark') {
+                this.themeService?.enable();
+            } else {
+                this.themeService?.disable();
+            }
+            this.infoClientService.playerName = response.data.name;
+            this.router.navigate(['/game-mode-options']);
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        }, 500);
     }
 }

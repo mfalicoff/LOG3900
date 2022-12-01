@@ -52,7 +52,6 @@ class Controller {
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
-      socket.emit("new-user", user.username);
       user.cookie = json.decode(response.body)["token"];
       await storage.write(key: 'token', value: user.cookie);
       socket.emit("new-user", user.username);
