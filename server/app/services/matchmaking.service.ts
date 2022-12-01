@@ -152,7 +152,6 @@ export class MatchmakingService {
                 if (rankedGame.rankedUsers[i].name === userName) {
                     rankedGame.rankedUsers.splice(i, 1);
                     socket.leave(rankedGame.name + Constants.RANKED_SUFFIX);
-        console.log('letsgo');
                 }
             }
         }
