@@ -29,11 +29,10 @@ export class AppComponent {
     goingBack() {
         if (this.router.url === '/login') {
             this.router.navigate(['/home']);
-        } else if(this.router.url === '/ranked-matchmaking'){
+        } else if (this.router.url === '/ranked-matchmaking') {
             this.socketService.socket.emit('removePlayerFromGame', this.infoClientService.playerName);
             history.back();
-        }
-        else {
+        } else {
             history.back();
         }
     }

@@ -190,7 +190,8 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
             onPressed: _goBackToRankedInitPage,
             icon: Icon(
               Icons.arrow_back,
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).colorScheme.secondary,
+
             ),
           ),
         ],

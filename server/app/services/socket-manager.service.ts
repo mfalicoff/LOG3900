@@ -496,7 +496,7 @@ export class SocketManager {
     ) {
         // We create the game and add it to the rooms map
         const newGame: GameServer = new GameServer(timeTurn, gameMode, roomName, isGamePrivate, passwd);
-        const user = await this.userService.findUserByName(playerName)
+        const user = await this.userService.findUserByName(playerName);
         const newPlayer = new Player(playerName, true, user.elo);
         newPlayer.id = socket.id;
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(playerName));
@@ -556,9 +556,8 @@ export class SocketManager {
 
     private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
-        const user = await this.userService.findUserByName(userData.name)
+        const user = await this.userService.findUserByName(userData.name);
         const newPlayer = new Player(userData.name, false, user.elo);
-        console.log(newPlayer.elo);
         game?.mapPlayers.set(socket.id, newPlayer); // dont delete this even if its duplicate code
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.id = socket.id;
@@ -584,11 +583,10 @@ export class SocketManager {
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', async (name) => {
             const user = await this.userService.findUserByName(name);
-            console.log(user.elo);
             if (user.language) {
                 this.translateService.addUser(user.name, user.language);
             }
-            this.users.set(socket.id, { name, roomName: '', elo: user.elo  });
+            this.users.set(socket.id, { name, roomName: '', elo: user.elo });
             const avatar = await this.userService.populateAvatarField(user);
             socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
@@ -963,8 +961,6 @@ export class SocketManager {
         socket.on('removePlayerFromGame', (userName) => {
             this.matchmakingService.removePlayerFromGame(socket, userName);
         });
-
-        
 
         socket.on('acceptMatch', (user) => {
             this.matchmakingService.onAccept(socket, user);

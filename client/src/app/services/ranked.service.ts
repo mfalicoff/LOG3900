@@ -24,6 +24,6 @@ export class RankedService {
         if (this.matchAccepted === false) {
             this.router.navigate(['/ranked-init']);
         }
-        //this.matchAccepted = false;
+        // this.matchAccepted = false;
     }
 }
