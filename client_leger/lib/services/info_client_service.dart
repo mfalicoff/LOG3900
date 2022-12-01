@@ -31,6 +31,7 @@ class InfoClientService with ChangeNotifier{
   bool powerUsedForTurn = false;
 
   String gameMode = CLASSIC_MODE;
+  double eloDisparity  =  60;
 
   List<String> letterReserve = [];
   String incomingPlayer = "";

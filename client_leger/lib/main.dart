@@ -3,6 +3,8 @@ import 'package:client_leger/screens/game_list_page.dart';
 import 'package:client_leger/screens/game_page.dart';
 import 'package:client_leger/screens/home_page.dart';
 import 'package:client_leger/screens/login_page.dart';
+import 'package:client_leger/screens/ranked-init_page.dart';
+import 'package:client_leger/screens/ranked_matchmaking_page.dart';
 import 'package:client_leger/screens/signup_page.dart';
 import 'package:client_leger/utils/theme.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -70,6 +72,8 @@ class _MyAppState extends State<MyApp> {
         '/create-game': (BuildContext context) => const CreateGamePage(),
         '/game': (BuildContext context) => const GamePage(),
         '/game-list': (BuildContext context) => const GameListPage(),
+        '/ranked-init': (BuildContext context) => const RankedInitPage(),
+        '/ranked-matchmaking': (BuildContext context) => const RankedMatchmakingPage(),
       },
       home: const LoginPage(),
     );

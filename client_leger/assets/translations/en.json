@@ -15,7 +15,12 @@
     },
     "HOME_SCREEN": {
         "CLASSIC_MODE": "Classic Mode ",
-        "POWER_CARDS_MODE": "Configurable Power Card Mode"
+        "POWER_CARDS_MODE": "Configurable Power Card Mode",
+        "RANKED_MODE": "Ranked Mode",
+        "GO_IN_BTN": "Enter",
+        "CLASSIC_MODE_DESCRIPTION": "Classic mode is the default game mode. It respects the official rules of the game. In this mode, 4 players compete against each other with at least 2 real players and the rest made up of virtual players.",
+        "RANKED_MODE_DESCRIPTION": "Ranked game mode is a game mode where players compete against each other to earn ranking points. In this mode, 4 real players compete and there is no virtual player.",
+        "POWER_CARD_MODE_DESCRIPTION": "Configurable power cards mode is a game mode where players can choose which power cards they want to use (example card: add 1 minute to its thinking time). In this mode, 4 players compete against each other with at least 2 real players and the rest made up of virtual players."
     },
     "PROFILE_PAGE": {
         "GAMES_PLAYED": "Games played",

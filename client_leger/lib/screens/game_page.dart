@@ -6,8 +6,8 @@ import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/widget/game_board.dart';
 import 'package:client_leger/widget/info_panel.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
 import 'package:flip_card/flip_card.dart';
+import 'package:flutter/material.dart';
 
 import '../models/player.dart';
 import '../services/socket_service.dart';
@@ -289,7 +289,9 @@ class _GamePageState extends State<GamePage> {
   void _leaveGame() {
     socketService.count = 1;
     socketService.socket.emit('leaveGame');
-    Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+    // Navigator.pushNamed(
+    //     context, "/home");
+    Navigator.popUntil(context, ModalRoute.withName("/home"));
   }
 
   Future<void> _giveUpGame(BuildContext context) {
@@ -308,7 +310,7 @@ class _GamePageState extends State<GamePage> {
               onPressed: () {
                 socketService.count = 1;
                 socketService.socket.emit('giveUpGame');
-                Navigator.popUntil(context, ModalRoute.withName("/game-list"));
+                Navigator.popUntil(context, ModalRoute.withName("/home"));
               },
             ),
             TextButton(
