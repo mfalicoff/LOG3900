@@ -397,6 +397,10 @@ body.my-dark-mode {
         margin-right: 50px;
         color: #0C483F;
     }
+    #title-box-profile{
+        background-color: wheat;
+        color: #0C483F;
+    }
 }
 
 body.my-light-mode {
@@ -563,6 +567,10 @@ body.my-light-mode {
         margin-top: 2%;
         font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
         margin-right: 50px;
+        color: wheat;
+    }
+    #title-box-profile{
+        background-color: #0C483F;
         color: wheat;
     }
 }
