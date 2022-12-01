@@ -163,7 +163,10 @@
         "ROOM_NAME_NOT_VALID": "Invalid room name",
         "AVAILABLE_CARD": "Available cards",
         "CONFIRM": "Confirm",
-        "POWER_LIST": "Power list"
+        "POWER_LIST": "Power list",
+        "MAX_ELO_DIFF": "Maximum elo difference",
+        "MATCHMAKING_IN_PROGRESS" : "Matchmaking in progress",
+        "MATCH_FOUND" : "Game found"
     },
     "CHAT_PANEL": {
         "ROOMS": "Rooms",

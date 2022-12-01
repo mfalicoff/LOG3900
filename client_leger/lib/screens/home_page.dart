@@ -76,6 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
               right: 30.0,
               child: ElevatedButton(
                   style: ButtonStyle(
+                      backgroundColor: MaterialStateColor.resolveWith(
+                              (states) => Theme.of(context).colorScheme.secondary),
                       padding: MaterialStateProperty.all(
                         const EdgeInsets.symmetric(
                             vertical: 18.0, horizontal: 0.0),
@@ -86,13 +88,15 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: _toSearchPage,
                   child: Icon(
                     Icons.search,
-                    color: Theme.of(context).colorScheme.secondary,
+                    color: Theme.of(context).colorScheme.primary,
                   ))),
           Positioned(
             top: 10.0,
             left: 30.0,
             child: ElevatedButton(
               style: ButtonStyle(
+                backgroundColor: MaterialStateColor.resolveWith(
+                        (states) => Theme.of(context).colorScheme.secondary),
                 padding: MaterialStateProperty.all(
                   const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
                 ),
@@ -105,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: _logout,
               child: Icon(
                 Icons.logout,
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -143,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       direction: FlipDirection.HORIZONTAL,
                       front: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                         ),
                         width: 200,
@@ -155,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "HOME_SCREEN.CLASSIC_MODE".tr(),
                                 style: TextStyle(
                                   color:
-                                  Theme.of(context).colorScheme.secondary,
+                                  Theme.of(context).colorScheme.primary,
                                   fontSize: 20,
                                 ),
                               ),
@@ -165,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.sentiment_satisfied,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -174,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.sentiment_satisfied,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -183,7 +187,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.sentiment_satisfied,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -192,7 +196,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.sentiment_satisfied,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -201,7 +205,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       back: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                         ),
                         width: 200,
@@ -217,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   "HOME_SCREEN.CLASSIC_MODE_DESCRIPTION".tr(),
                                   style: TextStyle(
                                     fontSize: 12.0,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                   textAlign: TextAlign.justify,
                                 ),
@@ -228,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.sentiment_satisfied,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -237,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.sentiment_satisfied,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -246,7 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.sentiment_satisfied,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -255,7 +259,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.sentiment_satisfied,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -265,6 +269,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Theme.of(context).colorScheme.secondary),
                         padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 10.0),
@@ -285,7 +291,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         "HOME_SCREEN.GO_IN_BTN".tr(),
                         style: TextStyle(
                             fontSize: 20,
-                            color: Theme.of(context).colorScheme.secondary
+                            color: Theme.of(context).colorScheme.primary
                         ),
                       ),
                     ),
@@ -299,7 +305,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       direction: FlipDirection.HORIZONTAL,
                       front: Container(
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.primary,
+                              color: Theme.of(context).colorScheme.secondary,
                               borderRadius: const BorderRadius.all(Radius.circular(5)),
                             ),
                             width: 200,
@@ -311,7 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     "HOME_SCREEN.RANKED_MODE".tr(),
                                     style: TextStyle(
                                       color:
-                                      Theme.of(context).colorScheme.secondary,
+                                      Theme.of(context).colorScheme.primary,
                                       fontSize: 20,
                                     ),
                                   ),
@@ -321,7 +327,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   top: 10,
                                   child: Icon(
                                     Icons.gavel,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.primary,
                                     size: 35,
                                   ),
                                 ),
@@ -330,7 +336,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   top: 10,
                                   child: Icon(
                                     Icons.gavel,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.primary,
                                     size: 35,
                                   ),
                                 ),
@@ -339,7 +345,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   bottom: 10,
                                   child: Icon(
                                     Icons.gavel,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.primary,
                                     size: 35,
                                   ),
                                 ),
@@ -348,7 +354,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   bottom: 10,
                                   child: Icon(
                                     Icons.gavel,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.primary,
                                     size: 35,
                                   ),
                                 ),
@@ -357,7 +363,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       back: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                         ),
                         width: 200,
@@ -373,7 +379,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     "HOME_SCREEN.RANKED_MODE_DESCRIPTION".tr(),
                                   style: TextStyle(
                                     fontSize: 12.0,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                   textAlign: TextAlign.justify,
                                 ),
@@ -384,7 +390,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.gavel,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -393,7 +399,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.gavel,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -402,7 +408,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.gavel,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -411,7 +417,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.gavel,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -421,6 +427,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Theme.of(context).colorScheme.secondary),
                         padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 10.0),
@@ -441,7 +449,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         "HOME_SCREEN.GO_IN_BTN".tr(),
                         style: TextStyle(
                             fontSize: 20,
-                            color: Theme.of(context).colorScheme.secondary
+                            color: Theme.of(context).colorScheme.primary
                         ),
                       ),
                     ),
@@ -455,7 +463,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       direction: FlipDirection.HORIZONTAL,
                       front: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                         ),
                         width: 200,
@@ -467,7 +475,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 "HOME_SCREEN.POWER_CARDS_MODE".tr(),
                                 style: TextStyle(
                                   color:
-                                  Theme.of(context).colorScheme.secondary,
+                                  Theme.of(context).colorScheme.primary,
                                   fontSize: 20,
                                 ),
                                 textAlign: TextAlign.center,
@@ -478,7 +486,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.auto_fix_normal,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -488,7 +496,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.auto_fix_normal,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -497,7 +505,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.auto_fix_normal,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -506,7 +514,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.auto_fix_normal,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -515,7 +523,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       back: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           borderRadius: const BorderRadius.all(Radius.circular(5)),
                         ),
                         width: 200,
@@ -531,7 +539,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   "HOME_SCREEN.POWER_CARD_MODE_DESCRIPTION".tr(),
                                   style: TextStyle(
                                     fontSize: 12.0,
-                                    color: Theme.of(context).colorScheme.secondary,
+                                    color: Theme.of(context).colorScheme.primary,
                                   ),
                                   textAlign: TextAlign.justify,
                                 ),
@@ -542,7 +550,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.auto_fix_normal,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -552,7 +560,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               top: 10,
                               child: Icon(
                                 Icons.auto_fix_normal,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -561,7 +569,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.auto_fix_normal,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -570,7 +578,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               bottom: 10,
                               child: Icon(
                                 Icons.auto_fix_normal,
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 size: 35,
                               ),
                             ),
@@ -580,6 +588,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith(
+                                (states) => Theme.of(context).colorScheme.secondary),
                         padding: MaterialStateProperty.all(
                           const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 10.0),
@@ -600,7 +610,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         "HOME_SCREEN.GO_IN_BTN".tr(),
                         style: TextStyle(
                             fontSize: 20,
-                            color: Theme.of(context).colorScheme.secondary
+                            color: Theme.of(context).colorScheme.primary
                         ),
                       ),
                     ),
@@ -618,12 +628,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 63,
                   width: 63,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.secondary,
                     borderRadius: const BorderRadius.all(Radius.circular(35.0)),
                   ),
                   child: IconButton(
                     iconSize: 35,
-                    icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp) : Icon(Icons.volume_up_outlined),
+                    icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp, color: Theme.of(context).colorScheme.primary) : Icon(Icons.volume_up_outlined, color: Theme.of(context).colorScheme.primary),
                     color: Theme.of(context).colorScheme.secondary,
                     onPressed: () {
                       setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});

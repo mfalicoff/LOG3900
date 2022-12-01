@@ -188,7 +188,7 @@ class _GamePageState extends State<GamePage> {
             ],
             if (infoClientService.incomingPlayer != "")
               AlertDialog(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 title: Text(
                   '${"GAME_PAGE.THE_PLAYER".tr()}${infoClientService.incomingPlayer}${"GAME_PAGE.TRY_CONNECT".tr()}',
                   style:
@@ -199,7 +199,7 @@ class _GamePageState extends State<GamePage> {
                     child: Text(
                       "GAME_PAGE.REFUSE".tr(),
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                     onPressed: () {
                       acceptPlayer(false);
@@ -209,7 +209,7 @@ class _GamePageState extends State<GamePage> {
                     child: Text(
                       "GAME_PAGE.ACCEPT".tr(),
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary),
+                          color: Theme.of(context).colorScheme.secondary),
                     ),
                     onPressed: () {
                       acceptPlayer(true);
@@ -226,7 +226,7 @@ class _GamePageState extends State<GamePage> {
                     right: 30,
                     child: IconButton(
                       iconSize: 35,
-                      icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp) : Icon(Icons.volume_up_outlined),
+                      icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp, color: Theme.of(context).colorScheme.primary) : Icon(Icons.volume_up_outlined, color: Theme.of(context).colorScheme.primary),
                       color: Theme.of(context).colorScheme.primary,
                       onPressed: () {
                         setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
@@ -299,14 +299,18 @@ class _GamePageState extends State<GamePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("GAME_PAGE.GIVE_UP_GAME".tr()),
-          content: Text("GAME_PAGE.SURE_WANT_GIVE_UP".tr()),
+          backgroundColor: Theme.of(context).colorScheme.secondary,
+          title: Text("GAME_PAGE.GIVE_UP_GAME".tr(), style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,)),
+          content: Text("GAME_PAGE.SURE_WANT_GIVE_UP".tr(), style: TextStyle(
+            color: Theme.of(context).colorScheme.primary,)),
           actions: <Widget>[
             TextButton(
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: Text("GAME_PAGE.GIVE_UP".tr()),
+              child: Text("GAME_PAGE.GIVE_UP".tr(), style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,)),
               onPressed: () {
                 socketService.count = 1;
                 socketService.socket.emit('giveUpGame');
@@ -317,7 +321,8 @@ class _GamePageState extends State<GamePage> {
               style: TextButton.styleFrom(
                 textStyle: Theme.of(context).textTheme.labelLarge,
               ),
-              child: Text("GAME_PAGE.CANCEL".tr()),
+              child: Text("GAME_PAGE.CANCEL".tr(), style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,)),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -366,7 +371,7 @@ class _PowerListDialog extends State<PowerListDialog> {
       onPressed: () => showDialog<String>(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          backgroundColor: Theme.of(context).colorScheme.primary,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
           actions: <Widget>[
             Column(
               mainAxisSize: MainAxisSize.min,
@@ -377,7 +382,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     Text(
                       "GAME_PAGE.CARDS_AVAILABLE".tr(),
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                           fontSize: 17,
                           decoration: TextDecoration.none),
@@ -387,7 +392,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     Text(
                         "${"GAME_PAGE.NO_POWERS".tr()}${3 - infoClientService.player.nbValidWordPlaced}${"GAME_PAGE.VALID_WORDS".tr()}",
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 15,
                             decoration: TextDecoration.none)),
                   ],
@@ -416,7 +421,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                   back: Container(
                                     decoration: BoxDecoration(
                                       color:
-                                          Theme.of(context).colorScheme.secondary,
+                                          Theme.of(context).colorScheme.primary,
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(5)),
                                     ),
@@ -436,7 +441,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                           fontSize: 12.0,
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .primary,
+                                              .secondary,
                                         ),
                                         textAlign: TextAlign.justify,
                                       ),
@@ -447,7 +452,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStatePropertyAll<
                                             Color>(
-                                        Theme.of(context).colorScheme.secondary),
+                                        Theme.of(context).colorScheme.primary),
                                   ),
                                   onPressed: () => {
                                     _onPowerCardClick(infoClientService
@@ -458,7 +463,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme
-                                          .primary,
+                                          .secondary,
                                     ),
                                   ),
                                 ),
@@ -478,7 +483,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                     child: Text(
                       "GAME_PAGE.ALREADY_USED_POWER".tr(),
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 13,
                           decoration: TextDecoration.none),
                     ),
@@ -492,7 +497,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                       "GAME_PAGE.NOT_YOUR_TURN".tr(),
                       textAlign: TextAlign.left,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 13,
                           decoration: TextDecoration.none),
                     ),
@@ -504,8 +509,7 @@ class _PowerListDialog extends State<PowerListDialog> {
         ),
       ),
       style: ButtonStyle(
-        backgroundColor: MaterialStatePropertyAll<Color>(
-            Theme.of(context).colorScheme.secondary),
+        backgroundColor: infoClientService.isTurnOurs && infoClientService.game.gameStarted ? MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary) : const MaterialStatePropertyAll<Color>(Colors.grey),
         padding: MaterialStateProperty.all(
           const EdgeInsets.symmetric(vertical: 6.0, horizontal: 6.0),
         ),
@@ -535,10 +539,10 @@ class _PowerListDialog extends State<PowerListDialog> {
               content: Text(
                 "GAME_PAGE.ENTER_POSITION_OF_TILE".tr(),
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               actions: <Widget>[
                 Form(
                   key: _formKey,
@@ -554,10 +558,10 @@ class _PowerListDialog extends State<PowerListDialog> {
                           border: const OutlineInputBorder(),
                           labelText: "GAME_PAGE.POSITION".tr(),
                           labelStyle: TextStyle(
-                              color: Theme.of(context).colorScheme.secondary),
+                              color: Theme.of(context).colorScheme.primary),
                         ),
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary),
+                            color: Theme.of(context).colorScheme.primary),
                       ),
                       TextButton(
                         onPressed: _sendCoords,
@@ -582,7 +586,7 @@ class _PowerListDialog extends State<PowerListDialog> {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               actions: <Widget>[
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -594,7 +598,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                           Text(
                             "GAME_PAGE.CLICK_ON_TILE_EXCHANGE".tr(),
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.secondary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 17,
                                 decoration: TextDecoration.none),
@@ -644,7 +648,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                             Text(
                               "GAME_PAGE.CLICK_ON_TILE_RESERVE".tr(),
                               style: TextStyle(
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17,
                                   decoration: TextDecoration.none),
@@ -697,14 +701,15 @@ class _PowerListDialog extends State<PowerListDialog> {
                             ),
                             TextButton(
                               onPressed: () => {_makeLetterExchange()},
-                              child: Text("GAME_PAGE.CONFIRM".tr()),
+                              child: Text("GAME_PAGE.CONFIRM".tr(), style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,)),
                             ),
                           ],
                           if (chosenLetterReserve == '') ...[
                             Text(
                               "GAME_PAGE.NO_LETTER_AVAILABLE".tr(),
                               style: TextStyle(
-                                  color: Theme.of(context).colorScheme.secondary,
+                                  color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17,
                                   decoration: TextDecoration.none),
@@ -712,7 +717,8 @@ class _PowerListDialog extends State<PowerListDialog> {
                           ],
                           TextButton(
                             onPressed: () => Navigator.pop(context, 'Annuler'),
-                            child: Text("GAME_PAGE.CANCEL".tr()),
+                            child: Text("GAME_PAGE.CANCEL".tr(),style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,)),
                           ),
                         ],
                       ),
@@ -732,7 +738,7 @@ class _PowerListDialog extends State<PowerListDialog> {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
-              backgroundColor: Theme.of(context).colorScheme.primary,
+              backgroundColor: Theme.of(context).colorScheme.secondary,
               actions: <Widget>[
                 Container(
                   margin: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -745,7 +751,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                         "GAME_PAGE.CLICK_AVATAR".tr(),
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme.of(context).colorScheme.primary,
                             fontWeight: FontWeight.bold,
                             fontSize: 17,
                             decoration: TextDecoration.none),
@@ -786,7 +792,7 @@ class _PowerListDialog extends State<PowerListDialog> {
                                         style: TextStyle(
                                           color: Theme.of(context)
                                               .colorScheme
-                                              .secondary,
+                                              .primary,
                                         ),
                                       ),
                                     ),
