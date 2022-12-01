@@ -5,6 +5,7 @@ import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/ranked.dart';
 import 'package:client_leger/services/socket_service.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../services/timer.dart';
@@ -100,13 +101,13 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                     children: [
 
                       Text (
-                        "Matchmaking en cours",
+                        "CREATE_GAME_PAGE.MATCHMAKING_IN_PROGRESS".tr(),
                         style: TextStyle(
                             fontSize: 35,
                             color: Theme.of(context).colorScheme.primary),
                       ),
                       Text(
-                        timerService.matchmakingDisplayTimer,
+                        translateTimer(timerService.matchmakingDisplayTimer),
                         style: TextStyle(
                             fontSize: 35,
                             color: Theme.of(context).colorScheme.primary),
@@ -123,7 +124,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
           AlertDialog(
           backgroundColor: Theme.of(context).colorScheme.secondary,
               title:
-              Center(child: Text('Partie trouvée')),
+              Center(child: Text('CREATE_GAME_PAGE.MATCH_FOUND'.tr(), style: TextStyle(color: Theme.of(context).colorScheme.primary), )),
               actions: [
                 Center(child:Text(
                   timerService.displayTimer,
@@ -141,6 +142,8 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                       children: [
                         ElevatedButton(
                           style: ButtonStyle(
+                            backgroundColor: MaterialStateColor.resolveWith(
+                                    (states) => Theme.of(context).colorScheme.secondary),
                             padding: MaterialStateProperty.all(
                               const EdgeInsets.symmetric(
                                   vertical: 13.0, horizontal: 30.0),
@@ -155,15 +158,17 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                           ),
                           onPressed: () => acceptMatch(),
                           child: Text(
-                            "Accepter",
+                            "GAME_PAGE.ACCEPT".tr(),
                             style: TextStyle(
                                 fontSize: 20,
-                                color: Theme.of(context).colorScheme.secondary
+                                color: Theme.of(context).colorScheme.primary
                             ),
                           ),
                         ),
                         ElevatedButton(
                           style: ButtonStyle(
+                            backgroundColor: MaterialStateColor.resolveWith(
+                                    (states) => Theme.of(context).colorScheme.secondary),
                             padding: MaterialStateProperty.all(
                               const EdgeInsets.symmetric(
                                   vertical: 13.0, horizontal: 30.0),
@@ -178,10 +183,10 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
                           ),
                           onPressed: () => refuseMatch(),
                           child: Text(
-                            "Refuser",
+                            "GAME_PAGE.REFUSE".tr(),
                             style: TextStyle(
                                 fontSize: 20,
-                                color: Theme.of(context).colorScheme.secondary
+                                color: Theme.of(context).colorScheme.primary
                             ),
                           ),
                         ),
@@ -195,7 +200,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
             onPressed: _goBackToRankedInitPage,
             icon: Icon(
               Icons.arrow_back,
-              color: const Color(0xFF0c483f),
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ],
@@ -225,5 +230,11 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
         context, "/ranked-init");
   }
 
-
+  String translateTimer(String matchmakingDisplayTimer) {
+    if (context.locale.languageCode == "en") {
+      matchmakingDisplayTimer =
+          matchmakingDisplayTimer.replaceAll("Temps écoulé", "Time elapsed");
+    }
+    return matchmakingDisplayTimer;
+  }
 }

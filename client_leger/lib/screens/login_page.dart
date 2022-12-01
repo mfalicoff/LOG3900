@@ -217,7 +217,6 @@ class _LoginFormState extends State<LoginForm> {
         infoClientService.playerName = globals.userLoggedIn.username;
         if (mounted){
           context.setLocale(Locale(globals.userLoggedIn.language!));
-          print(globals.userLoggedIn.theme);
           MyApp.of(context)!.changeTheme(globals.userLoggedIn.theme as String);
           Navigator.pushNamed(context, "/home");
         }
