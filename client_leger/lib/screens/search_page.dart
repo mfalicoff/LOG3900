@@ -268,7 +268,7 @@ class _SearchPage extends State<SearchPage> {
                     shrinkWrap: true,
                     itemCount: history.length,
                     itemBuilder: (BuildContext context, int index) {
-                      return Text('\u2022 ${translateConnection(history[lenght - 1 -index])}',
+                      return Text('\u2022 ${translateConnection(history[length - 1 -index])}',
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontSize: 11,
