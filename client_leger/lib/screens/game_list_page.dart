@@ -42,6 +42,7 @@ class _GameListPageState extends State<GameListPage> {
         Navigator.pushNamed(context, "/game");
       }
     });
+    infoClientService.clearRooms();
     socketService.socket.emit("listRoom");
   }
 
@@ -83,108 +84,106 @@ class _GameListPageState extends State<GameListPage> {
                 ),
                 padding: const EdgeInsets.symmetric(
                     vertical: 25.0, horizontal: 25.0),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Column(
                         children: [
-                          IconButton(
-                            onPressed: _goBackHomePage,
-                            icon: Icon(
-                              Icons.arrow_back,
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 200.0,
-                          ),
-                          Column(
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Icon(
-                                Icons.person,
-                                color: Theme.of(context).colorScheme.primary,
+                              IconButton(
+                                onPressed: _goBackHomePage,
+                                icon: Icon(
+                                  Icons.arrow_back,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
                               ),
-                              Text(
-                                "${globals.userLoggedIn.username} (${"GAME_LIST_PAGE.YOU".tr()})",
-                                style: TextStyle(
-                                    color:
+                              const SizedBox(
+                                width: 200.0,
+                              ),
+                              Column(
+                                children: [
+                                  Icon(
+                                    Icons.person,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  Text(
+                                    "${globals.userLoggedIn.username} (${"GAME_LIST_PAGE.YOU".tr()})",
+                                    style: TextStyle(
+                                        color:
                                         Theme.of(context).colorScheme.primary),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(width: 240),
+                              ElevatedButton(
+                                onPressed: _createGame,
+                                child: Text(
+                                  "GAME_LIST_PAGE.CREATE_GAME".tr(),
+                                  style: TextStyle(
+                                      color:
+                                      Theme.of(context).colorScheme.secondary),
+                                ),
+                              ),
+                              Container(
+                                  margin: const EdgeInsets.all(5),
+                                  child: const ChatPanelOpenButton()
                               ),
                             ],
                           ),
-                          const SizedBox(width: 240),
-                          ElevatedButton(
-                            onPressed: _createGame,
-                            child: Text(
-                              "GAME_LIST_PAGE.CREATE_GAME".tr(),
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.secondary),
+                          const SizedBox(
+                            height: 30.0,
+                          ),
+                          Text(
+                            "GAME_LIST_PAGE.LIST_ROOM_GAMES".tr(),
+                            style: TextStyle(
+                                fontSize: 25,
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                          const SizedBox(
+                            height: 25.0,
+                          ),
+                          Expanded(
+                            child: Container(
+                              child: gameList(
+                                rooms: infoClientService.rooms
+                                    .where((room) =>
+                                room.gameMode == infoClientService.gameMode)
+                                    .toList(),
+                              ),
                             ),
-                          ),
-                          Container(
-                              margin: const EdgeInsets.all(5),
-                              child: const ChatPanelOpenButton()
-                          ),
-                          StatefulBuilder(
-                              builder: (BuildContext context, StateSetter setState) {
-                                return Positioned(
-                                  top: 190,
-                                  right: 25,
-                                  child: Container(
-                                    height: 63,
-                                    width: 63,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(context).colorScheme.primary,
-                                      borderRadius: const BorderRadius.all(Radius.circular(35.0)),
-                                    ),
-                                    child: IconButton(
-                                      iconSize: 50,
-                                      icon: CircleAvatar(
-                                        radius: 20,
-                                        backgroundColor: Theme.of(context).colorScheme.primary,
-                                        backgroundImage:
-                                        infoClientService.soundDisabled ?
-                                        const AssetImage('assets/volume-off-white.png') :
-                                        const AssetImage('assets/volume-on-white.png'),
-                                      ),
-                                      onPressed: () {
-                                        setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
-                                        infoClientService.notifyListeners();
-                                        socketService.notifyListeners();
-                                      },
-                                    ),
-                                  ),
-                                );
-                              }
-                          ),
+                          )
                         ],
                       ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
-                      Text(
-                        "GAME_LIST_PAGE.LIST_ROOM_GAMES".tr(),
-                        style: TextStyle(
-                            fontSize: 25,
-                            color: Theme.of(context).colorScheme.primary),
-                      ),
-                      const SizedBox(
-                        height: 25.0,
-                      ),
-                      Expanded(
-                        child: Container(
-                          child: gameList(
-                            rooms: infoClientService.rooms
-                                .where((room) =>
-                                    room.gameMode == infoClientService.gameMode)
-                                .toList(),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
+                    ),
+                    StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return Positioned(
+                            top: 4,
+                            right: 210,
+                            child: Container(
+                              height: 63,
+                              width: 63,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primary,
+                                borderRadius: const BorderRadius.all(Radius.circular(35.0)),
+                              ),
+                              child: IconButton(
+                                iconSize: 35,
+                                icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp) : Icon(Icons.volume_up_outlined),
+                                color: Theme.of(context).colorScheme.secondary,
+                                onPressed: () {
+                                  setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
+                                  infoClientService.notifyListeners();
+                                  socketService.notifyListeners();
+                                },
+                              ),
+                            ),
+                          );
+                        }
+                    ),
+                  ],
                 ),
               ),
             ),

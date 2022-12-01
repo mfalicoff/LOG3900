@@ -21,7 +21,6 @@ export class RankedService {
     closeModal() {
         this.timerService.clearTimer();
         this.isShowModal = false;
-        console.log(this.matchAccepted);
         if (this.matchAccepted === false) {
             this.router.navigate(['/ranked-init']);
         }

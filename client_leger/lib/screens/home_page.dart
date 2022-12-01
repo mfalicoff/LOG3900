@@ -6,9 +6,8 @@ import 'package:client_leger/services/tapService.dart';
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:easy_localization/easy_localization.dart';
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:flip_card/flip_card.dart';
+import 'package:flutter/material.dart';
 
 import '../constants/constants.dart';
 import '../env/environment.dart';
@@ -30,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   final String? serverAddress = Environment().config?.serverURL;
   ChatService chatService = ChatService();
 
-    @override
+  @override
   void initState() {
     super.initState();
     controller.getFavouriteGames();
@@ -45,7 +44,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     socketService.socket.emit('getAllChatRooms');
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+      _logout();
+      return false;
+    },
+    child: Scaffold(
       endDrawer: Drawer(
           width: 600,
           child: ChatPanel(
@@ -80,7 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(100.0)))),
                   onPressed: _toSearchPage,
-                  child: const Icon(Icons.search))),
+                  child: Icon(
+                    Icons.search,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ))),
           Positioned(
             top: 10.0,
             left: 30.0,
@@ -96,7 +103,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
               onPressed: _logout,
-              child: const Icon(Icons.logout),
+              child: Icon(
+                Icons.logout,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
             ),
           ),
           Center(
@@ -612,15 +622,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     borderRadius: const BorderRadius.all(Radius.circular(35.0)),
                   ),
                   child: IconButton(
-                    iconSize: 50,
-                    icon: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      backgroundImage:
-                      infoClientService.soundDisabled ?
-                      const AssetImage('assets/volume-off-white.png') :
-                      const AssetImage('assets/volume-on-white.png'),
-                    ),
+                    iconSize: 35,
+                    icon: infoClientService.soundDisabled ? Icon(Icons.volume_off_sharp) : Icon(Icons.volume_up_outlined),
+                    color: Theme.of(context).colorScheme.secondary,
                     onPressed: () {
                       setState(() =>{infoClientService.soundDisabled = !infoClientService.soundDisabled});
                       infoClientService.notifyListeners();
@@ -633,7 +637,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-    );
+    ),);
   }
 
 

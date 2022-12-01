@@ -306,7 +306,6 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
 
     void _leaveGame() {
       socketService.count = 1;
-      usersController.getFavouriteGames();
       socketService.socket.emit('leaveGame');
       Navigator.popUntil(context, ModalRoute.withName("/home"));
     }
@@ -386,6 +385,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
           isPressed = true;
         });
         globals.userLoggedIn = await usersController.updateFavouriteGames(socketService.gameId);
+        await usersController.getFavouriteGames();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("END_GAME_RESULT_PAGE.FAVOURITE_GAMES_UPDATED".tr()),
           backgroundColor: Colors.green,

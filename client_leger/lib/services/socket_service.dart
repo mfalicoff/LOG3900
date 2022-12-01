@@ -137,6 +137,10 @@ class SocketService with ChangeNotifier {
       infoClientService.updateDictionaries(dictionaries);
     });
 
+    socket.on('ReSendDictionariesToClient', (dictionaries) {
+      infoClientService.updateDictionaries(dictionaries);
+    });
+
     socket.on('DictionaryDeletedMessage', (message) {});
 
     socket.on('SendBeginnerVPNamesToClient', (namesVP) {});
@@ -177,13 +181,15 @@ class SocketService with ChangeNotifier {
       Function deepEq = const DeepCollectionEquality().equals;
       infoClientService.updatePlayer(player);
       if(!deepEq(infoClientService.player.chatHistory, infoClientService.player.oldChatHistory) && infoClientService.player.chatHistory.last.senderName != infoClientService.player.name) {
-        if(chatService.rooms[0].name == 'game' && !infoClientService.soundDisabled) {
+        if(chatService.rooms[0].name == 'game') {
           chatService.rooms[0].isUnread = true;
-          final player = AudioPlayer(); // Create a player
-          await player.setUrl(
-              "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
-          await player.play();
-          await player.stop();
+          if(!infoClientService.soundDisabled){
+            final player = AudioPlayer(); // Create a player
+            await player.setUrl(
+                "asset:assets/audios/notification-small.mp3"); // Schemes: (https: | file: | asset: )
+            await player.play();
+            await player.stop();
+          }
         }
       }
       infoClientService.player.oldChatHistory = infoClientService.player.chatHistory;

@@ -100,7 +100,7 @@ class BoardPainter extends CustomPainter {
             );
             drawBonusText(
                 canvas,
-                textTilesMap[board[i][j].bonus]!,
+                translateBonus(board[i][j].bonus!),
                 Offset(startXY + j * (tileSize + tilePadding), startXY + i * (tileSize + tilePadding)));
           }
         }

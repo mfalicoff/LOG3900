@@ -8,6 +8,7 @@ import { UserService } from '@app/services/user.service';
 import { TranslateService } from "@ngx-translate/core";
 import { SocketService } from '@app/services/socket.service';
 import { NotificationService } from '@app/services/notification.service';
+import { DarkModeService } from 'angular-dark-mode';
 
 @Component({
     selector: 'app-game-mode-options-page',
@@ -19,6 +20,7 @@ export class GameModeOptionsPageComponent {
         private infoClientService: InfoClientService,
         private http: HttpClient,
         private router: Router,
+        private themeService: DarkModeService,
         private socketService: SocketService,
         public userService: UserService,
         private translate: TranslateService,
@@ -48,6 +50,7 @@ export class GameModeOptionsPageComponent {
                         localStorage.removeItem(`cookie-${this.userService.user._id}`);
                         localStorage.removeItem(`user-${this.userService.user._id}`);
                         this.infoClientService.playerName = 'DefaultPlayerName';
+                        this.themeService?.disable();
                         this.router.navigate(['/home']);
                     },
                     error: (error) => {

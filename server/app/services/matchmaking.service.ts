@@ -22,7 +22,6 @@ export class MatchmakingService {
         for (const rankedGame of this.rooms.values()) {
             if (this.doesPlayerFitInARoom(rankedGame, eloDisparity, user.elo)) {
                 if(rankedGame.matchFound === false){
-                    console.log('allo');
                     this.joinRoom(socket, rankedGame, user, eloDisparity);
                     if (rankedGame.rankedUsers.length === Constants.MAX_PERSON_PLAYING) {
                         this.rankedMatchFound(rankedGame, socket);
@@ -47,10 +46,7 @@ export class MatchmakingService {
     joinRoom(socket: io.Socket, rankedGame: RankedGame, user: User, eloDisparity: number) {
         socket.join(rankedGame.name + Constants.RANKED_SUFFIX);
         const rankedUser = new RankedUser(user, eloDisparity);
-        let room = this.rooms.get(rankedGame.name);
-        console.log(room);
         this.rooms.get(rankedGame.name)?.rankedUsers.push(rankedUser);
-        console.log(rankedGame.rankedUsers);
     }
 
     createRoom(socket: io.Socket, user: User, eloDisparity: number) {
@@ -73,7 +69,6 @@ export class MatchmakingService {
         for (const rankedGame of this.rooms.values()) {
             for(let i =0; i< rankedGame.rankedUsers.length; i++){
                 if(rankedGame.rankedUsers[i].name === user.name) {
-                    console.log(rankedGame.rankedUsers[i].name);
                     this.sio.sockets.sockets.get(socket.id)?.emit('closeModalOnRefuse');
                     rankedGame.rankedUsers.splice(i,1);
                     socket.leave(rankedGame.name + Constants.RANKED_SUFFIX);
@@ -97,7 +92,7 @@ export class MatchmakingService {
         const timerInterval = setInterval(() => {
             if (rankedGame.secondsValue === fiveSecondDelay) {
                 clearInterval(timerInterval);
-                for (let i = 0; i < rankedGame.rankedUsers.length; i++) {
+                for (let i = 0; i < rankedGame.rankedUsers.length;) {
                     if (rankedGame.rankedUsers[i].hasAccepted === false) {
                         this.sio.to(rankedGame.name + Constants.RANKED_SUFFIX).emit('closeModalOnRefuse');
                         rankedGame.clearTimer();
@@ -105,6 +100,7 @@ export class MatchmakingService {
                         rankedGame.rankedUsers.splice(i, 1);
                     } else {
                         rankedGame.rankedUsers[i].hasAccepted = false;
+                        i++;
                     }
                 }
                 if(rankedGame.rankedUsers.length < Constants.MAX_PERSON_PLAYING) {

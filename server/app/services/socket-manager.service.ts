@@ -496,7 +496,8 @@ export class SocketManager {
     ) {
         // We create the game and add it to the rooms map
         const newGame: GameServer = new GameServer(timeTurn, gameMode, roomName, isGamePrivate, passwd);
-        const newPlayer = new Player(playerName, true);
+        const user = await this.userService.findUserByName(playerName)
+        const newPlayer = new Player(playerName, true, user.elo);
         newPlayer.id = socket.id;
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(playerName));
         this.boardService.initBoardArray(newGame);
@@ -555,7 +556,9 @@ export class SocketManager {
 
     private async joinGameAsPlayer(socket: io.Socket, game: GameServer, userData: User) {
         // we add the new player to the map of players
-        const newPlayer = new Player(userData.name, false);
+        const user = await this.userService.findUserByName(userData.name)
+        const newPlayer = new Player(userData.name, false, user.elo);
+        console.log(newPlayer.elo);
         game?.mapPlayers.set(socket.id, newPlayer); // dont delete this even if its duplicate code
         newPlayer.avatarUri = this.userService.getAvatar(await this.userService.findUserByName(userData.name));
         newPlayer.id = socket.id;
@@ -580,11 +583,12 @@ export class SocketManager {
 
     private clientAndRoomHandler(socket: io.Socket) {
         socket.on('new-user', async (name) => {
-            this.users.set(socket.id, { name, roomName: '', elo: 2000 });
             const user = await this.userService.findUserByName(name);
+            console.log(user.elo);
             if (user.language) {
                 this.translateService.addUser(user.name, user.language);
             }
+            this.users.set(socket.id, { name, roomName: '', elo: user.elo  });
             const avatar = await this.userService.populateAvatarField(user);
             socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
@@ -649,9 +653,9 @@ export class SocketManager {
             }
 
             if (game.isGamePrivate) {
-                userData.roomName = game.roomName;
                 for (const creatorOfGame of game.mapPlayers.values()) {
                     if (creatorOfGame.isCreatorOfGame) {
+                        socket.emit('messageServer', this.translateService.translateMessage(userData.name, 'ASK_ENTRANCE_SENT'));
                         this.sio.sockets.sockets.get(creatorOfGame.id)?.emit('askForEntrance', userData.name, playerId);
                         return;
                     }
@@ -680,12 +684,22 @@ export class SocketManager {
         });
 
         socket.on('acceptPlayer', async (isAccepted, newPlayerId) => {
-            const userData = this.users.get(newPlayerId);
-            if (!userData) {
+            const userDataPlayerInGame = this.users.get(socket.id);
+            if (!userDataPlayerInGame) {
+                return;
+            }
+            const roomName = userDataPlayerInGame.roomName;
+            const userDataNewPlayer = this.users.get(newPlayerId);
+            if (!userDataNewPlayer) {
                 return;
             }
 
-            const game = this.rooms.get(userData.roomName);
+            // if the player is already in a room we do not add him
+            if (userDataNewPlayer.roomName !== '') {
+                return;
+            }
+
+            const game = this.rooms.get(roomName);
             if (!game) {
                 return;
             }
@@ -696,9 +710,9 @@ export class SocketManager {
             }
 
             if (isAccepted) {
-                await this.joinRoom(socketNewPlayer, userData, game);
+                await this.joinRoom(socketNewPlayer, userDataNewPlayer, game);
             } else {
-                userData.roomName = '';
+                userDataNewPlayer.roomName = '';
                 this.sio.sockets.sockets.get(newPlayerId)?.emit('messageServer', "Vous n'avez pas été accepté dans la salle.");
             }
         });
@@ -729,6 +743,7 @@ export class SocketManager {
             for (const player of game.mapPlayers.values()) {
                 if (player.id === 'virtualPlayer') {
                     oldVirtualPlayer = player;
+                    oldVirtualPlayer.elo = user.elo;
                     break;
                 }
             }

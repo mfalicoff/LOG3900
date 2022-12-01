@@ -3,6 +3,7 @@
     "PROFILE": {
         "STATS": "Statistics",
         "LANGUAGE": "Languages",
+        "THEMES": "Themes",
         "EDIT": "Edit profile",
         "HISTORY_ACTIONS": "Actions history",
         "HISTORY_CONNECTIONS": "Connection history",
@@ -65,10 +66,10 @@
         "WRONG_PASSWORD": "Incorrect password",
         "NO_PLAYERS": "There is no player in this room.",
         "CREATOR_GAME": "The creator of the game is: ",
-        "THERE_ARE": "There are",
-        "REAL_PLAYERS2": " joueur(s) reel(s): ",
-        "VIRTUAL_PLAYERS2": " joueur(s) virtuel(s): ",
-        "NO_ROOMS": "Il n'y a pas de salle disponible."
+        "THERE_ARE": "There are ",
+        "REAL_PLAYERS2": " real player(s): ",
+        "VIRTUAL_PLAYERS2": " virtual player(s): ",
+        "NO_ROOMS": "There is no room available."
     },
     "PARAMETERS_SELECTION": {
         "YOU": " (You)",
@@ -189,7 +190,7 @@
         "AVATAR": "Avatar",
         "USERNAME": "Username",
         "REQUIRED_USERNAME": "Username is required",
-        "MIN_USERNAME": "Username must be at least 3 characters",
+        "MIN_USERNAME": "Username must be at least 4 characters",
         "MAX_USERNAME": "Username must be at most 20 characters",
         "EMAIL": "Email",
         "REQUIRED_EMAIL": "Email is required",
@@ -227,5 +228,7 @@
         "NEW_CREATOR": "You are the new creator of the chat room: ",
         "ROOM_DEL_1": "The room ",
         "ROOM_DEL_2": " has been deleted by the creator."
-    }
+    },
+    "WORD": "WORD",
+    "LETTER": "LETTER"
 }

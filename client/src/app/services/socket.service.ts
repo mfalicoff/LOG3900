@@ -338,6 +338,10 @@ export class SocketService {
                 this.infoClientService.currSelectedChatroom = this.infoClientService.chatRooms[this.infoClientService.chatRooms.length - 1];
                 this.notifService.openSnackBar(this.translate.instant('CHAT_ROOMS.NEW_CREATOR') + chatRoom.name, true);
             }
+
+            if (chatRoom.name === 'general') {
+                this.infoClientService.currSelectedChatroom = this.infoClientService.chatRooms[this.infoClientService.chatRooms.length - 1];
+            }
         });
         this.socket.on('addMsgToChatRoom', (chatRoomName: string, msg: ChatMessage) => {
             const idxChatRoom = this.infoClientService.chatRooms.findIndex((room) => room.name === chatRoomName);

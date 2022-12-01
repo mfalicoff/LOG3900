@@ -4,12 +4,12 @@ let appWindow;
 
 function initWindow() {
     appWindow = new BrowserWindow({
-        // fullscreen: true,
-        height: 800,
-        width: 1000,
+        height: 1080,
+        width: 1920,
         webPreferences: {
             nodeIntegration: true,
         },
+        resizable: false
     });
 
     // Electron Build Path

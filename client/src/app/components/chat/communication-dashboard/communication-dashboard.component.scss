@@ -26,18 +26,17 @@
 
 .mainDiv {
   display: flex;
-  flex-direction: row;
+  // flex-direction: row;
 }
 
 #main {
   align-self: center;
   align-content: center;
-  border: 5px solid #0C483F;
-  background-color: wheat;
+  border: 5px solid;
   width: 600px;
-  height: 450px;
+  height: 439px;
   padding: 0px;
-  padding-top: 0;
+  margin-bottom: 0px;
 }
 
 .title {
@@ -48,7 +47,7 @@
 
 #titleChatDashBoard{
   padding: 2px;
-  color: #0C483F;
+  
   text-align: center;
   padding-bottom: 0px;
 }
@@ -60,13 +59,11 @@
 .listChatRoom{
   height: 260px;
   overflow-y: scroll;
-  border-top: 3px solid #0C483F;
+  border-top: 3px solid;
   padding-top: 5px;
 }
 
 .chatRoomElement{
-  background-color: #0C483F;
-  color: wheat;
   text-align: center;
   font-size: 15px;
   margin-bottom: 5px;
@@ -75,12 +72,10 @@
 }
 
 .btnStyle{
-  background-color: #0C483F;
   margin-top: 0px;
   text-align: center;
   margin-bottom: 5px;
   font-size: 12px;
-  color: wheat;
   cursor: pointer;
   box-shadow: none;
 }
@@ -91,9 +86,7 @@
 }
 
 .chatRoomElementPressed{
-  background-color: wheat;
-  color: #0C483F;
-  border: 2px solid #0C483F;
+  border: 2px solid;
 }
 
 
@@ -109,11 +102,8 @@
 }
 
 .chatroom {
-  margin-left: 10px;
   width: 75%;
-}
-
-.rooms {
+  height: 100%;
 }
 
 .buttons {
@@ -129,7 +119,7 @@
 }
 
 .mainButton {
-  padding: 2px;
+  padding: 0px;
   width: 90%;
   align-self: center;
   font-size: 16px;
@@ -150,19 +140,6 @@
   font-size: 40px;
   padding: 20px;
   border-radius: 8px;
-  background-color: #0c483f;
-  color: wheat;
-}
-
-.MPButton {
-  cursor: pointer;
-  top: 10px;
-  left: 10px;
-  position: absolute;
-  transform: scale(2);
-  margin-top: 2%;
-  margin-left: 2%;
-  color: #0c483f;
 }
 
 ::-webkit-scrollbar {
@@ -172,9 +149,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: wheat;
 }
 ::-webkit-scrollbar-thumb {
-  background: #0c483f;
   border-radius: 8px;
 }

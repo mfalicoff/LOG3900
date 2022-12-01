@@ -92,6 +92,8 @@ class _SearchPageChatRoom extends State<SearchPageChatRoom> {
                                 labelStyle: TextStyle(
                                 color:Theme.of(context).colorScheme.primary),
                               ),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
                             ),
                             Expanded(
                               child: ListView.builder(
@@ -107,8 +109,8 @@ class _SearchPageChatRoom extends State<SearchPageChatRoom> {
                                     child: Center(
                                       child: Text(
                                         '${roomsFound[index]['name']}',
-                                        style: const TextStyle(
-                                          color: Colors.black,
+                                        style: TextStyle(
+                                          color: Theme.of(context).colorScheme.primary,
                                           fontSize: 25,
                                           decoration:TextDecoration.none,
                                         ),

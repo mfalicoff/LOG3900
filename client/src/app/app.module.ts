@@ -35,6 +35,7 @@ import { EndGameResultsPageComponent } from '@app/pages/end-game-results-page/en
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { NgDisableLinkModule } from 'ng-disable-link';
 import { ConfirmWindowComponent } from './components/confirm-window/confirm-window.component';
+import { DARK_MODE_OPTIONS } from 'angular-dark-mode';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention,prefer-arrow/prefer-arrow-functions
 export function HttpLoaderFactory(http: HttpClient) {
@@ -93,7 +94,15 @@ export function HttpLoaderFactory(http: HttpClient) {
             },
         }),
     ],
-    providers: [],
+    providers: [
+        {
+            provide: DARK_MODE_OPTIONS,
+            useValue: {
+                darkModeClass: 'my-dark-mode',
+                lightModeClass: 'my-light-mode',
+            },
+        },
+    ],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
