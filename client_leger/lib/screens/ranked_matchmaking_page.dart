@@ -63,7 +63,12 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
   }
 
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+          _goBackToRankedInitPage();
+          return false;
+        },
+    child: Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
@@ -190,13 +195,13 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
             onPressed: _goBackToRankedInitPage,
             icon: Icon(
               Icons.arrow_back,
-              color: Theme.of(context).colorScheme.secondary,
-
+              color: Color(0xFF0c483f),
             ),
           ),
         ],
       ),
 
+    )
     );
   }
 
