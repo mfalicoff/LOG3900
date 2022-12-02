@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:client_leger/env/environment.dart';
 import 'package:client_leger/models/user.dart';
@@ -12,6 +13,7 @@ import 'info_client_service.dart';
 class Controller {
   final String? serverAddress = Environment().config?.serverURL;
   final InfoClientService infoClientService = InfoClientService();
+  final storage = const FlutterSecureStorage();
 
   Future<User> login({email = String, password = String, socket = Socket}) async {
     final response = await http.post(
@@ -27,6 +29,7 @@ class Controller {
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
+      await storage.write(key: 'token', value: user.cookie);
       socket.emit("new-user", user.username);
       socket.emit('getAllAvatars');
       return user;
@@ -39,21 +42,20 @@ class Controller {
     }
   }
 
-  Future<User> forceLogin({email = String, password = String, socket = Socket}) async {
+  Future<User> softLogin({token = String, socket = Socket}) async {
     final response = await http.post(
-      Uri.parse("$serverAddress/forceLogin"),
+      Uri.parse("$serverAddress/soft-login"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': splitCookie(token),
       },
-      body: jsonEncode(<String, String>{
-        "email": email,
-        "password": password,
-      }),
     );
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
+      await storage.write(key: 'token', value: user.cookie);
       socket.emit("new-user", user.username);
+      socket.emit('getAllAvatars');
       return user;
     } else {
       if(response.statusCode == 409) {
@@ -92,12 +94,13 @@ class Controller {
       Uri.parse("$serverAddress/logout"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{}),
     );
 
     if (response.statusCode == 200) {
+      await storage.delete(key: 'token');
       return user.clear();
     } else {
       throw Exception('Failed to logout');
@@ -110,7 +113,7 @@ class Controller {
       Uri.parse("$serverAddress/users/${user.id}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{"name": newName}),
     );
@@ -149,7 +152,7 @@ class Controller {
       Uri.parse("$serverAddress/users/${user.id}"),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{"avatarPath": avatarPath}),
     );
@@ -168,7 +171,7 @@ class Controller {
     final response = await http.patch(Uri.parse("$serverAddress/users/${user.id}"),
         headers : <String, String> {
             'Content-Type': 'application/json; charset=UTF-8',
-            'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+            'Authorization': splitCookie(user.cookie as String),
         },
         body: jsonEncode(<String, String>{"gameId": idOfGame}),
     );
@@ -195,7 +198,7 @@ class Controller {
     final response = await http.put(Uri.parse("$serverAddress/users/language/${user.id}"),
       headers : <String, String> {
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{"language": languageUpdated}),
     );
@@ -204,13 +207,17 @@ class Controller {
     }
   }
 
+  String splitCookie(String fullCookie) {
+      return fullCookie.split("=")[1].split(";")[0];
+  }
+
   updateTheme(String newTheme) async {
     final user = globals.userLoggedIn;
     String? cookie = user.cookie;
     final response = await http.put(Uri.parse("$serverAddress/users/theme/${user.id}"),
       headers : <String, String> {
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': user.cookie?.split("=")[1].split(";")[0] as String,
+        'Authorization': splitCookie(user.cookie as String),
       },
       body: jsonEncode(<String, String>{"theme": newTheme}),
     );

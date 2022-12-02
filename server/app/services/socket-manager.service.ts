@@ -591,14 +591,6 @@ export class SocketManager {
             socket.broadcast.emit('sendAvatars', user.name, avatar);
         });
 
-        socket.on('forceLogout', (name) => {
-            for (const user of this.users) {
-                if (user[1].name === name) {
-                    this.sio.sockets.sockets.get(user[0])?.emit('forceLogout');
-                }
-            }
-        });
-
         socket.on('createRoomAndGame', async ({ roomName, playerName, timeTurn, gameMode, isGamePrivate, passwd, activatedPowers }) => {
             const roomData = this.rooms.get(roomName);
             if (roomData) {

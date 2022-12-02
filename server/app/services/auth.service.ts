@@ -2,7 +2,7 @@ import { compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { CreateUserValidator } from '@app/utils/validators';
 import { HttpException } from '@app/classes/http.exception';
-import { DataStoredInToken, TokenData } from '@app/classes/auth.interface';
+import { DataStoredInToken, RequestWithUser, TokenData } from '@app/classes/auth.interface';
 import { User } from '@app/classes/users.interface';
 import userModel from '@app/models/users.model';
 import { isEmpty } from '@app/utils/utils';
@@ -41,15 +41,13 @@ class AuthService {
         return { cookie, findUser };
     }
 
-    async forceLogin(userData: CreateUserValidator): Promise<{ cookie: string; findUser: User }> {
-        if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
+    async softLogin(req: RequestWithUser) {
+        const requestUser = req.user;
 
-        const findUser = await this.userService.findUserByEmail(userData.email);
+        if (isEmpty(requestUser)) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
 
-        const isPasswordMatching: boolean = await compare(userData.password, findUser.password as string);
-        if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.NotFound, "You're password not matching");
+        const findUser = await this.userService.findUserByEmail(requestUser.email as string);
 
-        this.loggedInIds.push(findUser.id as string);
         findUser.avatarUri = await this.userService.populateAvatarField(findUser);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);

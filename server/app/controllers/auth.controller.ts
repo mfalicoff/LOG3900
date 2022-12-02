@@ -3,6 +3,7 @@ import { User } from '@app/classes/users.interface';
 import AuthService from '@app/services/auth.service';
 import { CreateUserValidator } from '@app/utils/validators';
 import { NextFunction, Request, Response } from 'express';
+import { RequestWithUser } from '@app/classes/auth.interface';
 
 /* eslint-disable no-invalid-this */
 
@@ -32,12 +33,10 @@ class AuthController {
         }
     };
 
-    forceLogin = async (req: Request, res: Response, next: NextFunction) => {
+    softLogin = async (req: RequestWithUser, res: Response, next: NextFunction) => {
         try {
-            const userData: CreateUserValidator = req.body;
-            const { cookie, findUser } = await this.authService.forceLogin(userData);
-
-            res.status(HTTPStatusCode.OK).json({ data: findUser, token: cookie, message: 'forcedLogin' });
+            const { cookie, findUser } = await this.authService.softLogin(req);
+            res.status(HTTPStatusCode.OK).json({ data: findUser, token: cookie, message: 'logged in' });
         } catch (error) {
             next(error);
         }

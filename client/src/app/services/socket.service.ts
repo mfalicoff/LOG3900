@@ -229,11 +229,6 @@ export class SocketService {
             this.rankedService.matchHasBeenFound();
         });
 
-        this.socket.on('forceLogout', async () => {
-            this.infoClientService.playerName = '';
-            await this.router.navigate(['/login']);
-        });
-
         this.socket.on('createRankedGame', async (name, creatorName) => {
             const mockDict = {
                 title: 'Dictionnaire français par défaut',
