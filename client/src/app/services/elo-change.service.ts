@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Player } from '@app/classes/player';
-import { SocketService } from './socket.service';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EloChangeService {
-    constructor(public socketService: SocketService) {}
 
     changeEloOfPlayers(oldPlayers: Player[]): Player[] {
         const baseEloChangeForFirstOrLast = 20;
@@ -26,6 +24,6 @@ export class EloChangeService {
         for (const player of players) {
             averageElo += player.elo;
         }
-        return averageElo / players.length;
+        return Math.floor(averageElo / players.length);
     }
 }

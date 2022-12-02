@@ -51,7 +51,8 @@
         "MODIFY_AVATAR": "Modify Avatar",
         "SELECT_AVATAR": "Select desired avatar or take a photo",
         "DARK": "Dark",
-        "LIGHT": "Light"
+        "LIGHT": "Light",
+        "ELO": "Elo: "
     },
     "SEARCH_PAGE": {
         "SEARCH_PLAYERS": "Search players"
@@ -148,7 +149,8 @@
         "NUMBER_OF_TURN_PLAYED": "Number of turns played",
         "GAME_SPECTATORS": "Game spectators",
         "NO_SPECTATORS": "There are no spectators.",
-        "FAVOURITE_GAMES_UPDATED": "The game has been successfully added to yours favourites."
+        "FAVOURITE_GAMES_UPDATED": "The game has been successfully added to yours favourites.",
+        "ELO": "Elo: "
     },
     "CREATE_GAME_PAGE": {
         "YOU": "You",

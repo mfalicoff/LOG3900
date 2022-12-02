@@ -3,6 +3,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { environment } from '@app/../environments/environment';
 import { GameSaved } from '@app/classes/game-saved';
+import * as Constants from '@app/classes/global-constants';
 import { Player } from '@app/classes/player';
 import { ProfileReadOnlyPageComponent } from '@app/pages/profile-page/profile-read-only-page/profile-read-only-page.component';
 import { EloChangeService } from '@app/services/elo-change.service';
@@ -49,8 +50,10 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.getGameStartDate();
         this.displayPlayingTime();
         this.saveGame();
-        this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
-        this.changeEloOfPlayersDB();
+        if(this.infoClientService.gameMode === Constants.MODE_RANKED){
+            this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
+            this.changeEloOfPlayersDB();
+        }
     }
 
     ngOnDestroy() {
@@ -86,7 +89,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
 
     changeEloOfPlayersDB() {
         for (const player of this.newPlayersElo) {
-            this.socketService.socket.emit('changeElo', player);
+            this.socketService.socket.emit('changeElo', player.name, player.elo);
         }
     }
 

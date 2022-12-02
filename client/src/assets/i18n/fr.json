@@ -13,6 +13,7 @@
         "GAMES_WON": "Parties gagnés: ",
         "AVERAGE_SCORE": "Score moyen par partie: ",
         "AVERAGE_TIMES": "Temps moyen par partie: ",
+        "ELO": "Elo: ",
         "CLOSE_BUTTON": "Fermer"
     },
     "FAVORITE_GAMES":{
@@ -184,7 +185,8 @@
         "GAMES_PLAYED": "Parties jouées: ",
         "GAMES_WON": "Parties gagnés: ",
         "AVERAGE_SCORE": "Score moyen par partie: ",
-        "AVERAGE_TIME": "Temps moyen par partie: "
+        "AVERAGE_TIME": "Temps moyen par partie: ",
+        "ELO": "Elo: "
     },
     "LOGIN_PAGE":{
         "AVATAR": "Avatar",

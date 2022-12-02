@@ -13,7 +13,8 @@
         "GAMES_WON": "Games won: ",
         "AVERAGE_SCORE": "Average score: ",
         "AVERAGE_TIMES": "Average time: ",
-        "CLOSE_BUTTON": "Close"
+        "CLOSE_BUTTON": "Close",
+        "ELO": "Elo: "
     },
     "FAVORITE_GAMES":{
         "FAVORITES_CAPS": "FAVORITE GAMES",
@@ -184,7 +185,8 @@
         "GAMES_PLAYED": "Games played:",
         "GAMES_WON": "Games won:",
         "AVERAGE_SCORE": "Average score per game:",
-        "AVERAGE_TIME": "Average time per game:"
+        "AVERAGE_TIME": "Average time per game:",
+        "ELO": "Elo: "
     },
     "LOGIN_PAGE":{
         "AVATAR": "Avatar",
