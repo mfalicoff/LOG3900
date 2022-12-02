@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:client_leger/constants/constants.dart' as constants;
 import 'package:client_leger/models/chat.dart';
@@ -116,9 +115,9 @@ class SocketService with ChangeNotifier {
       socket.emit("spectWantsToBePlayer",[gameName, socketId]);
     });
 
-    // socket.on("closeModalOnRefuse", (_) {
-    //   rankedService.closeModal();
-    // });
+    socket.on("closeModalOnRefuse", (_) {
+      rankedService.closeModal();
+    });
 
     socket.on("closeModal", (_) {
        rankedService.closeModal();
