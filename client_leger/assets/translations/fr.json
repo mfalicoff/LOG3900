@@ -166,7 +166,10 @@
         "ROOM_NAME_NOT_VALID": "Nom de salle non valide",
         "AVAILABLE_CARD": "Cartes disponibles",
         "CONFIRM": "Confirmer",
-        "POWER_LIST": "Liste pouvoirs"
+        "POWER_LIST": "Liste pouvoirs",
+        "MAX_ELO_DIFF": "Écart d'elo maximal",
+        "MATCHMAKING_IN_PROGRESS" : "Matchmaking en cours",
+        "MATCH_FOUND" : "Partie trouvée"
     },
     "CHAT_PANEL": {
         "ROOMS": "Salles",

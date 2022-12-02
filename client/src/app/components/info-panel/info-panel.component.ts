@@ -45,6 +45,7 @@ export class InfoPanelComponent {
 
     skipTurnButton() {
         this.socketService.socket.emit('turnFinished');
+        this.infoClientService.isTurnOurs = false;
     }
 
     onClickGiveUpButton() {

@@ -160,11 +160,11 @@ class UserService {
         await this.users.updateOne({ name: player.name }, { gamesWon: newGamesWon });
     }
 
-    async updateGameHistory(player: Player, didPlayerWin: boolean, gameStart: number): Promise<void> {
+    async updateGameHistory(player: Player, didPlayerWin: boolean, startTime: number): Promise<void> {
         if (player.id === 'virtualPlayer') return;
 
         let display = '';
-        const timestamp = new Date(gameStart);
+        const timestamp = new Date(startTime);
         const date = timestamp.toDateString();
         const time = timestamp.toLocaleTimeString();
         display += date;

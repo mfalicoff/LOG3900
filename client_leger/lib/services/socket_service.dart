@@ -291,6 +291,10 @@ class SocketService with ChangeNotifier {
     socket.on('askTimerStatus', (_) {
       socket.emit('timerStatus', timerService.secondsValue);
     });
+
+    socket.on('addSecsToTimer', (timeToAdd){
+      timerService.secondsValue += timeToAdd;
+    });
   }
 
   canvasActionsHandler() {

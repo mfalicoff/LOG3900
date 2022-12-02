@@ -1,5 +1,6 @@
 import 'package:client_leger/services/info_client_service.dart';
 import 'package:client_leger/services/socket_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'dart:developer';
 import 'dart:ui';
 
@@ -50,7 +51,7 @@ class _RankedInitPageState extends State<RankedInitPage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Écart d'elo maximal",
+                        "CREATE_GAME_PAGE.MAX_ELO_DIFF".tr(),
                         style: TextStyle(
                             fontSize: 25,
                             color: Theme.of(context).colorScheme.primary),
@@ -75,7 +76,9 @@ class _RankedInitPageState extends State<RankedInitPage> {
                         onPressed: () {
                           onConfirm();
                         },
-                        child: const Text("Confirmer"),
+                        child: Text("CREATE_GAME_PAGE.CONFIRM".tr(), style: TextStyle(
+                            fontSize: 25,
+                            color: Theme.of(context).colorScheme.secondary),),
                       ),
                     ],
                   ),
