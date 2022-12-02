@@ -114,7 +114,7 @@ class _SearchPage extends State<SearchPage> {
                                         },
                                         child: Center(
                                             child: Text(
-                                                '${usersFound[index]['name']}',
+                                                '${usersFound[index]["name"]}',
                                                 style: TextStyle(
                                                     color: Theme.of(context).colorScheme.primary,
                                                     fontSize: 25,
