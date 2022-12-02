@@ -941,13 +941,13 @@ export class SocketManager {
 
     private rankedHandler(socket: io.Socket) {
         socket.on('changeElo', (playerName, elo) => {
-        console.log('changedElo');
-            this.userService.changeEloUser(playerName,elo);
+            this.userService.changeEloUser(playerName, elo);
         });
 
         socket.on('leaveRankedGame', (playerName, elo) => {
-            elo -= 20;
-            this.userService.changeEloUser(playerName,elo);
+            const twentyEloDeductedForLeaving = 20;
+            elo -= twentyEloDeductedForLeaving;
+            this.userService.changeEloUser(playerName, elo);
         });
 
         socket.on('startMatchmaking', (eloDisparity, user) => {

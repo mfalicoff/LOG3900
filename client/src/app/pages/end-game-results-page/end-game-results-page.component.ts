@@ -50,7 +50,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         this.getGameStartDate();
         this.displayPlayingTime();
         this.saveGame();
-        if(this.infoClientService.gameMode === Constants.MODE_RANKED){
+        if (this.infoClientService.gameMode === Constants.MODE_RANKED) {
             this.newPlayersElo = this.eloChangeService.changeEloOfPlayers(this.players);
             this.changeEloOfPlayersDB();
         }

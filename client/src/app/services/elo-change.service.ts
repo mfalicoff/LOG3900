@@ -5,7 +5,6 @@ import { Player } from '@app/classes/player';
     providedIn: 'root',
 })
 export class EloChangeService {
-
     changeEloOfPlayers(oldPlayers: Player[]): Player[] {
         const baseEloChangeForFirstOrLast = 20;
         const baseEloChangeForSecondOrThird = 10;

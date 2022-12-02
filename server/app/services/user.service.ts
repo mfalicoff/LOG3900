@@ -175,7 +175,7 @@ class UserService {
     }
 
     async changeEloUser(playerName: string, elo: number) {
-        await this.users.updateOne({ name: playerName }, { elo: elo });
+        await this.users.updateOne({ name: playerName }, { elo });
     }
 
     async populateAvatarField(user: User): Promise<string> {
