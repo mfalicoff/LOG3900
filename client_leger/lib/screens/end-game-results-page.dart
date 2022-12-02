@@ -119,7 +119,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Times New Roman"
                       ),
@@ -128,7 +128,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.tertiary,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Times New Roman"
                       ),
@@ -145,7 +145,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Times New Roman"
                       ),
@@ -154,7 +154,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.tertiary,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           fontFamily: "Times New Roman"
                       ),
@@ -167,7 +167,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
               Text('${"END_GAME_RESULT_PAGE.GAME_SPECTATORS".tr()}: ',
                 style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
-                    fontSize: 18,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
                     fontFamily: "Times New Roman"
                 ),
@@ -182,7 +182,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -215,7 +215,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -224,7 +224,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.tertiary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -241,7 +241,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -250,7 +250,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.tertiary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -267,7 +267,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -276,7 +276,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.tertiary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -294,7 +294,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -303,7 +303,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.tertiary,
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                         fontFamily: "Times New Roman"
                     ),
@@ -319,7 +319,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.primary,
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.bold,
                               fontFamily: "Times New Roman"
                           ),
@@ -366,7 +366,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                     Text("${"END_GAME_RESULT_PAGE.SCORE".tr()}: ",
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.primary,
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
@@ -374,7 +374,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                       textAlign: TextAlign.left,
                                       style: TextStyle(
                                           color: Theme.of(context).colorScheme.tertiary,
-                                          fontSize: 18,
+                                          fontSize: 16,
                                           fontWeight: FontWeight.bold,
                                           fontFamily: "Times New Roman"
                                       ),
@@ -387,7 +387,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                   Text("${"END_GAME_RESULT_PAGE.LETTER_LEFT".tr()}: ",
                                     style: TextStyle(
                                       color: Theme.of(context).colorScheme.primary,
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -395,7 +395,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                         color: Theme.of(context).colorScheme.tertiary,
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: "Times New Roman"
                                     ),
@@ -408,7 +408,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                   Text("${"END_GAME_RESULT_PAGE.NUMBER_OF_TURN_PLAYED".tr()}: ",
                                     style: TextStyle(
                                       color: Theme.of(context).colorScheme.primary,
-                                      fontSize: 18,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
 
                                     ),
@@ -417,12 +417,12 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                     textAlign: TextAlign.left,
                                     style: TextStyle(
                                         color: Theme.of(context).colorScheme.tertiary,
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         fontWeight: FontWeight.bold,
                                         fontFamily: "Times New Roman"
                                     ),
                                   ),
-                                
+
                                 ],
                               ),
                               infoClientService.gameMode == MODE_RANKED?
@@ -430,7 +430,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                  Text("${"END_GAME_RESULT_PAGE.ELO".tr()} ${players[index].elo} + ${newPlayersElo[index].elo - players[index].elo} = ${newPlayersElo[index].elo}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.normal,
 
                                   ),
@@ -438,7 +438,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                                 :Text("${"END_GAME_RESULT_PAGE.ELO".tr()} ${players[index].elo} ${newPlayersElo[index].elo - players[index].elo} = ${newPlayersElo[index].elo}",
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.primary,
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.normal,
 
                                   ),
