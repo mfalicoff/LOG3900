@@ -121,7 +121,6 @@ export class MouseEventService {
                 }
             }
         }
-
         this.resetExchangeTiles(player);
         this.sendStandToClient(player);
         this.playAreaService.changePlayer(game);

@@ -13,10 +13,9 @@
                         <div class= "font-size-30">{{timerService.displayTimer}}</div>
                         <br>
                         <button class="accept-button" (click)="acceptMatch()"
-                        [ngClass]="{'green' : matchAccepted}"
+                        [ngClass]="{'green' : this.rankedService.matchAccepted}"
                         >{{'RANKED.ACCEPT' | translate}}</button>
                         <button class="refuse-button" (click)="refuseMatch()"
-                        [ngClass]="{'red' : matchRefuseCss}"
                         routerLink="/ranked-init"
                         >{{'RANKED.REFUSE' | translate}}</button>
                     </div>
@@ -25,3 +24,4 @@
         </div>
     </div>
 </div>
+

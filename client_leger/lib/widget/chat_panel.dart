@@ -38,6 +38,8 @@ class _ChatPanelOpenButton extends State<ChatPanelOpenButton> {
   Widget build(BuildContext context) {
     return ElevatedButton(
         style: ButtonStyle(
+            backgroundColor: MaterialStateColor.resolveWith(
+                    (states) => Theme.of(context).colorScheme.secondary),
             padding: MaterialStateProperty.all(
               const EdgeInsets.symmetric(vertical: 18.0, horizontal: 0.0),
             ),
@@ -51,7 +53,7 @@ class _ChatPanelOpenButton extends State<ChatPanelOpenButton> {
           children: [
             Icon(
               Icons.chat,
-              color: Theme.of(context).colorScheme.secondary,
+              color: Theme.of(context).colorScheme.primary,
             ),
             chatService.isThereAChatUnread() == true
                 ? Container(

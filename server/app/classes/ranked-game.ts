@@ -4,6 +4,7 @@ export class RankedGame {
     name: string;
     rankedUsers: RankedUser[];
     secondsValue: number = 0;
+    matchFound: boolean = false;
     private timerInterval: NodeJS.Timeout;
 
     constructor(name: string, rankedUsers: RankedUser[]) {

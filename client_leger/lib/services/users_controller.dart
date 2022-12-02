@@ -1,12 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:client_leger/env/environment.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:client_leger/utils/globals.dart' as globals;
 import 'package:client_leger/models/user.dart';
+import 'package:client_leger/utils/globals.dart' as globals;
+import 'package:http/http.dart' as http;
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 import 'info_client_service.dart';
 
