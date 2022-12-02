@@ -48,7 +48,7 @@
                     <li>{{'RESULT.SCORE2' | translate}}<b class="result">{{this.players[0].score}} </b></li>
                     <li>{{'RESULT.LETTER_ON_STAND' | translate}}<b class="result">{{this.lettersOnStand(this.players[0])}}</b></li>
                     <li>{{'RESULT.NUMBER_TURNS_IN_GAME' | translate}}<b class="result">{{this.players[0].turn}}</b></li>
-                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}<b class="result">{{this.players[0].elo}} + {{this.newPlayersElo[0].elo - this.players[0].elo}} = {{this.newPlayersElo[0].elo}}</b></li>
+                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}<b class="result">{{this.players[0].elo}}+{{this.newPlayersElo[0].elo - this.players[0].elo}} = {{this.newPlayersElo[0].elo}}</b></li>
                 </ul>
             </div>
             <div class="players-grid-col">
@@ -59,7 +59,7 @@
                     <li>{{'RESULT.SCORE2' | translate}}<b class="result">{{this.players[1].score}} </b></li>
                     <li>{{'RESULT.LETTER_ON_STAND' | translate}}<b class="result">{{this.lettersOnStand(this.players[1])}}</b></li>
                     <li>{{'RESULT.NUMBER_TURNS_IN_GAME' | translate}}<b class="result">{{this.players[1].turn}}</b></li>
-                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}<b class="result">{{this.players[1].elo}} + {{this.newPlayersElo[1].elo - this.players[1].elo}} = {{this.newPlayersElo[1].elo}}</b></li>
+                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}<b class="result">{{this.players[1].elo}}+{{this.newPlayersElo[1].elo - this.players[1].elo}} = {{this.newPlayersElo[1].elo}}</b></li>
                 </ul>
             </div>
             <div class="players-grid-col">
@@ -70,7 +70,7 @@
                     <li>{{'RESULT.SCORE2' | translate}}<b class="result">{{this.players[2].score}} </b></li>
                     <li>{{'RESULT.LETTER_ON_STAND' | translate}}<b class="result">{{this.lettersOnStand(this.players[2])}}</b></li>
                     <li>{{'RESULT.NUMBER_TURNS_IN_GAME' | translate}}<b class="result">{{this.players[2].turn}}</b></li>
-                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}<b class="result">{{this.players[2].elo}} + {{this.newPlayersElo[2].elo - this.players[2].elo}} = {{this.newPlayersElo[2].elo}}</b></li>
+                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}<b class="result">{{this.players[2].elo}}{{this.newPlayersElo[2].elo - this.players[2].elo}} = {{this.newPlayersElo[2].elo}}</b></li>
                 </ul>
             </div>
             <div class="players-grid-col">
@@ -81,7 +81,7 @@
                     <li>{{'RESULT.SCORE2' | translate}}<b class="result">{{this.players[3].score}} </b></li>
                     <li>{{'RESULT.LETTER_ON_STAND' | translate}}<b class="result">{{this.lettersOnStand(this.players[3])}}</b></li>
                     <li>{{'RESULT.NUMBER_TURNS_IN_GAME' | translate}}<b class="result">{{this.players[3].turn}}</b></li>
-                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}<b class="result">{{this.players[3].elo}} + {{this.newPlayersElo[3].elo - this.players[3].elo}} = {{this.newPlayersElo[3].elo}}</b></li>
+                    <li *ngIf="this.infoClientService.game.gameMode === 'Ranked'">{{'RESULT.ELO' | translate}}<b class="result">{{this.players[3].elo}}{{this.newPlayersElo[3].elo - this.players[3].elo}} = {{this.newPlayersElo[3].elo}}</b></li>
                 </ul>
             </div>
         </div>

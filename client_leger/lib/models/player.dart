@@ -1,11 +1,8 @@
-import 'package:client_leger/models/power-cards.dart';
 import 'package:client_leger/constants/constants.dart';
+import 'package:client_leger/models/power-cards.dart';
+import 'package:client_leger/models/tile.dart';
 import 'package:client_leger/models/vec4.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:collection/collection.dart';
-
-import 'package:client_leger/models/tile.dart';
-import 'package:just_audio/just_audio.dart';
 
 import '../services/chat-service.dart';
 import 'chat.dart';
@@ -15,6 +12,7 @@ class Player with ChangeNotifier {
   ChatService chatService = ChatService();
   late String id;
   late String name;
+  late int elo;
   late List<Tile> stand = [];
   late String avatarUri;
   late bool isCreatorOfGame;
@@ -55,6 +53,7 @@ class Player with ChangeNotifier {
 
   Player.fromJson(Map parsed) {
     name = parsed["name"];
+    elo = parsed["elo"];
     isCreatorOfGame = parsed["isCreatorOfGame"];
     id = parsed["id"];
 
@@ -87,6 +86,26 @@ class Player with ChangeNotifier {
 
     notifyListeners();
   }
+
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'elo': elo,
+    'isCreatorOfGame': isCreatorOfGame,
+    'score': score,
+    'nbLetterStand': nbLetterStand,
+    'lastWordPlaced': lastWordPlaced,
+    'turn': turn,
+    'tileIndexManipulation': tileIndexManipulation,
+    'allLetterSwapped': allLetterSwapped,
+    'avatarUri': avatarUri,
+    'powerCards': powerCards,
+    'nbValidWordPlaced': nbValidWordPlaced,
+    'chatHistory': chatHistory,
+    'mapLetterOnStand': mapLetterOnStand,
+  };
+
 
   static List<Player> createPLayersFromArray(Map parsed){
     var mapPlayers = parsed["players"];

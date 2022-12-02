@@ -56,6 +56,7 @@ class _RankedMatchmakingPageState extends State<RankedMatchmakingPage> {
     });
     socketService.socket.on("closeModalOnRefuse", (data) {
       if (mounted) {
+        log('what');
         timerService.clearTimer();
         rankedService.closeModal();
         Navigator.pushNamed(context, "/ranked-init");

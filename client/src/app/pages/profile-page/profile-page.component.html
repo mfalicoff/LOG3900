@@ -10,6 +10,7 @@
                 <mat-grid-tile class="statsElement">{{'PROFILE.GAMES_WON' | translate}}{{this.userService.user.gamesWon}}</mat-grid-tile>
                 <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_SCORE' | translate}}{{this.userService.user.averagePointsPerGame?.toFixed(2)}}</mat-grid-tile>
                 <mat-grid-tile class="statsElement">{{'PROFILE.AVERAGE_TIMES' | translate}}{{this.millisToMinutesAndSeconds()}}</mat-grid-tile>
+                <mat-grid-tile class="centerStatsElement">{{'PROFILE.ELO' | translate}}{{this.userService.user.elo}}</mat-grid-tile>
             </mat-grid-list>
         </div>
         <div class="button-grid-row">

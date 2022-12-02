@@ -174,8 +174,8 @@ class UserService {
         else await this.users.updateOne({ name: player.name }, { $push: { gameHistory: `Partie Perdu le ${display}` } });
     }
 
-    async changeEloUser(player: Player) {
-        await this.users.updateOne({ name: player.name }, { elo: player.elo });
+    async changeEloUser(playerName: string, elo: number) {
+        await this.users.updateOne({ name: playerName }, { elo });
     }
 
     async populateAvatarField(user: User): Promise<string> {

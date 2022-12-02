@@ -105,7 +105,7 @@ export class InfoPanelComponent {
             if (result) {
                 if (this.infoClientService.game.gameMode === 'Ranked' && this.infoClientService.game.gameFinished) {
                     this.socketService.count = 1;
-                    this.socketService.socket.emit('leaveRankedGame', this.infoClientService.player);
+                    this.socketService.socket.emit('leaveRankedGame', [this.infoClientService.player.name, this.infoClientService.player.elo]);
                 }
                 this.socketService.socket.emit('leaveGame');
                 this.socketService.count = 1;

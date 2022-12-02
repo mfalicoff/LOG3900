@@ -41,7 +41,6 @@ class TimerService with ChangeNotifier{
   }
 
   startTimer(num minutesByTurn) {
-    log('start');
     if (minutesByTurn < 0) {
       return;
     }

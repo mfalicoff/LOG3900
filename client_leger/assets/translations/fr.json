@@ -51,7 +51,8 @@
         "MODIFY_AVATAR": "Modifier Avatar",
         "SELECT_AVATAR": "Selectionner avatar voulu ou prenez une photo",
         "DARK": "Sombre",
-        "LIGHT": "Clair"
+        "LIGHT": "Clair",
+        "ELO": "Elo: "
 
     },
     "SEARCH_PAGE": {
@@ -149,7 +150,8 @@
         "NUMBER_OF_TURN_PLAYED": "Nombre de tours joué",
         "GAME_SPECTATORS": "Spectateurs de la partie",
         "NO_SPECTATORS": "Il n'y a pas de spectateurs.",
-        "FAVOURITE_GAMES_UPDATED": "La partie a été ajoutée dans vos favoris avec succès."
+        "FAVOURITE_GAMES_UPDATED": "La partie a été ajoutée dans vos favoris avec succès.",
+        "ELO": "Elo: "
     },
     "CREATE_GAME_PAGE": {
         "YOU": "Vous",

@@ -43,10 +43,16 @@
     justify-content: left;
     border-radius: 5px;
 }
-
-.mat-grid-tile-content {
-    justify-content: left;
+.centerStatsElement {
+    // overflow: visible;
+    font-size: 20px;
+    border-radius: 5px;
+    margin-left: 25%;
 }
+
+// .mat-grid-tile-content {
+//     //justify-content: left;
+// }
 
 .subcontainer {
     background-position: center;

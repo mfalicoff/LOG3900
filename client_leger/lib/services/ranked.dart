@@ -1,7 +1,6 @@
-import 'dart:developer';
+import 'package:flutter/cupertino.dart';
 
 import '../services/timer.dart';
-import 'package:flutter/cupertino.dart';
 
 class RankedService extends ChangeNotifier{
   TimerService timerService = TimerService();
