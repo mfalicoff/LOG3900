@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:ui';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:client_leger/services/users_controller.dart';
 import 'package:client_leger/services/socket_service.dart';
@@ -65,6 +67,32 @@ class _LoginFormState extends State<LoginForm> {
   Controller controller = Controller();
   final InfoClientService infoClientService = InfoClientService();
   final SocketService socketService = SocketService();
+  final storage = const FlutterSecureStorage();
+
+  @override
+  void initState() {
+    super.initState();
+    getTokenFromStorage();
+  }
+
+  getTokenFromStorage() async {
+    String? value = await storage.read(key: 'token');
+    if(value != null) {
+      try {
+        globals.userLoggedIn = await controller.softLogin(
+            token: value, socket: socketService.socket);
+        infoClientService.playerName = globals.userLoggedIn.username;
+        MyApp.of(context)!.changeTheme(globals.userLoggedIn.theme as String);
+        Timer(Duration(milliseconds: 500), () => Navigator.pushNamed(context, "/home"));
+        return true;
+      } on Exception {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: const Text("Impossible de se connecter"),
+          backgroundColor: Colors.red.shade300,
+        ));
+        }
+      }
+    }
 
   @override
     Widget build(BuildContext context) {
@@ -117,12 +145,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
             ),
-            onPressed: () async {
-              bool response = await _submit();
-              if (!response) {
-                showAlertDialog(context);
-              }
-            },
+            onPressed: _submit,
             child: Text(
               tr("LOGIN.LOGIN"),
               style: TextStyle(
@@ -161,80 +184,25 @@ class _LoginFormState extends State<LoginForm> {
     }
   }
 
-  showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = TextButton(
-      child: Text(tr("CANCEL")),
-      onPressed: () {
-        Navigator.of(context).pop();
-      },
-    );
-    Widget continueButton = TextButton(
-      child: Text(tr("CONTINUE")),
-      onPressed: () async {
-        try {
-          globals.userLoggedIn = await controller.forceLogin(
-              email: email, password: password, socket: socketService.socket);
-          infoClientService.playerName = globals.userLoggedIn.username;
-          socketService.socket.emit('forceLogout', globals.userLoggedIn.username);
-          Navigator.pushNamed(context, "/home");
-        } on Exception {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(tr("LOGIN.UNABLE_TO_CONNECT")),
-            backgroundColor: Colors.red.shade300,
-          ));
-        }
-      },
-    );
-
-    // set up the AlertDialog
-    AlertDialog alert = AlertDialog(
-      title: Text(
-          tr("LOGIN.CONNECTED_OTHER_DEVICE")),
-      content: Text(
-          tr("LOGIN.YOU_WILL_GIVE_UP")),
-      actions: [
-        cancelButton,
-        continueButton,
-      ],
-    );
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  Future<bool> _submit() async {
+  Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
       try {
         globals.userLoggedIn = await controller.login(
             email: email, password: password, socket: socketService.socket);
         infoClientService.playerName = globals.userLoggedIn.username;
-        if (mounted){
+        if (mounted) {
           context.setLocale(Locale(globals.userLoggedIn.language!));
           MyApp.of(context)!.changeTheme(globals.userLoggedIn.theme as String);
           Navigator.pushNamed(context, "/home");
         }
-        return true;
-      } on Exception catch (e) {
-        print(e.toString());
-        if (e.toString().contains("Already Logged In")) {
-          return false;
-        } else {
+      } on Exception {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(tr("LOGIN.UNABLE_TO_CONNECT")),
             backgroundColor: Colors.red.shade300,
           ));
-          return true;
-        }
       }
     }
-    return true;
   }
 
   void _toSignUpPage() {

@@ -680,6 +680,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _logout() {
     controller.logout(globals.userLoggedIn);
-    Navigator.pop(context);
+    Navigator.of(context).pop();
   }
 }

@@ -19,7 +19,7 @@ export const DEFAULT_WIDTH_STAND = WIDTH_EACH_SQUARE * NUMBER_SLOT_STAND + WIDTH
 export const DEFAULT_HEIGHT_STAND = WIDTH_EACH_SQUARE + SIZE_OUTER_BORDER_STAND * 2;
 export const SALT_ROUNDS = 10;
 export const WEB_TOKEN_SECRET = 'secret';
-export const TOKEN_EXPIRATION = 60;
+export const TOKEN_EXPIRATION = 3000;
 
 export const PADDING_BOARD_FOR_STANDS = DEFAULT_HEIGHT_STAND + PADDING_BET_BOARD_AND_STAND;
 /// ////////////////////////////////////////////////////////////////////////

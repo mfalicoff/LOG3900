@@ -12,7 +12,6 @@ import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:restart_app/restart_app.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -125,11 +124,6 @@ class SocketService with ChangeNotifier {
 
     socket.on('messageServer', (message) {
       print(message);
-    });
-
-    socket.on('forceLogout', (_) async {
-      globals.userLoggedIn.clear();
-      Restart.restartApp();
     });
 
     socket.on('SendDictionariesToClient', (dictionaries) {

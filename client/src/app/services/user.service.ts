@@ -1,12 +1,10 @@
 /* eslint-disable  @typescript-eslint/no-explicit-any */
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { GameSaved } from '@app/classes/game-saved';
 import { UserResponseInterface } from '@app/classes/response.interface';
 import { User } from '@app/classes/user.interface';
-import { ConfirmWindowComponent } from '@app/components/confirm-window/confirm-window.component';
 import { InfoClientService } from '@app/services/info-client.service';
 import { TranslateService } from '@ngx-translate/core';
 import { DarkModeService } from 'angular-dark-mode';
@@ -27,7 +25,6 @@ export class UserService {
         private infoClientService: InfoClientService,
         private router: Router,
         private notifService: NotificationService,
-        private dialog: MatDialog,
         private translate: TranslateService,
         private themeService: DarkModeService,
     ) {}
@@ -37,13 +34,13 @@ export class UserService {
     }
 
     updateUserInstance(user: User) {
-        localStorage.removeItem(`user-${user._id}`);
-        localStorage.setItem(`user-${user._id}`, JSON.stringify(user));
+        localStorage.removeItem('user');
+        localStorage.setItem('user', JSON.stringify(user));
         this.user = user;
     }
 
     getCookieHeader(): HttpHeaders {
-        return new HttpHeaders().set('Authorization', localStorage.getItem(`cookie-${this.user._id}`)?.split('=')[1].split(';')[0] as string);
+        return new HttpHeaders().set('Authorization', localStorage.getItem('cookie')?.split('=')[1].split(';')[0] as string);
     }
 
     async signUp(name: string, email: string, password: string, avatarPath: string, socket: Socket) {
@@ -73,7 +70,7 @@ export class UserService {
                         });
                 },
                 error: (error) => {
-                    this.handleErrorPOST(error, socket);
+                    this.handleErrorPOST(error);
                 },
             });
     }
@@ -91,7 +88,25 @@ export class UserService {
                     socket.emit('getAllAvatars');
                 },
                 error: (error) => {
-                    this.handleErrorPOST(error, socket, email, password);
+                    this.handleErrorPOST(error);
+                },
+            });
+    }
+
+    async softLogin(socket: Socket) {
+        this.http
+            .post<unknown>(
+                environment.serverUrl + 'soft-login',
+                {},
+                {
+                    headers: this.getCookieHeader(),
+                },
+            )
+            // eslint-disable-next-line deprecation/deprecation
+            .subscribe({
+                next: (response) => {
+                    this.saveUserInfo(response, socket);
+                    socket.emit('getAllAvatars');
                 },
             });
     }
@@ -109,8 +124,8 @@ export class UserService {
             .subscribe({
                 next: () => {
                     // @ts-ignore
-                    localStorage.removeItem(`cookie-${this.user._id}`);
-                    localStorage.removeItem(`user-${this.user._id}`);
+                    localStorage.removeItem('cookie');
+                    localStorage.removeItem('user');
                     this.infoClientService.playerName = 'DefaultPlayerName';
                     this.themeService?.disable();
                     this.router.navigate(['/home']);
@@ -236,56 +251,28 @@ export class UserService {
             });
     }
 
-    private handleErrorPOST(error: HttpErrorResponse, socket?: Socket, email?: string, password?: string) {
+    private handleErrorPOST(error: HttpErrorResponse) {
         if (error.error instanceof ErrorEvent) {
             this.notifService.openSnackBar('Erreur: ' + error.status + error.error.message, false);
         } else {
-            if (error.error.includes('Already logged in')) {
-                const dialogRef = this.dialog.open(ConfirmWindowComponent, {
-                    height: '25%',
-                    width: '25%',
-                    panelClass: 'matDialogWheat',
-                });
-
-                dialogRef.componentInstance.name =
-                    'Vous etes actuellement connecte sur une autre machine, voulez vous forcer une connexion?\n ' +
-                    'Si vous ete actuellement en match vous abandonnerez votre match';
-
-                dialogRef.afterClosed().subscribe((result) => {
-                    if (result) {
-                        this.http
-                            .post<any>(this.serverUrl + 'forcelogin', {
-                                email,
-                                password,
-                            })
-                            .subscribe({
-                                next: (response) => {
-                                    socket?.emit('forceLogout', response.data.name);
-                                    this.saveUserInfo(response, socket as Socket);
-                                },
-                                error: (newError) => {
-                                    this.handleErrorPOST(newError);
-                                },
-                            });
-                    }
-                });
-            } else {
-                this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
-            }
+            this.notifService.openSnackBar(`Erreur ${error.status}.` + ` Le message d'erreur est le suivant:\n ${error.message}`, false);
         }
     }
 
     private saveUserInfo(response: any, socket: Socket) {
-        localStorage.setItem(`cookie-${response.data._id}`, response.token);
+        localStorage.setItem('cookie', response.token);
         this.updateUserInstance(response.data);
         socket.emit('new-user', response.data.name);
-        this.translate.use(response.data.language);
-        if (response.data.theme.toLowerCase() === 'dark') {
-            this.themeService?.enable();
-        } else {
-            this.themeService?.disable();
-        }
-        this.infoClientService.playerName = response.data.name;
-        this.router.navigate(['/game-mode-options']);
+        setTimeout(() => {
+            this.translate.use(response.data.language);
+            if (response.data.theme.toLowerCase() === 'dark') {
+                this.themeService?.enable();
+            } else {
+                this.themeService?.disable();
+            }
+            this.infoClientService.playerName = response.data.name;
+            this.router.navigate(['/game-mode-options']);
+            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        }, 500);
     }
 }
