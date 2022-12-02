@@ -1,7 +1,7 @@
 <div class="justified" id="container">
     <div class="subcontainer justified">
         <img [src]="userService.user.avatarUri" id="profile"/>
-        <h1>{{this.userService.user.name}}</h1>
+        <h1 style="margin: 0 0 2px;">{{this.userService.user.name}}</h1>
         <button class="editButton" mat-flat-button (click)="openEditProfileComponent()">{{'PROFILE.EDIT' | translate}}</button>
         <div id="statsContainer">
             <h2>{{'PROFILE.STATS' | translate}}</h2>

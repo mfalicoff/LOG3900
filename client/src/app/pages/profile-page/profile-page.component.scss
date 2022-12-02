@@ -7,7 +7,7 @@
 #container {
     position: inherit;
     width: 80%;
-    margin-top: 5%;
+    margin-top: 2.5%;
     margin-left: 10%;
     height: 90%;
     font-size: large;
@@ -30,29 +30,26 @@
 }
 
 #statsContainer {
-    margin-top: 5%;
+    margin-top: 2%;
     margin-bottom: 5%;
     z-index: 2;
     text-align: center;
-    width: 80%;
-    height: 50%;
+    width: 70%;
+    height: 44%;
 }
 
 .statsElement {
+    border: solid 2px;
     font-size: 20px;
     justify-content: left;
-    border-radius: 5px;
 }
+
 .centerStatsElement {
-    // overflow: visible;
     font-size: 20px;
     border-radius: 5px;
     margin-left: 25%;
+    font-weight: bolder;
 }
-
-// .mat-grid-tile-content {
-//     //justify-content: left;
-// }
 
 .subcontainer {
     background-position: center;
