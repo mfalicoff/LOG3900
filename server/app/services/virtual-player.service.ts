@@ -15,6 +15,7 @@ import { PutLogicService } from './put-logic.service';
 import { ScoreCountService } from './score-count.service';
 import * as Constants from '@app/classes/global-constants';
 import { ChatMessage } from '@app/classes/chat-message';
+import { PowerCardsService } from '@app/services/power-cards.service';
 
 @Service()
 export class VirtualPlayerService {
@@ -31,6 +32,7 @@ export class VirtualPlayerService {
         protected scoreCountService: ScoreCountService,
         protected putLogicService: PutLogicService,
         protected debugCommandService: DebugCommandService,
+        private powerCardsService: PowerCardsService,
     ) {
         this.validEntries = new Map<Vec2, Set<string>>();
         this.direction = '';
@@ -124,6 +126,11 @@ export class VirtualPlayerService {
             this.putLogicService.computeWordVPToDraw(game, player, moveToPlay);
             await this.chatService.placeCommand('!placer ' + moveToPlay.command + ' ' + moveToPlay.word, game, player);
             this.debugCommandService.debugPrint(player, moveToPlay, game);
+            player.nbValidWordPlaced++;
+            if (game.gameMode === Constants.POWER_CARDS_MODE && player.nbValidWordPlaced >= 3) {
+                this.powerCardsService.givePowerCard(game, player);
+                player.nbValidWordPlaced = 0;
+            }
         }
         return moveToPlay;
     }

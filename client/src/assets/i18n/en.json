@@ -178,7 +178,8 @@
         "LETTER_ON_STAND": " Letters on stand: ",
         "NUMBER_TURNS_IN_GAME": " Number of turns played in the game: ",
         "ELO": " Elo: ",
-        "UPDATE_FAVOURITES_MESSAGE": "The game has been added into your favourites"
+        "UPDATE_FAVOURITES_MESSAGE": "The game has been added into your favourites",
+        "NO_CREATOR": "There are only spectators in the game (no creator)"
     },
     "PROFILE_READ_ONLY":{
         "STATS": "Statistics",

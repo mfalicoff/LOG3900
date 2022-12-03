@@ -7,11 +7,11 @@
     <div mat-dialog-content id="roomStats">
         <ul>
             <li>{{'RESULT.ROOM' | translate}}<b class="result">{{roomName}}</b></li>
-            <li >{{'RESULT.CREATOR' | translate}}<b class="result">{{this.creator}}</b></li>
+            <li>{{'RESULT.CREATOR' | translate}}<b class="result">{{this.creator}}</b></li>
             <div *ngIf="this.infoClientService.actualRoom.spectators.length !== 0">
                 <li>{{'RESULT.SPECTATORS' | translate}}</li>
                 <div *ngFor="let spect of this.infoClientService.actualRoom.spectators" class="two-grid-row">
-                    <div class="two-grid-col" style="margin-right: -85%">
+                    <div class="two-grid-col" style="margin-right: -94%">
                         <b>{{'RESULT.NAME' | translate}}</b>
                     </div>
                     <div class="two-grid-col">
@@ -32,7 +32,7 @@
             <li>{{'RESULT.NUMBER_TURNS' | translate}}<b class="result">{{this.numberOfTurns}}</b></li>
             <li>{{'RESULT.GAME_LENGTH' | translate}}<b class="result">{{this.playingTime}}</b></li>
             <li>{{'RESULT.GAME_START_TIME' | translate}}<b class="result">{{this.gameStartDate}}</b></li>
-            <li>{{'RESULT.ADD_GAME_FAVORITE_QUESTION' | translate}}<button mat-flat-button class="btnStyle" (click)="addGameToFavourites(); clicked=true" [disabled]="clicked">{{'RESULT.ADD_GAME_FAVORITE' | translate}}</button></li>
+            <li *ngIf="!infoClientService.isSpectator">{{'RESULT.ADD_GAME_FAVORITE_QUESTION' | translate}}<button mat-flat-button class="btnStyle" (click)="addGameToFavourites(); clicked=true" [disabled]="clicked">{{'RESULT.ADD_GAME_FAVORITE' | translate}}</button></li>
         </ul>
     </div>
     <div class="title-box">
