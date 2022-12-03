@@ -51,7 +51,8 @@ class AuthService {
         if (isEmpty(requestUser)) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
 
         let findUser = await this.userService.findUserByEmail(requestUser.email as string);
-
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        if (this.loggedInIds.indexOf(findUser.id as string) === -1) this.loggedInIds.push(findUser.id as string);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);
         findUser = (await this.users.findByIdAndUpdate(
