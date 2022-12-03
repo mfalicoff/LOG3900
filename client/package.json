@@ -14,7 +14,7 @@
     "lint": "ng lint --format stylish",
     "lint:fix": "npm run lint -- --fix",
     "start:electron": "ng build --configuration development --base-href ./ && electron .",
-    "build:electron": "ng build --configuration production && electron-packager . --asar --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite --out=./build --platform=win32",
+    "build:electron": "ng build --configuration production && electron-packager . polyScrabble --asar --ignore=/node_modules --ignore=/e2e --ignore=/src --overwrite --out=./build --platform=win32 --icon=./icon.ico",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build:prod": "tauri build"

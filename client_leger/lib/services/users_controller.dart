@@ -29,9 +29,10 @@ class Controller {
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
-      await storage.write(key: 'token', value: user.cookie);
       socket.emit("new-user", user.username);
       socket.emit('getAllAvatars');
+      await storage.write(key: 'token', value: user.cookie);
+      socket.emit('getAllChatRooms');
       return user;
     } else {
       if(response.statusCode == 409) {
@@ -53,9 +54,10 @@ class Controller {
     if (response.statusCode == 200) {
       User user = User.fromJson(json.decode(response.body));
       user.cookie = json.decode(response.body)["token"];
-      await storage.write(key: 'token', value: user.cookie);
       socket.emit("new-user", user.username);
       socket.emit('getAllAvatars');
+      await storage.write(key: 'token', value: user.cookie);
+      socket.emit('getAllChatRooms');
       return user;
     } else {
       if(response.statusCode == 409) {

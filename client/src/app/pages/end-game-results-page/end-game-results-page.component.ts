@@ -12,6 +12,7 @@ import { NotificationService } from '@app/services/notification.service';
 import { SocketService } from '@app/services/socket.service';
 import { UserService } from '@app/services/user.service';
 import { Subscription } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
     selector: 'app-end-game-results-page',
@@ -39,6 +40,7 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
         private eloChangeService: EloChangeService,
         private socketService: SocketService,
         private notifService: NotificationService,
+        private translate: TranslateService,
     ) {}
 
     ngOnInit() {
@@ -141,9 +143,12 @@ export class EndGameResultsPageComponent implements OnInit, OnDestroy {
 
     findCreatorOfGame(): void {
         // @ts-ignore
-        this.creator = this.infoClientService.actualRoom.players.find((player: Player) => {
+        const creator = this.infoClientService.actualRoom.players.find((player: Player) => {
             if (player.isCreatorOfGame) return player.name;
-        }).name;
+        });
+
+        if (creator && creator.name) this.creator = creator.name;
+        else this.creator = this.translate.instant('RESULT.NO_CREATOR');
     }
 
     isLinkEnabled(player: Player): boolean {

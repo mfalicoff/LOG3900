@@ -313,6 +313,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                 const SizedBox(
                     height: 10,
                 ),
+                if(!infoClientService.isSpectator) ...[
                 Row(
                     children: [
                         Text("${"END_GAME_RESULT_PAGE.ADD_GAME_IN_FAVORITE".tr()}: ",
@@ -329,7 +330,7 @@ class _EndGameResultsPage extends State<EndGameResultsPage> {
                             child: const Icon(Icons.playlist_add_sharp),
                         ),
                     ],
-                ),
+                )],
                 const SizedBox(
                     height: 15,
                 ),

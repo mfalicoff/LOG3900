@@ -178,7 +178,8 @@
         "LETTER_ON_STAND": " Lettres sur chevalet: ",
         "NUMBER_TURNS_IN_GAME": " Nombre de tours joué dans la partie: ",
         "ELO": " Elo: ",
-        "UPDATE_FAVOURITES_MESSAGE": "La partie a été ajoutée à vos favorites"
+        "UPDATE_FAVOURITES_MESSAGE": "La partie a été ajoutée à vos favorites",
+        "NO_CREATOR": "Il n'y a que des spectateurs dans la salle"
     },
     "PROFILE_READ_ONLY":{
         "STATS": "Statistiques",

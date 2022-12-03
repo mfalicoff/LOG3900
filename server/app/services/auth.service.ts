@@ -25,7 +25,7 @@ class AuthService {
     async login(userData: CreateUserValidator): Promise<{ cookie: string; findUser: User }> {
         if (isEmpty(userData)) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
 
-        const findUser = await this.userService.findUserByEmail(userData.email);
+        let findUser = await this.userService.findUserByEmail(userData.email);
 
         const isPasswordMatching: boolean = await compare(userData.password, findUser.password as string);
         if (!isPasswordMatching) throw new HttpException(HTTPStatusCode.NotFound, "You're password not matching");
@@ -34,10 +34,14 @@ class AuthService {
             throw new HttpException(HTTPStatusCode.Conflict, 'Already logged in, log out of device and try again');
 
         this.loggedInIds.push(findUser.id as string);
-        findUser.avatarUri = await this.userService.populateAvatarField(findUser);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);
-        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('login') } });
+        findUser = (await this.users.findByIdAndUpdate(
+            { _id: findUser.id },
+            { $push: { actionHistory: addActionHistory('login') } },
+            { new: true },
+        )) as User;
+        findUser.avatarUri = await this.userService.populateAvatarField(findUser);
         return { cookie, findUser };
     }
 
@@ -46,12 +50,16 @@ class AuthService {
 
         if (isEmpty(requestUser)) throw new HttpException(HTTPStatusCode.BadRequest, 'Bad request: no data sent');
 
-        const findUser = await this.userService.findUserByEmail(requestUser.email as string);
+        let findUser = await this.userService.findUserByEmail(requestUser.email as string);
 
-        findUser.avatarUri = await this.userService.populateAvatarField(findUser);
         const tokenData = this.createToken(findUser);
         const cookie = this.createCookie(tokenData);
-        await this.users.updateOne({ _id: findUser.id }, { $push: { actionHistory: addActionHistory('login') } });
+        findUser = (await this.users.findByIdAndUpdate(
+            { _id: findUser.id },
+            { $push: { actionHistory: addActionHistory('login') } },
+            { new: true },
+        )) as User;
+        findUser.avatarUri = await this.userService.populateAvatarField(findUser);
         return { cookie, findUser };
     }
 

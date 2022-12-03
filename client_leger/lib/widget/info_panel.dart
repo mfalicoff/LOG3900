@@ -204,7 +204,7 @@ class _InfoPanelState extends State<InfoPanel> {
               ),
               Container(
                   child: infoClientService.creatorShouldBeAbleToStartGame ==
-                          true
+                          true && !infoClientService.isSpectator
                       ? ElevatedButton(
                           style: ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll<Color>(Theme.of(context).colorScheme.secondary),
@@ -219,7 +219,7 @@ class _InfoPanelState extends State<InfoPanel> {
                         )
                       : null),
               Container(
-                child: infoClientService.creatorShouldBeAbleToStartGame == true
+                child: infoClientService.creatorShouldBeAbleToStartGame == true && !infoClientService.isSpectator
                     ? const SizedBox(
                         width: 5,
                       )
